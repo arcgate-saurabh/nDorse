@@ -1,0 +1,162 @@
+@font-face {
+	font-family: 'Avenir-Light';
+	src: url(../fonts/Avenir-Light_gdi.eot);
+	src: url(../fonts/Avenir-Light_gdi.eot?#iefix) format('embedded-opentype'), url(../fonts/Avenir-Light_gdi.woff) format('woff'), url(../fonts/Avenir-Light_gdi.ttf) format('truetype'), url(../fonts/Avenir-Light_gdi.svg#Avenir-Light) format('svg');
+	font-weight: 300;
+	font-style: normal;
+	font-stretch: normal;
+ unicode-range: U+000D-E308;
+}
+@font-face {
+	font-family: 'Avenir-Book';
+	src: url(../fonts/Avenir-Book_gdi.eot);
+	src: url(../fonts/Avenir-Book_gdi.eot?#iefix) format('embedded-opentype'), url(../fonts/Avenir-Book_gdi.woff) format('woff'), url(../fonts/Avenir-Book_gdi.ttf) format('truetype'), url(../fonts/Avenir-Book_gdi.svg#Avenir-Book) format('svg');
+	font-weight: 400;
+	font-style: normal;
+	font-stretch: normal;
+ unicode-range: U+0020-25CA;
+}
+@font-face {
+	font-family: 'Avenir-Medium';
+	src: url(../fonts/Avenir-Medium_gdi.eot);
+	src: url(../fonts/Avenir-Medium_gdi.eot?#iefix) format('embedded-opentype'), url(../fonts/Avenir-Medium_gdi.woff) format('woff'), url(../fonts/Avenir-Medium_gdi.ttf) format('truetype'), url(../fonts/Avenir-Medium_gdi.svg#Avenir-Medium) format('svg');
+	font-weight: 500;
+	font-style: normal;
+	font-stretch: normal;
+ unicode-range: U+0020-25CA;
+}
+body {
+	background-color: #eee;
+	padding-bottom: 0;
+	padding-top: 0;
+	font-family: 'Avenir-Book', Arial, Helvetica, sans-serif;
+	background: url(../img/bg.png) top center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.form-signin {
+	margin: 0 auto;
+	max-width: 581px;
+	padding: 15px;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox {
+	margin-bottom: 10px;
+}
+.form-signin .checkbox {
+	font-weight: normal;
+}
+.form-signin .form-control {
+	box-sizing: border-box;
+	font-size: 16px;
+	height: auto;
+	padding: 20px 10px;
+	position: relative;
+}
+.form-signin .form-control:focus {
+	z-index: 2;
+}
+.form-signin input[type="email"] {
+	border-radius: 4px;
+	position: relative;
+}
+.form-signin input[type="password"] {
+	border-radius: 4px;
+}
+.form-signin label.error {
+	position: relative;
+}
+.form-signin label {
+	padding: 5px 0 ;
+	position: relative;
+	line-height:20px;
+	margin:0 0;
+}
+h2.form-signin-heading {
+	font-family: 'Avenir-Light', Arial, Helvetica, sans-serif;
+	font-size: 38px;
+	color: #fff;
+	margin-bottom: 87px;
+	margin-top: 60px;
+	text-align: center;
+}
+.faq {
+	padding-top: 36px;
+	padding-bottom: 91px;
+}
+.faq a {
+	color: #666666;
+	text-decoration: underline;
+	text-align: center;
+}
+.btn-block {
+	background: #f47521;
+	background-image: -webkit-linear-gradient(top, #f47521, #ed5b13);
+	background-image: -moz-linear-gradient(top, #f47521, #ed5b13);
+	background-image: -ms-linear-gradient(top, #f47521, #ed5b13);
+	background-image: -o-linear-gradient(top, #f47521, #ed5b13);
+	background-image: linear-gradient(to bottom, #f47521, #ed5b13);
+	-webkit-border-radius: 4;
+	-moz-border-radius: 4;
+	border-radius: 4px;
+	color: #ffffff;
+	font-family: 'Avenir-Medium';
+	border: solid #e34e04 2px;
+	text-decoration: none;
+	padding: 20px 16px;
+}
+.btn-block:hover {
+	background: #ed5b13;
+	background-image: -webkit-linear-gradient(top, #ed5b13, #f47521);
+	background-image: -moz-linear-gradient(top, #ed5b13, #f47521);
+	background-image: -ms-linear-gradient(top, #ed5b13, #f47521);
+	background-image: -o-linear-gradient(top, #ed5b13, #f47521);
+	background-image: linear-gradient(to bottom, #ed5b13, #f47521);
+	border-radius: 4px;
+	color: #ffffff;
+	font-family: 'Avenir-Medium';
+	border: solid #e34e04 2px;
+	text-decoration: none;
+	text-decoration: none;
+}
+.form-signin > .ndrose {
+	margin-top: 60px;
+}
+label.error{
+	color:#de4848;
+	font-family: 'Avenir-Light';
+	font-weight:lighter;
+	font-size:16px;
+	}
+
+
+
+/**/
+.newLoginsec{
+	display: table;
+	margin: 0 auto;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding: 10px 10px 0;
+}
+
+.login .newLoginsec .dont-have {
+    margin-top: 5px;
+}
+
+.newLoginsec a.btn-default{height: 57px;width: 380px;padding: 13px;font-size: 20px;}
+
+@media all and (max-width: 640px){
+	.newLoginsec{
+		padding: 10px 0 0;
+		display: block;
+	}
+	.newLoginsec a.btn-default{
+		width: 100%;
+	}
+	.login .newLoginsec .dont-have {
+	    margin-top: 20px;
+	}
+}

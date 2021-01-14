@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+
+RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
+
+RewriteRule ^$ app/webroot/ [L]
+RewriteRule (.*) app/webroot/$1 [L]
+
+## 301 Redirects
+Redirect 301 %2F%23%21get-the-app%2Fc1nfr /site/contact
+
+
+
+</IfModule>

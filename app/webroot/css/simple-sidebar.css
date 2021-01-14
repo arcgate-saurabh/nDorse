@@ -1,0 +1,221 @@
+/*!
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+ /* Toggle Styles */
+
+ #wrapper {
+ 	padding-left: 0;
+ 	-webkit-transition: all 0.5s ease;
+ 	-moz-transition: all 0.5s ease;
+ 	-o-transition: all 0.5s ease;
+ 	transition: all 0.5s ease;
+ }
+ #wrapper.toggled {
+/*
+padding-left: 250px;
+*/
+}
+#sidebar-wrapper {
+	z-index: 1000;
+	/* position: fixed;*/
+	/*left: 250px;*/
+	left: 0;
+	width: 0;
+	height: 100%;
+	/*margin-left: -250px;*/
+
+	margin-top: 30px;
+	overflow-y: auto;/* background: #000;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;*/
+
+    /*background: rgba(0,0,0,0.9);*/
+/*
+	background: -moz-radial-gradient(center, ellipse cover, rgba(32,38,94,1) 0%, rgba(18,22,61,1) 44%, rgba(9,13,39,1) 100%);
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(32,38,94,1)), color-stop(44%, rgba(18,22,61,1)), color-stop(100%, rgba(9,13,39,1)));
+	background: -webkit-radial-gradient(center, ellipse cover, rgba(32,38,94,1) 0%, rgba(18,22,61,1) 44%, rgba(9,13,39,1) 100%);
+	background: -o-radial-gradient(center, ellipse cover, rgba(32,38,94,1) 0%, rgba(18,22,61,1) 44%, rgba(9,13,39,1) 100%);
+	background: -ms-radial-gradient(center, ellipse cover, rgba(32,38,94,1) 0%, rgba(18,22,61,1) 44%, rgba(9,13,39,1) 100%);
+	background: radial-gradient(ellipse at center, rgba(32,38,94,1) 0%, rgba(18,22,61,1) 44%, rgba(9,13,39,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#20265e', endColorstr='#090d27', GradientType=1 );
+	*/
+/*	background:url(../img/sidebar_bg.png) no-repeat top center;
+background-size:cover;*/
+}
+#wrapper.toggled #sidebar-wrapper {
+	width: 250px;
+}
+#page-content-wrapper {
+	width: 100%;
+	position: absolute;
+	padding: 90px 0 0;
+}
+#wrapper.toggled #page-content-wrapper {
+	position: absolute;
+	margin-right: -250px;
+}
+/* Sidebar Styles */
+
+.sidebar-nav {
+	/* position: absolute;*/
+	top: 0;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	height: 100vh;
+	background: url(../img/sidebar_bg.png) ;
+}
+.sidebar-nav li {
+	/*text-indent: 20px;*/
+	line-height: 22px;
+}
+.sidebar-nav li a {
+	display: block;
+	text-decoration: none;
+	color: #999999;
+}
+.sidebar-nav li a:hover {
+	text-decoration: none;
+	color: #fff;
+	background: rgba(255,255,255,0.2);
+}
+.sidebar-nav li a:active, .sidebar-nav li a:focus {
+	text-decoration: none;
+}
+.sidebar-nav > .sidebar-brand {
+	height: auto;
+	font-size: 18px;
+	/*line-height: 50px;*/
+	border-bottom: solid 1px rgba(255,255,255,0.3);
+	padding: 10px;
+	
+}
+.sidebar-nav > .sidebar-brand a {
+	color: #fff;
+	font-size: 14px;
+	font-weight: 400;
+}
+.sidebar-nav > .sidebar-brand a:hover {
+	color: #ef6116 ;
+	background: none;
+}
+.logout {
+	font-size: 18px;
+	width: 100%;
+	height: auto;
+	color: #fff;
+	padding:10px;
+	background: rgba(244,117,33,1);
+	background: -moz-linear-gradient(top, rgba(244,117,33,1) 0%, rgba(237,91,19,1) 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(244,117,33,1)), color-stop(100%, rgba(237,91,19,1)));
+	background: -webkit-linear-gradient(top, rgba(244,117,33,1) 0%, rgba(237,91,19,1) 100%);
+	background: -o-linear-gradient(top, rgba(244,117,33,1) 0%, rgba(237,91,19,1) 100%);
+	background: -ms-linear-gradient(top, rgba(244,117,33,1) 0%, rgba(237,91,19,1) 100%);
+	background: linear-gradient(to bottom, rgba(244,117,33,1) 0%, rgba(237,91,19,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f47521', endColorstr='#ed5b13', GradientType=0 );
+	position: absolute;
+	bottom: 0px;
+
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	
+	
+}
+
+.sidebar-nav li.logout a {
+	color: #fff;
+	font-size: 20px;
+}
+.logoutText {
+	font-size: 15px;
+	color: #cccccc;
+	font-family: 'Avenir-Light';
+}
+.logoutText:hover {
+	text-decoration: none;
+}
+.userName {
+	font-size: 20px;
+	color: #fff;
+	line-height: normal;
+	font-family: 'Avenir-Book';
+	width:70%;
+	-webkit-flex: 1 1 auto;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+}
+
+
+@media(min-width:768px) {
+
+	#wrapper {
+		padding-right: 0;
+	}
+	#wrapper.toggled {
+		padding-right: 0px;
+	}
+	#sidebar-wrapper {
+		width: 0;
+	}
+	#wrapper.toggled #sidebar-wrapper {
+		/*  width: 250px;*/
+		/*width: 540px;*/
+		width: 100%;
+	}
+	#page-content-wrapper {
+		padding: 0px 0 0;
+		position: relative;
+		;
+	}
+	#wrapper.toggled #page-content-wrapper {
+		position: relative;
+		margin-right: 0;
+	}
+	.userName {
+		width:50%;
+		text-overflow:ellipsis;
+		overflow:hidden;white-space:nowrap;
+
+	}
+
+}
+/* side bar code start */ 
+
+.sidebar {
+	/*   background-color: #f5f5f5;*/
+	border: 0 solid #eee;
+	bottom: 0;
+	display: block;
+	left: 0;
+	margin: 0;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	padding: 0;
+	position: fixed;
+	top: 65px;
+	z-index: 1000;
+}
+.main {
+	padding-left: 40px;
+	padding-right: 40px;
+	/*top: 95px;*/
+	top:65px;
+	padding-bottom:150px;
+}
+@media(min-width:768px) {
+	.main {
+		padding-left: 40px;
+		padding-right: 40px;
+		/*top: 95px;*/
+		/*top:65px;*/
+		top: 72px;
+		padding-bottom:300px;
+	}
+}

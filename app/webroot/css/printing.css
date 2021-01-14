@@ -1,0 +1,17 @@
+@font-face {
+	font-family: 'Avenir-Light';
+	src: url(../fonts/Avenir-Light_gdi.eot);
+	src: url(../fonts/Avenir-Light_gdi.eot?#iefix) format('embedded-opentype'), url(../fonts/Avenir-Light_gdi.woff) format('woff'), url(../fonts/Avenir-Light_gdi.ttf) format('truetype'), url(../fonts/Avenir-Light_gdi.svg#Avenir-Light) format('svg');
+	font-weight: 300;
+	font-style: normal;
+	font-stretch: normal;
+ unicode-range: U+000D-E308;
+}
+
+body{font-family: 'Avenir-Light'; font-size:12px;}
+td{text-align:center;border:0px; padding:5px 2px; margin:0 0 }
+.table-striped > tbody > tr:nth-of-type(2n+1){background:rgba(0,0,0,0.1);}
+table{width:100%;border-collapse:collapse;}
+.hidden{display:none}
+h2 ,h3 {margin:0 0;}
+h6{font-size:13px; margin:0 0}
