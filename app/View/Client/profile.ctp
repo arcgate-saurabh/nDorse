@@ -156,6 +156,36 @@
                                 <div class="col-md-3">
                                     <h2>My Badges:</h2>
                                 </div>
+<!--                                <div class="select-date col-md-12">
+                                    <div class="col-md-3 form-group">
+                                        <label> From</label>
+
+                                        <?php echo $this->Form->input('startdate', array('placeholder' => 'Start Date', 'type' => 'text', 'id' => 'datepicker_start', 'class' => 'form-control date', 'label' => false)); ?>
+                                    </div>
+                                    <div class="col-md-3 form-group">
+                                        <label> To</label>
+                                        <?php echo $this->Form->input('enddate', array('placeholder' => 'End Date', 'type' => 'text', 'id' => 'datepicker_end', 'class' => 'form-control date', 'label' => false)); ?>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <button class="btn btn-default" id="statesearch">SEARCH</button>
+                                        <button class="btn btn-default button-orange" id="showchartendorsment">SHOW CHART</button>
+
+                                    </div>
+                                </div>-->
+                                <section id="endorse-stats">
+                                    <div class="ndorse-states">
+                                        <table class="table table-hover table-states">
+                                            <tr >
+                                                <th  style="color: black !important">nDorsement Given </th>
+                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_given"]; ?></th>
+                                            </tr>
+                                            <tr>
+                                                <th style="color: black !important">nDorsement Received </th>
+                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_received"]; ?></th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </section>
                                 <?php
                                 //pr($badgesData);
                                 if (!empty($badgesData)) {
