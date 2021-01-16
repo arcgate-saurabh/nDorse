@@ -73,7 +73,7 @@ class ClientController extends AppController {
             $postData = $this->request->data['User'];
             //pr($postData);
             $response = $this->Apicalls->curlpost("login.json", $postData);
-             // pr($response); exit;
+//            pr($response); exit;
             $response = json_decode($response);
             $response = $response->result;
             if ($response->status == 1) {
@@ -308,7 +308,7 @@ class ClientController extends AppController {
             }
         }
     }
-	
+
     public function logoutredirect() {
         $this->redirect(array('controller' => 'client', 'action' => 'login'));
     }
@@ -470,6 +470,22 @@ class ClientController extends AppController {
                 $current_org = 0;
             }
 
+
+
+            $postdata = array("token" => $loggedinUser["token"]);
+            $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
+            $jsondatadecoded = json_decode($jsondata, true);
+//            pr($jsondata); exit;
+            if ($jsondatadecoded["result"]["status"]) {
+                $endorsedatadata = $jsondatadecoded["result"]["data"];
+//                pr($endorsedatadata); exit;
+                $this->set('statesdatanew', $endorsedatadata);
+            } else {
+                $errormsg = $jsondatadecoded["result"]["msg"];
+                $this->Session->write('error', $errormsg);
+                $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+            }
+
             $user_id = $loggedinUser["id"];
             if (is_numeric($id) && $id > 0) {
                 $user_id = $id;
@@ -501,6 +517,9 @@ class ClientController extends AppController {
 
         $this->set('MenuName', 'My Profile');
         $logindata = $loggedinUser;
+        $this->set('statesdatanew', $endorsedatadata);
+
+//                        pr($endorsedatadata); exit;
         $this->set(compact("profiledata", "logindata", "successmsg", "coreValuesData", "badgesData", "statesdata", "jsonNotificationDataArray"));
     }
 
@@ -1635,7 +1654,6 @@ class ClientController extends AppController {
     }
 
     public function adfsMobileLogin() {
-	pr($this->request->query);
         $queryData = $this->request->query['query'];
         $postData = json_decode($queryData);
         pr($postData);
@@ -1724,7 +1742,7 @@ class ClientController extends AppController {
         if (isset($loggedinUser['valid_manager']) && $loggedinUser['valid_manager'] == 1) {
             // Valid entry Do nothing
         } else {
-             $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
+            $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
         }
 
         if (isset($this->request->params['id'])) {
