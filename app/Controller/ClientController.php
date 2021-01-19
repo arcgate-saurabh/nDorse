@@ -470,12 +470,14 @@ class ClientController extends AppController {
                 $current_org = 0;
             }
 
-
-
-            $postdata = array("token" => $loggedinUser["token"]);
+            //Unix timestamp for a date MKTIME(0,0,0,mm,dd,yyyy) - 
+            $startdate = mktime(0, 0, 0, 01, 01, 2021);
+            $postdata = array("token" => $loggedinUser["token"], "start_date" => $startdate, "end_date" => "");
+//            pr($postdata);
             $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
             $jsondatadecoded = json_decode($jsondata, true);
-//            pr($jsondata); exit;
+//            pr($jsondata);
+//            exit;
             if ($jsondatadecoded["result"]["status"]) {
                 $endorsedatadata = $jsondatadecoded["result"]["data"];
 //                pr($endorsedatadata); exit;

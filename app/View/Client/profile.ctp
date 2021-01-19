@@ -151,6 +151,20 @@
                 </div>
                 <div id="nDorsements-data" class="tab-pane fade">
                     <div class="col-md-12">
+                        <section id="endorse-stats">
+                                    <div class="ndorse-states">
+                                        <table class="table table-hover table-states">
+                                            <tr >
+                                                <th  style="color: black !important">nDorsement Given </th>
+                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_given"]; ?></th>
+                                            </tr>
+                                            <tr>
+                                                <th style="color: black !important">nDorsement Received </th>
+                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_received"]; ?></th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </section>
                         <div class="nDorsement-profile">
                             <div class="my-badges">
                                 <div class="col-md-3">
@@ -172,20 +186,7 @@
 
                                     </div>
                                 </div>-->
-                                <section id="endorse-stats">
-                                    <div class="ndorse-states">
-                                        <table class="table table-hover table-states">
-                                            <tr >
-                                                <th  style="color: black !important">nDorsement Given </th>
-                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_given"]; ?></th>
-                                            </tr>
-                                            <tr>
-                                                <th style="color: black !important">nDorsement Received </th>
-                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_received"]; ?></th>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </section>
+                                
                                 <?php
                                 //pr($badgesData);
                                 if (!empty($badgesData)) {

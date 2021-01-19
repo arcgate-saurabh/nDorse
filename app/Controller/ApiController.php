@@ -281,7 +281,7 @@ class ApiController extends AppController {
 
         if ($this->request->is('post')) {
             $this->request->data['User'] = $this->request->data;
-echo "Test"; exit;
+//echo "Test"; exit;
             $this->request->data['source'] = isset($this->request->data['source']) && !empty($this->request->data['source']) ? $this->request->data['source'] : "email";
 
             $userData = $this->User->find('first', array('conditions' => array('User.email' => $this->request->data['email'])));
