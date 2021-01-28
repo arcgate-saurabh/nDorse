@@ -1227,7 +1227,7 @@ class ApiController extends AppController {
                 $params['order'] = 'Endorsement.created desc';
 
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
-
+                    
                 unset($conditionarray["Endorsement.endorser_id"]);
                 unset($conditionarray["Endorsement.endorsement_for"]);
                 unset($params['order']);
