@@ -1221,6 +1221,8 @@ class ApiController extends AppController {
                 $params['fields'] = "count(*) as cnt";
                 $conditionarray["Endorsement.organization_id"] = $org_id;
                 $conditionarray["Endorsement.endorser_id"] = $user_id;
+                $conditionarray["Endorsement.created >= "] = '2021-01-01 00:00:00';
+
                 $params['conditions'] = $conditionarray;
                 $params['order'] = 'Endorsement.created desc';
 
@@ -5978,9 +5980,7 @@ class ApiController extends AppController {
         }
     }
 
-
-
- public function searchInOrganizationDaisyWeb() {
+    public function searchInOrganizationDaisyWeb() {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -6069,11 +6069,7 @@ class ApiController extends AppController {
         }
     }
 
-
-
-
-
-   public function searchInOrganizationGuest() {
+    public function searchInOrganizationGuest() {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -11679,7 +11675,6 @@ class ApiController extends AppController {
 
         if (!empty($deviceToken_msg_arr)) {
 // Put your private key's passphrase here:
-
 //            $location = dirname(__FILE__) . '/' . 'pushcert_30102019.pem';
 //            $location = dirname(__FILE__) . '/' . 'pushcert_24sept20.pem';
             $location = dirname(__FILE__) . '/' . 'pushcert_29sept2020.pem';
@@ -11698,7 +11693,7 @@ class ApiController extends AppController {
             if (!$fp) {
                 exit("Failed to connect: $err $errstr" . PHP_EOL);
             } else {
-		echo 'Connected to APNS' . PHP_EOL;
+                echo 'Connected to APNS' . PHP_EOL;
             }
 
             foreach ($deviceToken_msg_arr as $key => $val) {
@@ -11714,7 +11709,7 @@ class ApiController extends AppController {
                         'alert' => $message,
                         'sound' => 'default',
                         'badge' => $abc,
-                        //'content-available' => 1
+                            //'content-available' => 1
                     );
 
 // Encode the payload as JSON
@@ -11731,9 +11726,9 @@ class ApiController extends AppController {
 
                     if (!$result) {
 // error not send notification
-echo 'message send error';
+                        echo 'message send error';
                     } else {
-pr($result);
+                        pr($result);
                     }
                 }
 //usleep(250000);
