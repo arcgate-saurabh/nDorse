@@ -4597,7 +4597,7 @@ class ApiController extends AppController {
                     , "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)),
                 '_serialize' => array('result')
             ));
-        } else {
+        } else {   
             $this->set(array(
                 'result' => array("status" => false
                     , "msg" => "Get call not allowed."),
