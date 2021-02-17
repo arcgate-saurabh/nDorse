@@ -966,7 +966,7 @@ class EndorseController extends AppController {
                             $response = json_decode($response);
                             if (isset($response->result)) {
                                 $response = $response->result;
-                                $this->set('emojis', $response->data);
+                                $this->set('emojis', $response->data_new);
                             } else {
                                 $this->set('emojis', array());
                             }
@@ -1033,8 +1033,8 @@ class EndorseController extends AppController {
                         //pr($this->request->data); exit;
 //                        pr($postData); exit;
                         $response = $this->Apicalls->curlpost("endorse.json", $postData);
-                        //pr($response);
-                        //exit;
+//                        pr($response);
+//                        exit;
                         $response = json_decode($response);
                         $response = $response->result;
                         if ($response->status == 1) {

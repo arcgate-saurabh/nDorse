@@ -1225,9 +1225,9 @@ class ApiController extends AppController {
 
                 $params['conditions'] = $conditionarray;
                 $params['order'] = 'Endorsement.created desc';
-                    
+
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
-                    
+
                 unset($conditionarray["Endorsement.endorser_id"]);
                 unset($conditionarray["Endorsement.endorsement_for"]);
                 unset($params['order']);
@@ -4516,7 +4516,7 @@ class ApiController extends AppController {
 //            pr($emailUsers); exit;
             foreach ($emailUsers as $index => $user) {
                 if (is_array($user["LoginStatistics"]) && !empty($user["LoginStatistics"])) {
-                    pr($user["LoginStatistics"]);
+//                    pr($user["LoginStatistics"]);
                     $deviceToken_msg_arr = array();
                     $token = $user["LoginStatistics"]["device_id"];
                     $count = 1;
@@ -13853,6 +13853,9 @@ class ApiController extends AppController {
         if (strpos($bit_emojis_url, 'localhost') < 0) {
             $bit_emojis_url = str_replace("http", "https", $bit_emojis_url);
         }
+
+
+
         if ($personalizedBitmoji == 0) {
             $emojis_array = array();
 //            $Emojisdata = $this->Emojis->find("all");
@@ -13873,34 +13876,44 @@ class ApiController extends AppController {
             }
             if (count($bitemojis_array) > 0) {
                 $emojis_array = array_merge($emojis_array, $bitemojis_array);
+                $emojis_array_all = array_merge($emojis_array, $bitemojis_array);
             }
             /* Combining Bitmojis End */
         } else {
 //            pr($orgBitmojis);
             $bitmojisArray = json_decode($orgBitmojis);
 
-            $bitemojis_array = $emojis_array = array();
+            $bitemojis_array = $emojis_array_all = array();
             $this->loadModel('Bitmojis');
 
             $Emojisdata = $this->Bitmojis->find("all", array('conditions' => array('id' => $bitmojisArray, 'status' => 1), 'order' => array('personalized desc')));
-//            pr($Emojisdata); exit;
+//            pr($Emojisdata);
+//            exit;
             foreach ($Emojisdata as $emojisval) {
-                $emojis_array[] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
+//                pr($emojisval);
+                $emojis_array_all[] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
+                
+                if (isset($emojisval["Bitmojis"]["personalized"]) && $emojisval["Bitmojis"]["personalized"] == 1) {
+                    $emojis_array["custom"][] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
+                } else {
+
+                    $emojis_array["default"][] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
+                }
             }
 //                pr($emojis_array);
 //                exit;
         }
 
-        if (count($emojis_array) > 0) {
+        if (count($emojis_array_all) > 0) {
             $this->set(array(
                 'result' => array("status" => true
-                    , "msg" => "Emojis data", "data" => $emojis_array),
+                    , "msg" => "Emojis data", "data" => $emojis_array_all,"data_new" => $emojis_array),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
                 'result' => array("status" => false
-                    , "msg" => "No stickers available", "data" => $emojis_array),
+                    , "msg" => "No stickers available", "data" => $emojis_array_all,"data_new" => $emojis_array),
                 '_serialize' => array('result')
             ));
         }

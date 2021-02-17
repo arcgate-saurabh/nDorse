@@ -7057,6 +7057,7 @@ body.preview .sidebar-nav {
     justify-content: center;
 }
 
+
 .addSticker .sticBg .sticker-container .sticker-img .relPosi .sticker-title, .sticker-container-edit .sticker-img .relPosi .sticker-title{
     position: absolute;
     left: -6px;
@@ -7080,7 +7081,8 @@ body.preview .sidebar-nav {
 }
 
 .addSticker .sticBg .sticker-container .sticker-img img.attached-item,
-.addSticker .sticBg .sticker-container-edit .sticker-img img.attached-item{
+.addSticker .sticBg .sticker-container-edit .sticker-img img.attached-item,
+img.attached-item{
     width: 90px;
     height: 90px;
     object-fit: cover;
@@ -7328,4 +7330,55 @@ a.bkTndorse span {
 .autoWidth{
     width: auto !important;
     margin: 0 auto;
+}
+
+/*********/
+
+
+.modal-body .sticker-container-edit{
+    padding: 0 0 10px;
+    margin: 0 0 20px;
+   white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%; 
+  display: block;
+}
+
+.modal-body .sticker-container-edit .sticker-img{
+    margin: 0 15px 0 0;
+    display: inline-block;
+    width: 115px;
+    height: 115px;
+}
+
+.modal-body .sticker-container-edit .relPosi{
+    align-items: center;
+}
+
+.modal-body .sticker-container-edit::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: #a8a8a8;
+    border-radius: 4px;
+    opacity: 0.2;
+}
+
+.modal-body .sticker-container-edit::-webkit-scrollbar {
+    height: 8px;
+    background-color: #fff;
+    border-radius: 4px;
+    opacity: 0.2;
+}
+
+.modal-body .sticker-container-edit::-webkit-scrollbar-thumb {
+    background-color: #24425e;
+    border: 2px solid #24425e;
+    border-radius: 4px;
+    opacity: 0.2;
+}
+
+.modal-body .sticker-container-edit:hover::-webkit-scrollbar-track,
+.modal-body .sticker-container-edit:hover::-webkit-scrollbar,
+.modal-body .sticker-container-edit:hover::-webkit-scrollbar-thumb {
+    opacity: 0.8;
 }

@@ -171,11 +171,32 @@
                 <h4 class="modal-title" >Select Stickers</h4>
             </div>
             <div class="modal-body" style="max-height:250px; overflow:auto;">
-                <?php foreach ($emojis as $emoji) { ?>
+                <div class="sticker-container-edit">
+                            <?php
+                            foreach ($emojis->custom as $emoji) {
+                                ?>
+                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                        <hr/>
+                        <div class="sticker-container-edit">
+                            <?php
+                            foreach ($emojis->default as $emoji) {
+                                ?>
+                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                <?php /* foreach ($emojis->default as $emoji) { ?>
                     <div class="sticker-container" >
                         <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
                     </div>
-                <?php } ?>
+                <?php } */ ?>
                 <div class="clearfix"></div>
             </div>
             <div class="modal-footer">

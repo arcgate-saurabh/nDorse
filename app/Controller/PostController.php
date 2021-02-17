@@ -44,12 +44,12 @@ class PostController extends AppController {
                 $orgName = $loggedinUser['current_org']->name;
                 $data = array("token" => $loggedinUser["token"], 'org_id' => $loggedinUser['current_org']->id);
                 $response = $this->Apicalls->curlpost("getOrgEmojis.json", $data);
-                //pr($response);
-                //exit;
+                pr($response);
+                exit;
                 $response = json_decode($response);
                 $response = $response->result;
                 $this->set('orgName', $orgName);
-                $this->set('emojis', $response->data);
+                $this->set('emojis', $response->data_new,true);
                 $this->set('jsIncludes', array('addPost'));
                 //emoji path
                 $emojiUrl = "";

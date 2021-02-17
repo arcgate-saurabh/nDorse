@@ -5,15 +5,14 @@
 echo $this->Html->script('momentNew');
 echo $this->Html->script('moment_timezone_with_data');
 ?>
-<div class="nDorse-process  col-md-12"> 
-    <!--    <div class="marg-top"></div>--> 
-    <!-- Step 02 --> 
+<div class="nDorse-process  col-md-12">
+    <!--    <div class="marg-top"></div>-->
+    <!-- Step 02 -->
     <?php
     echo $this->Form->create('endorsement', array('class' => '', 'enctype' => 'multipart/form-data'));
     echo $this->Form->input('usertimzone', array('value' => '', 'type' => 'hidden', 'id' => 'usertimzone', 'name' => 'usertimzone'));
     ?>
-
-    <!-- Post to start-->  
+    <!-- Post to start-->
     <?php
 //    echo $org_user_role;
 //    pr($subcenterArray);
@@ -26,22 +25,20 @@ echo $this->Html->script('moment_timezone_with_data');
                         <span class="radio">
                             <div class="input radio">
                                 <div class="col-md-4 col-xs-12 col-lg-6">
-                                    <input type="radio" name="report_type" id="postnow" class="postclick"  value="postnow" checked="checked">
+                                    <input type="radio" name="report_type" id="postnow" class="postclick" value="postnow" checked="checked">
                                     <label for="postnow">Post Now</label>
                                 </div>
                                 <div class="col-md-6 col-xs-12">
-                                    <input type="radio" name="report_type" class="postclick" id="postlater" value="postlater" >
+                                    <input type="radio" name="report_type" class="postclick" id="postlater" value="postlater">
                                     <label for="postlater">Post Later</label>
                                 </div>
                             </div>
                         </span>
                     </div>
-
                     <div class="date-pickers col-md-6 col-xs-12" style="display: none;">
                         <span class="pull-left col-md-2 date-time">Date & Time</span>
                         <div class="visible-xs clearfix"></div>
                         <div class='col-md-4'>
-
                             <div class="form-group">
                                 <div class='input-group date' id='datetimepicker3'>
                                     <input type='text' name="post_date" id="post_date" class="form-control" />
@@ -65,9 +62,9 @@ echo $this->Html->script('moment_timezone_with_data');
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                </div>
-                <div class="search-icn" style="margin-top:10px;">
-                    <div class="row addFlexbox">
+            </div>
+            <div class="search-icn" style="margin-top:10px;">
+                <div class="row addFlexbox">
                     <div class='col-md-3'>
                         <div class="Push-Notifications">
                             <input id="alertshown" class="alertshown" value="0" type="hidden">
@@ -88,7 +85,8 @@ echo $this->Html->script('moment_timezone_with_data');
                         <div class="centerSubForm Push-Notifications">
                             <label>Facility:</label>
                             <select class="form-control" name="subcenter" id="subcenter">
-                                <option value="0"><b><?php echo $orgName; ?></b> (All)</option>
+                                <option value="0"><b>
+                                    <?php echo $orgName; ?></b> (All)</option>
                                 <?php
                                 foreach ($subcenterArray as $id => $subcenter) {
                                     $selected = '';
@@ -96,7 +94,10 @@ echo $this->Html->script('moment_timezone_with_data');
                                         $selected = 'selected="selected"';
                                     }
                                     ?>
-                                    <option <?php echo $selected; ?> value="<?php echo $id; ?>"><?php echo $subcenter; ?></option>
+                                    <option <?php echo $selected; ?> value="
+                                                                     <?php echo $id; ?>">
+                                                                         <?php echo $subcenter; ?>
+                                    </option>
                                     <?php
                                 }
                                 ?>
@@ -105,12 +106,10 @@ echo $this->Html->script('moment_timezone_with_data');
                     </div>
                 </div>
                 <div class="row">
-                      <!--  <input type="text" placeholder="SEARCH EMPLOYEE OR DEPARTMENT..." class="form-control" value="">--> 
+                    <!--  <input type="text" placeholder="SEARCH EMPLOYEE OR DEPARTMENT..." class="form-control" value="">-->
                     <?php echo $this->Form->input('searchKey', array('placeholder' => "Search For Employee or Department", 'class' => "form-control", 'label' => false, 'value' => "")); ?> <span class="error" id="searchError"></span>
                     <div class="selected-values hidden">
                         <div class="col-md-11" id="selectedValues">
-
-
                         </div>
                         <div class="col-md-1 pull-right">
                             <button class="btn btn-clear-all js_clearAll" type="button">Clear All</button>
@@ -125,15 +124,14 @@ echo $this->Html->script('moment_timezone_with_data');
                 </div>
             </div>
         </section>
-        <!-- Post to end -->  
+        <!-- Post to end -->
     <?php } ?>
     <section>
-
         <div class="row">
             <h3>Add Title <span style="font-size:18px">(Optional)</span></h3>
             <div class="panel panel-default">
                 <div class="col-md-12">
-                    <input placeholder="Add Title..." class="add-msg" name="title"  maxlength="1000" />
+                    <input placeholder="Add Title..." class="add-msg" name="title" maxlength="1000" />
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -144,103 +142,136 @@ echo $this->Html->script('moment_timezone_with_data');
             <h3>Message<span style="font-size:18px"></span></h3>
             <div class="panel panel-default">
                 <div class="col-md-12">
-                    <textarea placeholder="Add Message..." id="message" class="add-msg" name="message"  maxlength="3000"></textarea>
+                    <textarea placeholder="Add Message..." id="message" class="add-msg" name="message" maxlength="3000"></textarea>
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <label class="error" id="validationError" ></label>
+            <label class="error" id="validationError"></label>
         </div>
     </section>
     <section>
         <div class="row">
-            <div class="col-md-12" >
+            <div class="col-md-12">
                 <div class="fileUpload">
-                    <input type="file" class="upload" id="endorseImages" name="img" accept=".jpg,.png,.gif,.jpeg" multiple >
-                    <label for="endorseImages" style="margin:0 0; padding:0 0"> <img src="<?php echo Router::url('/', true); ?>img/addClient.png"  align="left" width="30" alt=""/> </label>
+                    <input type="file" class="upload" id="endorseImages" name="img" accept=".jpg,.png,.gif,.jpeg" multiple>
+                    <label for="endorseImages" style="margin:0 0; padding:0 0"> <img src="<?php echo Router::url('/', true); ?>img/addClient.png" align="left" width="30" alt="" /> </label>
                 </div>
                 <h3 class="attach-img atch-img-tag" style=""> &nbsp;Attach Images</h3>
                 <div class="panel panel-default hidden" id="imagePanel" style="padding:10px; max-height:275px; overflow:auto;margin:5px 0;">
                     <div class="clearfix hidden-xs"></div>
                 </div>
                 <!-- <div class="clearfix hidden-xs"></div> -->
-                <label class="error" id="validImageError" ></label>
+                <label class="error" id="validImageError"></label>
             </div>
-            <div class="col-md-12 MT30" >
+            <div class="col-md-12 MT30">
                 <div class="fileUpload">
                     <label data-toggle="modal" data-target=".js_emojis" class="hand addstickerplusicon">
-                        <img src="<?php echo Router::url('/', true); ?>img/addClient.png"  align="left" width="30" alt="" data-toggle="modal" data-target=".js_emojis" class="hand addstickerplusicon"/>
+                        <img src="<?php echo Router::url('/', true); ?>img/addClient.png" align="left" width="30" alt="" data-toggle="modal" data-target=".js_emojis" class="hand addstickerplusicon" />
                     </label>
                 </div>
                 <h3 class="attach-img atch-img-tag"> &nbsp;Attach Stickers</h3>
-
                 <div class="panel panel-default MT30  hidden" id="stickerPanel" style="padding:10px;">
                     <div class="clearfix"></div>
                 </div>
                 <div class="clearfix"></div>
             </div>
-
             <!-- Add Files section start-->
-            <div class="col-md-12 MT30" style="" >
+            <div class="col-md-12 MT30" style="">
                 <div class="fileUpload">
-                    <input type="file" class="upload" id="postFiles" name="img" accept=".ppt,.pdf,.doc,.xls,.pptx,.docx,.xlsx,.ppt" multiple >
-                    <label for="postFiles" style="margin:0 0; padding:0 0"> <img src="<?php echo Router::url('/', true); ?>img/addClient.png"  align="left" width="30" alt=""/> </label>
+                    <input type="file" class="upload" id="postFiles" name="img" accept=".ppt,.pdf,.doc,.xls,.pptx,.docx,.xlsx,.ppt" multiple>
+                    <label for="postFiles" style="margin:0 0; padding:0 0"> <img src="<?php echo Router::url('/', true); ?>img/addClient.png" align="left" width="30" alt="" /> </label>
                 </div>
                 <h3 class="attach-img" style=" display: inline; position:relative; top: -6px;"> &nbsp;Attach Files
                     <span class="allowed-files">(Allowed files types: doc, pdf, ppt, xls & Max total files size upto 10Mb.)</span>
                 </h3>
-
                 <!-- Running Code start DO NOT DELETE THIS CODE-->
                 <div class="panel panel-default hidden" id="filesPanel" style="padding:10px; max-height:275px; overflow:auto;margin:5px 0;">
                     <div class="clearfix hidden-xs"></div>
                 </div>
-                <!-- Running Code end--> 
-
+                <!-- Running Code end-->
                 <div class="clearfix hidden-xs"></div>
-                <label class="error" id="validFileError" ></label>
+                <label class="error" id="validFileError"></label>
                 <div class="clearfix"></div>
-                <label class="error" id="validTotalFileError" ></label>
+                <label class="error" id="validTotalFileError"></label>
             </div>
             <!-- Add Files section End-->
-
             <div class="col-md-12">
                 <button class="btn btn-orange" type="submit" id="endorseSubmit">Send</button>
                 <div class="text-center hidden js_Loader"><img src="<?php echo Router::url('/', true); ?>img/ajax-loader.gif" alt="" /></div>
             </div>
         </div>
     </section>
-    <?php echo $this->Form->end(); ?> 
-    <!-- Step 02 --> 
-
+    <?php echo $this->Form->end(); ?>
+    <!-- Step 02 -->
 </div>
 <div class="modal fade bs-example-modal-lg nDorse-process js_emojis" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Select Stickers</h4>
+                <h4 class="modal-title"><strong>Select Stickers</strong></h4>
             </div>
-            <div class="modal-body" style="max-height:250px; overflow:auto;">
-                <?php foreach ($emojis as $emoji) {
+            <div class="modal-body">
+                <div class="addSticker">
+                    <div class="sticker-content">
+                        <div class="sticker-container-edit">
+                            <?php
+                            foreach ($emojis->custom as $emoji) {
+                                ?>
+                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                        <hr/>
+                        <div class="sticker-container-edit">
+                            <?php
+                            foreach ($emojis->default as $emoji) {
+                                ?>
+                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                                </div>
+                            <?php } ?>
+
+                        </div>
+
+                    </div>
+                </div>
+                <?php
+               /* foreach ($emojis->custom as $emoji) {
+                    ?>
+                    <div class="sticker-container" >
+                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                            <img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/>
+                        </div>
+                    </div>
+                <?php } ?>
+                <div class="clearfix"></div> 
+                <?php
+                foreach ($emojis->default as $emoji) {
                     ?>
                     <div class="sticker-container" >
                         <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
                     </div>
-                <?php } ?>
-                <div class="clearfix"></div>
+                <?php } */?>
+                <div class="clearfix"></div> 
             </div>
             <div class="modal-footer">
                 <button class="btn btn-orange pull-left js_selectEmojis">Done </button>
             </div>
-            <?php echo $this->Form->end(); ?> </div>
+            <?php echo $this->Form->end(); ?>
+        </div>
     </div>
 </div>
 <style>
     .fileUpload {
         position: relative;
         overflow: hidden;
-        display:inline;
+        display: inline;
         /*margin: 10px; */
     }
+
     .fileUpload input.upload {
         position: absolute;
         top: 0;
@@ -250,7 +281,7 @@ echo $this->Html->script('moment_timezone_with_data');
         font-size: 20px;
         cursor: pointer;
         opacity: 0;
-        display:hidden;
+        display: hidden;
         filter: alpha(opacity=0);
     }
 </style>
@@ -258,25 +289,25 @@ echo $this->Html->script('moment_timezone_with_data');
     $(function () {
         var dateNow = new Date();
         $('#datetimepicker4').datetimepicker({
-//            format: 'LT',
+            //            format: 'LT',
             format: 'HH:mm',
             defaultDate: dateNow
-//            use24hours: true
-//            minDate:moment()
+                    //            use24hours: true
+                    //            minDate:moment()
         });
         $('#datetimepicker3').datetimepicker({
             viewMode: 'years',
             format: 'MM/DD/YYYY',
             minDate: dateNow,
             defaultDate: dateNow
-//             minDate:moment()
+                    //             minDate:moment()
         });
 
         $('.postclick').on("click", function () {
             var postType = $(this).val();
             if (postType == 'postnow') {
                 $(".date-pickers").fadeOut('slow');
-            } else {//postlater
+            } else { //postlater
                 $(".date-pickers").fadeIn('slow');
             }
             console.log(postType);
