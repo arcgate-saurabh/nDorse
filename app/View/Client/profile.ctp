@@ -150,43 +150,58 @@
                     </div>
                 </div>
                 <div id="nDorsements-data" class="tab-pane fade">
-                    <div class="col-md-12">
+                    <div class="col-md-12 select-date">
+
+
+                        <!-- DateRange Code start -->
+                        <div class="col-md-12 time-range">
+                            <div class="pull-left">
+                                <h3>Select a Time Range</h3>
+                            </div>
+<!--                            <div class="pull-right">
+                                <button class="btn btn-default" id="showdatawithoutdatestas">SHOW ALL</button>
+                            </div>-->
+                        </div>
+                        <div class="clearfix"></div>   
+                        <div class="select-date col-md-12">
+                            <div class="col-md-3 form-group">
+                                <label> From</label>
+
+                                <?php echo $this->Form->input('startdate', array('placeholder' => 'Start Date', 'type' => 'text', 'id' => 'datepicker_start', 'class' => 'form-control date', 'label' => false)); ?>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label> To</label>
+                                <?php echo $this->Form->input('enddate', array('placeholder' => 'End Date', 'type' => 'text', 'id' => 'datepicker_end', 'class' => 'form-control date', 'label' => false)); ?>
+                            </div>
+                            <div class="col-md-6 ">
+                                <button class="btn btn-default" id="statesearch">SEARCH</button>
+                                <!--<button class="btn btn-default button-orange" id="showchartendorsment">SHOW CHART</button>-->
+
+                            </div>
+                        </div>
+                        <!-- DateRange code end -->
+
                         <section id="endorse-stats">
-                                    <div class="ndorse-states">
-                                        <table class="table table-hover table-states">
-                                            <tr >
-                                                <th  style="color: black !important">nDorsement Given </th>
-                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_given"]; ?></th>
-                                            </tr>
-                                            <tr>
-                                                <th style="color: black !important">nDorsement Received </th>
-                                                <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_received"]; ?></th>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </section>
+                            <div class="ndorse-states nDorsement-profile">
+                                <table class="table table-hover table-states">
+                                    <tr >
+                                        <th  style="color: black !important">nDorsement Given </th>
+                                        <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_given"]; ?></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="color: black !important">nDorsement Received </th>
+                                        <th  style="color: black !important" class="text-right"><?php echo $statesdatanew["endorse_received"]; ?></th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </section>
                         <div class="nDorsement-profile">
                             <div class="my-badges">
                                 <div class="col-md-3">
                                     <h2>My Badges:</h2>
                                 </div>
-<!--                                <div class="select-date col-md-12">
-                                    <div class="col-md-3 form-group">
-                                        <label> From</label>
 
-                                        <?php echo $this->Form->input('startdate', array('placeholder' => 'Start Date', 'type' => 'text', 'id' => 'datepicker_start', 'class' => 'form-control date', 'label' => false)); ?>
-                                    </div>
-                                    <div class="col-md-3 form-group">
-                                        <label> To</label>
-                                        <?php echo $this->Form->input('enddate', array('placeholder' => 'End Date', 'type' => 'text', 'id' => 'datepicker_end', 'class' => 'form-control date', 'label' => false)); ?>
-                                    </div>
-                                    <div class="col-md-6 ">
-                                        <button class="btn btn-default" id="statesearch">SEARCH</button>
-                                        <button class="btn btn-default button-orange" id="showchartendorsment">SHOW CHART</button>
 
-                                    </div>
-                                </div>-->
-                                
                                 <?php
                                 //pr($badgesData);
                                 if (!empty($badgesData)) {
@@ -330,6 +345,88 @@
 
                     });
                 });
+
+                $("#datepicker_start").datepicker(dateparameters);
+                $("#datepicker_end").datepicker(dateparameters);
+
+                $(document).on("click", "#statesearch", function () {
+
+                    var start_date = $("#datepicker_start").val();
+                    var end_date = $("#datepicker_end").val();
+                    if (start_date == "") {
+                        alertbootbox("Enter start date");
+                        return;
+                    } else if (start_date != "") {
+                        var dateobj = start_date.split("-");
+                        var starty = dateobj[2];
+                        var startm = dateobj[0];
+                        var startd = dateobj[1];
+                        //  alert(start_date);
+                        var d = new Date(starty, startm, startd);
+                        starttime = d.getTime();
+                        startdateendorse = start_date;
+                        if (end_date != "") {
+                            var dateobj = end_date.split("-");
+                            var endy = dateobj[2];
+                            var endm = dateobj[0];
+                            var endd = dateobj[1];
+                            var d = new Date(endy, endm, endd);
+                            endtime = d.getTime();
+                            if (starttime > endtime)
+                            {
+                                $("#datepicker_start").val("")
+                                startdateendorse = "";
+                                alertbootbox("end date greater than start date");
+                                return;
+                            }
+                            enddateendorse = end_date;
+                        }
+
+                    }
+                    // endorse date search
+                    curl = siteurl + 'cajax/getstatesearch';
+                    var formData = {start_date: start_date, end_date: end_date};
+
+                    $.ajax({
+                        url: curl,
+                        type: "POST",
+                        data: formData,
+                        success: function (data, textStatus, jqXHR)
+                        {
+                            var data_Arr = String(data).split('=====');
+
+                            $("#endorse-stats").html("");
+//                            $("#endorse-badges").html("");
+                            if ($.trim(data_Arr[0]) == "") {
+                                $(" <div >No Data available</div>").appendTo("#endorse-stats");
+                            } else {
+
+                                $(data_Arr[0]).appendTo("#endorse-stats");
+                            }
+
+                            if ($.trim(data_Arr[1]) != "") {
+                                //$(" <div >No Data available</div>").appendTo("#endorse-stats");
+                                //$(data_Arr[1]).appendTo("#endorse-badges");
+                            }
+
+                            if ($.trim(data_Arr[2]) != "") {
+
+                                //$(" <div >No Data available</div>").appendTo("#endorse-stats");
+
+//                                $(".knob").val(data_Arr[2]);
+//                                $('.knob').knob();
+                            }
+
+                        },
+                        error: function (jqXHR, textStatus, errorThrown)
+                        {
+
+                        }
+                    });
+
+
+                });
+
             });
 
         </script>
