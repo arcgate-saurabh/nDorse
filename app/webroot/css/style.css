@@ -3760,6 +3760,10 @@ img#org_image {
     font-weight: lighter;
 }
 
+.user-profile .ndorse-states table tbody tr td, .user-profile .ndorse-states table tbody tr th{
+        color: black !important;
+}
+
 .user-profile table tbody tr td:first-child {
     width: 200px;
 }

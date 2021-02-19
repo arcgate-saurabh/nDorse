@@ -155,15 +155,16 @@
 
                         <!-- DateRange Code start -->
                         <div class="col-md-12 time-range">
-                            <div class="pull-left">
-                                <h3>Select a Time Range</h3>
-                            </div>
 <!--                            <div class="pull-right">
                                 <button class="btn btn-default" id="showdatawithoutdatestas">SHOW ALL</button>
                             </div>-->
                         </div>
                         <div class="clearfix"></div>   
+                         <div class="col-md-6">
+                            <h3>Select a Time Range</h3>
+                        </div>
                         <div class="select-date col-md-12">
+                           
                             <div class="col-md-3 form-group">
                                 <label> From</label>
 
