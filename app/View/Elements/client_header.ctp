@@ -145,6 +145,17 @@ $paramsaction = trim($this->params["action"]);
                   </div>
                   <?php */
                 ?>
+                <ul class="icnNewMenu sidebar-nav">
+                    <li><a href="#"><span class="flaticon-notepad"></span>Maneger<br/>Reports</a></li>
+                    <li><a href="#"><span class="flaticon-users-1"></span>Active<br/>User List</a></li>
+                    <li><a href="#"><span class="flaticon-file-2"></span>Pending<br/>Post</a></li>
+                    <li><a href="#"><span class="flaticon-user-4"></span>My<br/>Organigation</a></li>
+                    <li><a href="#"><span class="flaticon-users"></span>Join<br/>an Org</a></li>
+                    <li><a href="#"><span class="flaticon-edit-1"></span>Create<br/>an Org</a></li>
+                    <li><a href="#"><span class="flaticon-notepad-2"></span>Feedback</a></li>
+                    <li><a href="#"><span class="flaticon-id-card-3"></span>EULA</a></li>
+                    <li><a href="#"><span class="flaticon-locked"></span>Logout</a></li>
+                </ul>
             </div>
             <div class="clearfix"></div>
             <div class="poweredBy headerFooterBG">

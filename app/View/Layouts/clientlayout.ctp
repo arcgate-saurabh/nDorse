@@ -84,6 +84,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
         echo $this->Html->css("jquery-confirm.min");
         echo $this->Html->css("bootstrap-datetimepicker"); //added @7-dec-2017 by babulal prasad
         echo $this->Html->css("font-awesome.min"); //added @7-dec-2017 by babulal prasad
+        echo $this->Html->css("flaticon"); //added @23-FEB-2021 by babulal prasad
 
         echo $this->fetch('meta');
         echo $this->fetch('css');
