@@ -284,7 +284,7 @@ class ClientController extends AppController {
         }
 
         $postData = array("token" => $loggedinUser['token'], 'authority_name' => $authorityName);
-
+//        pr($postData);
         $response = $this->Apicalls->curlpost("logout.json", $postData);
 //        pr($response);
 //        exit;

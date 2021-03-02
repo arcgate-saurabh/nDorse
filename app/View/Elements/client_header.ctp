@@ -51,80 +51,139 @@ $paramsaction = trim($this->params["action"]);
     <div class="col-sm-3 col-md-2 client-nav sidebar ">
         <div id="wrapper" class="nano">
             <div class="content">
-                <ul class="sidebar-nav">
+                <?php /*  <ul class="sidebar-nav">
+                  <?php if ($check_current_org > 0) { ?>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("Stats and Reports", "javascript:void(0);", array('style' => "cursor: default !important; padding:0 0 10px 10px")); ?>
+                  <ul class="with-arrows">
+                  <?php if ($check_current_org != 0) { ?>
+                  <li class="sidebar-brand">
+                  <a href="javascript:void(0);" data-toggle="modal" data-target=".manager-report-popupmodel">User Report</a>
+                  <?php //echo $this->Html->Link("User Report", array("controller" => "client", "action" => "managerreport", "id" => $check_current_org), ($paramsaction == "managerreport") ? array("class" => "active-link", 'target' => '_blank', 'escape' => false) : array("class" => "", 'target' => '_blank', 'escape' => false)); ?>
+
+                  </li>
+                  <?php } ?>
+                  <?php /*  if ($loggedUserRole == 2) { ?>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("What's New", array("controller" => "client", "action" => "whatsnew"), ($paramsaction == "whatsnew") ? array("class" => "active-link") : ""); ?> </li>
+                  <?php }
+                  ?>
+
+                  <?php
+                  //                                pr($current_org);
+                  if ($current_org->show_leader_board == 1) {
+                  //Commented after discuss with Rohan and bryan @13-july-2018 mail
+                  ?>
+                  <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("Leader Board", array("controller" => "client", "action" => "leaderboard"), ($paramsaction == "leaderboard") ? array("class" => "active-link") : ""); ?> </li>-->
+                  <?php } ?>
+                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Day", array("controller" => "endorse", "action" => "day"), ($paramsaction == "day") ? array("class" => "active-link") : ""); ?></li>
+                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Department", array("controller" => "endorse", "action" => "departments"), ($paramsaction == "departments") ? array("class" => "active-link") : ""); ?></li>
+                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Job Title", array("controller" => "endorse", "action" => "jobtitle"), ($paramsaction == "jobtitle") ? array("class" => "active-link") : ""); ?></li>
+                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Sub Org", array("controller" => "endorse", "action" => "entity"), ($paramsaction == "entity") ? array("class" => "active-link") : ""); ?></li>
+
+                  <?php */ /* ?>
+                  </ul>
+                  </li>
+                  <?php } ?>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("Organizations", "javascript:void(0);", array('style' => "cursor: default !important; padding:0 0 10px 10px")); ?>
+                  <ul class="with-arrows">
+                  <li class=""> <?php echo $this->Html->Link("My Organizations", array("controller" => "client", "action" => "myorganizations"), ($paramsaction == "myorganizations") ? array("class" => "active-link") : ""); ?> </li>
+                  <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                          ?> </li>-->
+                  <?php if (isset($loggedUserAuth['User']['profile_completed']) && $loggedUserAuth['User']['profile_completed'] != '') { ?>
+                  <li class=""> <?php echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : ""); ?> </li>
+                  <?php } else { ?>
+                  <li class=""> <a href="javascript:void(0);" id="createorglinkclient" <?php ($paramsaction == "joinanorganization") ? array("class" => "active-link") : "" ?>>Create Org </a></li>
+                  <?php } ?>
+                  <li class=""> <?php echo $this->Html->Link("Join An Org", array("controller" => "client", "action" => "joinanorganization"), ($paramsaction == "joinanorganization") ? array("class" => "active-link") : ""); ?></li>
+                  </ul>
+                  </li>
+                  <!--                    <li class="sidebar-brand"> <?php echo $this->Html->Link("Admin", "javascript:void(0);", array('style' => "cursor: default !important; padding:0 0 10px 10px")); ?>
+                  <ul class="with-arrows">
+                  <li class="disabled"> <?php echo $this->Html->Link("Manage Users", "", array("class" => "popup-for-admin")); ?> </li>
+                  <li class="disabled"> <?php echo $this->Html->Link("Manage Organization", "", array("class" => "popup-for-admin")); ?> </li>
+                  <li class="disabled"> <?php echo $this->Html->Link("Invite Users", "", array("class" => "popup-for-admin")); ?></li>
+                  </ul>
+                  </li>-->
+
+                  <!-- Pending post added by Babulal Prasad @18-dec-2017 -->
+                  <?php if ($current_org->org_role == 'admin') { ?>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("Pending Posts", array("controller" => "post", "action" => "pending"), ($paramsaction == "pending") ? array("class" => "active-link") : ""); ?></li>
+                  <?php } ?>
+
+                  <!-- Active User List added by Babulal Prasad @19-march-2018 <sup><span style='color:red;'>New</span><sup>-->
+                  <li class="sidebar-brand"> <?php
+                  ($paramsaction == "userlist") ? $activeuserClass = "active-link" : $activeuserClass = "";
+                  echo $this->Html->Link("Active User List ", array("controller" => "endorse", "action" => "userlist"), array("class" => $activeuserClass, 'escape' => false));
+                  ?></li>
+                  <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("My Profile", array("controller" => "client", "action" => "profile"), ($paramsaction == "profile") ? array("class" => "active-link") : ""); ?></li>-->
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("Feedback", "mailto:" . SUPPORTEMAIL . "?Subject=Feedback", array("target" => "_top")); ?></li>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk")); ?></li>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("FAQ", array("controller" => "client", "action" => "faq"), ($paramsaction == "faq") ? array("class" => "active-link") : ""); ?></li>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("End User License Agreement", array("controller" => "client", "action" => "tnc"), ($paramsaction == "tnc") ? array("class" => "active-link") : ""); ?></li>
+                  <?php //if ($source == 'ADFS') { ?>
+                  <!--<li class="sidebar-brand"> <a href="https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp&logout">Log out</a></li>-->
+                  <?php //} else { ?>
+                  <li class="sidebar-brand"> <?php echo $this->Html->Link("Log out", array("controller" => "client", "action" => "logout")); ?></li>
+                  <?php //} ?>
+                  </ul> */ ?>
+
+
+                <ul class="icnNewMenu sidebar-nav">
                     <?php if ($check_current_org > 0) { ?>
-                        <li class="sidebar-brand"> <?php echo $this->Html->Link("Stats and Reports", "javascript:void(0);", array('style' => "cursor: default !important; padding:0 0 10px 10px")); ?>
-                            <ul class="with-arrows">
-                                <?php if ($check_current_org != 0) { ?>
-                                    <li class="sidebar-brand"> 
-                                        <a href="javascript:void(0);" data-toggle="modal" data-target=".manager-report-popupmodel">User Report</a>
-                                        <?php //echo $this->Html->Link("User Report", array("controller" => "client", "action" => "managerreport", "id" => $check_current_org), ($paramsaction == "managerreport") ? array("class" => "active-link", 'target' => '_blank', 'escape' => false) : array("class" => "", 'target' => '_blank', 'escape' => false)); ?> 
 
-                                    </li>
-                                <?php } ?>
-                                <?php /*  if ($loggedUserRole == 2) { ?>
-                                  <li class="sidebar-brand"> <?php echo $this->Html->Link("What's New", array("controller" => "client", "action" => "whatsnew"), ($paramsaction == "whatsnew") ? array("class" => "active-link") : ""); ?> </li>
-                                  <?php }
-                                  ?>
+                        <?php if ($check_current_org != 0) { ?>
+                            <li class=""> 
+                                <a href="javascript:void(0);" data-toggle="modal" data-target=".manager-report-popupmodel"><span class="flaticon-notepad"></span>User<br/>Reports</a>
 
-                                  <?php
-                                  //                                pr($current_org);
-                                  if ($current_org->show_leader_board == 1) {
-                                  //Commented after discuss with Rohan and bryan @13-july-2018 mail
-                                  ?>
-                                  <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("Leader Board", array("controller" => "client", "action" => "leaderboard"), ($paramsaction == "leaderboard") ? array("class" => "active-link") : ""); ?> </li>-->
-                                  <?php } ?>
-                                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Day", array("controller" => "endorse", "action" => "day"), ($paramsaction == "day") ? array("class" => "active-link") : ""); ?></li>
-                                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Department", array("controller" => "endorse", "action" => "departments"), ($paramsaction == "departments") ? array("class" => "active-link") : ""); ?></li>
-                                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Job Title", array("controller" => "endorse", "action" => "jobtitle"), ($paramsaction == "jobtitle") ? array("class" => "active-link") : ""); ?></li>
-                                  <li class=""> <?php echo $this->Html->Link("nDorsement History By Sub Org", array("controller" => "endorse", "action" => "entity"), ($paramsaction == "entity") ? array("class" => "active-link") : ""); ?></li>
+                                <?php //echo $this->Html->Link("User Report", array("controller" => "client", "action" => "managerreport", "id" => $check_current_org), ($paramsaction == "managerreport") ? array("class" => "active-link", 'target' => '_blank', 'escape' => false) : array("class" => "", 'target' => '_blank', 'escape' => false)); ?> 
 
-                                  <?php */ ?>
-                            </ul>
+                            </li>
+                        <?php } ?>
+
+
+                    <?php } ?>
+
+                    <li>
+                        <?php echo $this->Html->Link("<span class='flaticon-user-4'></span>My<br/>Organigation", array("controller" => "client", "action" => "myorganizations"), ($paramsaction == "myorganizations") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> 
+
+                    </li>
+
+            <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                               ?> </li>-->
+                    <?php if (isset($loggedUserAuth['User']['profile_completed']) && $loggedUserAuth['User']['profile_completed'] != '') { ?>
+                        <li class=""> <?php echo $this->Html->Link("<span class='flaticon-edit-1'></span>Create<br/>an Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> </li>
+                    <?php } else { ?>
+                        <li class=""> 
+                            <a href="javascript:void(0);" id="createorglinkclient" <?php ($paramsaction == "joinanorganization") ? array("class" => "active-link") : "" ?>><span class="flaticon-edit-1"></span>Create<br/>an Org</a> </a>
                         </li>
                     <?php } ?>
-                    <li class="sidebar-brand"> <?php echo $this->Html->Link("Organizations", "javascript:void(0);", array('style' => "cursor: default !important; padding:0 0 10px 10px")); ?>
-                        <ul class="with-arrows">
-                            <li class=""> <?php echo $this->Html->Link("My Organizations", array("controller" => "client", "action" => "myorganizations"), ($paramsaction == "myorganizations") ? array("class" => "active-link") : ""); ?> </li>
-                            <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                          ?> </li>-->
-                            <?php if (isset($loggedUserAuth['User']['profile_completed']) && $loggedUserAuth['User']['profile_completed'] != '') { ?>
-                                <li class=""> <?php echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : ""); ?> </li>
-                            <?php } else { ?>
-                                <li class=""> <a href="javascript:void(0);" id="createorglinkclient" <?php ($paramsaction == "joinanorganization") ? array("class" => "active-link") : "" ?>>Create Org </a></li>
-                            <?php } ?>
-                            <li class=""> <?php echo $this->Html->Link("Join An Org", array("controller" => "client", "action" => "joinanorganization"), ($paramsaction == "joinanorganization") ? array("class" => "active-link") : ""); ?></li>
-                        </ul>
+                    <li class=""> 
+
+                        <?php echo $this->Html->Link("<span class='flaticon-users'></span>Join<br/>an Org", array("controller" => "client", "action" => "joinanorganization"), ($paramsaction == "joinanorganization") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?>
+
                     </li>
-                    <!--                    <li class="sidebar-brand"> <?php echo $this->Html->Link("Admin", "javascript:void(0);", array('style' => "cursor: default !important; padding:0 0 10px 10px")); ?>
-                                            <ul class="with-arrows">
-                                                <li class="disabled"> <?php echo $this->Html->Link("Manage Users", "", array("class" => "popup-for-admin")); ?> </li>
-                                                <li class="disabled"> <?php echo $this->Html->Link("Manage Organization", "", array("class" => "popup-for-admin")); ?> </li>
-                                                <li class="disabled"> <?php echo $this->Html->Link("Invite Users", "", array("class" => "popup-for-admin")); ?></li>
-                                            </ul>
-                                        </li>-->
+
 
                     <!-- Pending post added by Babulal Prasad @18-dec-2017 -->
                     <?php if ($current_org->org_role == 'admin') { ?>
-                        <li class="sidebar-brand"> <?php echo $this->Html->Link("Pending Posts", array("controller" => "post", "action" => "pending"), ($paramsaction == "pending") ? array("class" => "active-link") : ""); ?></li>
+                        <li class=""> 
+                            <?php echo $this->Html->Link("<span class='flaticon-file-2'></span>Pending<br/>Post", array("controller" => "post", "action" => "pending"), ($paramsaction == "pending") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?>
+                        </li>
                     <?php } ?>
 
-                                                                                    <!-- Active User List added by Babulal Prasad @19-march-2018 <sup><span style='color:red;'>New</span><sup>-->
-                    <li class="sidebar-brand"> <?php
+
+                    <li class=""> <?php
                         ($paramsaction == "userlist") ? $activeuserClass = "active-link" : $activeuserClass = "";
-                        echo $this->Html->Link("Active User List ", array("controller" => "endorse", "action" => "userlist"), array("class" => $activeuserClass, 'escape' => false));
+                        echo $this->Html->Link("<span class='flaticon-users-1'></span>Active<br/>User List", array("controller" => "endorse", "action" => "userlist"), array("class" => $activeuserClass, 'escape' => false));
                         ?></li>
                     <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("My Profile", array("controller" => "client", "action" => "profile"), ($paramsaction == "profile") ? array("class" => "active-link") : ""); ?></li>-->
-                    <li class="sidebar-brand"> <?php echo $this->Html->Link("Feedback", "mailto:" . SUPPORTEMAIL . "?Subject=Feedback", array("target" => "_top")); ?></li>
-                    <li class="sidebar-brand"> <?php echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk")); ?></li>
-                    <li class="sidebar-brand"> <?php echo $this->Html->Link("FAQ", array("controller" => "client", "action" => "faq"), ($paramsaction == "faq") ? array("class" => "active-link") : ""); ?></li>
-                    <li class="sidebar-brand"> <?php echo $this->Html->Link("End User License Agreement", array("controller" => "client", "action" => "tnc"), ($paramsaction == "tnc") ? array("class" => "active-link") : ""); ?></li>
+                    <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad-2'></span>Feedback", "mailto:" . SUPPORTEMAIL . "?Subject=Feedback", array("target" => "_top", "escape" => false)); ?></li>
+                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));   ?></li>-->
+                    <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad'></span>FAQ", array("controller" => "client", "action" => "faq"), ($paramsaction == "faq") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
+                    <li class=""> <?php echo $this->Html->Link("<span class='flaticon-id-card-3'></span>End User License Agreement", array("controller" => "client", "action" => "tnc"), ($paramsaction == "tnc") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <?php //if ($source == 'ADFS') { ?>
                     <!--<li class="sidebar-brand"> <a href="https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp&logout">Log out</a></li>-->
                     <?php //} else { ?>
-                    <li class="sidebar-brand"> <?php echo $this->Html->Link("Log out", array("controller" => "client", "action" => "logout")); ?></li>
+                    <li class=""> <?php echo $this->Html->Link("<span class='flaticon-locked'></span>Log out", array("controller" => "client", "action" => "logout"), array("escape" => false)); ?></li>
                     <?php //} ?>
                 </ul>
-
                 <?php
                 //====don't delete
                 /* ?>
@@ -145,17 +204,18 @@ $paramsaction = trim($this->params["action"]);
                   </div>
                   <?php */
                 ?>
-                <ul class="icnNewMenu sidebar-nav">
-                    <li><a href="#"><span class="flaticon-notepad"></span>Maneger<br/>Reports</a></li>
-                    <li><a href="#"><span class="flaticon-users-1"></span>Active<br/>User List</a></li>
-                    <li><a href="#"><span class="flaticon-file-2"></span>Pending<br/>Post</a></li>
-                    <li><a href="#"><span class="flaticon-user-4"></span>My<br/>Organigation</a></li>
-                    <li><a href="#"><span class="flaticon-users"></span>Join<br/>an Org</a></li>
-                    <li><a href="#"><span class="flaticon-edit-1"></span>Create<br/>an Org</a></li>
-                    <li><a href="#"><span class="flaticon-notepad-2"></span>Feedback</a></li>
-                    <li><a href="#"><span class="flaticon-id-card-3"></span>EULA</a></li>
-                    <li><a href="#"><span class="flaticon-locked"></span>Logout</a></li>
-                </ul>
+
+                <!--<ul class="icnNewMenu sidebar-nav">-->
+    <!--                    <li><a href="#"><span class="flaticon-notepad"></span>Maneger<br/>Reports</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-users-1"></span>Active<br/>User List</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-file-2"></span>Pending<br/>Post</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-user-4"></span>My<br/>Organigation</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-users"></span>Join<br/>an Org</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-edit-1"></span>Create<br/>an Org</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-notepad-2"></span>Feedback</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-id-card-3"></span>EULA</a></li>-->
+                    <!--<li><a href="#"><span class="flaticon-locked"></span>Logout</a></li>-->
+                <!--</ul>-->
             </div>
             <div class="clearfix"></div>
             <div class="poweredBy headerFooterBG">
@@ -214,7 +274,7 @@ $paramsaction = trim($this->params["action"]);
 //                            $liveFeedUrl = Router::url('/', true) . 'endorse/ADFSLiveFeed';
 //                        }
                         ?>
-                        <!--<a href="<?php //echo Router::url('/', true);                   ?>endorse" class="endorse-home" >-->
+                        <!--<a href="<?php //echo Router::url('/', true);                        ?>endorse" class="endorse-home" >-->
                         <a href="<?php echo $liveFeedUrl; ?>" class="endorse-home" >
                             <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_home; ?>" alt=""  />
                         </a>
@@ -232,7 +292,7 @@ $paramsaction = trim($this->params["action"]);
                     <!--     Hide after client ask to version 6.5.1 ticket no = 229
                       <span>  
                           <!--<span class="count">00</span>-->
-                    <!--        <a href="<?php //echo Router::url('/', true);   ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);   ?>img/<?php //echo $ndorse_stats;   ?>" alt=""   />
+                    <!--        <a href="<?php //echo Router::url('/', true);        ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);        ?>img/<?php //echo $ndorse_stats;        ?>" alt=""   />
                             </a>
                         </span>
                     -->
