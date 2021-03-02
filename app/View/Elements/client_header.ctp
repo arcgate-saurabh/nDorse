@@ -283,6 +283,9 @@ $paramsaction = trim($this->params["action"]);
                         <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/myprofile-icon.png" alt=""  /> </a>
                     </span>
                     <span>
+                        <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/notification.png" alt=""  /> </a>
+                    </span>
+                    <span>
                         <span class="count hidden" id="ndorsedCount">                    </span>
                         <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
                             <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
