@@ -1858,6 +1858,72 @@ class ClientController extends AppController {
         $this->set('jsIncludes', array('endorse_charts'));
         $this->set(compact('datesarray', 'layout', 'subcenterData', 'orgDeptArray', 'arrayendorsementdetail', 'facility_id', 'departmentId', 'organization_id', 'orgName'));
     }
+    
+    public function notifications($id = 0) {
+        $errormsg = "";
+        $successmsg = "";
+        if ($this->Session->check('Auth.User')) {
+            
+            $loggedinUser = $this->Auth->user();
+            if (isset($loggedinUser['current_org'])) {
+                $current_org = $loggedinUser['current_org']->id;
+            } else {
+                $current_org = 0;
+            }
+            //Unix timestamp for a date MKTIME(0,0,0,mm,dd,yyyy) - 
+//            $startdate = mktime(0, 0, 0, 01, 01, 2021);
+//            $postdata = array("token" => $loggedinUser["token"], "start_date" => $startdate, "end_date" => "");
+////            pr($postdata);
+//            $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
+//            $jsondatadecoded = json_decode($jsondata, true);
+////            pr($jsondata);
+////            exit;
+//            if ($jsondatadecoded["result"]["status"]) {
+//                $endorsedatadata = $jsondatadecoded["result"]["data"];
+////                pr($endorsedatadata); exit;
+//                $this->set('statesdatanew', $endorsedatadata);
+//            } else {
+//                $errormsg = $jsondatadecoded["result"]["msg"];
+//                $this->Session->write('error', $errormsg);
+//                $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+//            }
+//
+            $user_id = $loggedinUser["id"];
+            if (is_numeric($id) && $id > 0) {
+                $user_id = $id;
+            }
+            $postdata = array("token" => $loggedinUser["token"], "user_id" => $user_id, "org_id" => $current_org);
+//            $jsondata = $this->Apicalls->curlpost("getProfile.json", $postdata);
+
+            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast10Notifications.json", $postdata); //Show all last 10 notifications
+//            pr($jsonNotificationData);
+//            exit;
+
+//            $jsondatadecoded = json_decode($jsondata, true);
+            $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
+
+            $jsonNotificationDataArray = $jsonNotificationDataArray['result']['data']['AlertCenterNotification'];
+            //$orgdata = isset($jsondatadecoded["result"]["data"]) ? $jsondatadecoded["result"]["data"] : $jsondatadecoded["result"]["msg"];
+//            if (isset($jsondatadecoded["result"]["data"])) {
+//                $profiledata = $jsondatadecoded["result"]["data"]["user_data"];
+//                $badgesData = $jsondatadecoded["result"]["data"]["badges"];
+//                $coreValuesData = $jsondatadecoded["result"]["data"]["core_value"];
+//                $statesdata = $jsondatadecoded["result"]["data"]["endorse_count"];
+//            } else {
+//                $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
+//                $this->redirect($this->Auth->logout());
+//            }
+        } else {
+            $this->redirect(array('controller' => 'client', 'action' => 'login'));
+        }
+
+        $this->set('MenuName', 'Notifications');
+        $logindata = $loggedinUser;
+//        $this->set('statesdatanew', $endorsedatadata);
+
+//                        pr($endorsedatadata); exit;
+        $this->set(compact("jsonNotificationDataArray"));
+    }
 
 }
 ?>

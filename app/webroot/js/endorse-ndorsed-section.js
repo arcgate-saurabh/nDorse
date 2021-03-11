@@ -26,20 +26,22 @@ $(document).ready(function () {
     $(".feed-vertical").css("width", widthvertical);
     $("#datepicker_start").datepicker(dateparameters);
     $("#datepicker_end").datepicker(dateparameters);
+    $("#datepicker_start_1").datepicker(dateparameters);
+    $("#datepicker_end_1").datepicker(dateparameters);
 });
 
-$(document).on("click", "#showdatawithoutdate", function () {
+$(document).on("click", "#showdatawithoutdate1", function () {
     $("#searchendorsements").attr("type", "text");
     $("#searchendorsements").val("");
     $("#livesearch").html("");
     $("#selectedValues").html("");
     $(".selected-values ").addClass('hidden');
-    $("#datepicker_start").val("");
-    $("#datepicker_end").val("");
+    $("#datepicker_start_1").val("");
+    $("#datepicker_end_1").val("");
     $("#searchendorsements").val("");
     startdateendorse = enddateendorse = "";
     curl = siteurl + 'cajax/getendorsedatesearch';
-    var formData = {page: 1, type: endorsetype};
+    var formData = {page: 1, type: endorsetype1};
     endorser_type = "";
     endorser_id = "";
 
@@ -51,12 +53,12 @@ $(document).on("click", "#showdatawithoutdate", function () {
         {
             var data_Arr = String(data).split('=====');
 
-            $("#endorsementlist").html("");
+            $("#endorsementlist1").html("");
             if ($.trim(data_Arr[0]) == "") {
-                $(" <div >No Data available</div>").appendTo("#endorsementlist");
+                $(" <div >No Data available</div>").appendTo("#endorsementlist1");
             } else {
 
-                $(data_Arr[0]).appendTo("#endorsementlist");
+                $(data_Arr[0]).appendTo("#endorsementlist1");
             }
             var widthvertical = $(".feed-vertical").parent(".col-md-8").css("width");
             $(".feed-vertical").css("width", widthvertical);
@@ -71,10 +73,11 @@ $(document).on("click", "#showdatawithoutdate", function () {
         }
     });
 });
-$(document).on("click", "#endorsesearch", function () {
 
-    var start_date = $("#datepicker_start").val();
-    var end_date = $("#datepicker_end").val();
+$(document).on("click", "#endorsesearchsection1", function () {
+
+    var start_date = $("#datepicker_start_1").val();
+    var end_date = $("#datepicker_end_1").val();
     if (start_date == "") {
         alertbootbox("Select a Start date");
         return;
@@ -99,7 +102,7 @@ $(document).on("click", "#endorsesearch", function () {
             endtime = d.getTime();
             if (starttime > endtime)
             {
-                $("#datepicker_start").val("")
+                $("#datepicker_start_1").val("");
                 startdateendorse = "";
                 alertbootbox("End Date must be greater than the Start Date.");
                 return;
@@ -110,11 +113,12 @@ $(document).on("click", "#endorsesearch", function () {
     }
     // endorse date search
     curl = siteurl + 'cajax/getendorsedatesearch';
-    var formData = {page: 1, type: endorsetype, start_date: start_date, end_date: end_date};
+    var formData = {page: 1, type: endorsetype1, start_date: start_date, end_date: end_date};
     if (endorser_type != "" && endorser_id != "")
     {
-        formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, start_date: start_date, end_date: end_date};
+        formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, start_date: start_date, end_date: end_date};
     }
+//    console.log(formData);
     $.ajax({
         url: curl,
         type: "POST",
@@ -123,12 +127,12 @@ $(document).on("click", "#endorsesearch", function () {
         {
             var data_Arr = String(data).split('=====');
 
-            $("#endorsementlist").html("");
+            $("#endorsementlist1").html("");
             if ($.trim(data_Arr[0]) == "") {
-                $(" <div class='no-data-nDorse' >No Data available</div>").appendTo("#endorsementlist");
+                $(" <div class='no-data-nDorse' >No Data available</div>").appendTo("#endorsementlist1");
             } else {
 
-                $(data_Arr[0]).appendTo("#endorsementlist");
+                $(data_Arr[0]).appendTo("#endorsementlist1");
             }
 
             var widthvertical = $(".feed-vertical").parent(".col-md-8").css("width");
@@ -309,13 +313,13 @@ $(window).scroll(function () {
         console.log(endorsepage + " " + totalendorsepage);
         if (endorsepage <= totalendorsepage) {
             curl = siteurl + 'cajax/getendorsedatesearch';
-            var formData = {page: endorsepage, type: endorsetype};
-            if (endorsetype != "public") {
+            var formData = {page: endorsepage, type: endorsetype1};
+            if (endorsetype1 != "public") {
 
                 if (startdateendorse != "" && enddateendorse != "") {
-                    formData = {page: endorsepage, type: endorsetype, start_date: startdateendorse, end_date: enddateendorse};
+                    formData = {page: endorsepage, type: endorsetype1, start_date: startdateendorse, end_date: enddateendorse};
                 } else if (startdateendorse != "") {
-                    formData = {page: endorsepage, type: endorsetype, start_date: startdateendorse};
+                    formData = {page: endorsepage, type: endorsetype1, start_date: startdateendorse};
                 }
 
 
@@ -324,13 +328,13 @@ $(window).scroll(function () {
             if (endorser_type != "" && endorser_id != "")
             {
 
-                formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype};
-                if (endorsetype != "public") {
+                formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1};
+                if (endorsetype1 != "public") {
 
                     if (startdateendorse != "" && enddateendorse != "") {
-                        formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, start_date: startdateendorse, end_date: enddateendorse};
+                        formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, start_date: startdateendorse, end_date: enddateendorse};
                     } else if (startdateendorse != "") {
-                        formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, start_date: startdateendorse};
+                        formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, start_date: startdateendorse};
                     }
 
 
@@ -349,7 +353,7 @@ $(window).scroll(function () {
                     {
                         $(".hiddenloader").addClass("hidden");
                         var data_Arr = String(data).split('=====');
-                        $(data_Arr[0]).appendTo("#endorsementlist");
+                        $(data_Arr[0]).appendTo("#endorsementlist1");
 
                         var widthvertical = $(".feed-vertical").parent(".col-md-8").css("width");
                         $(".feed-vertical").css("width", widthvertical);
@@ -452,8 +456,8 @@ $(document).on("keyup", "#searchendorsements", function () {
         {
             endorser_type = "";
             endorser_id = "";
-            var formData = {page: 1, type: endorsetype, feed_type: feedType};
-            if (endorsetype != "public") {
+            var formData = {page: 1, type: endorsetype1, feed_type: feedType};
+            if (endorsetype1 != "public") {
 
                 if (startdateendorse != "" && enddateendorse != "") {
                     formData = {page: 1, endorser_type: endorser_type, start_date: startdateendorse, end_date: enddateendorse};
@@ -509,9 +513,9 @@ $(document).on("change", "#subcenter", function () {
 
     if (endorser_id != '') {
 
-        var formData = {page: 1, type: endorsetype, feed_type: feedType, subcenter_id: subcenter_id, endorser_type: endorser_type, endorser_id: endorser_id};
+        var formData = {page: 1, type: endorsetype1, feed_type: feedType, subcenter_id: subcenter_id, endorser_type: endorser_type, endorser_id: endorser_id};
     } else {
-        var formData = {page: 1, type: endorsetype, feed_type: feedType, subcenter_id: subcenter_id};
+        var formData = {page: 1, type: endorsetype1, feed_type: feedType, subcenter_id: subcenter_id};
     }
 
     $.ajax({
@@ -622,8 +626,8 @@ $(document).on("click", ".js_clearAll_endorse", function () {
     {
         endorser_type = "";
         endorser_id = "";
-        var formData = {page: 1, type: endorsetype, feed_type: feedType, subcenter_id: subcenter_id};
-        if (endorsetype != "public") {
+        var formData = {page: 1, type: endorsetype1, feed_type: feedType, subcenter_id: subcenter_id};
+        if (endorsetype1 != "public") {
 
             if (startdateendorse != "" && enddateendorse != "") {
                 formData = {page: 1, endorser_type: endorser_type, start_date: startdateendorse, end_date: enddateendorse};
@@ -680,13 +684,13 @@ $(document).on("click", ".livesearchdata", function () {
     $("#searchendorsements").attr("data-endorsementid", endorser_id);
 
     endorsepage = 1;
-    var formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, feed_type: feedType, subcenter_id: subcenter_id};
-    if (endorsetype != "public") {
+    var formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, feed_type: feedType, subcenter_id: subcenter_id};
+    if (endorsetype1 != "public") {
 
         if (startdateendorse != "" && enddateendorse != "") {
-            formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, start_date: startdateendorse, end_date: enddateendorse};
+            formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, start_date: startdateendorse, end_date: enddateendorse};
         } else if (startdateendorse != "") {
-            formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, start_date: startdateendorse};
+            formData = {page: endorsepage, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, start_date: startdateendorse};
         }
 
 
@@ -838,7 +842,7 @@ function filterorganizationlist() {
         subcenter_id = subcenterID;
     }
 
-    var formdata = {keyword: keyword, feed_type: feedType, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype, subcenter_id: subcenter_id};
+    var formdata = {keyword: keyword, feed_type: feedType, endorser_type: endorser_type, endorser_id: endorser_id, type: endorsetype1, subcenter_id: subcenter_id};
     
     delay(function () {
         $.ajax({

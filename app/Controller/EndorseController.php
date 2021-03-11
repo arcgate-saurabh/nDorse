@@ -1206,7 +1206,7 @@ class EndorseController extends AppController {
 //            echo "DONE"; exit;
 //    }
 
-public function daisy() {
+    public function daisy() {
         $this->set('MenuName', 'Post Now');
         $loggedinUser = $this->Auth->user();
 //        pr($loggedinUser); exit;
@@ -1326,7 +1326,6 @@ public function daisy() {
         $this->set('addPost', false);
     }
 
-
     public function addcomment() {
 //        $this->autoRender = false;
 //        $this->layout = false;
@@ -1375,6 +1374,66 @@ public function daisy() {
                 }
             }
         }
+    }
+
+    // endorsements
+    public function summary() {
+        $loggedinUser = $this->Auth->user();
+        if ($this->Session->check('Auth.User')) {
+
+            if (isset($loggedinUser['current_org'])) {
+
+                $postdata = array("token" => $loggedinUser["token"]);
+                $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
+                $jsondatadecoded = json_decode($jsondata, true);
+
+                if ($jsondatadecoded["result"]["status"]) {
+                    $endorsedatadata = $jsondatadecoded["result"]["data"];
+                    $this->set('statesdata', $endorsedatadata);
+                    $this->set('profiledata', $loggedinUser);
+                } else {
+                    $errormsg = $jsondatadecoded["result"]["msg"];
+                    $this->Session->write('error', $errormsg);
+                    $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+                }
+
+                //Getting data for ndorsement received
+                $postdata = array("token" => $loggedinUser["token"], "type" => "endorsed");
+                $jsondata = $this->Apicalls->curlpost("getEndorseList.json", $postdata);
+                $jsondatadecoded = json_decode($jsondata, true);
+                if ($jsondatadecoded["result"]["status"]) {
+                    $endorsedatadata = $jsondatadecoded["result"]["data"];
+                    $this->set('endorsedata', $endorsedatadata["endorse_data"]);
+                    $this->set('endorsepage', $endorsedatadata["total_page"]);
+                    $this->set('servertime', $endorsedatadata["server_time"]);
+                }
+
+                //Getting data for ndorsements given
+                $postdata = array("token" => $loggedinUser["token"], "type" => "endorser");
+                $jsondata = $this->Apicalls->curlpost("getEndorseList.json", $postdata);
+
+                $jsondatadecoded = json_decode($jsondata, true);
+//                pr($jsondatadecoded); exit;
+                if ($jsondatadecoded["result"]["status"]) {
+                    $endorsedatadata = $jsondatadecoded["result"]["data"];
+                    $this->set('endorsedata2', $endorsedatadata["endorse_data"]);
+                    $this->set('endorsepage2', $endorsedatadata["total_page"]);
+                    $this->set('servertime2', $endorsedatadata["server_time"]);
+                }
+            } else {
+                $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+            }
+        } else {
+            $this->redirect(array('controller' => 'client', 'action' => 'login'));
+        }
+
+        $org_user_role = $loggedinUser['current_org']->org_role;
+        $logged_user_id = $loggedinUser['id'];
+        $this->set('jsIncludes', array('endorse_stats', 'endorse-ndorsed-section','endorse-ndorser-section'));
+        $this->set('addEndorse', true);
+        $this->set('org_user_role', $org_user_role);
+        $this->set('logged_user_id', $logged_user_id);
+        $this->set('MenuName', 'nDorsements');
     }
 
 }

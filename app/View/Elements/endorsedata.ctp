@@ -339,8 +339,8 @@ if (!empty($endorsedata)) {
     ?>
 
 <?php } else { ?>
-            <br><br>
-    <div class="no-data-nDorse">No Data available</div>
+            <!--<br><br>-->
+    <!--<div class="no-data-nDorse">No Data available</div>-->
 <?php } ?>=====<?php echo $total_page; ?>
 
 <?php

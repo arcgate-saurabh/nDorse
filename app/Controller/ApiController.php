@@ -4597,7 +4597,7 @@ class ApiController extends AppController {
                     , "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)),
                 '_serialize' => array('result')
             ));
-        } else {   
+        } else {
             $this->set(array(
                 'result' => array("status" => false
                     , "msg" => "Get call not allowed."),
@@ -6557,9 +6557,22 @@ class ApiController extends AppController {
                     }
                 }
 
-                if (isset($type) && $type == 'endorser') {
+                if (isset($type) && ($type == 'endorser' || $type == 'endorsed')) {
                     $NEWconditionarray["FeedTran.feed_type"] = 'endorse';
+//                    $NEWconditionarray["FeedTran.user_id"] = "like '%'".$user_id."'%'";
                 }
+
+
+                 $start_date = "";
+                $end_date = "";
+                if (isset($this->request->data["start_date"]) && $this->request->data["start_date"] != "") {
+                    $start_date = $this->request->data["start_date"];
+                }
+                if (isset($this->request->data["end_date"]) && $this->request->data["end_date"] != "") {
+                    $end_date = $this->request->data["end_date"];
+                }
+
+
 
 
                 /* Condition added by Babulal prasad to filter scheduled posts */
@@ -6571,8 +6584,14 @@ class ApiController extends AppController {
                     array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
                                     "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
                                     "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
-                    array("visibility_check" => 0, 'FeedTran.org_id' => $org_id)
+                    array("visibility_check" => 0, 'FeedTran.org_id' => $org_id,"user_id like '%" . '"' . $user_id . '"' . "%'",)
                 );
+                 if ($start_date != "") {
+                    $NEWconditionarray["FeedTran.created >= "] = date("Y-m-d 00:00:00", $start_date);
+                }
+                if ($end_date != "") {
+                    $NEWconditionarray["FeedTran.created <= "] = date("Y-m-d 23:59:59", $end_date);
+                }
 //(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
 //OR 
 //(visibility_check = 0 and org_id = 123  )
@@ -6580,7 +6599,8 @@ class ApiController extends AppController {
 
                 /*                 * ***************** */
 
-
+//                pr($NEWconditionarray); //exit;
+//                $NEWparams['fields'] = "*";
                 $NEWparams['fields'] = "count(*) as cnt";
                 $NEWparams['conditions'] = $NEWconditionarray;
 //$NEWparams['order'] = 'FeedTran.created desc';
@@ -6598,7 +6618,8 @@ class ApiController extends AppController {
 
 //Getting live feeds
 //$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
-//pr($NEWconditionarray); exit;
+//                pr($NEWconditionarray);
+//                exit;
                 $paramsFeed['fields'] = "*";
                 $paramsFeed['conditions'] = $NEWconditionarray;
                 $paramsFeed['limit'] = $limit;
@@ -6672,8 +6693,7 @@ class ApiController extends AppController {
 //if ($userOrganization['UserOrganization']['user_role'] != 2) {
                 $conditionarray["Endorsement.type != "] = "private";
 // }
-
-
+//                pr($endorseFeedIds);
                 $conditionarray["Endorsement.id"] = $endorseFeedIds;
 
                 $params['conditions'] = $conditionarray;
@@ -6711,8 +6731,8 @@ class ApiController extends AppController {
 //                $log = $this->Endorsement->getDataSource()->getLog(false, false);
 //                pr($log);
 //                exit;
-//pr($endorsement); 
-// exit;
+//                pr($endorsement);
+//                exit;
                 $endorsmentarray = array();
                 $departmentarray = array();
                 $entityarray = array();
@@ -13892,7 +13912,7 @@ class ApiController extends AppController {
             foreach ($Emojisdata as $emojisval) {
 //                pr($emojisval);
                 $emojis_array_all[] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
-                
+
                 if (isset($emojisval["Bitmojis"]["personalized"]) && $emojisval["Bitmojis"]["personalized"] == 1) {
                     $emojis_array["custom"][] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
                 } else {
@@ -13907,13 +13927,13 @@ class ApiController extends AppController {
         if (count($emojis_array_all) > 0) {
             $this->set(array(
                 'result' => array("status" => true
-                    , "msg" => "Emojis data", "data" => $emojis_array_all,"data_new" => $emojis_array),
+                    , "msg" => "Emojis data", "data" => $emojis_array_all, "data_new" => $emojis_array),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
                 'result' => array("status" => false
-                    , "msg" => "No stickers available", "data" => $emojis_array_all,"data_new" => $emojis_array),
+                    , "msg" => "No stickers available", "data" => $emojis_array_all, "data_new" => $emojis_array),
                 '_serialize' => array('result')
             ));
         }
