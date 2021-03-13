@@ -996,8 +996,42 @@ class EndorseController extends AppController {
                             $this->set('endorseMessageMinLimit', $loggedinUser['current_org']->endorse_message_min_limit);
                         }
 
-                        //                pr($response->data->core_values);die;
 
+                        if (isset($this->request->data['userid']) && ($this->request->data['userid'] != '')) {
+                            $selected_user_id = $this->request->data['userid'];
+                            $conditionarray = $array = array();
+                            $conditionarray = array("User.id" => $selected_user_id);
+
+
+                            $array['fields'] = array('fname', 'lname', 'userOrganization.subcenter_id');
+
+                            $array['joins'] = array(
+                                array(
+                                    'table' => 'user_organizations',
+                                    'alias' => 'userOrganization',
+                                    'type' => 'LEFT',
+                                    'conditions' => array(
+                                        'userOrganization.user_id = User.id',
+                                        'userOrganization.organization_id =' . $loggedinUser['current_org']->id,
+                                    )
+                                )
+                            );
+                            $array['conditions'] = $conditionarray;
+
+                            $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
+                            $selectedUserData = $this->User->find("all", $array);
+                            if (isset($selectedUserData[0]['User']) && !empty($selectedUserData[0]['User'])) {
+                                $selectedUsername = $selectedUserData[0]['User']['fname'] . ' ' . $selectedUserData[0]['User']['lname'];
+                                $selectUserSubcenterID = $selectedUserData[0]['userOrganization']['subcenter_id'];
+                            }
+                        } else {
+                            $selected_user_id = "";
+                            $selectedUsername = $selectUserSubcenterID = "";
+                        }
+
+                        $this->set('selectedUserId', $selected_user_id);
+                        $this->set('selectedUsername', $selectedUsername);
+                        $this->set('selectUserSubcenterID', $selectUserSubcenterID);
                         $this->set('type', $this->request->data['type']);
                     } else {
                         $postData = array("token" => $loggedinUser["token"]);
@@ -1429,7 +1463,7 @@ class EndorseController extends AppController {
 
         $org_user_role = $loggedinUser['current_org']->org_role;
         $logged_user_id = $loggedinUser['id'];
-        $this->set('jsIncludes', array('endorse_stats', 'endorse-ndorsed-section','endorse-ndorser-section'));
+        $this->set('jsIncludes', array('endorse_stats', 'endorse-ndorsed-section', 'endorse-ndorser-section'));
         $this->set('addEndorse', true);
         $this->set('org_user_role', $org_user_role);
         $this->set('logged_user_id', $logged_user_id);

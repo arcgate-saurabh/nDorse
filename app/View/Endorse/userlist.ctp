@@ -77,8 +77,8 @@
                                             ?></h6>
                                     </div>
                                     <div class="right-element">
-                                        <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel">
-                                            <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options', 'align' => 'right')) ?>
+                                        <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel" data-userid="<?php echo $users['id']; ?>" class="active-userlist-endorse">
+                                            <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options111', 'align' => 'right')) ?>
                                         </a>
                                         <div class="clearfix"></div>
                                     </div>
@@ -137,11 +137,22 @@ function remove_emoji($text) {
     return $text;
 }
 ?>
-<!--<script>
+<script>
     $(document).ready(function () {
-        var publicnDorseVisible = "<?php // echo $endorse['public_endorse_visible'];                         ?>";
-        if (publicnDorseVisible == 0) {
-            $(document).find(".my-nDorse-btn").removeClass('ndorseNowBtn');
-        }
+
+        $('.active-userlist-endorse').on('click', function () {
+            var userID = $(this).attr('data-userid');
+            
+            
+            
+            $(document).find("#selected_user_id").val(userID);
+            
+        });
+
+
+//        var publicnDorseVisible = "<?php // echo $endorse['public_endorse_visible'];                           ?>";
+//        if (publicnDorseVisible == 0) {
+//            $(document).find(".my-nDorse-btn").removeClass('ndorseNowBtn');
+//        }
     });
-</script>-->
+</script>

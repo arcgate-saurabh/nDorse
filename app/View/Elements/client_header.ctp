@@ -158,7 +158,7 @@ $paramsaction = trim($this->params["action"]);
 
                     </li>
 
-                            <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                                   ?> </li>-->
+                                    <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                                     ?> </li>-->
                     <?php if (isset($loggedUserAuth['User']['profile_completed']) && $loggedUserAuth['User']['profile_completed'] != '') { ?>
                         <li class=""> <?php echo $this->Html->Link("<span class='flaticon-edit-1'></span>Create<br/>an Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> </li>
                     <?php } else { ?>
@@ -187,7 +187,7 @@ $paramsaction = trim($this->params["action"]);
                         ?></li>
                     <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("My Profile", array("controller" => "client", "action" => "profile"), ($paramsaction == "profile") ? array("class" => "active-link") : ""); ?></li>-->
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad-2'></span>Feedback", "mailto:" . SUPPORTEMAIL . "?Subject=Feedback", array("target" => "_top", "escape" => false)); ?></li>
-                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));       ?></li>-->
+                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));         ?></li>-->
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad'></span>FAQ", array("controller" => "client", "action" => "faq"), ($paramsaction == "faq") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-id-card-3'></span>End User License Agreement", array("controller" => "client", "action" => "tnc"), ($paramsaction == "tnc") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <?php //if ($source == 'ADFS') { ?>
@@ -286,7 +286,7 @@ $paramsaction = trim($this->params["action"]);
 //                            $liveFeedUrl = Router::url('/', true) . 'endorse/ADFSLiveFeed';
 //                        }
                         ?>
-                        <!--<a href="<?php //echo Router::url('/', true);                            ?>endorse" class="endorse-home" >-->
+                        <!--<a href="<?php //echo Router::url('/', true);                              ?>endorse" class="endorse-home" >-->
                         <a href="<?php echo $liveFeedUrl; ?>" class="endorse-home" >
                             <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_home; ?>" alt=""  />
                         </a>
@@ -301,21 +301,21 @@ $paramsaction = trim($this->params["action"]);
                         <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/myprofile-icon.png" alt=""  /> </a>
                     </span>
 
-<!--                    <span>
-                        <span class="count hidden" id="ndorsedCount">                    </span>
-                        <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
-                            <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
-                        </a>
-                    </span>-->
+        <!--                    <span>
+                                <span class="count hidden" id="ndorsedCount">                    </span>
+                                <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
+                                    <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
+                                </a>
+                            </span>-->
 
                     <!--     Hide after client ask to version 6.5.1 ticket no = 229
                       <span>  
                           <!--<span class="count">00</span>-->
-                    <!--        <a href="<?php //echo Router::url('/', true);            ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);            ?>img/<?php //echo $ndorse_stats;            ?>" alt=""   />
+                    <!--        <a href="<?php //echo Router::url('/', true);              ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);              ?>img/<?php //echo $ndorse_stats;              ?>" alt=""   />
                             </a>
                         </span>
                     -->
-<!--                    <span>
+    <!--                    <span>
                       <span class="count">00</span>
                         <a href="<?php echo Router::url('/', true); ?>endorse/ndorse"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorse; ?>" alt=""   /> 
 
@@ -335,7 +335,7 @@ $paramsaction = trim($this->params["action"]);
                             <div class="popDownArrow text-center"><?php echo $this->Html->image('popDownArrow.png'); ?></div>
                             <div class="nD-menu-well">
                                 <ul class="" style="list-style:none">
-                                    <li><a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel">nDorse Now!</a></li>
+                                    <li><a href="javascript:void(0);" class="ndorse-now-top" data-toggle="modal" data-target=".endorse-now-popupmodel">nDorse Now!</a></li>
 
 
                                     <?php
@@ -406,6 +406,7 @@ $paramsaction = trim($this->params["action"]);
                 <?php if ($orgUpdates['user_status'] == 'active' && $orgUpdates['org_status'] == 'active') { ?>
                     <span class="radio">
                         <div class="input radio">
+                            <input id="selected_user_id" value="" type="hidden" name="data[userid]"/>
                             <input type="radio" checked="checked"  id="pn" name="data[type]" value="standard">
                             <label for="pn">Public nDorsement </label>
                             <img src="<?php echo Router::url('/', true); ?>img/public-nDorse.png"  class="pull-right" alt=""  /> <br />
@@ -480,3 +481,8 @@ $paramsaction = trim($this->params["action"]);
         </div>
     </div>
 </div>
+<script>
+    $(".ndorse-now-top").click(function () {
+        $(document).find("#selected_user_id").val("");
+    });
+</script>

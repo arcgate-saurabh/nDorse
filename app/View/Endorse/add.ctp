@@ -172,31 +172,31 @@
             </div>
             <div class="modal-body" style="max-height:250px; overflow:auto;">
                 <div class="sticker-container-edit">
-                            <?php
-                            foreach ($emojis->custom as $emoji) {
-                                ?>
-                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
-                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
-                                </div>
-                            <?php } ?>
-
+                    <?php
+                    foreach ($emojis->custom as $emoji) {
+                        ?>
+                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                            <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
                         </div>
-                        <hr/>
-                        <div class="sticker-container-edit">
-                            <?php
-                            foreach ($emojis->default as $emoji) {
-                                ?>
-                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
-                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
-                                </div>
-                            <?php } ?>
+                    <?php } ?>
 
+                </div>
+                <hr/>
+                <div class="sticker-container-edit">
+                    <?php
+                    foreach ($emojis->default as $emoji) {
+                        ?>
+                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                            <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
                         </div>
+                    <?php } ?>
+
+                </div>
                 <?php /* foreach ($emojis->default as $emoji) { ?>
-                    <div class="sticker-container" >
-                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
-                    </div>
-                <?php } */ ?>
+                  <div class="sticker-container" >
+                  <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
+                  </div>
+                  <?php } */ ?>
                 <div class="clearfix"></div>
             </div>
             <div class="modal-footer">
@@ -244,6 +244,17 @@
 
     $(document).ready(function () {
 
+        var selectedUserId = '<?php echo $selectedUserId; ?>';
+        var selectedUsername = '<?php echo $selectedUsername; ?>';
+        var selectUserSubcenterID = '<?php echo $selectUserSubcenterID; ?>';
+
+//        alert(selectedUserId + " / " + selectedUsername + "/ " + selectUserSubcenterID);
+
+        if (selectedUserId != '') {
+            $('#nDorse-search').append('<div class="searched-values js_searched" data-endorsementfor="user" data-endorsedid="' + selectedUserId + '" data-subcenterid="' + selectUserSubcenterID + '"><span class="js_searchedName">' + selectedUsername + ' </span></div>');
+            $('.js_searched').click();
+            $('#nDorse-search').remove(".js_searched");
+        }
         $(".js_coreValue").on('click', function () {
             var DataModalShow = $(this).attr('data-model');
             if (DataModalShow == 1) {
