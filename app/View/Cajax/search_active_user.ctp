@@ -16,13 +16,20 @@ if (isset($activeuserdata) && count($activeuserdata) > 0) {
             $user_image = $users['image'];
         }
         $lastSeenDate = date("M d", $users["last_used_date"]);
+        $activeStatus = 'offline';
+
+        if (isset($users["last_used_date"]) && $users["last_used_date"] == 0) {
+            $activeStatus = 'away';
+        } else if (isset($loginTimeDiffrance) && $loginTimeDiffrance < 3) {
+            $activeStatus = 'online';
+        }
         ?>
         <section id="" class="userlist">
             <div class="Dear-Details" id="" post_id="">
                 <div class="Name-Post "> 
                     <div class="namenimg">
                         <div class="col-md-4">
-                            <span class="offline"></span> <!-- offline/online-->
+                            <span class="<?php echo $activeStatus; ?>"></span>
                             <?php
                             $user_profile = Router::url('/', true) . "img/user.png";
                             ?>
@@ -37,14 +44,18 @@ if (isset($activeuserdata) && count($activeuserdata) > 0) {
                         <div class="col-md-4">
                             <h6 class="last-seen">Last Seen:
                                 <?php
-                                $servertime = $users['curr_time'];
-                                $createddate = new DateTime(date("Y-m-d H:i:s", $users['last_used_date']));
-                                echo $this->App->getFeedTimeInterval($createddate, $servertime, $lastSeenDate);
+                                if (isset($users["last_used_date"]) && $users["last_used_date"] == 0) {
+                                    echo "Not logged-in yet.";
+                                } else {
+                                    $servertime = $users['curr_time'];
+                                    $createddate = new DateTime(date("Y-m-d H:i:s", $users['last_used_date']));
+                                    echo $this->App->getFeedTimeInterval($createddate, $servertime, $lastSeenDate);
+                                }
                                 ?></h6>
                         </div>
                         <div class="col-md-4">
                             <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel">
-        <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options', 'align' => 'right')) ?>
+                                <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options', 'align' => 'right')) ?>
                             </a>
                             <div class="clearfix"></div>
                         </div>
