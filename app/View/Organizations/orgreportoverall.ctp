@@ -154,7 +154,7 @@ $orgid = $organization_id;
                                 <button id="resetdates1" title="Click to Reset Date"  class="btn btn-info btn-xs resetendorsementsfilters1 leaderboardreportResetButton" type="button">Reset Date</button>
                                 <?php echo $this->Form->End(); ?> </div>
                         </div>
-                        <div class="row date-range" id="leaderboarddatepicker2" style="margin-top:15px;">
+                        <div class="row date-range hide" id="leaderboarddatepicker2" style="margin-top:15px;">
                             <div class="col-md-3" >
                                 <h4 class="date-range">Select Date Range 2</h4>
                             </div>
