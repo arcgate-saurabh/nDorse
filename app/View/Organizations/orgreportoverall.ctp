@@ -154,6 +154,27 @@ $orgid = $organization_id;
                                 <button id="resetdates1" title="Click to Reset Date"  class="btn btn-info btn-xs resetendorsementsfilters1 leaderboardreportResetButton" type="button">Reset Date</button>
                                 <?php echo $this->Form->End(); ?> </div>
                         </div>
+                        <div class="row date-range" id="leaderboarddatepicker2" style="margin-top:15px;">
+                            <div class="col-md-3" >
+                                <h4 class="date-range">Select Date Range 2</h4>
+                            </div>
+                            <?php echo $this->Form->Create("daterangerandc"); ?>
+                            <input type="hidden" value="menu1" name="reporttab" />
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input id="startdaterandc_2" readonly="readonly" name="startdaterandc_2" type='text'value="<?php echo $datesarray1["startdate_1"]; ?>" class="form-control datepickerrandc" placeholder="Start Date"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input id="enddaterandc_2" readonly="readonly" name="enddaterandc_2" type='text' value="<?php echo $this->Time->Format($datesarray1["enddate_1"], DATEFORMAT) ?>" class="form-control datepickerrandc" placeholder="End Date"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-xs btn-info datesubmitter leaderboardreportfilterbutton2">Apply</button>
+                                <button id="resetdates1" title="Click to Reset Date"  class="btn btn-info btn-xs resetendorsementsfilters2 leaderboardreportResetButton" type="button">Reset Date</button>
+                                <?php echo $this->Form->End(); ?> </div>
+                        </div>
                     </div>
 
 
@@ -231,6 +252,8 @@ $orgid = $organization_id;
         if (reportNumber == 1) {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "none");
             $(document).find("#leaderboarddatepicker").css("display", "none");
+            $(document).find("#leaderboarddatepicker2").css("display", "none");
+
         } else {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "block");
             $(document).find("#leaderboarddatepicker").css("display", "block");
@@ -288,6 +311,8 @@ $orgid = $organization_id;
         if (reportNumber == 1) {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "none");
             $(document).find("#leaderboarddatepicker").css("display", "none");
+            $(document).find("#leaderboarddatepicker2").css("display", "none");
+
         } else {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "block");
             $(document).find("#leaderboarddatepicker").css("display", "block");
@@ -355,9 +380,12 @@ $orgid = $organization_id;
         if (reportNumber == 1) {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "none");
             $(document).find("#leaderboarddatepicker").css("display", "none");
+            $(document).find("#leaderboarddatepicker2").css("display", "none");
+
         } else {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "block");
             $(document).find("#leaderboarddatepicker").css("display", "block");
+            $(document).find("#leaderboarddatepicker2").css("display", "none");
         }
 
         switch (reportNumber) {
@@ -418,9 +446,12 @@ $orgid = $organization_id;
         if (reportNumber == 1) {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "none");
             $(document).find("#leaderboarddatepicker").css("display", "none");
+            $(document).find("#leaderboarddatepicker2").css("display", "block");
+
         } else {
             $(document).find("#saveasspreadsheetleaderboard-new").css("display", "block");
             $(document).find("#leaderboarddatepicker").css("display", "block");
+            $(document).find("#leaderboarddatepicker2").css("display", "none");
         }
 
         switch (reportNumber) {

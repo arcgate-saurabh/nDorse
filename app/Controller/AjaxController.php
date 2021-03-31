@@ -716,7 +716,8 @@ class AjaxController extends AppController {
                             "organization_id" => $orgId,
                             "name" => $department,
                             "from_master" => 0,
-                            "status" => 1
+                            "status" => 1,
+                            "updated" => date('Y-m-d H:i:s'),
                         );
                         $this->OrgDepartment->create();
                         $this->OrgDepartment->save($deptArray);
@@ -847,7 +848,8 @@ class AjaxController extends AppController {
                                 "organization_id" => $orgId,
                                 "name" => $department,
                                 "from_master" => 0,
-                                "status" => 1
+                                "status" => 1,
+                                "updated" => date('Y-m-d H:i:s'),
                             );
                             $this->OrgDepartment->create();
                             $this->OrgDepartment->save($deptArray);
@@ -896,7 +898,7 @@ class AjaxController extends AppController {
                             $subOrgId = $deptRecord['Entity']['id'];
                         }
                     } else {
-                        $subOrgId = "";
+                        $subOrgId = 0;
                     }
 
                     $newUserOrganization = array(
