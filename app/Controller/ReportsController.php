@@ -810,7 +810,140 @@ class ReportsController extends AppController {
 //        echo $this->Endorsement->getLastQuery();
 //        pr($endorsementbyWeek);
 //        exit;
-        $this->set(compact("endorsementbyWeek", "endorsementbyday"));
+
+        /** Code to get monthly active users data *
+         * added by Babulal prasad
+         * @30-march-2021
+         */
+        $startdate = $enddate = '';
+
+//        pr($this->request->data);
+        if (!empty($this->request->data["startdaterandc"]) && !empty($this->request->data["enddaterandc"])) {
+            $requestdata = $this->request->data;
+            $startdate = $this->Common->dateConvertServer($requestdata["startdaterandc"]);
+            $enddate = $this->Common->dateConvertServer($requestdata["enddaterandc"]);
+        }
+
+
+
+        $until = new DateTime();
+        if ($organization_id == 0) {//426 //415
+            $interval = new DateInterval('P1M'); //3 months
+        } else {
+            $interval = new DateInterval('P12M'); //12 months
+        }
+
+        $from = $until->sub($interval);
+        $last12Mnth = $from->format('Y-m-t');
+
+        $acitveUserConditions = array();
+        $acitveUserConditions["ApiSession.created >"] = $last12Mnth;
+        $acitveUserConditions["UserOrganization.organization_id"] = $organization_id;
+        $acitveUserConditions["DefaultOrg.organization_id"] = $organization_id;
+        $acitveUserConditions["DefaultOrg.status"] = 1;
+
+        $params['conditions'] = $acitveUserConditions;
+//        $params['joins'] = array(
+//            array(
+//                'table' => 'user_organizations',
+//                'alias' => 'UserOrganization',
+//                'type' => 'RIGHT',
+//                'conditions' => array(
+//                    'UserOrganization.user_id = ApiSession.user_id',
+//                    'UserOrganization.organization_id = ' . $organization_id,
+//                )
+//            )
+//        );
+        $params['fields'] = array('ApiSession.*');
+        $params['joins'] = array(
+            array(
+                'table' => 'api_sessions',
+                'alias' => 'ApiSession',
+                'type' => 'LEFT',
+                'conditions' => array(
+                    'ApiSession.user_id = UserOrganization.user_id',
+                    'ApiSession.created > ' . $last12Mnth,
+                )
+            ),
+            array(
+                'table' => 'default_orgs',
+                'alias' => 'DefaultOrg',
+                'type' => 'LEFT',
+                'conditions' => array(
+                    'DefaultOrg.user_sid = UserOrganization.user_id',
+                    'DefaultOrg.organization_id = ' . $organization_id,
+                )
+            )
+        );
+//        pr($params);
+//        exit;
+                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
+
+        $activeUserData = $this->UserOrganization->find("all", $params);
+        echo $this->UserOrganization->getLastQuery();
+        exit;
+//        pr($activeUserData);
+//        exit;
+        $monthwiseallData = array();
+        foreach ($activeUserData as $index => $data) {
+            $month = date("M-y", strtotime($data['ApiSession']['created']));
+            $monthwiseallData[$month][] = $data;
+        }
+        $activeMonthwiseCounts = array();
+        $orgActiveUserCountArray = array();
+//        pr($monthwiseallData);
+        foreach ($monthwiseallData as $monthIndex => $mnthData) {
+            foreach ($mnthData as $index => $data) {
+//                pr($data);
+                $SessionId = $data['ApiSession']['id'];
+                //DATA CALCULATION FOR ORGANIZATION Users
+                if (!isset($activeMonthwiseCounts[$monthIndex][$SessionId])) {
+                    $activeMonthwiseCounts[$monthIndex][$SessionId] = $SessionId;
+                }
+            }
+        }
+//        pr($activeMonthwiseCounts);
+//        exit;
+        //Calculation for dynamic months range on date range selection
+        $date1 = new DateTime($enddate);
+        $date2 = new DateTime($startdate);
+        $diff = $date1->diff($date2);
+        $monthsDiff = (($diff->format('%y') * 12) + $diff->format('%m'));
+
+
+
+        if ($startdate != "" and $enddate != "") {
+            for ($i = 0; $i <= $monthsDiff; $i++) {
+                $months[] = date("M-y", strtotime($enddate . " -$i months"));
+            }
+            $months = array_reverse($months);
+        } else {
+            for ($i = 0; $i <= 11; $i++) {
+                $months[] = date("M-y", strtotime(date('Y-m-01') . " -$i months"));
+            }
+            $months = array_reverse($months);
+        }
+
+        foreach ($months as $index => $monthID) {
+            //Monthwise Org Endorsement Count Data
+            if (isset($activeMonthwiseCounts[$monthID])) {
+                $orgActiveUserCountArray[$monthID] = count($activeMonthwiseCounts[$monthID]);
+            } else {
+//                foreach ($corevaluesIDsArray as $indx => $cvID) {
+                $orgActiveUserCountArray[$monthID] = 0;
+//                }
+            }
+        }
+//        pr($orgActiveUserCountArray);
+//        exit;
+        $monthsnew = json_encode($months);
+        $totalActiveUsers = array();
+        foreach ($orgActiveUserCountArray as $monthID => $totalCount) {
+            $totalActiveUsers[] = array($totalCount);
+        }
+        $totalActiveUsers = json_encode($totalActiveUsers); //exit;
+
+        $this->set(compact("endorsementbyWeek", "endorsementbyday", "monthsnew", "totalActiveUsers"));
         echo $this->render('/Elements/leaderboard_barchart');
         exit;
     }
@@ -1079,26 +1212,26 @@ class ReportsController extends AppController {
                     }
 
                     if (isset($deptNdorsementCount[$deptIdSender]['sent'])) {
-                        $deptNdorsementCount[$deptIdSender]['sent'] ++;
+                        $deptNdorsementCount[$deptIdSender]['sent']++;
                     } else {
                         $deptNdorsementCount[$deptIdSender]['sent'] = 1;
                     }
 
                     if (isset($deptNdorsementCount[$deptIdReceiver]['received'])) {
-                        $deptNdorsementCount[$deptIdReceiver]['received'] ++;
+                        $deptNdorsementCount[$deptIdReceiver]['received']++;
                     } else {
                         $deptNdorsementCount[$deptIdReceiver]['received'] = 1;
                     }
 
 
                     if (isset($usersNdorsementsCounts[$senderUserId]['sent'])) {
-                        $usersNdorsementsCounts[$senderUserId]['sent'] ++;
+                        $usersNdorsementsCounts[$senderUserId]['sent']++;
                     } else {
                         $usersNdorsementsCounts[$senderUserId]['sent'] = 1;
                     }
 
                     if (isset($usersNdorsementsCounts[$receivedUserId]['received'])) {
-                        $usersNdorsementsCounts[$receivedUserId]['received'] ++;
+                        $usersNdorsementsCounts[$receivedUserId]['received']++;
                     } else {
                         $usersNdorsementsCounts[$receivedUserId]['received'] = 1;
                     }
@@ -1335,13 +1468,13 @@ class ReportsController extends AppController {
                     $deptIdReceiver = $userOrgArray[$receivedUserId]; //nDorsed
 
                     if (isset($usersNdorsementsCounts[$senderUserId]['sent'])) {
-                        $usersNdorsementsCounts[$senderUserId]['sent'] ++;
+                        $usersNdorsementsCounts[$senderUserId]['sent']++;
                     } else {
                         $usersNdorsementsCounts[$senderUserId]['sent'] = 1;
                     }
 
                     if (isset($usersNdorsementsCounts[$receivedUserId]['received'])) {
-                        $usersNdorsementsCounts[$receivedUserId]['received'] ++;
+                        $usersNdorsementsCounts[$receivedUserId]['received']++;
                     } else {
                         $usersNdorsementsCounts[$receivedUserId]['received'] = 1;
                     }
@@ -1406,13 +1539,13 @@ class ReportsController extends AppController {
                     $userlisting[$receivedUserId] = $receivedUserId;
                     $userlisting[$senderUserId] = $senderUserId;
                     if (isset($usersNdorsementsCounts[$senderUserId]['sent'])) {
-                        $usersNdorsementsCounts[$senderUserId]['sent'] ++;
+                        $usersNdorsementsCounts[$senderUserId]['sent']++;
                     } else {
                         $usersNdorsementsCounts[$senderUserId]['sent'] = 1;
                     }
 
                     if (isset($usersNdorsementsCounts[$receivedUserId]['received'])) {
-                        $usersNdorsementsCounts[$receivedUserId]['received'] ++;
+                        $usersNdorsementsCounts[$receivedUserId]['received']++;
                     } else {
                         $usersNdorsementsCounts[$receivedUserId]['received'] = 1;
                     }

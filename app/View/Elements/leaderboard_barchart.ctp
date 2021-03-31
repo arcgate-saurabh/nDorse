@@ -1,6 +1,6 @@
 <?php
 $series = $series1 = "";
-echo $totalActiveUsers;
+//echo $totalActiveUsers;
 if (!empty($endorsementbyday)) {
     $seriesdata = "";
     foreach ($endorsementbyday as $lval) {
