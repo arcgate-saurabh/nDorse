@@ -839,8 +839,8 @@ class ReportsController extends AppController {
         $acitveUserConditions = array();
         $acitveUserConditions["ApiSession.created >"] = $last12Mnth;
         $acitveUserConditions["UserOrganization.organization_id"] = $organization_id;
-        $acitveUserConditions["DefaultOrg.organization_id"] = $organization_id;
-        $acitveUserConditions["DefaultOrg.status"] = 1;
+//        $acitveUserConditions["DefaultOrg.organization_id"] = $organization_id;
+//        $acitveUserConditions["DefaultOrg.status"] = 1;
 
         $params['conditions'] = $acitveUserConditions;
 //        $params['joins'] = array(
@@ -862,26 +862,24 @@ class ReportsController extends AppController {
                 'type' => 'LEFT',
                 'conditions' => array(
                     'ApiSession.user_id = UserOrganization.user_id',
-                    'ApiSession.created > ' . $last12Mnth,
                 )
-            ),
+            ) /*,
             array(
                 'table' => 'default_orgs',
                 'alias' => 'DefaultOrg',
                 'type' => 'LEFT',
                 'conditions' => array(
-                    'DefaultOrg.user_sid = UserOrganization.user_id',
-                    'DefaultOrg.organization_id = ' . $organization_id,
+                    'DefaultOrg.user_id = UserOrganization.user_id',
                 )
-            )
+            )*/
         );
 //        pr($params);
 //        exit;
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
 
         $activeUserData = $this->UserOrganization->find("all", $params);
-        echo $this->UserOrganization->getLastQuery();
-        exit;
+//        echo $this->UserOrganization->getLastQuery();
+//        exit;
 //        pr($activeUserData);
 //        exit;
         $monthwiseallData = array();
