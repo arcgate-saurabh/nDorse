@@ -187,6 +187,10 @@ class EndorseController extends AppController {
                 $postdata = array("token" => $loggedinUser["token"], "type" => "public", "subcenter_id" => $user_subcenterID);
 //                pr(json_encode($postdata)); exit;
                 //$jsondata = $this->Apicalls->curlpost("getEndorseList.json", $postdata);
+//                $jsondata = $this->Apicalls->curlpost("getAllLast15Notifications.json", $postdata);
+//                
+//                pr($jsondata); exit;
+                
                 $jsondata = $this->Apicalls->curlpost("getLiveFeeds.json", $postdata);
                 //pr($jsondata); exit;
                 $jsondatadecoded = json_decode($jsondata, true);

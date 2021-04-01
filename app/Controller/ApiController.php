@@ -3381,7 +3381,7 @@ class ApiController extends AppController {
                     if ($endorsementFor == 'user') {
                         $push_notification = 1;
                     }
-
+                    $msg = $userName . " has commented on your nDorsement \n\n in " . $orgName . " Organization";
                     if (isset($push_notification) && $push_notification == 1) {
 
                         $loginuser = $this->LoginStatistics->find("all", array(
@@ -3406,15 +3406,18 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @7-june-2019
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-                                $this->loadModel('AlertCenterNotification');
-                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
-                                $AlertCenterNotificationArray['org_id'] = $orgId;
-                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
-                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-                                $AlertCenterNotificationArray['original_msg'] = $msg;
-                                $AlertCenterNotificationArray['status'] = 0;
-                                $AlertCenterNotificationArray['os'] = 'ios';
-                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+//                                $this->loadModel('AlertCenterNotification');
+//                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
+//                                $AlertCenterNotificationArray['org_id'] = $orgId;
+//                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
+//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+//                                $AlertCenterNotificationArray['original_msg'] = $msg;
+//                                $AlertCenterNotificationArray['status'] = 0;
+//                                $AlertCenterNotificationArray['os'] = 'ios';
+//                                $AlertCenterNotificationArray['feed_id'] = $endorsementId;
+//                                $AlertCenterNotificationArray['sender_id'] = $userID;
+//
+//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
 //                                    print_r($deviceToken_msg_arr);
 //                                    continue;
@@ -3437,19 +3440,33 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @7-june-2018
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-                                $this->loadModel('AlertCenterNotification');
-                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
-                                $AlertCenterNotificationArray['org_id'] = $orgId;
-                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
-                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-                                $AlertCenterNotificationArray['original_msg'] = $msg;
-                                $AlertCenterNotificationArray['status'] = 0;
-                                $AlertCenterNotificationArray['os'] = 'android';
-                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+//                                $this->loadModel('AlertCenterNotification');
+//                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
+//                                $AlertCenterNotificationArray['org_id'] = $orgId;
+//                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
+//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+//                                $AlertCenterNotificationArray['original_msg'] = $msg;
+//                                $AlertCenterNotificationArray['status'] = 0;
+//                                $AlertCenterNotificationArray['os'] = 'android';
+//                                $AlertCenterNotificationArray['feed_id'] = $endorsementId;
+//                                $AlertCenterNotificationArray['sender_id'] = $userID;
+//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
                             }
                         }
                     }
+                    $this->loadModel('AlertCenterNotification');
+                    $AlertCenterNotificationArray['user_id'] = $endorsedId;
+                    $AlertCenterNotificationArray['org_id'] = $orgId;
+                    $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
+                    $AlertCenterNotificationArray['plain_msg'] = $msg;
+                    $AlertCenterNotificationArray['original_msg'] = $msg;
+                    $AlertCenterNotificationArray['status'] = 0;
+                    $AlertCenterNotificationArray['os'] = '';
+                    $AlertCenterNotificationArray['feed_id'] = $endorsementId;
+                    $AlertCenterNotificationArray['feed_type'] = 'ndorse';
+                    $AlertCenterNotificationArray['sender_id'] = $userID;
+                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                     /* Send Push notification code End */
 
                     $this->set(array(
@@ -3506,7 +3523,10 @@ class ApiController extends AppController {
             $loggedInUser = $this->Auth->user();
             $errorsArray = array();
             $error = false;
-            $post['user_id'] = $loggedInUser['id'];
+//            pr($this->request->data);
+//            pr($loggedInUser);
+//            exit;
+            $sender_id = $post['user_id'] = $loggedInUser['id'];
             $postId = $post['post_id'] = $this->request->data['post_id'];
             $post['comment'] = isset($this->request->data['comment']) ? $this->request->data['comment'] : "";
             $this->PostComment->clear();
@@ -3525,11 +3545,32 @@ class ApiController extends AppController {
                     $likearray = array("post_id" => $postId);
                     $this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
                     $postData = $this->Post->findById($postId);
-
+                    $postUserId = $postData['Post']['user_id'];
                     $comment_count = $postData['Post']['comments_count'] + 1;
                     $this->Post->id = $postId;
                     $this->Post->savefield("comments_count", $comment_count);
                     $status = true;
+
+
+                    /* Alert Notification added by Babulal Prasad @1-april-2021 */
+                    $orgId = $loggedInUser['current_org']['id'];
+                    $username = $loggedInUser['fname'] . " " . $loggedInUser['lname'];
+                    if ($postUserId != $sender_id) {
+                        $msg = $username . " has commented on your post!";
+                        $this->loadModel('AlertCenterNotification');
+                        $AlertCenterNotificationArray['user_id'] = $postUserId;
+                        $AlertCenterNotificationArray['org_id'] = $orgId;
+                        $AlertCenterNotificationArray['alert_type'] = 'Post Comment Notification';
+                        $AlertCenterNotificationArray['plain_msg'] = $msg;
+                        $AlertCenterNotificationArray['original_msg'] = $msg;
+                        $AlertCenterNotificationArray['status'] = 0;
+                        $AlertCenterNotificationArray['os'] = '';
+                        $AlertCenterNotificationArray['feed_id'] = $postId;
+                        $AlertCenterNotificationArray['feed_type'] = 'post';
+                        $AlertCenterNotificationArray['sender_id'] = $sender_id;
+                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                    }
+
 
                     $this->set(array(
                         'result' => array("status" => true
@@ -3798,15 +3839,16 @@ class ApiController extends AppController {
                                                 /** Added by Babulal Prasad @7-june-2018
                                                  * * SAVE DATA for alert center feature Start
                                                  * ** */
-//                                                $this->loadModel('AlertCenterNotification');
-//                                                $AlertCenterNotificationArray['user_id'] = $userID;
-//                                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                                $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
-//                                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                                $AlertCenterNotificationArray['status'] = 0;
-//                                                $AlertCenterNotificationArray['os'] = 'ios';
-//                                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                                $this->loadModel('AlertCenterNotification');
+                                                $AlertCenterNotificationArray['user_id'] = $userID;
+                                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                                                $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
+                                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                                                $AlertCenterNotificationArray['status'] = 0;
+                                                $AlertCenterNotificationArray['os'] = 'ios';
+                                                $AlertCenterNotificationArray['feed_id'] = $postId;
+                                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                                 /* SAVE DATA for alert center feature End** */
 //                                    print_r($deviceToken_msg_arr);
 //                                    continue;
@@ -3829,15 +3871,16 @@ class ApiController extends AppController {
                                                 /** Added by Babulal Prasad @7-june-2018
                                                  * * SAVE DATA for alert center feature Start
                                                  * ** */
-//                                                $this->loadModel('AlertCenterNotification');
-//                                                $AlertCenterNotificationArray['user_id'] = $userID;
-//                                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                                $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
-//                                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                                $AlertCenterNotificationArray['status'] = 0;
-//                                                $AlertCenterNotificationArray['os'] = 'android';
-//                                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                                $this->loadModel('AlertCenterNotification');
+                                                $AlertCenterNotificationArray['user_id'] = $userID;
+                                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                                                $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
+                                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                                                $AlertCenterNotificationArray['status'] = 0;
+                                                $AlertCenterNotificationArray['os'] = 'android';
+                                                $AlertCenterNotificationArray['feed_id'] = $postId;
+                                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                                 /* SAVE DATA for alert center feature End** */
                                             }
                                         }
@@ -3928,15 +3971,16 @@ class ApiController extends AppController {
                                                     /** Added by Babulal Prasad @7-june-2018
                                                      * * SAVE DATA for alert center feature Start
                                                      * ** */
-//                                                    $this->loadModel('AlertCenterNotification');
-//                                                    $AlertCenterNotificationArray['user_id'] = $userID;
-//                                                    $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                                    $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
-//                                                    $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                                    $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                                    $AlertCenterNotificationArray['status'] = 0;
-//                                                    $AlertCenterNotificationArray['os'] = 'ios';
-//                                                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                                    $this->loadModel('AlertCenterNotification');
+                                                    $AlertCenterNotificationArray['user_id'] = $userID;
+                                                    $AlertCenterNotificationArray['org_id'] = $orgId;
+                                                    $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
+                                                    $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                                    $AlertCenterNotificationArray['original_msg'] = $msg;
+                                                    $AlertCenterNotificationArray['status'] = 0;
+                                                    $AlertCenterNotificationArray['os'] = 'ios';
+                                                    $AlertCenterNotificationArray['feed_id'] = $postId;
+                                                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                                     /* SAVE DATA for alert center feature End** */
                                                     $this->Common->sendPushNotification($deviceToken_msg_arr);
                                                 } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
@@ -3957,15 +4001,16 @@ class ApiController extends AppController {
                                                     /** Added by Babulal Prasad @7-june-2018
                                                      * * SAVE DATA for alert center feature Start
                                                      * ** */
-//                                                    $this->loadModel('AlertCenterNotification');
-//                                                    $AlertCenterNotificationArray['user_id'] = $userID;
-//                                                    $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                                    $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
-//                                                    $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                                    $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                                    $AlertCenterNotificationArray['status'] = 0;
-//                                                    $AlertCenterNotificationArray['os'] = 'android';
-//                                                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                                    $this->loadModel('AlertCenterNotification');
+                                                    $AlertCenterNotificationArray['user_id'] = $userID;
+                                                    $AlertCenterNotificationArray['org_id'] = $orgId;
+                                                    $AlertCenterNotificationArray['alert_type'] = 'Post Notification';
+                                                    $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                                    $AlertCenterNotificationArray['original_msg'] = $msg;
+                                                    $AlertCenterNotificationArray['status'] = 0;
+                                                    $AlertCenterNotificationArray['os'] = 'android';
+                                                    $AlertCenterNotificationArray['feed_id'] = $postId;
+                                                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                                     /* SAVE DATA for alert center feature End** */
                                                 }
                                             }
@@ -4363,7 +4408,7 @@ class ApiController extends AppController {
             $subject = $loggedInUser['fname'] . " " . $loggedInUser['lname'] . " has endorsed you.";
             $endorseeIds = array();
             $emailUserIds = array();
-
+            $endorsementID = 0;
 
             $userSubcenterID = $this->Common->getUserSubcenter($loggedInUser['id'], $loggedInUser['current_org']['id']);
 
@@ -4408,7 +4453,7 @@ class ApiController extends AppController {
                         $endorsementIds[] = $this->Endorsement->id;
                         $endorsed_user_id = array();
                         /* Save data in Feeds table Start Added by Babulal Prasad @03012017*** */
-                        $endorseId = $this->Endorsement->id;
+                        $endorsementID = $endorseId = $this->Endorsement->id;
                         $this->FeedTran->clear();
                         $feedTrans['FeedTran']['feed_id'] = $endorseId;
                         $feedTrans['FeedTran']['org_id'] = $loggedInUser['current_org']['id'];
@@ -4511,6 +4556,7 @@ class ApiController extends AppController {
             $emailUsers = $this->User->find("all", $params);
             //echo $this->User->getLastQuery();
             $emailQueue = array();
+            $endorserID = $loggedInUser['id'];
             $endorserName = $loggedInUser['fname'] . " " . $loggedInUser['lname'];
             $configVars = array("endorser_name" => $endorserName);
 //            pr($emailUsers); exit;
@@ -4525,6 +4571,7 @@ class ApiController extends AppController {
                     }
 //Hi <endorsed name>,  You were ndorsed by <endorser name> from <organizaion name>. 
                     $msg = 'Hi ' . ucfirst($user['User']['fname']) . ", You were nDorsed by " . $endorserName . " from " . $loggedInUser['current_org']["name"] . ".";
+                    $notificationMsg = 'You have recieved an nDorsement from ' . $endorserName;
                     $parameter = array("org_id" => $loggedInUser['current_org']['id'], "category" => "SwitchAction", "notification_type" => "post_promotion",
                         "title" => "nDorse App");
 
@@ -4541,10 +4588,11 @@ class ApiController extends AppController {
 //                        $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
 //                        $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
 //                        $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
-//                        $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                        $AlertCenterNotificationArray['original_msg'] = $msg;
+//                        $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
+//                        $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
 //                        $AlertCenterNotificationArray['status'] = 0;
 //                        $AlertCenterNotificationArray['os'] = 'ios';
+//                        $AlertCenterNotificationArray['feed_id'] = $endorsementID;
 //                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                         /* SAVE DATA for alert center feature End** */
                     } elseif (strtolower($user["LoginStatistics"]["os"]) == "android") {
@@ -4560,14 +4608,29 @@ class ApiController extends AppController {
 //                        $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
 //                        $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
 //                        $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
-//                        $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                        $AlertCenterNotificationArray['original_msg'] = $msg;
+//                        $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
+//                        $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
 //                        $AlertCenterNotificationArray['status'] = 0;
 //                        $AlertCenterNotificationArray['os'] = 'android';
+//                        $AlertCenterNotificationArray['feed_id'] = $endorsementID;
 //                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                         /* SAVE DATA for alert center feature End** */
                     }
                 }
+
+                $this->loadModel('AlertCenterNotification');
+                $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
+                $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
+                $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
+                $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
+                $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
+                $AlertCenterNotificationArray['status'] = 0;
+                $AlertCenterNotificationArray['os'] = '';
+                $AlertCenterNotificationArray['feed_id'] = $endorsementID;
+                $AlertCenterNotificationArray['feed_type'] = 'ndorse';
+                $AlertCenterNotificationArray['sender_id'] = $endorserID;
+                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+
                 //sleep(4);
 
                 $subject = "nDorsement Notification";
@@ -6563,7 +6626,7 @@ class ApiController extends AppController {
                 }
 
 
-                 $start_date = "";
+                $start_date = "";
                 $end_date = "";
                 if (isset($this->request->data["start_date"]) && $this->request->data["start_date"] != "") {
                     $start_date = $this->request->data["start_date"];
@@ -6584,9 +6647,9 @@ class ApiController extends AppController {
                     array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
                                     "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
                                     "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
-                    array("visibility_check" => 0, 'FeedTran.org_id' => $org_id,"user_id like '%" . '"' . $user_id . '"' . "%'",)
+                    array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, "user_id like '%" . '"' . $user_id . '"' . "%'",)
                 );
-                 if ($start_date != "") {
+                if ($start_date != "") {
                     $NEWconditionarray["FeedTran.created >= "] = date("Y-m-d 00:00:00", $start_date);
                 }
                 if ($end_date != "") {
@@ -9850,11 +9913,14 @@ class ApiController extends AppController {
 
                     $status = true;
                     $sendPushNotification = 1;
+                    $userDATA = $this->User->findById($user_id);
+                    $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
+                    $msg = $userName . " liked your nDorsement.";
                     /* Send Push notification */
                     if (isset($sendPushNotification) && $sendPushNotification == 1) {
-
-                        $userDATA = $this->User->findById($user_id);
-                        $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
+//
+//                        $userDATA = $this->User->findById($user_id);
+//                        $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
 
 
                         $loginuser = $this->LoginStatistics->find("all", array(
@@ -9879,15 +9945,17 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @30-may-2019
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-                                $this->loadModel('AlertCenterNotification');
-                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
-                                $AlertCenterNotificationArray['org_id'] = $orgId;
-                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
-                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-                                $AlertCenterNotificationArray['original_msg'] = $msg;
-                                $AlertCenterNotificationArray['status'] = 0;
-                                $AlertCenterNotificationArray['os'] = 'ios';
-                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+//                                $this->loadModel('AlertCenterNotification');
+//                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
+//                                $AlertCenterNotificationArray['org_id'] = $orgId;
+//                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
+//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+//                                $AlertCenterNotificationArray['original_msg'] = $msg;
+//                                $AlertCenterNotificationArray['status'] = 0;
+//                                $AlertCenterNotificationArray['os'] = 'ios';
+//                                $AlertCenterNotificationArray['feed_id'] = $e_id;
+//                                $AlertCenterNotificationArray['sender_id'] = $user_id;
+//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
                                 $this->Common->sendPushNotification($deviceToken_msg_arr);
                             } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
@@ -9909,19 +9977,33 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @30-may-2019
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-                                $this->loadModel('AlertCenterNotification');
-                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
-                                $AlertCenterNotificationArray['org_id'] = $orgId;
-                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
-                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-                                $AlertCenterNotificationArray['original_msg'] = $msg;
-                                $AlertCenterNotificationArray['status'] = 0;
-                                $AlertCenterNotificationArray['os'] = 'android';
-                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+//                                $this->loadModel('AlertCenterNotification');
+//                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
+//                                $AlertCenterNotificationArray['org_id'] = $orgId;
+//                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
+//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+//                                $AlertCenterNotificationArray['original_msg'] = $msg;
+//                                $AlertCenterNotificationArray['status'] = 0;
+//                                $AlertCenterNotificationArray['os'] = 'android';
+//                                $AlertCenterNotificationArray['feed_id'] = $e_id;
+//                                $AlertCenterNotificationArray['sender_id'] = $user_id;
+//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
                             }
                         }
                     }
+                    $this->loadModel('AlertCenterNotification');
+                    $AlertCenterNotificationArray['user_id'] = $endorsed_id;
+                    $AlertCenterNotificationArray['org_id'] = $orgId;
+                    $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
+                    $AlertCenterNotificationArray['plain_msg'] = $msg;
+                    $AlertCenterNotificationArray['original_msg'] = $msg;
+                    $AlertCenterNotificationArray['status'] = 0;
+                    $AlertCenterNotificationArray['os'] = 'android';
+                    $AlertCenterNotificationArray['feed_id'] = $e_id;
+                    $AlertCenterNotificationArray['feed_type'] = 'ndorse';
+                    $AlertCenterNotificationArray['sender_id'] = $user_id;
+                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                     $msg = "Endorsement liked successfully";
                     /** END send notification code** */
                 } else {
@@ -10062,6 +10144,9 @@ class ApiController extends AppController {
                     $msg = "Wall Post liked successfully";
                     $status = true;
                     $sendPushNotification = 1;
+                    $userDATA = $this->User->findById($user_id);
+                    $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
+                    $msg = "Your post titled : " . $postTitle . " \n\n liked by " . $userName;
                     /* Send Push notification */
 //                    if (isset($sendPushNotification) && $sendPushNotification == 1) {
 //
@@ -10135,6 +10220,18 @@ class ApiController extends AppController {
 //                            }
 //                        }
 //                    }
+                    $this->loadModel('AlertCenterNotification');
+                    $AlertCenterNotificationArray['user_id'] = $postedUserID;
+                    $AlertCenterNotificationArray['org_id'] = $orgId;
+                    $AlertCenterNotificationArray['alert_type'] = 'Post Like Notification';
+                    $AlertCenterNotificationArray['plain_msg'] = $msg;
+                    $AlertCenterNotificationArray['original_msg'] = $msg;
+                    $AlertCenterNotificationArray['status'] = 0;
+                    $AlertCenterNotificationArray['os'] = '';
+                    $AlertCenterNotificationArray['feed_id'] = $p_id;
+                    $AlertCenterNotificationArray['feed_type'] = 'post';
+                    $AlertCenterNotificationArray['sender_id'] = $user_id;
+                    $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                     /** END send notification code** */
                 } else {
                     $msg = "you have already liked Post";
@@ -14775,7 +14872,7 @@ class ApiController extends AppController {
         }
     }
 
-    public function getAllLast10Notifications() {
+    public function getAllLast15Notifications() {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
 //                pr($this->request->data); 
@@ -14796,18 +14893,18 @@ class ApiController extends AppController {
                                 'alias' => 'User',
                                 'type' => 'LEFT',
                                 'conditions' => array(
-                                    'AlertCenterNotification.user_id = User.id '
+                                    'AlertCenterNotification.sender_id = User.id '
                                 )
                             )
                         )
                         ,
-                        'conditions' => array('user_id' => $user_id /* , 'org_id' => $currentOrgId */), 'order' => array('AlertCenterNotification.created'), 'limit' => 15));
+                        'conditions' => array('user_id' => $user_id /* , 'org_id' => $currentOrgId */), 'order' => array('AlertCenterNotification.created desc'), 'limit' => 15));
 
                     if (!empty($allNotificationsList)) {
 
                         foreach ($allNotificationsList as $index => $notificationDATA) {
                             //pr($notificationDATA); exit;
-                            $img = '';
+                            $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
                             if ($notificationDATA["User"]["image"] != "") {
                                 $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $notificationDATA["User"]["image"];
                             }
@@ -14994,6 +15091,9 @@ class ApiController extends AppController {
                                 if (isset($userImage) && $userImage != '') {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userImage;
                                     $userImage = str_replace("http", "https", $userImagehttp);
+                                } else {
+                                    $userImagehttp = Router::url('/', true) . "app/webroot/img/user.png";
+                                    $userImage = str_replace("http", "https", $userImagehttp);
                                 }
                                 $postLikeArray[$index]['user_image'] = $userImage;
                                 $postLikeArray[$index]['post_like_id'] = $postLikedata['PostLike']['id'];
@@ -15051,6 +15151,9 @@ class ApiController extends AppController {
                                 $userImage = $postLikedata['User']['image'];
                                 if (isset($userImage) && $userImage != '') {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userImage;
+                                    $userImage = str_replace("http", "https", $userImagehttp);
+                                } else {
+                                    $userImagehttp = Router::url('/', true) . "app/webroot/img/user.png";
                                     $userImage = str_replace("http", "https", $userImagehttp);
                                 }
                                 $endorsementLikeArray[$index]['user_image'] = $userImage;

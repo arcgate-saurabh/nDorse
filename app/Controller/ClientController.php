@@ -1895,7 +1895,7 @@ class ClientController extends AppController {
             $postdata = array("token" => $loggedinUser["token"], "user_id" => $user_id, "org_id" => $current_org);
 //            $jsondata = $this->Apicalls->curlpost("getProfile.json", $postdata);
 
-            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast10Notifications.json", $postdata); //Show all last 10 notifications
+            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast15Notifications.json", $postdata); //Show all last 10 notifications
 //            pr($jsonNotificationData);
 //            exit;
 
