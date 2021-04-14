@@ -6662,7 +6662,8 @@ class ApiController extends AppController {
 
                 /*                 * ***************** */
 
-//                pr($NEWconditionarray); //exit;
+//                pr($NEWconditionarray);
+//                exit;
 //                $NEWparams['fields'] = "*";
                 $NEWparams['fields'] = "count(*) as cnt";
                 $NEWparams['conditions'] = $NEWconditionarray;
@@ -6677,7 +6678,12 @@ class ApiController extends AppController {
 
                 $totalLiveFeed = $totaleFeeds[0][0]["cnt"];
                 $totalpage = ceil($totalLiveFeed / $limit);
-                $NEWconditionarray["FeedTran.endorse_type !="] = 'private';
+                $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
+                $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
+
+                if ($userOrganization['UserOrganization']['user_role'] != 2) {
+                    $NEWconditionarray["FeedTran.endorse_type !="] = 'private';
+                }
 
 //Getting live feeds
 //$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
@@ -16540,6 +16546,154 @@ class ApiController extends AppController {
                 $this->set(array(
                     'result' => array("status" => false
                         , "msg" => "Invalid token in request"),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed."),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+
+    /** Added by Babulal Prasad @12-april-2021 ** */
+    public function getPendingGuestnDorsements() {
+        if ($this->request->is('post')) {
+            if (isset($this->request->data['token'])) {
+                $token = $this->request->data['token'];
+                $userinfo = $this->getuserData($token, true);
+                $loggedinUser = $this->Auth->user();
+//                pr($current_org);
+//                exit;
+
+                if ($loggedinUser['current_org']['org_role'] == "admin") {
+                    $orgid = $loggedinUser['current_org']['id'];
+                    $this->loadModel('Endorsements');
+
+                    $conditionarray["Endorsement.type"] = "guest";
+                    $conditionarray["Endorsement.status"] = "0";
+                    $conditionarray["Endorsement.organization_id"] = $orgid;
+                    $params['conditions'] = $conditionarray;
+                    $params['order'] = 'Endorsement.created desc';
+                    $params['fields'] = "*,UNIX_TIMESTAMP(Endorsement.created) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                    $this->Endorsement->unbindModel(array('hasMany' => array('EndorseCoreValues', 'EndorseReplies', 'EndorseAttachments', 'EndorseHashtag')));
+                    $orgDetail = $this->Endorsement->find("all", $params);
+//                    pr($orgDetail); exit;
+                    foreach ($orgDetail as $key => $endorsementdata) {
+                        $tempEndorse = $endorsementdata['Endorsement'];
+                        $userid[] = $tempEndorse["endorser_id"];
+                        if ($tempEndorse["endorsement_for"] == "user") {
+                            $userid[] = $tempEndorse["endorsed_id"];
+                        }
+                    }
+
+                    $userdata = array();
+                    if (!empty($userid)) {
+                        $totaluserdetails = $this->User->find("all", array("conditions" => array("id" => $userid),
+                            "fields" => array("id", "fname", "lname", "image")));
+                        foreach ($totaluserdetails as $userval) {
+//                            $userdetails[$userval["User"]["id"]] = $userval;
+                            $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
+                            if ($userval["User"]["image"] != "") {
+                                $userdata[$userval["User"]["id"]] .= "&&&&" . Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["User"]["image"];
+                            }
+                        }
+                    }
+//                    pr($userdata);
+//                    exit;
+//                    pr($orgDetail);
+                    $guestPendingNdorseData = array();
+                    foreach ($orgDetail as $key => $endorsementdata) {
+//                        pr($endorsementdata);
+                        $endorseData = $endorsementdata['Endorsement'];
+
+                        $guestPendingNdorseData[$key]['id'] = $endorseData['id'];
+                        $guestPendingNdorseData[$key]['endorsed_id'] = $endorseData['endorsed_id'];
+                        $guestPendingNdorseData[$key]['endorser_id'] = $endorseData['endorser_id'];
+                        $guestPendingNdorseData[$key]['organization_id'] = $endorseData['organization_id'];
+                        $guestPendingNdorseData[$key]['endorsement_for'] = $endorseData['endorsement_for'];
+                        $guestPendingNdorseData[$key]['type'] = $endorseData['type'];
+                        $guestPendingNdorseData[$key]['message'] = $endorseData['message'];
+                        $guestPendingNdorseData[$key]['created'] = $endorsementdata[0]['create_date'];
+                        $guestPendingNdorseData[$key]['servertime'] = $endorsementdata[0]['curr_time'];
+
+                        $endorserId = $endorseData["endorser_id"];
+                        $endorsedId = $endorseData["endorsed_id"];
+
+                        if (isset($userdata[$endorserId])) {
+                            $newuserdata = explode("&&&&", $userdata[$endorserId]);
+//                            pr($newuserdata);
+                            $guestPendingNdorseData[$key]["endorser_name"] = $newuserdata[0];
+                            $defaultImg = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
+                            if (isset($newuserdata[1])) {
+
+                                $needle = 'default.jpg';
+                                if (strpos($newuserdata[1], $needle) !== false) {
+                                    $guestPendingNdorseData[$key]["endorser_image"] = $defaultImg;
+                                } else {
+                                    $guestPendingNdorseData[$key]["endorser_image"] = $newuserdata[1];
+                                }
+                            } else {
+
+                                $guestPendingNdorseData[$key]["endorser_image"] = $defaultImg;
+                            }
+                        } else {
+                            $guestPendingNdorseData[$key]["endorser_name"] = "";
+                            $guestPendingNdorseData[$key]["endorser_image"] = "";
+                        }
+
+
+                        if (isset($userdata[$endorsedId])) {
+                            $newuserdata = explode("&&&&", $userdata[$endorsedId]);
+                            $guestPendingNdorseData[$key]["endorsed_name"] = $newuserdata[0];
+
+                            if (isset($newuserdata[1])) {
+
+                                $needle = 'default.jpg';
+                                if (strpos($newuserdata[1], $needle) !== false) {
+                                    $guestPendingNdorseData[$key]["endorsed_image"] = '';
+                                } else {
+                                    $guestPendingNdorseData[$key]["endorsed_image"] = $newuserdata[1];
+                                }
+                            }
+                        } else {
+                            $guestPendingNdorseData[$key]["endorsed_name"] = "";
+                            $guestPendingNdorseData[$key]["endorsed_image"] = "";
+                        }
+//                        pr($guestPendingNdorseData);
+//                        exit;
+                    }
+//                    exit;
+
+                    $totalrecords = $this->Endorsement->find("count", array("conditions" => array("organization_id" => $orgid, "Endorsement.type" => 'guest', "Endorsement.status = 0")));
+//                    pr($orgDetail);
+//                    exit;
+//                    $this->set('orgDetail', $orgDetail);
+
+                    $returndata = array("pending_daisy" => $guestPendingNdorseData, "total_page" => $totalrecords);
+
+
+
+
+                    $this->set(array(
+                        'result' => array("status" => true
+                            , "msg" => "Pending guest ndorsements list",
+                            "data" => $returndata),
+                        '_serialize' => array('result')
+                    ));
+                } else {
+                    $this->set(array(
+                        'result' => array("status" => false
+                            , "msg" => "Only admin can access."),
+                        '_serialize' => array('result')
+                    ));
+                }
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => "Token is missing in request"),
                     '_serialize' => array('result')
                 ));
             }
