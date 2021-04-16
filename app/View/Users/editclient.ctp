@@ -75,7 +75,7 @@ foreach ($checkarray as $fieldvalue) {
                                 <input type="text" id="inputEmail" value="<?php
                                 echo $userdata['User']['id'];
                                 ;
-                                ?>" class="form-control" readonly="readonly" >
+                                ?>" class="form-control" >
                             </div>
                         </div>
                     </div>
@@ -87,7 +87,7 @@ foreach ($checkarray as $fieldvalue) {
                                 <div class="labelCus require">Email</div>
                             </div>
                             <div class="col-md-10">
-                                <?php echo $this->Form->input('email', array('placeholder' => 'Email', 'class' => 'form-control', 'label' => false, "readonly" => "readonly")); ?>
+                                <?php echo $this->Form->input('email', array('placeholder' => 'Email', 'class' => 'form-control', 'label' => false)); ?>
                             </div>
                         </div>
                         <div class="col-md-6">

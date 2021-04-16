@@ -188,11 +188,16 @@ class EndorseController extends AppController {
 //                pr(json_encode($postdata)); exit;
                 //$jsondata = $this->Apicalls->curlpost("getEndorseList.json", $postdata);
 //                $jsondata = $this->Apicalls->curlpost("getAllLast15Notifications.json", $postdata);
-//                
-//                pr($jsondata); exit;
-                
+//                $postdata = array("token" => $loggedinUser["token"], "status" => 1);
+//                    $jsondata = $this->Apicalls->curlpost("getPendingGuestnDorsements.json", $postdata);
+//                $postdata = array("token" => $loggedinUser["token"], "status" => 2, 'endorsement_id' => 12351);
+//                $jsondata = $this->Apicalls->curlpost("changeGuestEndorsementStatus.json", $postdata);
+//                //                
+//                pr($jsondata);
+//                exit;
+
                 $jsondata = $this->Apicalls->curlpost("getLiveFeeds.json", $postdata);
-                //pr($jsondata); exit;
+//                pr($jsondata); exit;
                 $jsondatadecoded = json_decode($jsondata, true);
                 $org_id = $loggedinUser['current_org']->id;
                 $postdata = array("token" => $loggedinUser["token"], "org_id" => $org_id);

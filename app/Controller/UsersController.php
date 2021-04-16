@@ -315,7 +315,7 @@ class UsersController extends AppController {
                     }
                     //department
                     if (isset($this->request->data['Org']['departmentactive'])) {
-			//	pr($this->request->data['Org']['departmentactive']);
+                        //	pr($this->request->data['Org']['departmentactive']);
                         $counterdepartments = count($this->request->data['Org']['departmentactive']);
                         for ($i = 0; $i < $counterdepartments; $i++) {
                             $hiddendeptid = isset($this->request->data['Org']['departmenthiddenid'][$i]) ? $this->request->data['Org']['departmenthiddenid'][$i] : "";
@@ -1148,7 +1148,7 @@ class UsersController extends AppController {
                     $authUser = $this->Auth->User();
                     //$client_image = $this->Session->read('Auth.User.client_image');
                     if ($this->request->is(array('post', 'put'))) {
-
+//                        pr($this->request->data); exit;
                         //==obile visible field
                         if (isset($this->request->data["User"]["mobile_visible"])) {
                             $this->request->data['User']['mobile_visible'] = 1;
@@ -1285,10 +1285,12 @@ class UsersController extends AppController {
                         //$listState = $this->State->find('list', array('conditions' => array('State.country_id' => $country_id)));
                         $listState = $this->Common->liststate($country_id);
                     }
-
+//                    pr($userdata['User']['dob']); exit;
                     $client_image = $userdata['User']['image'];
-                    $userdata['User']['dob'] = $this->Common->dateConvertDisplay($userdata['User']['dob']);
-                    $this->Session->write('Auth.User.client_image', $client_image);
+                    if (isset($userdata['User']['dob']) && $userdata['User']['dob'] != '') {
+                        $userdata['User']['dob'] = $this->Common->dateConvertDisplay($userdata['User']['dob']);
+                    }
+//                    $this->Session->write('Auth.User.client_image', $client_image);
                     //$client_image = $this->Session->read('Auth.User.client_image');
                     if ($this->request->is(array('post', 'put'))) {
 
@@ -1367,6 +1369,7 @@ class UsersController extends AppController {
                         $this->request->data['User']['skills'] = $skillsval;
                         $this->request->data['User']['hobbies'] = $hobbiesval;
                         $this->User->setValidation('edit');
+//                        pr($this->request->data['User']); exit;
                         $this->User->set($this->request->data['User']);
                         unset($this->User->validate['image']);
                         if ($this->User->Validates()) {

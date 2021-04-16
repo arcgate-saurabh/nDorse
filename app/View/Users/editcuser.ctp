@@ -74,7 +74,7 @@ foreach ($checkarray as $fieldvalue) {
                             <div class="col-md-11">
                                 <input type="text" id="inputEmail" value="<?php
                                 echo $userdata['User']['id'];
-                                ?>" class="form-control" readonly="readonly" >
+                                ?>" class="form-control"  >
                             </div>
                         </div>
                     </div>
@@ -89,7 +89,7 @@ foreach ($checkarray as $fieldvalue) {
                                 <?php
                                 //$decodedEmail = $this->App->decodeData($userdata['User']['email']);
                                 $decodedEmail = $userdata['User']['email'];
-                                echo $this->Form->input('email', array('placeholder' => 'Email', 'class' => 'form-control', 'label' => false, 'value' => $decodedEmail, "readonly" => "readonly"));
+                                echo $this->Form->input('email', array('placeholder' => 'Email', 'class' => 'form-control', 'label' => false, 'value' => $decodedEmail));
                                 ?>
                             </div>
                         </div>
