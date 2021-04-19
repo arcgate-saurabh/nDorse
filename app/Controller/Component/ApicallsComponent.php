@@ -10,8 +10,8 @@ class ApicallsComponent extends Component {
 
     public function initialize(Controller $controller) {
         $this->controller = $controller;
-        $this->apiurl =  "https://api.ndorse.net/api/"; //LIVE
-//        $this->apiurl = Router::url('/', true) . "api/"; //Local
+//        $this->apiurl =  "https://api.ndorse.net/api/"; //LIVE
+        $this->apiurl = Router::url('/', true) . "api/"; //Local
 //        $this->apiurl = "http://52.42.97.9/prod2/api/"; //Stage or prod2
 //        $this->apiurl = "https://staging.ndorse.net/api/"; //Stage or prod2 https server for testing
     }
@@ -23,7 +23,7 @@ class ApicallsComponent extends Component {
     }
 
     public function curlget($method, $data) {
-        $action = trim($method);
+        $action = trim($method);   
         $apiurl = $this->apiurl . $action . "?" . http_build_query($data);
         //echo $apiurl;exit;
         $this->log($apiurl, 'debugget');
@@ -41,7 +41,7 @@ class ApicallsComponent extends Component {
     }
 
     public function curlpost($method, $data) {
-	//pr($data); exit;
+        //pr($data); exit;
         $isLoggedIn = isset($_SESSION['User']) ? true : false;
 
         $action = trim($method);
@@ -61,23 +61,22 @@ class ApicallsComponent extends Component {
             curl_setopt($cSession, CURLOPT_HEADER, true);
             curl_setopt($cSession, CURLOPT_FOLLOWLOCATION, 1);
         }
-        
-         if (strstr($action, 'ADFSClientLogin.json')){
-             if(is_array($data)){
-                 
-             }
-         }
-        
+
+        if (strstr($action, 'ADFSClientLogin.json')) {
+            if (is_array($data)) {
+                
+            }
+        }
+
         curl_setopt($cSession, CURLOPT_URL, $apiurl);
         curl_setopt($cSession, CURLOPT_POST, true);
         curl_setopt($cSession, CURLOPT_POSTFIELDS, http_build_query($data));
-        ob_start();  
-		//pr($cSession);		
+        ob_start();
+        //pr($cSession);		
         //echo "test"; exit;
         curl_exec($cSession);
         $result = ob_get_contents();
 //	pr($result); exit;
-
 //        if (!$result->status && $result->msg == 'Token expired') {
 //            $renewmethod = 'users/renewsession.json';
 //            $renewdata['token'] = $data['token'];
@@ -122,7 +121,7 @@ class ApicallsComponent extends Component {
         ob_start();
         curl_exec($cSession);
         $result = ob_get_contents();
-        pr($result); 
+        pr($result);
         exit;
         ob_end_clean();
         curl_close($cSession);
