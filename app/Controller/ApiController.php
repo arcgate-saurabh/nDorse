@@ -16677,7 +16677,7 @@ class ApiController extends AppController {
 //                    exit;
 //                    $this->set('orgDetail', $orgDetail);
 
-                $returndata = array("pending_daisy" => $guestPendingNdorseData, "total_page" => $totalrecords);
+                $returndata = array("endorsements_list" => $guestPendingNdorseData, "total_page" => $totalrecords);
 
 
                 $msg = "Pending guest ndorsements list";
