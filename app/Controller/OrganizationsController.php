@@ -2152,6 +2152,116 @@ class OrganizationsController extends AppController {
         $datesarray = array("startdate" => $startdate, "enddate" => $enddate);
         $this->set(compact("authUser", "organization_id", "companydetail", 'allvaluesendorsement', 'orgcorevaluesandcode', 'datesarray', 'jobtitles', 'departments', 'entities', 'totalEndorsements', 'orgdata', 'DAISYAwards'));
     }
+    
+    function guestendorsementsreport($organization_id = "null") {
+        $result = $this->Common->checkorgid($organization_id);
+
+        //=============to redirect if orgid is wrong
+        if ($result == "redirect") {
+            $this->redirect(array("controller" => "organizations", "action" => "index"));
+        }
+        $this->loadModel("Endorsement");
+        $this->loadModel("User");
+        $startdate = "";
+        $enddate = "";
+        if (!empty($this->request->data["startdaterandc"]) && !empty($this->request->data["enddaterandc"])) {
+            $requestdata = $this->request->data;
+            $startdate = $this->Common->dateConvertServer($requestdata["startdaterandc"]);
+            $enddate = $this->Common->dateConvertServer($requestdata["enddaterandc"]);
+        }
+        $this->Session->write('orgid', $organization_id);
+        $this->Session->write('datearray', array("startdate" => $startdate, "enddate" => $enddate));
+        $authUser = $this->Auth->User();
+        $orgdata = $this->Organization->findById($organization_id);
+        $companydetail = $this->Common->getcompanyinformation($orgdata["Organization"]);
+        //=======================================endorsement all feature
+        $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcode($organization_id);
+//        $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcodeForReports($organization_id);
+//        pr($orgcorevaluesandcode); exit;
+        $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseReplies')));
+//        $condtionsallendorsement = array("organization_id" => $organization_id);
+//        $condtionsallendorsement = array("type" => "daisy");
+        $condtionsallendorsement["organization_id"] = $organization_id;
+        $condtionsallendorsement["type"] = "guest";
+        //$condtionsallendorsement["Endorsement.status"] = 1;  Show all nDorsements
+        if ($startdate != "" and $enddate != "") {
+            array_push($condtionsallendorsement, "date(Endorsement.created) between '$startdate' and '$enddate'");
+        } else {
+            //month(created) = month(NOW())", "year(created) = year(NOW())
+            array_push($condtionsallendorsement, "month(Endorsement.created) = month(NOW())", "year(Endorsement.created) = year(NOW())");
+//            echo "DATE : "+month(NOW())+"-"+year(NOW());
+
+            $d = new DateTime('first day of this month');
+            $startdate = $d->format('m-d-Y');
+            //$enddate = date('m-d-Y', time());
+            $enddate = date('Y-m-d', time());
+        }
+//        exit;
+        $limit = Configure::read("pageLimit");
+        if (isset($this->request->data["page"]) && $this->request->data["page"] > 1) {
+            $page = $this->request->data["page"];
+            $offset = $page * $limit;
+        } else {
+            $page = 1;
+            $offset = 0;
+        }
+
+        //ini_set('memory_limit', '256M');
+        ini_set('memory_limit', '1024M');
+        $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'Endorse')));
+
+//        $allendorsementList = $this->Endorsement->find("all", array(
+//            'fields' => array('EndorseCoreValues.*', 'Endorsement.*'),
+//            'joins' => array(/* array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id')), */
+//                array('table' => 'endorse_core_values', 'alias' => 'EndorseCoreValues', 'type' => 'LEFT', 'conditions' => array('EndorseCoreValues.endorsement_id = Endorsement.id'))
+//            ), "order" => "Endorsement.created DESC", "group" => 'Endorsement.id', "conditions" => $condtionsallendorsement));
+//
+//        $totalEndorsements = count($allendorsementList);
+
+        $allendorsement = $this->Endorsement->find("all", array(
+            'fields' => array('EndorseCoreValues.*', 'Endorsement.*', 'DaisySubcenter.name'),
+            'joins' => array(
+                /* array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id')), */
+                array('table' => 'daisy_subcenters', 'alias' => 'DaisySubcenter', 'type' => 'LEFT', 'conditions' => array('DaisySubcenter.id = Endorsement.nominee_subcenter_id')),
+                array('table' => 'endorse_core_values', 'alias' => 'EndorseCoreValues', 'type' => 'LEFT', 'conditions' => array('EndorseCoreValues.endorsement_id = Endorsement.id'))
+            ),
+            "order" => "Endorsement.created DESC", "conditions" => $condtionsallendorsement/* , "limit" => 200, "page" => $page, 'offset' => $offset */));
+        //
+//        $allendorsement = $this->Endorsement->find("all", array("order" => "Endorsement.created DESC", "conditions" => $condtionsallendorsement));
+//        echo $this->Endorsement->getLastQuery();
+//        echo $endorsementformonth = $this->Common->endorsementformonth($organization_id);
+//        exit;
+//        exit;
+//        exit;
+//        pr($allendorsement);
+//        exit;
+        $rd = array();
+        foreach ($allendorsement as $index => $data) {
+            $endorseId = $data['Endorsement']['id'];
+            $rd[$endorseId]['Endorsement'] = $data['Endorsement'];
+            $nomineeSubcenterName = "";
+            if (!empty($data['DaisySubcenter']) && isset($data['DaisySubcenter']['name'])) {
+                $nomineeSubcenterName = $data['DaisySubcenter']['name'];
+            }
+            $rd[$endorseId]['Endorsement']['nominee_subcenter_name'] = $nomineeSubcenterName;
+
+            $rd[$endorseId]['EndorseCoreValues'][] = $data['EndorseCoreValues'];
+        }
+//        pr($rd);
+//        exit;
+        $allendorsement = $rd;
+        $departments = $this->Common->getorgdepartments($organization_id);
+        $entities = $this->Common->getorgentities($organization_id);
+        $allvaluesendorsement = $this->Common->allvaluesendorsement($allendorsement, $departments, $entities, 'guest');
+//        echo $totalEndorsements = count($allvaluesendorsement);exit;
+        $jobtitles = $this->Common->getorgjobtitles($organization_id);
+//        pr($allvaluesendorsement);
+//        exit;
+        //=======================================end endorsement all feature
+        $DAISYAwards = Configure::read("DAISY_Awards");
+        $datesarray = array("startdate" => $startdate, "enddate" => $enddate);
+        $this->set(compact("authUser", "organization_id", "companydetail", 'allvaluesendorsement', 'orgcorevaluesandcode', 'datesarray', 'jobtitles', 'departments', 'entities', 'totalEndorsements', 'orgdata', 'DAISYAwards'));
+    }
 
     function allposts($org_id = "null") {
         $organization_id = $org_id;

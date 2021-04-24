@@ -2521,6 +2521,30 @@ function searchalldaisyendorsement(searchvalue) {
     });
 }
 
+//=============search all endorsement data when searched
+function searchallguestendorsement(searchvalue) {
+    var orgid = $("#endorsementorgid").val();
+    var jobtitles = $("#jobtitlefilter").val();
+    var departments = $("#departmentfilter").val();
+    var entities = $("#entityfilter").val();
+    $("#allendorsementsearching").html("");
+    $.ajax({
+        type: "POST",
+        url: siteurl + 'ajax/searchallguestendorsement2',
+        data: {searchvalue: searchvalue, orgid: orgid, jobtitles: jobtitles, departments: departments, entities: entities},
+        success: function (data, xhr) {
+//            console.log(data); return false;
+            $(".search-loader").addClass("search-icn").removeClass('search-loader');
+            $("#allendorsementsearching").html(data);
+            //$(data).appendTo(".table-condensed tbody");
+            //$(".hiddenloader").addClass("hidden");
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $(".search-loader").addClass("search-icn").removeClass('search-loader');
+        }
+    });
+}
+
 var timer = 0;
 var delay = (function () {
     return function (callback, ms) {
@@ -3525,7 +3549,7 @@ $(document).ready(function () {
     });
 
     $("#submitdaisyfilterendorsement").click(function () {
-        alert("TEST");
+//        alert("TEST");
         var jobtitles = $("#jobtitlefilter").val();
         var departments = $("#departmentfilter").val();
         var entities = $("#entityfilter").val();
@@ -3540,6 +3564,36 @@ $(document).ready(function () {
                 $(".search-icn").addClass("search-loader").removeClass('search-icn');
             },
             success: function (data, xhr) {
+                $(".search-loader").addClass("search-icn").removeClass('search-loader');
+                $("#allendorsementsearching").html(data);
+                totalendorsements();
+                //$(data).appendTo(".table-condensed tbody");
+                //$(".hiddenloader").addClass("hidden");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $(".search-loader").addClass("search-icn").removeClass('search-loader');
+            }
+        });
+    });
+     
+   $("#submitguestfilterendorsement").click(function () {
+//        alert("TEST");
+        var jobtitles = $("#jobtitlefilter").val();
+        var departments = $("#departmentfilter").val();
+        var entities = $("#entityfilter").val();
+        var startdate = $("#startdaterandc").val();
+        var enddate = $("#enddaterandc").val();
+        var orgid = $("#endorsementorgid").val();
+        $.ajax({
+            type: "POST",
+            dataType: 'html',
+            url: siteurl + 'ajax/filterallguestendorsement',
+            data: {jobtitles: jobtitles, departments: departments, entities: entities, orgid: orgid, startdate: startdate, enddate: enddate},
+            beforeSend: function () {
+                $(".search-icn").addClass("search-loader").removeClass('search-icn');
+            },
+            success: function (data, xhr) {
+//                console.log(data); return false;
                 $(".search-loader").addClass("search-icn").removeClass('search-loader');
                 $("#allendorsementsearching").html(data);
                 totalendorsements();
@@ -3656,6 +3710,24 @@ $(document).ready(function () {
             $(".search-icn").addClass("search-loader").removeClass('search-icn');
             delay(function () {
                 searchalldaisyendorsement($("#searchalldaisyendorsement").val());
+            }, 1000);
+        }
+//        $(".search-icn").addClass("search-loader").removeClass('search-icn');
+//        delay(function () {
+//            searchpostruntime();
+//        }, 1000);
+        /*}*/
+    });
+    
+    //===fetch value after a delay to send request less than the desired requests
+    $('#searchallguestendorsement').keyup(function () {
+        var jobtitles = $("#jobtitlefilter").val();
+        var departments = $("#departmentfilter").val();
+        var entities = $("#entityfilter").val();
+        if (jobtitles == null && departments == null && entities == null) {
+            $(".search-icn").addClass("search-loader").removeClass('search-icn');
+            delay(function () {
+                searchallguestendorsement($("#searchallguestendorsement").val());
             }, 1000);
         }
 //        $(".search-icn").addClass("search-loader").removeClass('search-icn');

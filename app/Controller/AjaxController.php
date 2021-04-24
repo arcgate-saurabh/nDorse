@@ -4345,6 +4345,146 @@ class AjaxController extends AppController {
         echo $htmlstring = $this->render('/Elements/allendorsementslisting');
         exit;
     }
+    
+    
+    //Added By Babulal Prasad @24-APril-2021 To filter on all guest nDorsements in admin
+    function searchallguestendorsement2() {
+        $this->layout = "ajax_new";
+        $this->autoRender = false;
+        $this->loadModel("UserOrganization");
+        $this->loadModel("Endorsement");
+        $this->loadModel("Entity");
+        $this->loadModel("OrgDepartment");
+        $organization_id = $this->request->data["orgid"];
+        $searchvalue = trim($this->request->data["searchvalue"]);
+        $jobtitles = $this->request->data["jobtitles"];
+        $departments = $this->request->data["departments"];
+
+        $entities = isset($this->request->data["entities"]) ? $this->request->data["entities"] : "";
+        //searching users as per the searching value
+        $conditionssearchingallendorsement = array("organization_id" => $organization_id);
+        if (!empty($jobtitles[0])) {
+            $conditionssearchingallendorsement[] = array("job_title_id" => $jobtitles);
+        }
+        if (!empty($entities[0])) {
+            $conditionssearchingallendorsement[] = array("entity_id" => $entities);
+        }
+        if (!empty($departments[0])) {
+            $conditionssearchingallendorsement[] = array("department_id" => $departments);
+        }
+        $userConditions = array();
+        if ($searchvalue != "") {
+            $userConditions['OR'] = $conditionssearchingallendorsement["OR"] = array(
+                "fname LIKE '%$searchvalue%'",
+                "lname LIKE '%$searchvalue%'",
+                "concat(User.fname,' ',User.lname) LIKE '%$searchvalue%'"
+            );
+        }
+        $userConditions['role'] = 5;
+
+        $fieldssearchingallendorsement = array("User.id");
+        $userorgdata = $this->UserOrganization->find("all", array("fields" => $fieldssearchingallendorsement, "conditions" => $conditionssearchingallendorsement));
+//        pr($conditionssearchingallendorsement); 
+//        pr($userConditions); 
+        $guestuserdata = $this->User->find("all", array("fields" => $fieldssearchingallendorsement, "conditions" => $userConditions));
+//        pr($userorgdata);
+//        pr($userdata);
+//        echo $this->UserOrganization->getLastQuery();
+//        exit;
+//pr($userorgdata); exit;
+        $usersid = array("user" => array(), "entity" => array(), "department" => array());
+        foreach ($userorgdata as $usersdata) {
+            $usersid["user"][] = $usersdata["User"]["id"];
+        }
+        if (count($guestuserdata) > 0) {
+            foreach ($guestuserdata as $gusersdata) {
+                $usersid["user"][] = $gusersdata["User"]["id"];
+            }
+        }
+
+        //searching entity as per the searching value
+        $conditionentity = array("organization_id" => $organization_id);
+        if ($searchvalue != "") {
+            $conditionentity["OR"] = array(
+                "name LIKE '%$searchvalue%'",
+            );
+        }
+        $fieldsentity = array("Entity.id");
+        $entitydata = $this->Entity->find("all", array("fields" => $fieldsentity, "conditions" => $conditionentity));
+        foreach ($entitydata as $entitiesid) {
+            $usersid["entity"][] = $entitiesid["Entity"]["id"];
+        }
+        //searching department as per the searching value
+        $conditionorgdept = array("organization_id" => $organization_id);
+        if ($searchvalue != "") {
+            $conditionorgdept["OR"] = array(
+                "name LIKE '%$searchvalue%'",
+            );
+        }
+        $orgdeptdata = $this->OrgDepartment->find("all", array("fields" => array("OrgDepartment.id"), "conditions" => $conditionorgdept));
+        foreach ($orgdeptdata as $departmentdata) {
+            $usersid["department"][] = $departmentdata["OrgDepartment"]["id"];
+        }
+
+
+//        if ($startdate != "" and $enddate != "") {
+//            array_push($condtionsallendorsement, "date(Endorsement.created) between '$startdate' and '$enddate'");
+//        }
+        $orgcorevaluesandcode = array();
+        $allvaluesendorsement = array();
+        $allendorsementdept = array();
+        if (!empty($usersid)) {
+            $allendorsementusers = array();
+            $allendorsemententity = array();
+            if (!empty($usersid["user"])) {
+
+                $condtionsallendorsementusers = array("Endorsement.organization_id" => $organization_id);
+                $condtionsallendorsementusers = array("Endorsement.type" => "guest");
+//                $condtionsallendorsementusers["Endorsement.organization_id"] = $organization_id;
+//                $condtionsallendorsementusers["Endorsement.type"] = ['guest'];
+
+                $condtionsallendorsementusers["OR"] = array(
+                    "Endorsement.endorser_id" => $usersid["user"],
+                    array("Endorsement.endorsed_id" => $usersid["user"], "endorsement_for" => "user"),
+                );
+                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseReplies')));
+                $allendorsementusers = $this->Endorsement->find("all", array("order" => "Endorsement.created DESC", "conditions" => $condtionsallendorsementusers));
+//                echo $this->Endorsement->getLastQuery();
+//                pr($allendorsementusers);
+//                exit;
+            }
+
+            if (!empty($usersid["entity"])) {
+                $condtionsallendorsemententity = array("Endorsement.organization_id" => $organization_id);
+                $condtionsallendorsemententity["OR"] = array(
+                    array("Endorsement.endorsed_id" => $usersid["entity"], "endorsement_for" => "entity"),
+                );
+                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseReplies')));
+                $allendorsemententity = $this->Endorsement->find("all", array("order" => "Endorsement.created DESC", "conditions" => $condtionsallendorsemententity));
+            }
+
+            if (!empty($usersid["department"])) {
+                $condtionsallendorsementdept = array("Endorsement.organization_id" => $organization_id);
+                $condtionsallendorsementdept["OR"] = array(
+                    array("Endorsement.endorsed_id" => $usersid["department"], "endorsement_for" => "department"),
+                );
+                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseReplies')));
+                $allendorsementdept = $this->Endorsement->find("all", array("order" => "Endorsement.created DESC", "conditions" => $condtionsallendorsementdept));
+            }
+
+
+
+            $allendorsement = array_merge($allendorsemententity, $allendorsementusers, $allendorsementdept);
+
+            $departments = $this->Common->getorgdepartments($organization_id);
+            $entities = $this->Common->getorgentities($organization_id);
+            $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcode($organization_id);
+            $allvaluesendorsement = $this->Common->allvaluesendorsement($allendorsement, $departments, $entities);
+        }
+        $this->set(compact("allvaluesendorsement", "orgcorevaluesandcode"));
+        echo $htmlstring = $this->render('/Elements/allguestendorsementslisting');
+        exit;
+    }
 
     //Added By Babulal Prasad @24-may-2018 To filter on all guest nDorsements in admin
     function searchalldaisyendorsement() {
@@ -4597,6 +4737,64 @@ class AjaxController extends AppController {
         $filtered = "yes";
         $this->set(compact("allvaluesendorsement", "orgcorevaluesandcode", "filtered"));
         echo $htmlstring = $this->render('/Elements/alldaisyendorsementslisting');
+        exit;
+//        foreach($user_org_data as $userorguserid){
+//            $user_id[] = $userorguserid["UserOrganization"]["user_id"];
+//        }
+    }
+    
+    function filterallguestendorsement() {
+        $this->layout = "ajax_new";
+        $this->autoRender = false;
+        $this->loadModel("Endorsement");
+        $organization_id = $this->request->data["orgid"];
+        $jobtitle = isset($this->request->data["jobtitles"]) ? $this->request->data["jobtitles"] : "";
+        $departments = isset($this->request->data["departments"]) ? $this->request->data["departments"] : "";
+        $entities = isset($this->request->data["entities"]) ? $this->request->data["entities"] : "";
+        $startdate = $this->Common->dateConvertServer($this->request->data["startdate"]);
+        $enddate = $this->Common->dateConvertServer($this->request->data["enddate"]);
+        $this->Common->bindmodelcommonjobtitle();
+        $this->Endorsement->bindModel(array(
+            'hasMany' => array(
+                'EndorseCoreValues' => array(
+                    'className' => 'EndorseCoreValues',
+                ),
+            )
+        ));
+        $conditions = array();
+        if (!empty($jobtitle)) {
+            $conditions[] = array("UserOrganization.job_title_id" => $jobtitle);
+        }
+        if (!empty($entities)) {
+            $conditions[] = array("UserOrganization.entity_id" => $entities);
+        }
+        if (!empty($departments)) {
+            $conditions[] = array("UserOrganization.department_id" => $departments);
+        }
+
+        $conditions[] = array(
+            //"UserOrganization.organization_id" => $organization_id,
+            //"UserOrganization.status" => 1, 
+            "Endorsement.organization_id" => $organization_id,
+            "Endorsement.type" => "guest",
+                //"Endorsement.endorsement_for" => "user"   
+        );
+
+        if ($startdate != "" and $enddate != "") {
+            $conditions[] = "date(Endorsement.created) between '$startdate' and '$enddate'";
+        }
+
+        $this->UserOrganization->recursive = 2;
+        $allendorsement = $this->UserOrganization->find("all", array("order" => "Endorsement.created DESC", "conditions" => $conditions));
+
+        $departments = $this->Common->getorgdepartments($organization_id);
+        $entities = $this->Common->getorgentities($organization_id);
+        $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcode($organization_id);
+        $allvaluesendorsement = $this->Common->allvaluesendorsement($allendorsement, $departments, $entities, "userorganization");
+
+        $filtered = "yes";
+        $this->set(compact("allvaluesendorsement", "orgcorevaluesandcode", "filtered"));
+        echo $htmlstring = $this->render('/Elements/allguestendorsementslisting');
         exit;
 //        foreach($user_org_data as $userorguserid){
 //            $user_id[] = $userorguserid["UserOrganization"]["user_id"];
@@ -5066,7 +5264,14 @@ class AjaxController extends AppController {
         $ifAttachment = $this->request->data["ifAttachment"];
         $information = $this->request->data["information"];
         $spreadsheetobject = json_decode($this->request->data["spreadsheetobject"]);
-        $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcodeForReports($organization_id);
+        if ($type == "guest") {
+//            $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcodeForReports($organization_id);
+            $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcode($organization_id);
+        } else {
+
+            $orgcorevaluesandcode = $this->Common->getorgcorevaluesandcodeForReports($organization_id);
+        }
+
         $totalEndorsements = $this->request->data["totalendorsements"];
         $org_detail = $this->Organization->findById($organization_id, array("name", "image"));
         $orgname = $org_detail["Organization"]["name"];
@@ -5114,6 +5319,11 @@ class AjaxController extends AppController {
                     $result = array("Nominator", "Nominator Title", "Nominator Email", "Nominator Mobile", "Nominee", "Nominee Department/Unit", "Sub-Center/Facility", "nDorsement Date", "Award", 'CORE VALUES');
                     $coreValueCountCol = "E";
                     $countCol = 4;
+                } else if ($type == "guest") {
+                    //$result = array("nDorser", "nDorsed","", "nDorsement Date", "Award", 'CORE VALUES');
+                    $result = array("nDorser", "nDorsed", "nDorsed Dept.", "nDorsed Faciliy", "nDorsement Date", 'CORE VALUES');
+                    $coreValueCountCol = "E";
+                    $countCol = 4;
                 }
                 if (!empty($orgcorevaluesandcode)) {
                     foreach ($orgcorevaluesandcode as $key => $corevaluesall) {
@@ -5127,7 +5337,7 @@ class AjaxController extends AppController {
                         }
                     }
                 }
-                if ($type == "daisy") {
+                if ($type == "daisy" || $type == "guest") {
                     array_push($result, 'Status');
                 }
 
@@ -5209,10 +5419,10 @@ class AjaxController extends AppController {
 
 
                 $objPHPExcel->getActiveSheet()->getStyle('D' . $countercolumn)->applyFromArray($styleArray);
-		
-		if($type == "daisy"){
+
+                if ($type == "daisy") {
                     $objPHPExcel->getActiveSheet()->SetCellValue("A" . $columntowriteon, "Total Nominations   " . $totalEndorsements);
-                }else{
+                } else {
                     $objPHPExcel->getActiveSheet()->SetCellValue("A" . $columntowriteon, "Total nDorsements   " . $totalEndorsements);
                 }
 
@@ -5223,7 +5433,7 @@ class AjaxController extends AppController {
                 }
 
                 $columntowriteoncorevalues = $columntowriteon + 1;
-                if ($type != "daisy") {
+                if ($type != "daisy" && $type != "guest") {
                     $objPHPExcel->getActiveSheet()->SetCellValue("A" . $columntowriteoncorevalues, "Core Values Embodied  " . $columnsum);
                 }
                 //==set row height of last columns
@@ -5849,7 +6059,7 @@ class AjaxController extends AppController {
         //echo $this->UserOrganization->getLastQuery();
         //$log = $this->UserOrganization->getDataSource()->getLog(false, false);
         //pr($log);
-       // exit;
+        // exit;
 
 
         $arrayendorsementdetail = $this->Common->arrayforendorsementdetail($endorsementdata);

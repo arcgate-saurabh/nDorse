@@ -1,26 +1,31 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" 
       integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-<?php
-$data = array(
-    "textcenter" => "Customer Portal Setting",
-    "righttabs" => "3",
-    "orgid" => $orgDetail['Organization']['id'],
-    "video_feature" => $orgDetail['Organization']['featured_video_enabled'],
-    "customer_portal" => $orgDetail['Organization']['allow_customer_portal'],
-    "daisy_portal" => $orgDetail['Organization']['enable_daisy_portal']
-);
+      <?php
+      $data = array(
+          "textcenter" => "Customer Portal Setting",
+          "righttabs" => "3",
+          "orgid" => $orgDetail['Organization']['id'],
+          "video_feature" => $orgDetail['Organization']['featured_video_enabled'],
+          "customer_portal" => $orgDetail['Organization']['allow_customer_portal'],
+          "daisy_portal" => $orgDetail['Organization']['enable_daisy_portal']
+      );
 //pr($data); exit;
-$headerpage = ($authUser["role"] == 1) ? 'header' : 'headerorg';
-echo $this->Element($headerpage, array('data' => $data));
+      $headerpage = ($authUser["role"] == 1) ? 'header' : 'headerorg';
+      echo $this->Element($headerpage, array('data' => $data));
 //pr($orgDetail['Organization']['image']); exit;
-?>
+      ?>
 <p><?php echo $this->Session->Flash(); ?></p>
-
 <div class="stats">
-    <div class="row bor-bot">
-        <h2><?php echo $orgDetail['Organization']['name']; ?></h2>
+    <div class="row">
+        <div class="bor-bot d-flexCenter">
+            <h2 class="pull-left"><?php echo $orgDetail['Organization']['name']; ?></h2>
+            <?php echo $this->Html->link("All Guest Nomination", array('controller' => 'organizations', 'action' => 'guestendorsementsreport', $orgDetail['Organization']['id']), array('class' => 'btn btn-success pull-right')); ?>
+            <!--<a href="/nDorseV2/organizations/index" class="btn btn-success pull-right">All DAISY Nomination</a>-->
+
+        </div>
     </div>
 </div>
+
 <section>
     <div class="">
         <section>
