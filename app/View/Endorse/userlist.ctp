@@ -78,7 +78,7 @@
                                     </div>
                                     <div class="right-element">
                                         <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel" data-userid="<?php echo $users['id']; ?>" class="active-userlist-endorse">
-                                            <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options111', 'align' => 'right')) ?>
+                                            <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options111', 'align' => 'right','style'=> 'height: 35px')) ?>
                                         </a>
                                         <div class="clearfix"></div>
                                     </div>
