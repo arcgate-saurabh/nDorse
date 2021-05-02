@@ -323,8 +323,9 @@
     <div class="row bor-bot">
         <h3 ><span class="heading_status_type">Pending</span> Guest nDorsements
             <a class="btn statusbttn btn-warning btn-sm ml15 Pending active" data-name="Pending" disabled="disabled" data-value="0">Pending</a>
-            <a class="btn statusbttn btn-danger btn-sm ml15 Rejected" data-name="Rejected" data-value="2">Rejected</a>
-            <a class="btn statusbttn btn-info btn-sm ml15  Drafted" data-name="Drafted" data-value="3">Drafted</a>
+            <!--<a class="btn statusbttn btn-danger btn-sm ml15 Rejected" data-name="Rejected" data-value="2">Rejected</a>-->
+            <a class="btn statusbttn btn-info btn-sm ml15  Drafted" data-name="Drafted" data-value="3">Hold</a>
+            <a class="btn statusbttn btn-success btn-sm ml15  Approved" data-name="Approved" data-value="1">Approved</a>
         </h3>
         <div class="row col-md-12 ">
             <div class="note">

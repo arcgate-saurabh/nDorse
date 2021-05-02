@@ -1472,7 +1472,7 @@ class CommonComponent extends Component {
             $endorserJobTitle = $this->getUserCurrentJobName($endorsementdataall["Endorsement"]["endorser_id"], $endorsementdataall["Endorsement"]["organization_id"]);
 
 
-
+            $endorsedJobTitle = $endorsedDeptName = "";
             if ($endorsementdataall["Endorsement"]["endorsement_for"] == "user") {
                 $endorseddetail = $UserModel->findById($endorsementdataall["Endorsement"]["endorsed_id"], array("User.id", "User.fname", "User.lname"));
                 $endorsedid = isset($endorseddetail["User"]["id"]) ? $endorseddetail["User"]["id"] : "0";

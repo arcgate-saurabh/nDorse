@@ -29,7 +29,7 @@ $ndorse_home = "ndorse-home.png";
 $ndorse_ndorse = "nDorser.png";
 $ndorse_ndorsed = "nDorsed.png";
 $ndorse_stats = "nDorsements.png";
-$notification = "notification.png";
+$notification = "notification-white.png";
 $ndorsements = "nDorsements.png";
 //$ndorse_ndorse=
 if (strstr($currentpage, "endorse")) {
@@ -53,7 +53,7 @@ if (strstr($currentpage, "client")) {
 //  print_r($pageval);exit;
     $paramsactionendorse = trim($this->params["action"]);
     if ($paramsactionendorse == "notifications") {
-        $notification = "notification-active.png";
+        $notification = "notification-active-white.png";
     }
 }
 $paramsaction = trim($this->params["action"]);
@@ -298,7 +298,7 @@ $paramsaction = trim($this->params["action"]);
                         <a href="<?php echo Router::url('/', true); ?>client/notifications"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
                     </span>
                     <span>
-                        <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/myprofile-icon.png" alt=""  /> </a>
+                        <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/myprofile-icon-white.png" alt=""  /> </a>
                     </span>
 
         <!--                    <span>

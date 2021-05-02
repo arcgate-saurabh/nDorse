@@ -91,9 +91,11 @@ if (!empty($orgdata["Endorsement"])) {
                 <div class="col-md-3">
                     <div class="pull-right ">
                         <div class="col-md-6 col-sm-12">
-                            <a href="javascript:void(0);" rel="<?php echo $endorsement['id']; ?>_one" class="dots">
-                                <?php echo $this->Html->Image("3dots.png", array("align" => "pull-right")); ?>
-                            </a>
+                            <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
+                                <a href="javascript:void(0);" rel="<?php echo $endorsement['id']; ?>_one" class="dots">
+                                    <?php echo $this->Html->Image("3dots.png", array("align" => "pull-right")); ?>
+                                </a>
+                            <?php } ?>
                             <div class="arrow_box <?php echo $endorsement['id']; ?>_one" style="position: absolute; right: -18px; z-index: 2; display: none;">
                                 <div style="border:0px solid #f00; margin-top:-35px; margin-right:5px;" class="pull-right">
                                     <?php echo $this->Html->Image("popupArrow.png"); ?>
@@ -101,22 +103,23 @@ if (!empty($orgdata["Endorsement"])) {
                                 <ul>
                                     <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
                                         <li>
-                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 1)">Selected</a>
+                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 1)">Approve to Live</a>
                                         </li>
                                         <?php
                                     }
-                                    if (isset($endorsement['status']) && $endorsement['status'] != 2) {
-                                        ?>
+                                    /*  if (isset($endorsement['status']) && $endorsement['status'] != 2) {
+                                      ?>
+                                      <li>
+                                      <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 2)">Not Selected</a>
+                                      </li>
+                                      <?php } */
+                                    ?>
+                                    <?php if (isset($endorsement['status']) && ($endorsement['status'] != 3 && $endorsement['status'] != 1)) { ?>
                                         <li>
-                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 2)">Not Selected</a>
+                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 3)">Hold</a>
                                         </li>
                                     <?php } ?>
-                                    <?php //if (isset($endorsement['status']) && $endorsement['status'] != 3) {  ?>
-                                    <!--                                        <li>
-                                                                                <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 3)">Save to Draft</a>
-                                                                            </li>-->
-                                    <?php //} ?>
-                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 3) { ?>
+                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
                                         <li>
                                             <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 4)">Delete</a>
                                         </li>
