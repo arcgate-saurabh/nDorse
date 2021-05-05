@@ -16856,12 +16856,12 @@ class ApiController extends AppController {
                     $followingIdsArray = array_unique($followingIdsArray);
                     $ids = json_encode($followingIdsArray, true);
                     $newdata = $this->UserFollowing->updateAll(array('following_ids' => "'" . $ids . "'"), array('id' => $uFollowingID));
-                    $msg = "User successfully followed. Updated.";
+                    $msg = "User successfully followed.";
                 } else {
                     $newEntry['UserFollowing']['user_id'] = $userID;
                     $newEntry['UserFollowing']['following_ids'] = json_encode(array($fllowingUserId));
                     $newdata = $this->UserFollowing->save($newEntry);
-                    $msg = "User successfully followed. Created.";
+                    $msg = "User successfully followed.";
                 }
 
                 /* Put/Update followers table */
@@ -16883,7 +16883,7 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
+                    'result' => array("status" => true
                         , "msg" => $msg),
                     '_serialize' => array('result')
                 ));
