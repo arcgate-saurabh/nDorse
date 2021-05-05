@@ -11,7 +11,7 @@ class ApiController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow("register", "login", "logout", "getDefaultDepartments", "getDefaultJobTitles", "getOrganization", "getDefaultSkills", "getSubOrganizations", "getProfile", "saveprofile", "getPredefinedValues", "getDefaultHobbies", "isValidQRCode", "saveOrganization", "endorse", "saveEndorseAttachments", "getCountryStateList", "saveprofileorg", "getOrgoption", "saveOrgoption", "sendVerification", "joinOrganization", "searchInOrganization", "getEndorseList", "endorsedetails", "endorselike", "endorsereply", "mySearchInOrganization", "switchGroup", "getorganizationuser", "userOrgAdminAccessAction", "getjoinrequestUser", "acceptorgrequest", "endorsestats", "leaderboard", "forgotPassword", "resetPassword", "changepassword", "userOrgSearch", "getVariousOrganizationData", "termsConditions", "getTimelyUpdates", "recoverusername", "endorsementbydept", "endorsementbyday", "endorsementbycorevalues", "faq", "sendtermconditions", "getEmojis", "getBitmojis", "updateLastAppUsedTime", "renewSession", "endorsementbyjobtitles", "endorsementbyentity", "enterFeedTransData", "searchInOrganizationGuest", "guestEndorse", "getAllPendingListing", "onViewNotification", "onCancelNotification", "sendPushNotificationAndroid", "setnewpassword", "daisyEndorse", "searchInOrganizationDaisy", "ldapLogin", "getOrgShortCode", "ADFSClientLogin", "checkADFSLoginSession", "getOrgSubcenters", "getSubcenterCorevalues", "getOrgEmojis", "getPendingGuestnDorsements");
+        $this->Auth->allow("register", "login", "logout", "getDefaultDepartments", "getDefaultJobTitles", "getOrganization", "getDefaultSkills", "getSubOrganizations", "getProfile", "saveprofile", "getPredefinedValues", "getDefaultHobbies", "isValidQRCode", "saveOrganization", "endorse", "saveEndorseAttachments", "getCountryStateList", "saveprofileorg", "getOrgoption", "saveOrgoption", "sendVerification", "joinOrganization", "searchInOrganization", "getEndorseList", "endorsedetails", "endorselike", "endorsereply", "mySearchInOrganization", "switchGroup", "getorganizationuser", "userOrgAdminAccessAction", "getjoinrequestUser", "acceptorgrequest", "endorsestats", "leaderboard", "forgotPassword", "resetPassword", "changepassword", "userOrgSearch", "getVariousOrganizationData", "termsConditions", "getTimelyUpdates", "recoverusername", "endorsementbydept", "endorsementbyday", "endorsementbycorevalues", "faq", "sendtermconditions", "getEmojis", "getBitmojis", "updateLastAppUsedTime", "renewSession", "endorsementbyjobtitles", "endorsementbyentity", "enterFeedTransData", "searchInOrganizationGuest", "guestEndorse", "getAllPendingListing", "onViewNotification", "onCancelNotification", "sendPushNotificationAndroid", "setnewpassword", "daisyEndorse", "searchInOrganizationDaisy", "ldapLogin", "getOrgShortCode", "ADFSClientLogin", "checkADFSLoginSession", "getOrgSubcenters", "getSubcenterCorevalues", "getOrgEmojis", "getPendingGuestnDorsements", "getUserFollowList");
     }
 
     public function sendVerification() {
@@ -16817,6 +16817,201 @@ class ApiController extends AppController {
             $this->set(array(
                 'result' => array("status" => false
                     , "msg" => "Token is missing in request"),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+
+    /* Created by Babulalprasad at 05-may-2021
+     * To Follow any user
+     */
+
+    public function followingUser() {
+        if ($this->request->is('post')) {
+            if (isset($this->request->data['token'])) {
+                $token = $this->request->data['token'];
+                $userinfo = $this->getuserData($token, true);
+                $userID = $userinfo['users']['id'];
+                if (isset($this->request->data['user_id'])) {
+                    $fllowingUserId = $this->request->data['user_id']; //1364
+                }
+                $this->loadModel("UserFollowing");
+                $this->loadModel("UserFollower");
+                /* Check and put entry in Following table */
+                $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+
+                /* Check entry in follower lists */
+                $userFollower = $this->UserFollower->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $fllowingUserId, 'status' => 1)));
+//                pr($userFollower);
+//                exit;
+
+                $newEntry = array();
+                if (!empty($userFollowings)) {
+                    $userFollowings = array_shift($userFollowings);
+                    $userFollowings = $userFollowings['UserFollowing'];
+                    $uFollowingID = $userFollowings['id'];
+                    $followingIds = $userFollowings['following_ids'];
+                    $followingIdsArray = json_decode($followingIds, true);
+                    $followingIdsArray = array_merge($followingIdsArray, array($fllowingUserId));
+                    $followingIdsArray = array_unique($followingIdsArray);
+                    $ids = json_encode($followingIdsArray, true);
+                    $newdata = $this->UserFollowing->updateAll(array('following_ids' => "'" . $ids . "'"), array('id' => $uFollowingID));
+                    $msg = "User successfully followed. Updated.";
+                } else {
+                    $newEntry['UserFollowing']['user_id'] = $userID;
+                    $newEntry['UserFollowing']['following_ids'] = json_encode(array($fllowingUserId));
+                    $newdata = $this->UserFollowing->save($newEntry);
+                    $msg = "User successfully followed. Created.";
+                }
+
+                /* Put/Update followers table */
+                $newUEntry = array();
+                if (!empty($userFollower)) {
+                    $userFollower = array_shift($userFollower);
+                    $userFollower = $userFollower['UserFollower'];
+                    $uFollowerID = $userFollower['id'];
+                    $followerIds = $userFollower['followers_ids'];
+                    $followersIdsArray = json_decode($followerIds, true);
+                    $followersIdsArray = array_merge($followersIdsArray, array($userID));
+                    $followersIdsArray = array_unique($followersIdsArray);
+                    $followesIds = json_encode($followersIdsArray, true);
+                    $newdata = $this->UserFollower->updateAll(array('followers_ids' => "'" . $followesIds . "'"), array('id' => $uFollowerID));
+                } else {
+                    $newUEntry['UserFollower']['user_id'] = $fllowingUserId;
+                    $newUEntry['UserFollower']['followers_ids'] = json_encode(array($userID));
+                    $newUfollowerData = $this->UserFollower->save($newUEntry);
+                }
+
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => $msg),
+                    '_serialize' => array('result')
+                ));
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => "Token is missing in request"),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed"),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+
+    /* Created by Babulalprasad at 05-may-2021
+     * To get followers and following users
+     */
+
+    public function getUserFollowList() {
+        if ($this->request->is('get')) {
+            if (isset($this->request->query['token'])) {
+                $token = $this->request->query['token'];
+                $userinfo = $this->getuserData($token, true);
+
+                $userID = $userinfo['users']['id'];
+                $type = 'following'; // or follower
+                if (isset($this->request->query['type'])) {
+                    $type = $this->request->query['type'];
+                }
+
+                if ($type == 'following') {
+                    $this->loadModel("UserFollowing");
+                    $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+                    if (!empty($userFollowings)) {
+                        $userFollowings = array_shift($userFollowings);
+                        $userFollowings = $userFollowings['UserFollowing'];
+                        $uFollowingID = $userFollowings['id'];
+                        $followingIdsArray = json_decode($userFollowings['following_ids']);
+                        $users = array();
+                        $rootUrl = Router::url('/', true);
+                        if (!empty($followingIdsArray)) {
+                            $usersData = $this->User->find('all', array('fields' => array('id', "CONCAT(trim(fname),' ',trim(lname)) as fullname", 'image'), 'conditions' => array('id' => $followingIdsArray)));
+                            if (!empty($usersData)) {
+                                foreach ($usersData as $index => $uData) {
+                                    $users[$uData['User']['id']]['id'] = $uData['User']['id'];
+                                    $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
+                                    if (isset($uData['User']['image']) && $uData['User']['image'] != '') {
+                                        $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $uData['User']['image'];
+                                    }
+                                    $users[$uData['User']['id']]['image'] = $img;
+                                    $users[$uData['User']['id']]['fullname'] = $uData[0]['fullname'];
+                                }
+                            }
+                        }
+                        $this->set(array(
+                            'result' => array("status" => true
+                                , "msg" => 'User following list.',
+                                "data" => $users),
+                            '_serialize' => array('result')
+                        ));
+                    } else {
+                        // Following no-one
+                        $x = new stdClass();
+                        $this->set(array(
+                            'result' => array("status" => true
+                                , "msg" => 'User following list.',
+                                "data" => $x),
+                            '_serialize' => array('result')
+                        ));
+                    }
+                } else {
+                    $this->loadModel("UserFollower");
+                    $userFollower = $this->UserFollower->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+                    
+                    if (!empty($userFollower)) {
+                        $userFollower = array_shift($userFollower);
+                        $userFollower = $userFollower['UserFollower'];
+                        $uFollowingID = $userFollower['id'];
+                        $followerIdsArray = json_decode($userFollower['followers_ids']);
+                        $users = array();
+                        $rootUrl = Router::url('/', true);
+                        if (!empty($followerIdsArray)) {
+                            $usersData = $this->User->find('all', array('fields' => array('id', "CONCAT(trim(fname),' ',trim(lname)) as fullname", 'image'), 'conditions' => array('id' => $followerIdsArray)));
+                            if (!empty($usersData)) {
+                                foreach ($usersData as $index => $uData) {
+                                    $users[$uData['User']['id']]['id'] = $uData['User']['id'];
+                                    $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
+                                    if (isset($uData['User']['image']) && $uData['User']['image'] != '') {
+                                        $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $uData['User']['image'];
+                                    }
+                                    $users[$uData['User']['id']]['image'] = $img;
+                                    $users[$uData['User']['id']]['fullname'] = $uData[0]['fullname'];
+                                }
+                            }
+                        }
+                        $this->set(array(
+                            'result' => array("status" => true
+                                , "msg" => 'User followers list.',
+                                "data" => $users),
+                            '_serialize' => array('result')
+                        ));
+                    } else {
+                        // Following no-one
+                        $x = new stdClass();
+                        $this->set(array(
+                            'result' => array("status" => true
+                                , "msg" => 'User followers list.',
+                                "data" => $x),
+                            '_serialize' => array('result')
+                        ));
+                    }
+                }
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => "Token is missing in request"),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Post call not allowed"),
                 '_serialize' => array('result')
             ));
         }
