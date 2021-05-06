@@ -16933,13 +16933,13 @@ class ApiController extends AppController {
                             $usersData = $this->User->find('all', array('fields' => array('id', "CONCAT(trim(fname),' ',trim(lname)) as fullname", 'image'), 'conditions' => array('id' => $followingIdsArray)));
                             if (!empty($usersData)) {
                                 foreach ($usersData as $index => $uData) {
-                                    $users[$uData['User']['id']]['id'] = $uData['User']['id'];
+                                    $users[$index]['id'] = $uData['User']['id'];
                                     $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
                                     if (isset($uData['User']['image']) && $uData['User']['image'] != '') {
                                         $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $uData['User']['image'];
                                     }
-                                    $users[$uData['User']['id']]['image'] = $img;
-                                    $users[$uData['User']['id']]['fullname'] = $uData[0]['fullname'];
+                                    $users[$index]['image'] = $img;
+                                    $users[$index]['fullname'] = $uData[0]['fullname'];
                                 }
                             }
                         }
@@ -16962,7 +16962,7 @@ class ApiController extends AppController {
                 } else {
                     $this->loadModel("UserFollower");
                     $userFollower = $this->UserFollower->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
-                    
+
                     if (!empty($userFollower)) {
                         $userFollower = array_shift($userFollower);
                         $userFollower = $userFollower['UserFollower'];
@@ -16974,13 +16974,13 @@ class ApiController extends AppController {
                             $usersData = $this->User->find('all', array('fields' => array('id', "CONCAT(trim(fname),' ',trim(lname)) as fullname", 'image'), 'conditions' => array('id' => $followerIdsArray)));
                             if (!empty($usersData)) {
                                 foreach ($usersData as $index => $uData) {
-                                    $users[$uData['User']['id']]['id'] = $uData['User']['id'];
+                                    $users[$index]['id'] = $uData['User']['id'];
                                     $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
                                     if (isset($uData['User']['image']) && $uData['User']['image'] != '') {
                                         $img = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $uData['User']['image'];
                                     }
-                                    $users[$uData['User']['id']]['image'] = $img;
-                                    $users[$uData['User']['id']]['fullname'] = $uData[0]['fullname'];
+                                    $users[$index]['image'] = $img;
+                                    $users[$index]['fullname'] = $uData[0]['fullname'];
                                 }
                             }
                         }
@@ -17012,6 +17012,77 @@ class ApiController extends AppController {
             $this->set(array(
                 'result' => array("status" => false
                     , "msg" => "Post call not allowed"),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+
+    /* Created by Babulalprasad at 06-may-2021
+     * To UnFollow any user
+     */
+
+    public function UnfollowUser() {
+        if ($this->request->is('post')) {
+            if (isset($this->request->data['token'])) {
+                $token = $this->request->data['token'];
+                $userinfo = $this->getuserData($token, true);
+                $userID = $userinfo['users']['id'];
+                if (isset($this->request->data['user_id'])) {
+                    $fllowingUserId = $this->request->data['user_id']; //1364
+                }
+                $this->loadModel("UserFollowing");
+                $this->loadModel("UserFollower");
+
+                /* Check and put entry in Following table */
+                $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+
+                /* Check entry in follower lists */
+                $userFollower = $this->UserFollower->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $fllowingUserId, 'status' => 1)));
+
+                $newEntry = array();
+                if (!empty($userFollowings)) {
+                    $userFollowings = array_shift($userFollowings);
+                    $userFollowings = $userFollowings['UserFollowing'];
+                    $uFollowingID = $userFollowings['id'];
+                    $followingIds = $userFollowings['following_ids'];
+                    $followingIdsArray = json_decode($followingIds, true);
+                    $followingIdsArray = array_diff($followingIdsArray, array($fllowingUserId));
+                    sort($followingIdsArray);
+                    $ids = json_encode($followingIdsArray);
+                    $newdata = $this->UserFollowing->updateAll(array('following_ids' => "'" . $ids . "'"), array('id' => $uFollowingID));
+                    $msg = "User successfully unfollowed.";
+                }
+
+                /* Put/Update followers table */
+                $newUEntry = array();
+                if (!empty($userFollower)) {
+                    $userFollower = array_shift($userFollower);
+                    $userFollower = $userFollower['UserFollower'];
+                    $uFollowerID = $userFollower['id'];
+                    $followerIds = $userFollower['followers_ids'];
+                    $followersIdsArray = json_decode($followerIds, true);
+                    $followersIdsArray = array_diff($followersIdsArray, array($userID));
+                    sort($followersIdsArray);
+                    $followesIds = json_encode($followersIdsArray, true);
+                    $newdata = $this->UserFollower->updateAll(array('followers_ids' => "'" . $followesIds . "'"), array('id' => $uFollowerID));
+                }
+
+                $this->set(array(
+                    'result' => array("status" => true
+                        , "msg" => $msg),
+                    '_serialize' => array('result')
+                ));
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => "Token is missing in request"),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else { 
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed"),
                 '_serialize' => array('result')
             ));
         }

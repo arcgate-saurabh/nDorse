@@ -187,8 +187,8 @@ class EndorseController extends AppController {
                 $postdata = array("token" => $loggedinUser["token"], "type" => "public", "subcenter_id" => $user_subcenterID);
 //                
 //                $postdata = array("token" => $loggedinUser["token"], "user_id" => 1363);
-//                    $jsondata = $this->Apicalls->curlpost("followingUser.json", $postdata);
-//                $postdata = array("token" => $loggedinUser["token"],'type' => 'following');
+//                    $jsondata = $this->Apicalls->curlpost("UnfollowUser.json", $postdata);
+//                $postdata = array("token" => $loggedinUser["token"],'type' => 'follower');
 //                                pr(json_encode($postdata)); exit;
 //                    $jsondata = $this->Apicalls->curlget("getUserFollowList.json", $postdata);
                 //                //$jsondata = $this->Apicalls->curlpost("getEndorseList.json", $postdata);
@@ -201,6 +201,8 @@ class EndorseController extends AppController {
 //                pr($jsondata);
 //                exit;
 
+                
+                
                 $jsondata = $this->Apicalls->curlpost("getLiveFeeds.json", $postdata);
 //                pr($jsondata); exit;
                 $jsondatadecoded = json_decode($jsondata, true);
