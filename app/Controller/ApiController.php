@@ -12218,6 +12218,20 @@ class ApiController extends AppController {
                 }
             }
 
+            /* Adding following list into timley updates */
+
+            $userID = $loggedInUser['id'];
+            $this->loadModel("UserFollowing");
+            $followingIdsArray = array();
+            $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+            if (!empty($userFollowings)) {
+                $userFollowings = array_shift($userFollowings);
+                $userFollowings = $userFollowings['UserFollowing'];
+                $uFollowingID = $userFollowings['id'];
+                $followingIdsArray = json_decode($userFollowings['following_ids']);
+            }
+            $returnData['following_users'] = $followingIdsArray;
+            
             if (!empty($orgStatus) && !empty($userStatus)) {
                 if ($orgStatus != 'active') {
 //$isCurrentOrgActive = 0;
@@ -17079,7 +17093,7 @@ class ApiController extends AppController {
                     '_serialize' => array('result')
                 ));
             }
-        } else { 
+        } else {
             $this->set(array(
                 'result' => array("status" => false
                     , "msg" => "Get call not allowed"),
