@@ -39,7 +39,7 @@ if ($endorsedata["type"] == "anonymous") {
         <div class="">
             <div class="grey-bg">
                 <div class="col-md-4 col-sm-4">
-                    <div class="text-left">
+                    <div class="text-left nDorsed">
 
                         <img src="<?php echo $endorsed_image; ?>" user_id="<?php echo $endorsedata["endorsed_id"]; ?>"  
                              endorse_type="anonymous<?php //echo $endorsedata["endorsement_for"];                    ?>" 
@@ -48,6 +48,7 @@ if ($endorsedata["type"] == "anonymous") {
 
                         <span class="rohan-space"><?php echo ucfirst($endorsedata["endorsed_name"]); ?></span>
                         <p class="ndorser-detail">nDorsed</p>
+                        <div class="userFollow"></div>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
@@ -79,7 +80,7 @@ if ($endorsedata["type"] == "anonymous") {
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
-                    <div class="text-right">
+                    <div class="text-right nDorser">
                         <span class="rohan-space hidden-xs"><?php echo ucfirst($endorser_name); ?></span> 
 
                         <img src="<?php echo $endorser_image; ?>" 
@@ -90,6 +91,7 @@ if ($endorsedata["type"] == "anonymous") {
                         <span class="rohan-space visible-xs"><?php echo ucfirst($endorser_name); ?></span> 
 
                         <p class="ndorsed-detail">nDorser</p>
+                        <div class="userFollow follow"></div>
                     </div>
                 </div>
                 <div class="col-xs-12 visible-xs">

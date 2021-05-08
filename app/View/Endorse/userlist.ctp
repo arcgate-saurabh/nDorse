@@ -82,6 +82,9 @@
                                         </a>
                                         <div class="clearfix"></div>
                                     </div>
+                                    <div class="userFollow follow" title="unfollow">
+                                        
+                                    </div>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
