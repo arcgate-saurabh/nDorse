@@ -17018,10 +17018,25 @@ class ApiController extends AppController {
                                 }
                             }
                         }
+                        
+                        
+                        
+                        $this->loadModel("UserFollowing");
+                        $followingIdsArray = array();
+                        $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+                        if (!empty($userFollowings)) {
+                            $userFollowings = array_shift($userFollowings);
+                            $userFollowings = $userFollowings['UserFollowing'];
+                            $uFollowingID = $userFollowings['id'];
+                            $followingIdsArray = json_decode($userFollowings['following_ids']);
+                        }
+                        $returnData['following_users'] = $followingIdsArray;
+                        $returnData['followers'] = $users;
+                        
                         $this->set(array(
                             'result' => array("status" => true
                                 , "msg" => 'User followers list.',
-                                "data" => $users),
+                                "data" => $returnData),
                             '_serialize' => array('result')
                         ));
                     } else {
