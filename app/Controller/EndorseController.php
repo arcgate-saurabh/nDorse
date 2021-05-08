@@ -197,7 +197,8 @@ class EndorseController extends AppController {
 //                    $jsondata = $this->Apicalls->curlpost("getPendingGuestnDorsements.json", $postdata);
 //                $postdata = array("token" => $loggedinUser["token"], "status" => 2, 'endorsement_id' => 12351);
 //                $jsondata = $this->Apicalls->curlpost("changeGuestEndorsementStatus.json", $postdata);
-//                //                
+//                //              
+//                                $jsondata = $this->Apicalls->curlpost("getActiveUserList.json", $postdata);  
 //                pr($jsondata);
 //                exit;
 
@@ -224,7 +225,7 @@ class EndorseController extends AppController {
 //                    $featured_video_enabled = $alldetailsorg['featured_video_enabled'];
 //                }
 //                exit;
-//                $jsondata = $this->Apicalls->curlpost("getActiveUserList.json", $postdata);
+
 //                
 
                 $orgVideoList = $videojsondecodedata['result']['data']['org_video_list'];
