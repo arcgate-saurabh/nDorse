@@ -31,6 +31,7 @@ $ndorse_ndorsed = "nDorsed.png";
 $ndorse_stats = "nDorsements.png";
 $notification = "notification-white.png";
 $ndorsements = "nDorsements.png";
+
 //$ndorse_ndorse=
 if (strstr($currentpage, "endorse")) {
     $pageval = explode("endorse", $currentpage);
@@ -48,12 +49,15 @@ if (strstr($currentpage, "endorse")) {
         $ndorsements = "nDorsements-act.png";
     }
 }
+$myProfile = "myprofile-icon-white.png";
 if (strstr($currentpage, "client")) {
     $pageval = explode("client", $currentpage);
 //  print_r($pageval);exit;
     $paramsactionendorse = trim($this->params["action"]);
     if ($paramsactionendorse == "notifications") {
         $notification = "notification-active-white.png";
+    } elseif ($paramsactionendorse == "profile") {
+        $myProfile = "myprofile-icon-active.png";
     }
 }
 $paramsaction = trim($this->params["action"]);
@@ -158,7 +162,7 @@ $paramsaction = trim($this->params["action"]);
 
                     </li>
 
-                                    <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                                     ?> </li>-->
+                                            <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                                       ?> </li>-->
                     <?php if (isset($loggedUserAuth['User']['profile_completed']) && $loggedUserAuth['User']['profile_completed'] != '') { ?>
                         <li class=""> <?php echo $this->Html->Link("<span class='flaticon-edit-1'></span>Create<br/>an Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> </li>
                     <?php } else { ?>
@@ -187,7 +191,7 @@ $paramsaction = trim($this->params["action"]);
                         ?></li>
                     <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("My Profile", array("controller" => "client", "action" => "profile"), ($paramsaction == "profile") ? array("class" => "active-link") : ""); ?></li>-->
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad-2'></span>Feedback", "mailto:" . SUPPORTEMAIL . "?Subject=Feedback", array("target" => "_top", "escape" => false)); ?></li>
-                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));         ?></li>-->
+                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));           ?></li>-->
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad'></span>FAQ", array("controller" => "client", "action" => "faq"), ($paramsaction == "faq") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-id-card-3'></span>End User License Agreement", array("controller" => "client", "action" => "tnc"), ($paramsaction == "tnc") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <?php //if ($source == 'ADFS') { ?>
@@ -286,7 +290,7 @@ $paramsaction = trim($this->params["action"]);
 //                            $liveFeedUrl = Router::url('/', true) . 'endorse/ADFSLiveFeed';
 //                        }
                         ?>
-                        <!--<a href="<?php //echo Router::url('/', true);                              ?>endorse" class="endorse-home" >-->
+                        <!--<a href="<?php //echo Router::url('/', true);                                ?>endorse" class="endorse-home" >-->
                         <a href="<?php echo $liveFeedUrl; ?>" class="endorse-home" >
                             <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_home; ?>" alt=""  />
                         </a>
@@ -298,20 +302,20 @@ $paramsaction = trim($this->params["action"]);
                         <a href="<?php echo Router::url('/', true); ?>client/notifications"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
                     </span>
                     <span>
-                        <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/myprofile-icon-white.png" alt=""  /> </a>
+                        <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $myProfile; ?>" alt=""  /> </a>
                     </span>
 
-        <!--                    <span>
-                                <span class="count hidden" id="ndorsedCount">                    </span>
-                                <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
-                                    <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
-                                </a>
-                            </span>-->
+                <!--                    <span>
+                                        <span class="count hidden" id="ndorsedCount">                    </span>
+                                        <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
+                                            <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
+                                        </a>
+                                    </span>-->
 
                     <!--     Hide after client ask to version 6.5.1 ticket no = 229
                       <span>  
                           <!--<span class="count">00</span>-->
-                    <!--        <a href="<?php //echo Router::url('/', true);              ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);              ?>img/<?php //echo $ndorse_stats;              ?>" alt=""   />
+                    <!--        <a href="<?php //echo Router::url('/', true);                ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);                ?>img/<?php //echo $ndorse_stats;                ?>" alt=""   />
                             </a>
                         </span>
                     -->

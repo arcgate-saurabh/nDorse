@@ -48,7 +48,8 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#personal-data" aria-expanded="false">Personal</a></li>
                 <li class=""><a data-toggle="tab" href="#nDorsements-data" aria-expanded="false">nDorsements</a></li>
-                <li class=""><a data-toggle="tab" href="#notification-data" aria-expanded="false">Notifications</a></li>
+                <li class=""><a data-toggle="tab" href="#followers-data" aria-expanded="false">Followers</a></li>
+                <li class=""><a data-toggle="tab" href="#followings-data" aria-expanded="false">Following</a></li>
             </ul>
             <div class="tab-content">
                 <div id="personal-data" class="tab-pane active in fade">
@@ -155,16 +156,16 @@
 
                         <!-- DateRange Code start -->
                         <div class="col-md-12 time-range">
-<!--                            <div class="pull-right">
-                                <button class="btn btn-default" id="showdatawithoutdatestas">SHOW ALL</button>
-                            </div>-->
+                            <!--                            <div class="pull-right">
+                                                            <button class="btn btn-default" id="showdatawithoutdatestas">SHOW ALL</button>
+                                                        </div>-->
                         </div>
                         <div class="clearfix"></div>   
-                         <div class="col-md-6">
+                        <div class="col-md-6">
                             <h3>Select a Time Range</h3>
                         </div>
                         <div class="select-date col-md-12">
-                           
+
                             <div class="col-md-3 form-group">
                                 <label> From</label>
 
@@ -295,7 +296,7 @@
 
                     </div>
                 </div>
-                <div id="notification-data" class="tab-pane fade">
+                <div id="followers-data" class="tab-pane fade">
                     <div class="col-md-12">
                         <div class="user-profile ">
                             <div class="col-md-12">
@@ -306,18 +307,33 @@
                             <div class="user-profile">
                                 <table class="table table-hover table-striped">
                                     <tbody>
-                                        <?php
-                                        if (!empty($jsonNotificationDataArray)) {
-                                            foreach ($jsonNotificationDataArray as $index => $notificationDATA) {
-//                                                pr($notificationDATA);
-                                                ?>
-                                                <tr>
-                                                    <td><?php echo $this->Html->image($notificationDATA['user_image'], array('class' => 'img-circle hand show-user-profile', 'width' => "50px", 'height' => '50px')); ?> <?php echo $notificationDATA['plain_msg']; ?></td>
-                                                </tr>
-                                                <?php
-                                            }
-                                        }
-                                        ?>
+
+                                        <tr>
+                                            <td>Followers list</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="followings-data" class="tab-pane fade">
+                    <div class="col-md-12">
+                        <div class="user-profile ">
+                            <div class="col-md-12">
+                                <?php if ($successmsg != "") { ?>
+                                    <div id="flashmessage" class="msg text-center col-md-12" style="margin:10px 0"><?php echo $successmsg; ?></div>
+                                <?php } ?>
+                            </div>
+                            <div class="user-profile">
+                                <table class="table table-hover table-striped">
+                                    <tbody>
+
+                                        <tr>
+                                            <td>Followings list</td>
+                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
