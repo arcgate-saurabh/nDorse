@@ -12220,18 +12220,19 @@ class ApiController extends AppController {
 
             /* Adding following list into timley updates */
 
-            $userID = $loggedInUser['id'];
-            $this->loadModel("UserFollowing");
-            $followingIdsArray = array();
-            $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
-            if (!empty($userFollowings)) {
-                $userFollowings = array_shift($userFollowings);
-                $userFollowings = $userFollowings['UserFollowing'];
-                $uFollowingID = $userFollowings['id'];
-                $followingIdsArray = json_decode($userFollowings['following_ids']);
-            }
-            $returnData['following_users'] = $followingIdsArray;
-            
+//            $userID = $loggedInUser['id'];
+//            $this->loadModel("UserFollowing");
+//            $followingIdsArray = array();
+//            $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+//            if (!empty($userFollowings)) {
+//                $userFollowings = array_shift($userFollowings);
+//                $userFollowings = $userFollowings['UserFollowing'];
+//                $uFollowingID = $userFollowings['id'];
+//                $followingIdsArray = json_decode($userFollowings['following_ids']);
+//            }
+//            $returnData['following_users'] = $followingIdsArray;
+
+
             if (!empty($orgStatus) && !empty($userStatus)) {
                 if ($orgStatus != 'active') {
 //$isCurrentOrgActive = 0;
@@ -14724,11 +14725,30 @@ class ApiController extends AppController {
                     $activeUsers['org_id'] = $currentOrgId;
 
 
+                    /* Adding following list into timley updates */
+
+                    $userID = $loggedInUser['id'];
+                    $this->loadModel("UserFollowing");
+                    $followingIdsArray = array();
+                    $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+                    if (!empty($userFollowings)) {
+                        $userFollowings = array_shift($userFollowings);
+                        $userFollowings = $userFollowings['UserFollowing'];
+                        $uFollowingID = $userFollowings['id'];
+                        $followingIdsArray = json_decode($userFollowings['following_ids']);
+                    }
+//                    $returnData['following_users'] = $followingIdsArray;
+
                     if (isset($ActiveUsersList)) {
                         if (is_array($ActiveUsersList) && count($ActiveUsersList) > 0) {
                             $User = array();
                             foreach ($ActiveUsersList as $index => $UserData) {
+
 //pr($UserData); exit;
+                                $User['is_following'] = false;
+                                if (in_array($UserData['User']['id'], $followingIdsArray)) {
+                                    $User['is_following'] = true;
+                                }
 
                                 $User['name'] = $UserData[0]['fullname'];
                                 $User['about'] = $UserData['User']['about'];
