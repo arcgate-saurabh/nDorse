@@ -1153,4 +1153,26 @@ class CajaxController extends AppController {
         exit();
     }
 
+    /** Added By Babulal Prasad @08-may-2021**
+     * TO update follow/unfollow status */
+    public function updateFollowStatus() {
+//        pr($this->request->data);die;
+        $this->layout = "ajax_new";
+
+        $postData = array();
+        $postData['token'] = $this->request->data['token'];
+        $postData['user_id'] = $this->request->data['userid'];
+
+        $api = 'UnfollowUser.json';
+        if ($this->request->data['status'] == 'follow') {
+            $api = 'followingUser.json';
+        }
+
+//        pr($postData); exit;
+        $response = $this->Apicalls->curlpost($api, $postData);
+        $response = json_decode($response);
+        echo json_encode($response->result, true);
+        exit;
+    }
+
 }

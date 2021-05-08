@@ -44,6 +44,46 @@ $(document).on("click", ".close-suggestion", function () {
     $(".suggestion").addClass('hidden');
 });
 
+/* Added by Babulal Prasad @8-may-2021 
+ * To follow or unfollow users*/
+
+$(document).on("click", ".userFollow", function () {
+    var dataAttr = $(this).attr('data-attr');
+    var userID = $(this).attr('data-user-id');
+    var followStatus = 'follow';
+    if (dataAttr == 'following') {
+        followStatus = 'unfollow';
+    }
+
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: siteurl + 'cajax/updateFollowStatus',
+        data: {
+            status: followStatus,
+            userid: userID,
+        },
+        success: function (response) {
+            if (response.status) {
+                if (followStatus == 'follow') {
+                    console.log('followed');
+                    $("#unfollowing_" + userID).addClass('hidden');
+                    $("#following_" + userID).removeClass('hidden');
+
+                } else {
+                    console.log('un-followed');
+                    $("#following_" + userID).addClass('hidden');
+                    $("#unfollowing_" + userID).removeClass('hidden');
+
+
+                }
+            }
+        }
+    });
+});
+
+
+
 $(document).on("click", ".js_searched", function () {
     var endorsementfor = $(this).attr("data-endorsementfor");
     var endorsedId = $(this).attr("data-endorsedid");
@@ -149,7 +189,7 @@ $(window).scroll(function () {
     //  if($(window).scrollTop() + $(window).height() == $(document).height()) {
     if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
         var keyword = $("#searchendorsements").val();
-        console.log("pagenumber : "+pagenumber + "  // totaluserpages : " + totaluserpages);
+        console.log("pagenumber : " + pagenumber + "  // totaluserpages : " + totaluserpages);
         if (pagenumber <= totaluserpages) {
             var curl = siteurl + 'cajax/searchActiveUser';
             var formData = {page: pagenumber};
@@ -177,7 +217,7 @@ $(window).scroll(function () {
                     }
                 });
             }
-        }else{
+        } else {
             $(".hiddenloader").addClass("hidden");
         }
     }

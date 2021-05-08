@@ -55,10 +55,21 @@ if (isset($activeuserdata) && count($activeuserdata) > 0) {
                         </div>
                         <div class="col-md-4">
                             <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel">
-                                <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options', 'align' => 'right')) ?>
+                                <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options111', 'align' => 'right', 'style' => 'height: 35px')) ?>
                             </a>
                             <div class="clearfix"></div>
                         </div>
+                        <?php
+                        $following = $unfollowing = '';
+                        if ($users['is_following']) {
+                            $unfollowing = 'hidden';
+                        } else {
+                            $following = 'hidden';
+                        }
+                        ?>
+
+                        <div class="userFollow follow <?php echo $following; ?>" id="following_<?php echo $users["id"]; ?>"  data-attr="following" data-user-id = '<?php echo $users["id"]; ?>'></div>
+                        <div class="userFollow unfollow <?php echo $unfollowing; ?>" id="unfollowing_<?php echo $users["id"]; ?>" data-attr="unfollowing" data-user-id = '<?php echo $users["id"]; ?>'></div>
                     </div>
                     <div class="clearfix"></div>
                 </div>

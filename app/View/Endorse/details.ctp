@@ -42,7 +42,7 @@ if ($endorsedata["type"] == "anonymous") {
                     <div class="text-left nDorsed">
 
                         <img src="<?php echo $endorsed_image; ?>" user_id="<?php echo $endorsedata["endorsed_id"]; ?>"  
-                             endorse_type="anonymous<?php //echo $endorsedata["endorsement_for"];                    ?>" 
+                             endorse_type="anonymous<?php //echo $endorsedata["endorsement_for"];                     ?>" 
                              data-user-id="<?php echo $endorsedata["endorsed_id"]; ?>" data-logged-id="<?php echo $logged_user_id; ?>"
                              width="100" class="img-circle ndorse_click hand show-user-profile"  alt=""/>
 
@@ -52,7 +52,7 @@ if ($endorsedata["type"] == "anonymous") {
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
-                    <div class="date-detail hidden-xs"><?php //echo $createddate;                    ?>
+                    <div class="date-detail hidden-xs"><?php //echo $createddate;                     ?>
 
                         <?php
                         //=========calculating time difference from present time.
@@ -85,13 +85,17 @@ if ($endorsedata["type"] == "anonymous") {
 
                         <img src="<?php echo $endorser_image; ?>" 
                              data-user-id="<?php echo $endorsedata["endorser_id"]; ?>" data-logged-id="<?php echo $logged_user_id; ?>"
-                             user_id="<?php echo $endorsedata["endorser_id"]; ?>" endorse_type="anonymous<?php //echo $ndorser_anonymous;              ?>"  
+                             user_id="<?php echo $endorsedata["endorser_id"]; ?>" endorse_type="anonymous<?php //echo $ndorser_anonymous;               ?>"  
                              width="100" class="img-circle ndorse_click hand <?php echo $show_user_profile; ?>" alt=""/>
 
                         <span class="rohan-space visible-xs"><?php echo ucfirst($endorser_name); ?></span> 
 
                         <p class="ndorsed-detail">nDorser</p>
-                        <div class="userFollow follow"></div>
+                        <?php
+                        if ($logged_user_id != $endorsedata["endorser_id"]) {
+                            ?>
+                            <div class="userFollow follow"></div>
+                        <?php } ?>
                     </div>
                 </div>
                 <div class="col-xs-12 visible-xs">
@@ -194,7 +198,6 @@ if ($endorsedata["type"] == "anonymous") {
                         foreach ($endorsedata["emojis_image"] as $imageval) {
 //                            $imageval = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $imageval;
 //                            $imageval = str_replace("http", "https", $imageval);
-                            
 //                            if (strpos($imageval, 'localhost') < 0 || strpos($imageval, 'staging') < 0) {
 //                                $imageval = str_replace("http", "https", $imageval);
 //                            }
@@ -341,7 +344,7 @@ if ($endorsedata["type"] == "anonymous") {
             <div class="modal-body">
 
                 <div class="form-group">
-                    <?php //echo $this->Form->input('reply', array('placeholder' => 'Enter Your text Here...','class' => 'my-pro-textarea', 'label' => false,'type'=>'textarea'));    ?> 
+                    <?php //echo $this->Form->input('reply', array('placeholder' => 'Enter Your text Here...','class' => 'my-pro-textarea', 'label' => false,'type'=>'textarea'));     ?> 
                     <textarea id="reply" placeholder="Enter the text for reply"> </textarea>
                     <div id="replyerr" class="error" style="display:none;"></div>
                 </div>

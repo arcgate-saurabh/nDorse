@@ -496,7 +496,7 @@ class ClientController extends AppController {
             $jsondata = $this->Apicalls->curlpost("getProfile.json", $postdata);
 
 //            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast10Notifications.json", $postdata); //Show all last 10 notifications
-//            pr($jsonNotificationData);
+//            pr($jsondata);
 //            exit;
 
             $jsondatadecoded = json_decode($jsondata, true);

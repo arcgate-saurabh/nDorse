@@ -1525,6 +1525,26 @@ class ApiController extends AppController {
                 $userinfo = array("user_data" => $userinfo, "organization_data" => $orgarr);
             }
 
+            // Added by Babulalprasad @8-may2021 
+                $this->loadModel("UserFollowing");
+                $followingIdsArray = array();
+                $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $authuser["id"], 'status' => 1)));
+                if (!empty($userFollowings)) {
+                    $userFollowings = array_shift($userFollowings);
+                    $userFollowings = $userFollowings['UserFollowing'];
+                    $uFollowingID = $userFollowings['id'];
+                    $followingIdsArray = json_decode($userFollowings['following_ids']);
+                }
+                if(!empty($followingIdsArray)){
+                    if(in_array($user_id,$followingIdsArray)){
+                        $userinfo['is_following'] = true;
+                    }else{
+                        $userinfo['is_following'] = false;
+                    }
+                }
+            
+            
+            
 //  $userinfo = $this->getuserData($token, true);
             if (!empty($userinfo)) {
                 unset($userinfo["user_data"]["password"]);
@@ -8566,7 +8586,34 @@ class ApiController extends AppController {
                         $endorse["message"] = $endormentMsg;
                     }
                 }
-//pr($endorse); exit;
+
+
+                // Added by Babulalprasad @8-may2021 
+                $this->loadModel("UserFollowing");
+                $followingIdsArray = array();
+                $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $selfuser_id, 'status' => 1)));
+                if (!empty($userFollowings)) {
+                    $userFollowings = array_shift($userFollowings);
+                    $userFollowings = $userFollowings['UserFollowing'];
+                    $uFollowingID = $userFollowings['id'];
+                    $followingIdsArray = json_decode($userFollowings['following_ids']);
+                }
+                
+                if(!empty($followingIdsArray)){
+                    if(in_array($endorser_id,$followingIdsArray)){
+                        $endorse['endorser_following'] = true;
+                    }else{
+                        $endorse['endorser_following'] = false;
+                    }
+                    
+                    if(in_array($endorserd_id,$followingIdsArray)){
+                        $endorse['endorsed_following'] = true;
+                    }else{
+                        $endorse['endorsed_following'] = false;
+                    }
+                }
+
+                //pr($endorse); exit;
                 $this->set(array(
                     'result' => array("status" => true
                         , "msg" => "Endorsement details",
@@ -17018,9 +17065,9 @@ class ApiController extends AppController {
                                 }
                             }
                         }
-                        
-                        
-                        
+
+
+
                         $this->loadModel("UserFollowing");
                         $followingIdsArray = array();
                         $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
@@ -17032,7 +17079,7 @@ class ApiController extends AppController {
                         }
                         $returnData['following_users'] = $followingIdsArray;
                         $returnData['followers'] = $users;
-                        
+
                         $this->set(array(
                             'result' => array("status" => true
                                 , "msg" => 'User followers list.',

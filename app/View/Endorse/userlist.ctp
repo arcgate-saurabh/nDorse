@@ -78,13 +78,22 @@
                                     </div>
                                     <div class="right-element">
                                         <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel" data-userid="<?php echo $users['id']; ?>" class="active-userlist-endorse">
-                                            <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options111', 'align' => 'right','style'=> 'height: 35px')) ?>
+                                            <?php echo $this->Html->image('nDorse-now.png', array('class' => 'show-options111', 'align' => 'right', 'style' => 'height: 35px')) ?>
                                         </a>
                                         <div class="clearfix"></div>
                                     </div>
-                                    <div class="userFollow follow" title="unfollow">
-                                        
-                                    </div>
+
+                                    <?php
+                                    $following = $unfollowing = '';
+                                    if ($users['is_following']) {
+                                        $unfollowing = 'hidden';
+                                    } else {
+                                        $following = 'hidden';
+                                    }
+                                    ?>
+
+                                    <div class="userFollow follow <?php echo $following; ?>" id="following_<?php echo $users["id"]; ?>"  data-attr="following" data-user-id = '<?php echo $users["id"]; ?>'></div>
+                                    <div class="userFollow unfollow <?php echo $unfollowing; ?>" id="unfollowing_<?php echo $users["id"]; ?>" data-attr="unfollowing" data-user-id = '<?php echo $users["id"]; ?>'></div>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
@@ -145,15 +154,15 @@ function remove_emoji($text) {
 
         $('.active-userlist-endorse').on('click', function () {
             var userID = $(this).attr('data-userid');
-            
-            
-            
+
+
+
             $(document).find("#selected_user_id").val(userID);
-            
+
         });
 
 
-//        var publicnDorseVisible = "<?php // echo $endorse['public_endorse_visible'];                           ?>";
+//        var publicnDorseVisible = "<?php // echo $endorse['public_endorse_visible'];                                       ?>";
 //        if (publicnDorseVisible == 0) {
 //            $(document).find(".my-nDorse-btn").removeClass('ndorseNowBtn');
 //        }
