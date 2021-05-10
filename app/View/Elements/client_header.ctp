@@ -1,7 +1,8 @@
 <?php
 if ($this->Session->read('Auth.User.id')) {
     $loggedUserAuth = ($this->Session->read('Auth'));
-//    pr($loggedUserAuth['User']['source']); exit;
+    $loggedUserNotifications = $this->Session->read('Auth.Notifications');
+//    pr($loggedUserN); exit;
     $loggedUserRole = ($this->Session->read('Auth.User.role'));
     $current_org = $this->Session->read('Auth.User.current_org');
 //    pr($current_org->id);exit;
@@ -10,6 +11,7 @@ if ($this->Session->read('Auth.User.id')) {
     $check_current_org = 0;
 //    pr($orgUpdates);
 //    exit;
+
     if (!empty($current_org) && ($orgUpdates['org_status'] == 'active' && $orgUpdates['user_status'] == 'active')) {
         $check_current_org = $current_org->id;
     }
@@ -162,7 +164,7 @@ $paramsaction = trim($this->params["action"]);
 
                     </li>
 
-                                            <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                                       ?> </li>-->
+                                                                                        <!--<li class=""> <?php //echo $this->Html->Link("Create Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link") : "");                                                                  ?> </li>-->
                     <?php if (isset($loggedUserAuth['User']['profile_completed']) && $loggedUserAuth['User']['profile_completed'] != '') { ?>
                         <li class=""> <?php echo $this->Html->Link("<span class='flaticon-edit-1'></span>Create<br/>an Org", array("controller" => "client", "action" => "createorg"), ($paramsaction == "createorg") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> </li>
                     <?php } else { ?>
@@ -191,7 +193,7 @@ $paramsaction = trim($this->params["action"]);
                         ?></li>
                     <!--<li class="sidebar-brand"> <?php echo $this->Html->Link("My Profile", array("controller" => "client", "action" => "profile"), ($paramsaction == "profile") ? array("class" => "active-link") : ""); ?></li>-->
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad-2'></span>Feedback", "mailto:" . SUPPORTEMAIL . "?Subject=Feedback", array("target" => "_top", "escape" => false)); ?></li>
-                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));           ?></li>-->
+                    <!--<li class="sidebar-brand"> <?php // echo $this->Html->Link("Recommend nDorse", "", array("class" => "recommendLnk"));                      ?></li>-->
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-notepad'></span>FAQ", array("controller" => "client", "action" => "faq"), ($paramsaction == "faq") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <li class=""> <?php echo $this->Html->Link("<span class='flaticon-id-card-3'></span>End User License Agreement", array("controller" => "client", "action" => "tnc"), ($paramsaction == "tnc") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?></li>
                     <?php //if ($source == 'ADFS') { ?>
@@ -290,7 +292,7 @@ $paramsaction = trim($this->params["action"]);
 //                            $liveFeedUrl = Router::url('/', true) . 'endorse/ADFSLiveFeed';
 //                        }
                         ?>
-                        <!--<a href="<?php //echo Router::url('/', true);                                ?>endorse" class="endorse-home" >-->
+                        <!--<a href="<?php //echo Router::url('/', true);                                           ?>endorse" class="endorse-home" >-->
                         <a href="<?php echo $liveFeedUrl; ?>" class="endorse-home" >
                             <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_home; ?>" alt=""  />
                         </a>
@@ -301,95 +303,92 @@ $paramsaction = trim($this->params["action"]);
                     <span>
                         <a href="<?php echo Router::url('/', true); ?>client/notifications"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
                     </span>
+                    <!-- Added by Babualal prasad to show users notifications -->
+
                     <span class="dropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
-                     <div class="dropdown-menu user-profile" aria-labelledby="dropdownMenuButton">
-                       <table class="table table-hover table-striped">
-<tbody>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="#" style="color: beige;text-decoration: none;">
-                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
-                <span style="margin-left: 10px;">Dilbag Singh</span>
-            </a>
-        </td>
-    </tr>
+                        <?php if (!empty($loggedUserNotifications)) { ?>
+                            <div class="dropdown-menu user-profile" aria-labelledby="dropdownMenuButton">
+                                <table class="table table-hover table-striped">
+                                    <tbody>
+                                        <?php
+                                        foreach ($loggedUserNotifications as $index => $notifications) {
+//                                            pr($notifications);
+                                            ?>
+                                            <tr>
+                                                <td>
 
-</tbody>
-</table>
-                      </div>
+                                                    <?php
+
+                                                    if ($notifications['feed_type'] != 'null') {
+                                                        $rootUrl = Router::url('/', true);
+                                                        if ($notifications['feed_type'] == 'ndorse') {
+                                                            $link = $rootUrl . "endorse/details/" . $notifications['feed_id'];
+                                                        } else {
+                                                            $link = $rootUrl . "post/details/" . $notifications['feed_id'];
+                                                        }
+                                                        ?>
+                                                        <a href="<?php echo $link; ?>" style="color: beige;text-decoration: none;">
+                                                            <?php
+                                                            echo $this->Html->image($notifications['user_image'], array('class' => 'img-circle hand show-user-profile', 'width' => "50px", 'height' => '50px'));
+                                                            echo '<span style="margin-left: 20px;">' . $notifications['plain_msg'] . "</span>";
+                                                            ?>
+                                                        </a>                                    
+                                                        <?php
+                                                    } else {
+                                                        echo $this->Html->image($notifications['user_image'], array('class' => 'img-circle hand show-user-profile', 'width' => "50px", 'height' => '50px'));
+                                                        echo '<span style="margin-left: 20px;">' . $notifications['plain_msg'] . "</span>";
+                                                    }
+                                                    ?>
+
+
+
+<!--                                                    <a href="#" style="color: beige;text-decoration: none;">
+                                                        <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo $notifications['user_image']; ?>" />
+                                                        <span style="margin-left: 10px;"><?php echo $notifications['user_name']; ?></span>
+                                                    </a>-->
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php } else {
+                            ?>
+                            <div class="dropdown-menu user-profile" aria-labelledby="dropdownMenuButton">
+                                <table class="table table-hover table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td>No new notifications</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php }
+                        ?>
+
                     </span>
+
                     <span>
                         <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $myProfile; ?>" alt=""  /> </a>
                     </span>
 
-                <!--                    <span>
-                                        <span class="count hidden" id="ndorsedCount">                    </span>
-                                        <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
-                                            <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
-                                        </a>
-                                    </span>-->
+                                                            <!--                    <span>
+                                                                                    <span class="count hidden" id="ndorsedCount">                    </span>
+                                                                                    <a href="<?php echo Router::url('/', true); ?>endorse/ndorsed" class="endorse-ndorsed">
+                                                                                        <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorse_ndorsed; ?>" alt="" />
+                                                                                    </a>
+                                                                                </span>-->
 
                     <!--     Hide after client ask to version 6.5.1 ticket no = 229
                       <span>  
                           <!--<span class="count">00</span>-->
-                    <!--        <a href="<?php //echo Router::url('/', true);                ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);                ?>img/<?php //echo $ndorse_stats;                ?>" alt=""   />
+                    <!--        <a href="<?php //echo Router::url('/', true);                           ?>endorse/stats"> <img src="<?php //echo Router::url('/', true);                           ?>img/<?php //echo $ndorse_stats;                           ?>" alt=""   />
                             </a>
                         </span>
                     -->
@@ -433,7 +432,7 @@ $paramsaction = trim($this->params["action"]);
                                     <?php } ?>
 
                                     <!--                                <li>
-                                    <?php //echo $this->Html->link('DAISY Award!', array('controller' => 'endorse', 'action' => 'daisy'));    ?>
+                                    <?php //echo $this->Html->link('DAISY Award!', array('controller' => 'endorse', 'action' => 'daisy'));        ?>
                                                                     </li>-->
                                 </ul>
                             </div>
@@ -455,7 +454,7 @@ $paramsaction = trim($this->params["action"]);
                     }
                 }
                 ?>
-                <?php //echo $this->Html->Image("add-nDorse.png") ;         ?>
+                <?php //echo $this->Html->Image("add-nDorse.png") ;             ?>
                 <div class="clearfix"></div>
             </div>
         </div>
@@ -469,7 +468,7 @@ $paramsaction = trim($this->params["action"]);
                 <!--<h4 class="modal-title select-type" >Select Type</h4> --> 
             </div>
             <div class="modal-body">
-                <?php //echo $this->Form->create('endorsementType', array('class' => 'select-type', 'url' => Router::url('/', true) . "post/add"));    ?> 
+                <?php //echo $this->Form->create('endorsementType', array('class' => 'select-type', 'url' => Router::url('/', true) . "post/add"));     ?> 
                 <?php
                 $rootUrl = Router::url('/', true);
 

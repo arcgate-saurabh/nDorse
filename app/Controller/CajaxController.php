@@ -963,6 +963,19 @@ class CajaxController extends AppController {
         if (isset($loggedinUser['current_org'])) {
             $postdata['token'] = $loggedinUser['token'];
             $apiResponse = $this->Apicalls->curlpost("getTimelyUpdates.json", $postdata);
+
+            /** Notification * */
+            $postdata = array("token" => $loggedinUser["token"], "user_id" => $loggedinUser['id'], "org_id" => $loggedinUser['current_org']);
+//                    pr($postdata);
+            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast15Notifications.json", $postdata); //Show all last 10 notifications
+
+            $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
+
+            $jsonNotificationDataArray = $jsonNotificationDataArray['result']['data']['AlertCenterNotification'];
+
+//                    $returnData['notifications'] = $jsonNotificationDataArray;
+            $this->Session->write('Auth.Notifications', $jsonNotificationDataArray);
+
             //pr($apiResponse); exit;
             $response = json_decode($apiResponse);
             $response->noData = false;

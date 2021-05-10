@@ -587,6 +587,9 @@ class ApiController extends AppController {
 
                     $returnData['pending_requests'] = $pendingRequestOrgs;
 
+
+
+
 //                    pr($returnData); exit;
 //                    $a = $this->Auth->user();
 //                    $returnData['auth_user'] = $a;
@@ -1526,25 +1529,25 @@ class ApiController extends AppController {
             }
 
             // Added by Babulalprasad @8-may2021 
-                $this->loadModel("UserFollowing");
-                $followingIdsArray = array();
-                $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $authuser["id"], 'status' => 1)));
-                if (!empty($userFollowings)) {
-                    $userFollowings = array_shift($userFollowings);
-                    $userFollowings = $userFollowings['UserFollowing'];
-                    $uFollowingID = $userFollowings['id'];
-                    $followingIdsArray = json_decode($userFollowings['following_ids']);
+            $this->loadModel("UserFollowing");
+            $followingIdsArray = array();
+            $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $authuser["id"], 'status' => 1)));
+            if (!empty($userFollowings)) {
+                $userFollowings = array_shift($userFollowings);
+                $userFollowings = $userFollowings['UserFollowing'];
+                $uFollowingID = $userFollowings['id'];
+                $followingIdsArray = json_decode($userFollowings['following_ids']);
+            }
+            if (!empty($followingIdsArray)) {
+                if (in_array($user_id, $followingIdsArray)) {
+                    $userinfo['is_following'] = true;
+                } else {
+                    $userinfo['is_following'] = false;
                 }
-                if(!empty($followingIdsArray)){
-                    if(in_array($user_id,$followingIdsArray)){
-                        $userinfo['is_following'] = true;
-                    }else{
-                        $userinfo['is_following'] = false;
-                    }
-                }
-            
-            
-            
+            }
+
+
+
 //  $userinfo = $this->getuserData($token, true);
             if (!empty($userinfo)) {
                 unset($userinfo["user_data"]["password"]);
@@ -8598,17 +8601,17 @@ class ApiController extends AppController {
                     $uFollowingID = $userFollowings['id'];
                     $followingIdsArray = json_decode($userFollowings['following_ids']);
                 }
-                
-                if(!empty($followingIdsArray)){
-                    if(in_array($endorser_id,$followingIdsArray)){
+
+                if (!empty($followingIdsArray)) {
+                    if (in_array($endorser_id, $followingIdsArray)) {
                         $endorse['endorser_following'] = true;
-                    }else{
+                    } else {
                         $endorse['endorser_following'] = false;
                     }
-                    
-                    if(in_array($endorserd_id,$followingIdsArray)){
+
+                    if (in_array($endorserd_id, $followingIdsArray)) {
                         $endorse['endorsed_following'] = true;
-                    }else{
+                    } else {
                         $endorse['endorsed_following'] = false;
                     }
                 }
@@ -12176,6 +12179,12 @@ class ApiController extends AppController {
 
                 /*                 * UPDATE LAST LOGIN TIME* */
                 $this->updateLastAppUsedTime();
+                
+                
+
+                    
+                
+                
             } else {
 
 
@@ -12263,8 +12272,14 @@ class ApiController extends AppController {
                     $userStatus = array_search($defaultOrganization['UserOrganization']["status"], $statusConfig);
                     $orgStatus = array_search($defaultOrganization['Organization']["status"], $statusConfig);
                 }
+                
             }
 
+                                
+
+            
+            
+            
             /* Adding following list into timley updates */
 
 //            $userID = $loggedInUser['id'];
@@ -17024,7 +17039,7 @@ class ApiController extends AppController {
                                 }
                             }
                         }
-                        
+
                         $returnData['following'] = $users;
                         $this->set(array(
                             'result' => array("status" => true
@@ -17079,8 +17094,8 @@ class ApiController extends AppController {
                             $uFollowingID = $userFollowings['id'];
                             $followingIdsArray = json_decode($userFollowings['following_ids']);
                         }
-                        
-                        
+
+
                         $returnData['following_users'] = $followingIdsArray;
                         $returnData['followers'] = $users;
 
