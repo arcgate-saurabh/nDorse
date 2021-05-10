@@ -1,11 +1,11 @@
 <div class="user-profile ">
 
     <section>
-        <div class="col-md-12" style="margin-bottom:20px;">
+        <div class="userFlexbox" style="margin-bottom:20px;">
             <?php if ($successmsg != "") { ?>
                 <div id="flashmessage" class="msg text-center col-md-12" style="margin:10px 0"><?php echo $successmsg; ?></div>
             <?php } ?>
-            <div class="col-md-2 text-center">
+                <div class="nDorsed">
                 <?php
                 $nodresegivenvalue = $statesdata["giving"];
                 $ndorsereceivedvalue = $statesdata["getting"] * 10;
@@ -30,6 +30,7 @@
                 }
                 ?>
                 <!--<img src="<?php echo $imageval; ?>" bigimg ="<?php echo $bigimg; ?>"  index="<?php echo $index; ?>" type="image" width="100" class="attached-item  detail_img_<?php echo $index; ?>"  alt=""/>-->
+                <div class="userFollow follow"></div>
             </div>
             <div class="col-md-3">
                 <h2 class="u-name"><?php echo ucfirst(trim($profiledata["fname"] . " " . $profiledata["lname"])); ?>

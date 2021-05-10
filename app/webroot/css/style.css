@@ -7459,17 +7459,26 @@ a.bkTndorse span {
 
 .userFollow.follow,
 .text-left.nDorsed .userFollow.follow,
-.text-right.nDorser .userFollow.follow {
+.text-right.nDorser .userFollow.follow, .user-profile .nDorsed .userFollow.follow {
     background: url(../img/follow-icon.png) no-repeat;
     background-size: cover;
 }
 
 .text-left.nDorsed,
-.text-right.nDorser {
+.text-right.nDorser, .user-profile .nDorsed {
     position: relative;
 }
 
-.text-left.nDorsed .userFollow {
+.userFlexbox {
+    display: flex;
+    padding: 0 15px;
+}
+.user-profile .userFlexbox .nDorsed{
+    display: table;
+    margin: 0 30px 0 0;
+}
+
+.text-left.nDorsed .userFollow, .user-profile .nDorsed .userFollow{
     position: absolute;
     top: -5px;
     left: 80px;
@@ -7480,6 +7489,10 @@ a.bkTndorse span {
     background-size: cover;
     cursor: pointer;
     box-shadow: none
+}
+
+.user-profile .nDorsed .userFollow{
+    left: 90px;
 }
 
 .text-right.nDorser .userFollow {
