@@ -301,6 +301,80 @@ $paramsaction = trim($this->params["action"]);
                     <span>
                         <a href="<?php echo Router::url('/', true); ?>client/notifications"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
                     </span>
+                    <span class="dropdown">
+                        <a href="javascript:void(0)" class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
+                     <div class="dropdown-menu user-profile" aria-labelledby="dropdownMenuButton">
+                       <table class="table table-hover table-striped">
+<tbody>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="#" style="color: beige;text-decoration: none;">
+                <img class="img-circle hand show-user-profile" width="40px" height="40px" src="<?php echo Router::url('/', true); ?>image/user.png" />
+                <span style="margin-left: 10px;">Dilbag Singh</span>
+            </a>
+        </td>
+    </tr>
+
+</tbody>
+</table>
+                      </div>
+                    </span>
                     <span>
                         <a href="<?php echo Router::url('/', true); ?>client/profile"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $myProfile; ?>" alt=""  /> </a>
                     </span>
