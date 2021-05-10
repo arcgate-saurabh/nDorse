@@ -298,7 +298,27 @@
                 </div>
                 <div id="followers-data" class="tab-pane fade">
                     <div class="col-md-12">
-                        <div class="user-profile ">
+                        <div class="followListing">
+                                <ul>
+                                    <li>
+                                        <img src="<?php echo Router::url('/', true); ?>img/p_pic.png" alt=""  />
+                                        <span>Babu Lal</span>
+                                        <div class="followBtn">
+                                            <input type="checkbox" id="check1" />
+                                            <label for="check1"></label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <img src="<?php echo Router::url('/', true); ?>img/p_pic.png" alt=""  />
+                                        <span>Babu Lal</span>
+                                        <div class="followBtn">
+                                            <input type="checkbox" id="check2" />
+                                            <label for="check2"></label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        <!-- <div class="user-profile ">
                             <div class="col-md-12">
                                 <?php if ($successmsg != "") { ?>
                                     <div id="flashmessage" class="msg text-center col-md-12" style="margin:10px 0"><?php echo $successmsg; ?></div>
@@ -315,7 +335,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div id="followings-data" class="tab-pane fade">

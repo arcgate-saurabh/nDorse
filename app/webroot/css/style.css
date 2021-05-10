@@ -7558,7 +7558,7 @@ a.bkTndorse span {
 .navbar .dropdown .user-profile table tbody tr th {
     padding: 8px !important;
     font-size: 16px;
-    width: 375px;
+    width: 600px;
 }
 
 .navbar .dropdown .user-profile table tbody tr td a,
@@ -7566,31 +7566,116 @@ a.bkTndorse span {
     display: block;
 }
 
-.navbar .dropdown .user-profile table::-webkit-scrollbar-track {
+.navbar .dropdown .user-profile table::-webkit-scrollbar-track, .followListing::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
     background-color: #a8a8a8;
     border-radius: 4px;
     opacity: 0.2;
 }
 
-.navbar .dropdown .user-profile table::-webkit-scrollbar {
+.navbar .dropdown .user-profile table::-webkit-scrollbar, .followListing::-webkit-scrollbar {
     width: 8px;
     background-color: #fff;
     border-radius: 4px;
     opacity: 0.2;
 }
 
-.navbar .dropdown .user-profile table::-webkit-scrollbar-thumb {
+.navbar .dropdown .user-profile table::-webkit-scrollbar-thumb, .followListing::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.5);
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     opacity: 0.2;
 }
 
-.navbar .dropdown .user-profile table:hover::-webkit-scrollbar-track,
-.navbar .dropdown .user-profile table:hover::-webkit-scrollbar,
-.navbar .dropdown .user-profile table:hover::-webkit-scrollbar-thumb {
-    opacity: 0.8;
+
+
+.followListing {
+    max-height: 450px;
+    overflow: auto;
+}
+
+.followListing ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.followListing ul li{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+}
+
+.followListing ul li:nth-of-type(2n+1) {
+    background: #9699a8;
+}
+
+.followListing ul li:nth-of-type(2n+2) {
+    background: #585c78;
+}
+
+.followListing ul li img{
+    width: 65px;
+    height: 65px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.followListing ul li span{
+    padding:0 15px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: 400;
+}
+
+.followBtn{
+    position: absolute;
+    right: 0px;
+}
+
+.followBtn input{
+    display: none;
+}
+
+/*[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+    position: absolute;
+}*/
+
+.followBtn label{
+    background: #f47521 linear-gradient(to bottom, #f47521, #ed5b13) repeat scroll 0 0;
+    border-radius: 4px;
+    color: #ffffff !important;
+    text-decoration: none;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    width: 100px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    padding: 0 !important;
+    position: relative;
+}
+
+.followBtn input[type="checkbox"]:not(:checked) + label:after{
+    content: "Unfollow" !important;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    opacity: 1;
+}
+
+.followBtn input[type="checkbox"]:checked + label:after{
+    content: "Follow" !important;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    opacity: 1;
 }
 
 @media all and (max-width: 767px) {
