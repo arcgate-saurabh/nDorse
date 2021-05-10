@@ -17024,10 +17024,12 @@ class ApiController extends AppController {
                                 }
                             }
                         }
+                        
+                        $returnData['following'] = $users;
                         $this->set(array(
                             'result' => array("status" => true
                                 , "msg" => 'User following list.',
-                                "data" => $users),
+                                "data" => $returnData),
                             '_serialize' => array('result')
                         ));
                     } else {
@@ -17077,6 +17079,8 @@ class ApiController extends AppController {
                             $uFollowingID = $userFollowings['id'];
                             $followingIdsArray = json_decode($userFollowings['following_ids']);
                         }
+                        
+                        
                         $returnData['following_users'] = $followingIdsArray;
                         $returnData['followers'] = $users;
 
