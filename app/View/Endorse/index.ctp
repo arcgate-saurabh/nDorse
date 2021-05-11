@@ -21,7 +21,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
 //    pr($subcenterData); exit;
 ?>
 <div class="col-md-12">
-    <section class="new-post">
+    <section class="new-post flexPostBox">
         <div class="btn-group mt-top" data-toggle="buttons" style="margin-left: -13px;">
             <label class="btn btn-primary active orgfilterradio">
                 <input type="radio" name="feedtype" id="all" value="" autocomplete="off" checked> All
@@ -33,7 +33,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
                 <input type="radio" name="feedtype" id="nDorsements" value="endorse" autocomplete="off"> nDorsements
             </label>
         </div>
-
+<div class="posiRel">
         <!-- VIDEO SECTION -->  
         <?php
 //            echo $featured_video_enabled; exit;
@@ -109,13 +109,14 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
         </div>
         <!-- <span class="text-danger" data-toggle="tooltip" data-placement="top" title="Disclaimer">?</span> -->
         <!-- HTML to write -->
-        <span href="#" class="tTip " data-toggle="tooltip" data-placement="right" 
+        <span href="#" class="tTip " data-toggle="tooltip" data-placement="left" 
               title="Featured Video 
               -Accepted file types: MP4 & MOV
               -Max upload file size of 150MB">?</span>
                   <?php } ?>
         <!-- VIDEO SECTION END-->
         <?php } ?>
+    </div>
     </section>
     <script type="text/javascript">
         $(function () {
@@ -479,7 +480,11 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
                         </div>
 
                         <div class="clearfix"></div>
-
+                        <div class="webCard">
+                            <div class="titleHead"><h3>ORTHO-X: 6 INCH MEMORY FOAM MATTRESS (ADVANCED)</h3></div>
+                            <div class="titleUrl"><p>Url:- <a href="#">https://www.livpuresleep.com/products/ortho-x-mattress-6-inch-memory-foam?variant=34821140512921</a></p></div>
+                            <div class="cardImg"><img src="<?php echo Router::url('/', true); ?>img/product-img.jpg" alt="" /></div>
+                        </div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="orange-bg no-hand">
