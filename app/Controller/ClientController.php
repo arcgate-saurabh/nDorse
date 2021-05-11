@@ -503,13 +503,14 @@ class ClientController extends AppController {
 //            $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
 //
 //            $jsonNotificationDataArray = $jsonNotificationDataArray['result']['data']['AlertCenterNotification'];
-            $jsonNotificationDataArray  = array();
+            $jsonNotificationDataArray = array();
             //$orgdata = isset($jsondatadecoded["result"]["data"]) ? $jsondatadecoded["result"]["data"] : $jsondatadecoded["result"]["msg"];
             if (isset($jsondatadecoded["result"]["data"])) {
                 $profiledata = $jsondatadecoded["result"]["data"]["user_data"];
                 $badgesData = $jsondatadecoded["result"]["data"]["badges"];
                 $coreValuesData = $jsondatadecoded["result"]["data"]["core_value"];
                 $statesdata = $jsondatadecoded["result"]["data"]["endorse_count"];
+                $isFollowing = $jsondatadecoded["result"]["data"]["is_following"];
             } else {
                 $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
                 $this->redirect($this->Auth->logout());
@@ -522,8 +523,24 @@ class ClientController extends AppController {
         $logindata = $loggedinUser;
         $this->set('statesdatanew', $endorsedatadata);
 
+        /* API to get following and followers list */
+
+        $postdata = array("token" => $loggedinUser["token"], 'type' => 'following');
+        $jsonFollowingData = $this->Apicalls->curlget("getUserFollowList.json", $postdata);
+        $postdata = array("token" => $loggedinUser["token"], 'type' => 'follower');
+        $jsonFollowersData = $this->Apicalls->curlget("getUserFollowList.json", $postdata);
+        
+        $userFollowingList = json_decode($jsonFollowingData,true);
+        $userFollowerList = json_decode($jsonFollowersData,true);
+        $userFollowingList = $userFollowingList['result']['data'];
+        $userFollowerList = $userFollowerList['result']['data'];
+//        pr($userFollowingList);
+//        pr($userFollowerList);
+//exit;
+
+
 //                        pr($endorsedatadata); exit;
-        $this->set(compact("profiledata", "logindata", "successmsg", "coreValuesData", "badgesData", "statesdata", "jsonNotificationDataArray"));
+        $this->set(compact("userFollowingList", "userFollowerList", "profiledata", "logindata", "isFollowing", "successmsg", "coreValuesData", "badgesData", "statesdata", "jsonNotificationDataArray"));
     }
 
     public function resetpassword() {
@@ -1859,12 +1876,12 @@ class ClientController extends AppController {
         $this->set('jsIncludes', array('endorse_charts'));
         $this->set(compact('datesarray', 'layout', 'subcenterData', 'orgDeptArray', 'arrayendorsementdetail', 'facility_id', 'departmentId', 'organization_id', 'orgName'));
     }
-    
+
     public function notifications($id = 0) {
         $errormsg = "";
         $successmsg = "";
         if ($this->Session->check('Auth.User')) {
-            
+
             $loggedinUser = $this->Auth->user();
             if (isset($loggedinUser['current_org'])) {
                 $current_org = $loggedinUser['current_org']->id;
@@ -1899,7 +1916,6 @@ class ClientController extends AppController {
             $jsonNotificationData = $this->Apicalls->curlpost("getAllLast15Notifications.json", $postdata); //Show all last 10 notifications
 //            pr($jsonNotificationData);
 //            exit;
-
 //            $jsondatadecoded = json_decode($jsondata, true);
             $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
 
@@ -1921,7 +1937,6 @@ class ClientController extends AppController {
         $this->set('MenuName', 'Notifications');
         $logindata = $loggedinUser;
 //        $this->set('statesdatanew', $endorsedatadata);
-
 //                        pr($endorsedatadata); exit;
         $this->set(compact("jsonNotificationDataArray"));
     }

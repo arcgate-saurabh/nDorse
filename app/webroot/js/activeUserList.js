@@ -47,40 +47,40 @@ $(document).on("click", ".close-suggestion", function () {
 /* Added by Babulal Prasad @8-may-2021 
  * To follow or unfollow users*/
 
-$(document).on("click", ".userFollow", function () {
-    var dataAttr = $(this).attr('data-attr');
-    var userID = $(this).attr('data-user-id');
-    var followStatus = 'follow';
-    if (dataAttr == 'following') {
-        followStatus = 'unfollow';
-    }
-
-    $.ajax({
-        type: "POST",
-        dataType: 'json',
-        url: siteurl + 'cajax/updateFollowStatus',
-        data: {
-            status: followStatus,
-            userid: userID,
-        },
-        success: function (response) {
-            if (response.status) {
-                if (followStatus == 'follow') {
-                    console.log('followed');
-                    $("#unfollowing_" + userID).addClass('hidden');
-                    $("#following_" + userID).removeClass('hidden');
-
-                } else {
-                    console.log('un-followed');
-                    $("#following_" + userID).addClass('hidden');
-                    $("#unfollowing_" + userID).removeClass('hidden');
-
-
-                }
-            }
-        }
-    });
-});
+//$(document).on("click", ".userFollow", function () {
+//    var dataAttr = $(this).attr('data-attr');
+//    var userID = $(this).attr('data-user-id');
+//    var followStatus = 'follow';
+//    if (dataAttr == 'following') {
+//        followStatus = 'unfollow';
+//    }
+//
+//    $.ajax({
+//        type: "POST",
+//        dataType: 'json',
+//        url: siteurl + 'cajax/updateFollowStatus',
+//        data: {
+//            status: followStatus,
+//            userid: userID,
+//        },
+//        success: function (response) {
+//            if (response.status) {
+//                if (followStatus == 'follow') {
+//                    console.log('followed');
+//                    $("#unfollowing_" + userID).addClass('hidden');
+//                    $("#following_" + userID).removeClass('hidden');
+//
+//                } else {
+//                    console.log('un-followed');
+//                    $("#following_" + userID).addClass('hidden');
+//                    $("#unfollowing_" + userID).removeClass('hidden');
+//
+//
+//                }
+//            }
+//        }
+//    });
+//});
 
 
 

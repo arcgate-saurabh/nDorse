@@ -8602,17 +8602,14 @@ class ApiController extends AppController {
                     $followingIdsArray = json_decode($userFollowings['following_ids']);
                 }
 
+                $endorse['endorsed_following'] = false;
+                $endorse['endorser_following'] = false;
                 if (!empty($followingIdsArray)) {
                     if (in_array($endorser_id, $followingIdsArray)) {
                         $endorse['endorser_following'] = true;
-                    } else {
-                        $endorse['endorser_following'] = false;
                     }
-
                     if (in_array($endorserd_id, $followingIdsArray)) {
                         $endorse['endorsed_following'] = true;
-                    } else {
-                        $endorse['endorsed_following'] = false;
                     }
                 }
 
@@ -12179,12 +12176,6 @@ class ApiController extends AppController {
 
                 /*                 * UPDATE LAST LOGIN TIME* */
                 $this->updateLastAppUsedTime();
-                
-                
-
-                    
-                
-                
             } else {
 
 
@@ -12272,14 +12263,13 @@ class ApiController extends AppController {
                     $userStatus = array_search($defaultOrganization['UserOrganization']["status"], $statusConfig);
                     $orgStatus = array_search($defaultOrganization['Organization']["status"], $statusConfig);
                 }
-                
             }
 
-                                
 
-            
-            
-            
+
+
+
+
             /* Adding following list into timley updates */
 
 //            $userID = $loggedInUser['id'];

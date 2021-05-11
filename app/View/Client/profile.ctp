@@ -5,7 +5,7 @@
             <?php if ($successmsg != "") { ?>
                 <div id="flashmessage" class="msg text-center col-md-12" style="margin:10px 0"><?php echo $successmsg; ?></div>
             <?php } ?>
-                <div class="nDorsed">
+            <div class="nDorsed">
                 <?php
                 $nodresegivenvalue = $statesdata["giving"];
                 $ndorsereceivedvalue = $statesdata["getting"] * 10;
@@ -29,8 +29,23 @@
                         'width' => '115', 'height' => '115', 'id' => 'client_image', 'class' => 'img-circle attached-item1'));
                 }
                 ?>
-                <!--<img src="<?php echo $imageval; ?>" bigimg ="<?php echo $bigimg; ?>"  index="<?php echo $index; ?>" type="image" width="100" class="attached-item  detail_img_<?php echo $index; ?>"  alt=""/>-->
-                <div class="userFollow follow"></div>
+            <!--<img src="<?php echo $imageval; ?>" bigimg ="<?php echo $bigimg; ?>"  index="<?php echo $index; ?>" type="image" width="100" class="attached-item  detail_img_<?php echo $index; ?>"  alt=""/>-->
+
+                <!--<div class="userFollow follow"></div>-->
+                <?php
+                if ($logindata["id"] != $profiledata["id"]) {
+//                    pr($profiledata);
+
+                    $following = $unfollowing = '';
+                    if ($isFollowing) {
+                        $unfollowing = 'hidden';
+                    } else {
+                        $following = 'hidden';
+                    }
+                    ?>
+                    <div class="userFollow follow <?php echo $following; ?>" id="following_<?php echo $profiledata["id"]; ?>"  data-attr="following" data-user-id = '<?php echo $profiledata["id"]; ?>'></div>
+                    <div class="userFollow unfollow <?php echo $unfollowing; ?>" id="unfollowing_<?php echo $profiledata["id"]; ?>" data-attr="unfollowing" data-user-id = '<?php echo $profiledata["id"]; ?>'></div>
+                <?php } ?>
             </div>
             <div class="col-md-3">
                 <h2 class="u-name"><?php echo ucfirst(trim($profiledata["fname"] . " " . $profiledata["lname"])); ?>
@@ -49,8 +64,10 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#personal-data" aria-expanded="false">Personal</a></li>
                 <li class=""><a data-toggle="tab" href="#nDorsements-data" aria-expanded="false">nDorsements</a></li>
-                <li class=""><a data-toggle="tab" href="#followers-data" aria-expanded="false">Followers</a></li>
-                <li class=""><a data-toggle="tab" href="#followings-data" aria-expanded="false">Following</a></li>
+                <?php if ($logindata["id"] == $profiledata["id"]) { ?>
+                    <li class=""><a data-toggle="tab" href="#followers-data" aria-expanded="false">Followers</a></li>
+                    <li class=""><a data-toggle="tab" href="#followings-data" aria-expanded="false">Following</a></li>
+                <?php } ?>
             </ul>
             <div class="tab-content">
                 <div id="personal-data" class="tab-pane active in fade">
@@ -292,72 +309,62 @@
                                 </table>
                             <?php } ?>
                         </div>
-
-
-
                     </div>
                 </div>
                 <div id="followers-data" class="tab-pane fade">
                     <div class="col-md-12">
                         <div class="followListing">
-                                <ul>
-                                    <li>
-                                        <img src="<?php echo Router::url('/', true); ?>img/p_pic.png" alt=""  />
-                                        <span>Babu Lal</span>
-                                        <div class="followBtn">
-                                            <input type="checkbox" id="check1" />
-                                            <label for="check1"></label>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="<?php echo Router::url('/', true); ?>img/p_pic.png" alt=""  />
-                                        <span>Babu Lal</span>
-                                        <div class="followBtn">
-                                            <input type="checkbox" id="check2" />
-                                            <label for="check2"></label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        <!-- <div class="user-profile ">
-                            <div class="col-md-12">
-                                <?php if ($successmsg != "") { ?>
-                                    <div id="flashmessage" class="msg text-center col-md-12" style="margin:10px 0"><?php echo $successmsg; ?></div>
-                                <?php } ?>
-                            </div>
-                            <div class="user-profile">
-                                <table class="table table-hover table-striped">
-                                    <tbody>
+                            <?php
+                            if (!empty($userFollowerList)) {
+                                echo '<ul>';
+                                foreach ($userFollowerList['followers'] as $index => $follower) {
+                                    echo "<li>";
+                                    echo $this->Html->image($follower['image']);
+                                    echo "<span>" . $follower['fullname'] . "</span>";
+                                    echo '<div class="followBtn">';
+                                    $checked = 'checked = "checked"'; //If not following
+                                    if (in_array($follower['id'], $userFollowerList['following_users'])) {
+                                        $checked = ''; //If following
+                                    }
+                                    ?>
+                                    <input type="checkbox" id="follower_<?php echo $follower['id']; ?>" data-user-id="<?php echo $follower['id']; ?>" class="userFollowProfile" data-attr="unfollow"  <?php echo $checked; ?>/>
+                                    <label for="follower_<?php echo $follower['id']; ?>"></label>
+                                    <?php
+                                    echo '</div>';
+                                    echo "</li>";
+                                }
+                                echo '</ul>';
+                            } else {
+                                echo "<ul><li>No Followers</li></ul>";
+                            }
+                            ?>
+                        </div>
 
-                                        <tr>
-                                            <td>Followers list</td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
                 <div id="followings-data" class="tab-pane fade">
                     <div class="col-md-12">
-                        <div class="user-profile ">
-                            <div class="col-md-12">
-                                <?php if ($successmsg != "") { ?>
-                                    <div id="flashmessage" class="msg text-center col-md-12" style="margin:10px 0"><?php echo $successmsg; ?></div>
-                                <?php } ?>
-                            </div>
-                            <div class="user-profile">
-                                <table class="table table-hover table-striped">
-                                    <tbody>
-
-                                        <tr>
-                                            <td>Followings list</td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="followListing">
+                            <?php
+                            if (!empty($userFollowingList)) {
+                                echo '<ul>';
+                                foreach ($userFollowingList['following'] as $index => $following) {
+                                    echo "<li>";
+                                    echo $this->Html->image($following['image']);
+                                    echo "<span>" . $following['fullname'] . "</span>";
+                                    echo '<div class="followBtn">';
+                                    ?>
+                                    <input type="checkbox" id="following_<?php echo $following['id']; ?>" data-user-id="<?php echo $following['id']; ?>" class="userFollowProfile" data-attr="following" />
+                                    <label for="following_<?php echo $following['id']; ?>"></label>
+                                    <?php
+                                    echo '</div>';
+                                    echo "</li>";
+                                }
+                                echo '</ul>';
+                            } else {
+                                echo "<ul><li>No Followers</li></ul>";
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -366,6 +373,54 @@
         </div>
         <script>
             $(document).ready(function () {
+                /*user follow/unfollow event handling*/
+                $(document).on("click", ".userFollowProfile", function (event) {
+                    event.preventDefault();
+                    var dataAttr = $(this).attr('data-attr');
+                    var userID = $(this).attr('data-user-id');
+                    var followStatus = 'follow';
+                    if (dataAttr == 'following') {
+                        followStatus = 'unfollow';
+                    }
+
+//                    console.log(followStatus);
+//                    console.log(userID);
+//                    return false;
+
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: siteurl + 'cajax/updateFollowStatus',
+                        data: {
+                            status: followStatus,
+                            userid: userID,
+                        },
+                        success: function (response) {
+                            console.log(response);
+                            if (response.status) {
+                                if (followStatus == 'follow') {
+                                    console.log('followed');
+//                                    $("#follower_" + userID).prop('checked', true);
+//                                    $(this).prop('checked', true);
+                                } else {
+                                    console.log('un-followed');
+//                                    $("#follower_" + userID)..prop('checked', false);
+//                                    $(this).prop('checked', false);
+                                }
+                            }
+                        }
+                    });
+                });
+
+
+
+
+
+
+
+
+
+
                 $('[data-toggle="popover"]').popover();
                 $('.attached-item1').on('click', function () {
                     var src = $(this).attr('bigimg');

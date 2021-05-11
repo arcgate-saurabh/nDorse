@@ -42,17 +42,34 @@ if ($endorsedata["type"] == "anonymous") {
                     <div class="text-left nDorsed">
 
                         <img src="<?php echo $endorsed_image; ?>" user_id="<?php echo $endorsedata["endorsed_id"]; ?>"  
-                             endorse_type="anonymous<?php //echo $endorsedata["endorsement_for"];                     ?>" 
+                             endorse_type="anonymous<?php //echo $endorsedata["endorsement_for"];                         ?>" 
                              data-user-id="<?php echo $endorsedata["endorsed_id"]; ?>" data-logged-id="<?php echo $logged_user_id; ?>"
                              width="100" class="img-circle ndorse_click hand show-user-profile"  alt=""/>
 
                         <span class="rohan-space"><?php echo ucfirst($endorsedata["endorsed_name"]); ?></span>
                         <p class="ndorser-detail">nDorsed</p>
-                        <div class="userFollow"></div>
+                        <?php
+//                        pr($endorsedata);
+                        if ($logged_user_id != $endorsedata["endorsed_id"]) {
+                            ?>
+                            <?php
+                            $following = $unfollowing = '';
+                            if ($endorsedata['endorsed_following']) {
+                                $unfollowing = 'hidden';
+                            } else {
+                                $following = 'hidden';
+                            }
+                            ?>
+
+                            <div class="userFollow follow <?php echo $following; ?>" id="following_<?php echo $endorsedata["endorsed_id"]; ?>"  data-attr="following" data-user-id = '<?php echo $endorsedata["endorsed_id"]; ?>'></div>
+                            <div class="userFollow unfollow <?php echo $unfollowing; ?>" id="unfollowing_<?php echo $endorsedata["endorsed_id"]; ?>" data-attr="unfollowing" data-user-id = '<?php echo $endorsedata["endorsed_id"]; ?>'></div>
+
+                        <?php } ?>
+
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
-                    <div class="date-detail hidden-xs"><?php //echo $createddate;                     ?>
+                    <div class="date-detail hidden-xs"><?php //echo $createddate;                         ?>
 
                         <?php
                         //=========calculating time difference from present time.
@@ -85,7 +102,7 @@ if ($endorsedata["type"] == "anonymous") {
 
                         <img src="<?php echo $endorser_image; ?>" 
                              data-user-id="<?php echo $endorsedata["endorser_id"]; ?>" data-logged-id="<?php echo $logged_user_id; ?>"
-                             user_id="<?php echo $endorsedata["endorser_id"]; ?>" endorse_type="anonymous<?php //echo $ndorser_anonymous;               ?>"  
+                             user_id="<?php echo $endorsedata["endorser_id"]; ?>" endorse_type="anonymous<?php //echo $ndorser_anonymous;                   ?>"  
                              width="100" class="img-circle ndorse_click hand <?php echo $show_user_profile; ?>" alt=""/>
 
                         <span class="rohan-space visible-xs"><?php echo ucfirst($endorser_name); ?></span> 
@@ -94,7 +111,16 @@ if ($endorsedata["type"] == "anonymous") {
                         <?php
                         if ($logged_user_id != $endorsedata["endorser_id"]) {
                             ?>
-                            <div class="userFollow follow"></div>
+                            <?php
+                            $following = $unfollowing = '';
+                            if ($endorsedata['endorser_following']) {
+                                $unfollowing = 'hidden';
+                            } else {
+                                $following = 'hidden';
+                            }
+                            ?>
+                            <div class="userFollow follow <?php echo $following; ?>" id="following_<?php echo $endorsedata["endorser_id"]; ?>"  data-attr="following" data-user-id = '<?php echo $endorsedata["endorser_id"]; ?>'></div>
+                            <div class="userFollow unfollow <?php echo $unfollowing; ?>" id="unfollowing_<?php echo $endorsedata["endorser_id"]; ?>" data-attr="unfollowing" data-user-id = '<?php echo $endorsedata["endorser_id"]; ?>'></div>
                         <?php } ?>
                     </div>
                 </div>
