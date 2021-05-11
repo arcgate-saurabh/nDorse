@@ -300,9 +300,9 @@ $paramsaction = trim($this->params["action"]);
                     <span>
                         <a href="<?php echo Router::url('/', true); ?>endorse/summary"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $ndorsements; ?>" alt=""  /> </a>
                     </span>
-                    <span>
+<!--                    <span>
                         <a href="<?php echo Router::url('/', true); ?>client/notifications"> <img src="<?php echo Router::url('/', true); ?>img/<?php echo $notification; ?>" alt=""  /> </a>
-                    </span>
+                    </span>-->
                     <!-- Added by Babualal prasad to show users notifications -->
 
                     <span class="dropdown">

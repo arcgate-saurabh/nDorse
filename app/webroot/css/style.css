@@ -7717,6 +7717,24 @@ a.bkTndorse span {
     opacity: 1;
 }
 
+.followBtn label.userFollowingProfile.following:after {
+    content: "Unfollow" !important;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    opacity: 1;
+}
+
+.followBtn label.userFollowingProfile:after {
+    content: "Follow" !important;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    opacity: 1;
+}
+
 @media all and (max-width: 767px) {
     .navbar .dropdown .user-profile {
         width: auto;

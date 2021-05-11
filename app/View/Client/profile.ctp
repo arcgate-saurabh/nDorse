@@ -331,7 +331,7 @@
                                     }
                                     ?>
 
-                                    <label id="follower_<?php echo $follower['id']; ?>" data-user-id="<?php echo $follower['id']; ?>" class="userFollowerProfile <?php echo $checked; ?>" data-attr="unfollow"><!-- <?php echo $followText; ?> --></label>
+                                    <label id="follower_<?php echo $follower['id']; ?>" data-user-id="<?php echo $follower['id']; ?>" class="userFollowerProfile <?php echo $checked; ?>" data-attr="unfollow"><?php // echo $followText; ?></label>
 
                                     <?php
                                     echo '</div>';
@@ -366,7 +366,7 @@
                                         $followText = 'Unfollow';
                                     }
                                     ?>
-                                    <label id="following_<?php echo $following['id']; ?>" data-user-id="<?php echo $following['id']; ?>" class="userFollowingProfile <?php echo $checked; ?>" data-attr="unfollow"><?php echo $followText; ?></label>
+                                    <label id="following_<?php echo $following['id']; ?>" data-user-id="<?php echo $following['id']; ?>" class="userFollowingProfile <?php echo $checked; ?>" data-attr="unfollow"><?php // echo $followText; ?></label>
                                     <?php
                                     echo '</div>';
                                     echo "</li>";

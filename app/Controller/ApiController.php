@@ -6637,7 +6637,26 @@ class ApiController extends AppController {
 
 
                 if (isset($feed_type) && $feed_type != '') {
-                    $NEWconditionarray["FeedTran.feed_type"] = $feed_type;
+                    if ($feed_type == 'following') {
+                        /* Added by Babulal prasad at @11MAY2021
+                         * if filter is following then get following users list and get the feed
+                         */
+                        $this->loadModel("UserFollowing");
+                        $followingIdsArray = array();
+                        $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $user_id, 'status' => 1)));
+                        if (!empty($userFollowings)) {
+                            $userFollowings = array_shift($userFollowings);
+                            $userFollowings = $userFollowings['UserFollowing'];
+                            $uFollowingID = $userFollowings['id'];
+                            $followingIdsArray = json_decode($userFollowings['following_ids']);
+                            $followingIdsArray = array_filter($followingIdsArray); // Removing empty value/ids
+                        }
+
+//                        $NEWconditionarray["FeedTran.user_id"] = $followingIdsArray;
+                    } else { //If feed_type != 'following'
+                        $NEWconditionarray["FeedTran.feed_type"] = $feed_type;
+                    }
+
                     if (isset($feed_id) && $feed_id != '') {
                         $NEWconditionarray["FeedTran.feed_id"] = $feed_id;
                     }
@@ -6666,12 +6685,29 @@ class ApiController extends AppController {
                 $NEWconditionarray["FeedTran.status"] = 1;
 
 
-                $NEWconditionarray["OR"] = array(
-                    array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
-                                    "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
-                                    "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
-                    array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, "user_id like '%" . '"' . $user_id . '"' . "%'",)
-                );
+//                        pr($Usercondition ); exit;
+
+                if ($feed_type == 'following') {
+
+                    $Usercondition = implode(" OR ", array_map(function($ids) {
+                                return "JSON_CONTAINS(user_id, JSON_ARRAY('$ids'))";
+                            }, $followingIdsArray));
+//                            pr($Usercondition); exit;
+                            
+                    $NEWconditionarray["OR"] = array(
+                        array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids" => $followingIdsArray,
+                                        "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
+                                        $Usercondition)))),
+                        array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, $Usercondition)
+                    );
+                } else {
+                    $NEWconditionarray["OR"] = array(
+                        array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
+                                        "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
+                                        "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
+                        array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, "user_id like '%" . '"' . $user_id . '"' . "%'",)
+                    );
+                }
                 if ($start_date != "") {
                     $NEWconditionarray["FeedTran.created >= "] = date("Y-m-d 00:00:00", $start_date);
                 }
@@ -6693,8 +6729,10 @@ class ApiController extends AppController {
 //$NEWparams['order'] = 'FeedTran.created desc';
                 $NEWparams['order'] = 'FeedTran.publish_date desc';
                 $totaleFeeds = $this->FeedTran->find("all", $NEWparams);
-//                pr($totaleFeeds); exit;
-//                echo $this->FeedTran->getLastQuery();exit;
+//                pr($totaleFeeds);
+//                exit;
+//                echo $this->FeedTran->getLastQuery();
+//                exit;
 //                $log = $this->FeedTran->getDataSource()->getLog(false, false);
 //                pr($log);
 //                exit;

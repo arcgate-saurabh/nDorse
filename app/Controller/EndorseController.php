@@ -202,8 +202,8 @@ class EndorseController extends AppController {
 //                    pr($jsondata);
 //                    exit;
 
-                
-                
+
+
                 $jsondata = $this->Apicalls->curlpost("getLiveFeeds.json", $postdata);
 //                pr($jsondata); exit;
                 $jsondatadecoded = json_decode($jsondata, true);
@@ -225,7 +225,6 @@ class EndorseController extends AppController {
 //                    $featured_video_enabled = $alldetailsorg['featured_video_enabled'];
 //                }
 //                exit;
-
 //                
 
                 $orgVideoList = $videojsondecodedata['result']['data']['org_video_list'];
@@ -239,12 +238,31 @@ class EndorseController extends AppController {
                         $subcenterData = $subcenterArray['result']['data'];
                     }
                 }
-
-
-
+                
+                
                 $user_id = $loggedinUser["id"];
                 $user_role = $loggedinUser["role"];
                 $org_user_role = $loggedinUser['current_org']->org_role;
+
+                /* Added by Babulal prasad at @11MAY2021
+                 * if filter is following then get following users list and get the feed
+                 */
+                $this->loadModel("UserFollowing");
+                $followingIdsArray = array();
+                $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $user_id, 'status' => 1)));
+                if (!empty($userFollowings)) {
+                    $userFollowings = array_shift($userFollowings);
+                    $userFollowings = $userFollowings['UserFollowing'];
+                    $uFollowingID = $userFollowings['id'];
+                    $followingIdsArray = json_decode($userFollowings['following_ids']);
+                    $followingIdsArray = array_filter($followingIdsArray); // Removing empty value/ids
+                }
+                $this->set('followingIdsArray', $followingIdsArray);
+
+
+
+
+                
 
 
                 $user_do_not_remind = $loggedinUser["do_not_remind"];
