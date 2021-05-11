@@ -322,13 +322,17 @@
                                     echo $this->Html->image($follower['image']);
                                     echo "<span>" . $follower['fullname'] . "</span>";
                                     echo '<div class="followBtn">';
-                                    $checked = 'checked = "checked"'; //If not following
+
+                                    $checked = ''; //If not following
+                                    $followText = 'Follow';
                                     if (in_array($follower['id'], $userFollowerList['following_users'])) {
-                                        $checked = ''; //If following
+                                        $checked = 'following'; //If following
+                                        $followText = 'Unfollow';
                                     }
                                     ?>
-                                    <input type="checkbox" id="follower_<?php echo $follower['id']; ?>" data-user-id="<?php echo $follower['id']; ?>" class="userFollowProfile" data-attr="unfollow"  <?php echo $checked; ?>/>
-                                    <label for="follower_<?php echo $follower['id']; ?>"></label>
+
+                                    <label id="follower_<?php echo $follower['id']; ?>" data-user-id="<?php echo $follower['id']; ?>" class="userFollowerProfile <?php echo $checked; ?>" data-attr="unfollow"><?php echo $followText; ?></label>
+
                                     <?php
                                     echo '</div>';
                                     echo "</li>";
@@ -353,16 +357,23 @@
                                     echo $this->Html->image($following['image']);
                                     echo "<span>" . $following['fullname'] . "</span>";
                                     echo '<div class="followBtn">';
+
+
+                                    $checked = ''; //If not following
+                                    $followText = 'Follow';
+                                    if (in_array($following['id'], $userFollowerList['following_users'])) {
+                                        $checked = 'following'; //If following
+                                        $followText = 'Unfollow';
+                                    }
                                     ?>
-                                    <input type="checkbox" id="following_<?php echo $following['id']; ?>" data-user-id="<?php echo $following['id']; ?>" class="userFollowProfile" data-attr="following" />
-                                    <label for="following_<?php echo $following['id']; ?>"></label>
+                                    <label id="following_<?php echo $following['id']; ?>" data-user-id="<?php echo $following['id']; ?>" class="userFollowingProfile <?php echo $checked; ?>" data-attr="unfollow"><?php echo $followText; ?></label>
                                     <?php
                                     echo '</div>';
                                     echo "</li>";
                                 }
                                 echo '</ul>';
                             } else {
-                                echo "<ul><li>No Followers</li></ul>";
+                                echo "<ul><li>Start Following</li></ul>";
                             }
                             ?>
                         </div>
@@ -374,19 +385,17 @@
         <script>
             $(document).ready(function () {
                 /*user follow/unfollow event handling*/
-                $(document).on("click", ".userFollowProfile", function (event) {
+                $(document).on("click", ".userFollowerProfile", function (event) {
                     event.preventDefault();
                     var dataAttr = $(this).attr('data-attr');
                     var userID = $(this).attr('data-user-id');
                     var followStatus = 'follow';
-                    if (dataAttr == 'following') {
+                    if (dataAttr == 'unfollow') {
                         followStatus = 'unfollow';
                     }
-
-//                    console.log(followStatus);
-//                    console.log(userID);
-//                    return false;
-
+                    console.log(dataAttr);
+                    console.log(userID);
+                    console.log(followStatus);
                     $.ajax({
                         type: "POST",
                         dataType: 'json',
@@ -400,16 +409,46 @@
                             if (response.status) {
                                 if (followStatus == 'follow') {
                                     console.log('followed');
-//                                    $("#follower_" + userID).prop('checked', true);
-//                                    $(this).prop('checked', true);
+                                    $("#follower_" + userID).addClass('following').attr('data-attr', 'unfollow');
                                 } else {
                                     console.log('un-followed');
-//                                    $("#follower_" + userID)..prop('checked', false);
-//                                    $(this).prop('checked', false);
+                                    $("#follower_" + userID).removeClass('following').attr('data-attr', 'follow');
                                 }
                             }
                         }
                     });
+                });
+
+                $(document).on("click", ".userFollowingProfile", function (event) {
+                    event.preventDefault();
+                    var dataAttr = $(this).attr('data-attr');
+                    var userID = $(this).attr('data-user-id');
+                    var followStatus = 'follow';
+                    if (dataAttr == 'unfollow') {
+                        followStatus = 'unfollow';
+                    }
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: siteurl + 'cajax/updateFollowStatus',
+                        data: {
+                            status: followStatus,
+                            userid: userID,
+                        },
+                        success: function (response) {
+                            console.log(response);
+                            if (response.status) {
+                                if (followStatus == 'follow') {
+                                    console.log('followed');
+                                    $("#following_" + userID).addClass('following').attr('data-attr', 'unfollow');
+                                } else {
+                                    console.log('un-followed');
+                                    $("#following_" + userID).removeClass('following').attr('data-attr', 'follow');
+                                }
+                            }
+                        }
+                    }
+                    );
                 });
 
 
