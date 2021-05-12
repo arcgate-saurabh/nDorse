@@ -17,7 +17,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
 <!--Fancybox Ends --> 
 <?php
 //if (!empty($endorsedata)) {
-//    pr($subcenterData); exit;
+//    pr($subcenterData); exit;  
 ?>
 <div class="col-md-12">
     <section class="new-post flexPostBox">
@@ -485,7 +485,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
 
                                     <div class="clearfix"></div>
 
-                                    <!--                        <div class="webCard">
+                                    <!--                          <div class="webCard">
                                                                 <div class="titleHead"><h3>ORTHO-X: 6 INCH MEMORY FOAM MATTRESS (ADVANCED)</h3></div>
                                                                 <div class="titleUrl"><p>Url:- <a href="#">https://www.livpuresleep.com/products/ortho-x-mattress-6-inch-memory-foam?variant=34821140512921</a></p></div>
                                                                 <div class="cardImg"><img src="<?php echo Router::url('/', true); ?>img/product-img.jpg" alt="" /></div>

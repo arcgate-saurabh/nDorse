@@ -361,10 +361,10 @@
 
                                     $checked = ''; //If not following
                                     $followText = 'Follow';
-                                    if (in_array($following['id'], $userFollowerList['following_users'])) {
+                                    //if (in_array($following['id'], $userFollowerList['following_users'])) {
                                         $checked = 'following'; //If following
                                         $followText = 'Unfollow';
-                                    }
+                                    //}
                                     ?>
                                     <label id="following_<?php echo $following['id']; ?>" data-user-id="<?php echo $following['id']; ?>" class="userFollowingProfile <?php echo $checked; ?>" data-attr="unfollow"><?php // echo $followText; ?></label>
                                     <?php
