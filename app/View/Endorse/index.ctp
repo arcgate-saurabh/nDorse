@@ -744,7 +744,7 @@ function remove_emoji($text) {
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $.get('http://www.guardian.co.uk/culture/2012/jun/21/jimmy-carr-apologises-error-tax',
+        $.get('https://www.guardian.co.uk/culture/2012/jun/21/jimmy-carr-apologises-error-tax',
                 function (data) {
                     var MetaData = $(data).find('meta[name=adescription]').attr("content");
                     console.log("MetaData");
