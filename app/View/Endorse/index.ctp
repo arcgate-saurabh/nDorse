@@ -743,6 +743,16 @@ function remove_emoji($text) {
     });</script>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        $.get('http://www.guardian.co.uk/culture/2012/jun/21/jimmy-carr-apologises-error-tax',
+                function (data) {
+                    var MetaData = $(data).find('meta[name=adescription]').attr("content");
+                    console.log("MetaData");
+                    console.log(MetaData);
+                });
+
+
+
         $('.fancybox').fancybox();
         $(".fancybox-effects-a").fancybox({
             helpers: {
