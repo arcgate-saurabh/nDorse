@@ -414,6 +414,7 @@ $(document).on("click", ".userFollow", function () {
             userid: userID,
         },
         success: function (response) {
+            
             if (response.status) {
                 if (followStatus == 'follow') {
                     console.log('followed');

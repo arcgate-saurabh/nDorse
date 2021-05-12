@@ -1171,9 +1171,11 @@ class CajaxController extends AppController {
     public function updateFollowStatus() {
 //        pr($this->request->data);die;
         $this->layout = "ajax_new";
-
+        $loggedinUser = $this->Auth->user();
         $postData = array();
-        $postData['token'] = $this->request->data['token'];
+        $postData['token'] = $loggedinUser['token'];
+        
+//        $postData['token'] = $this->request->data['token'];
         $postData['user_id'] = $this->request->data['userid'];
 
         $api = 'UnfollowUser.json';
