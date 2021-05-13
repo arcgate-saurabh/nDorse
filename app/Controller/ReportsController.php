@@ -770,11 +770,35 @@ class ReportsController extends AppController {
         exit;
     }
 
+    // Function to get all the dates in given range
+    function getDatesFromRange($start, $end, $format = 'Y-m-d') {
+
+        // Declare an empty array
+        $array = array();
+
+        // Variable that store the date interval
+        // of period 1 day
+        $interval = new DateInterval('P1D');
+
+        $realEnd = new DateTime($end);
+        $realEnd->add($interval);
+
+        $period = new DatePeriod(new DateTime($start), $interval, $realEnd);
+
+        // Use loop to store date into array
+        foreach ($period as $date) {
+            $array[] = $date->format($format);
+        }
+
+        // Return the array elements
+        return $array;
+    }
+
     public function ndorsement_history_day_weeks() {
         $this->layout = "ajax_new";
         $this->autoRender = false;
         $organization_id = $this->request->data['organization_id'];
-
+//        pr($this->request->data); ///exit;
         $startdate = "";
         $enddate = "";
         if (!empty($this->request->data["startdate"]) && !empty($this->request->data["enddate"])) {
@@ -785,12 +809,16 @@ class ReportsController extends AppController {
 
         $conditionsendorsementbyday["organization_id"] = $organization_id;
         $conditionsendorsementbyday['type !='] = array('guest', 'daisy');
-        $conditionsendorsementbyday[] = 'MONTH(created)=MONTH(CURRENT_DATE())';
-        $conditionsendorsementbyday[] = 'YEAR(created) =YEAR(CURRENT_DATE())';
+
+
 
         if ($startdate != "" and $enddate != "") {
             array_push($conditionsendorsementbyday, "date(created) between '$startdate' and '$enddate'");
+        } else {
+            $conditionsendorsementbyday[] = 'MONTH(created)=MONTH(CURRENT_DATE())';
+            $conditionsendorsementbyday[] = 'YEAR(created) =YEAR(CURRENT_DATE())';
         }
+//        pr($conditionsendorsementbyday);
         $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseReplies', 'EndorseCoreValues', 'EndorseHashtag')));
         $endorsementbyday = $this->Endorsement->find("all", array("conditions" => $conditionsendorsementbyday, "group" => "date(Endorsement.created)", "fields" => array("count(*) as cnt", "date(created) as cdate")));
 //        echo $this->Endorsement->getLastQuery(); exit;
@@ -803,8 +831,16 @@ class ReportsController extends AppController {
         $conditionsendorsementbyWeek = array();
         $conditionsendorsementbyWeek["organization_id"] = $organization_id;
         $conditionsendorsementbyWeek['type !='] = array('guest', 'daisy');
-        $conditionsendorsementbyWeek[] = 'MONTH(created)=MONTH(CURRENT_DATE())';
-        $conditionsendorsementbyWeek[] = 'YEAR(created) =YEAR(CURRENT_DATE())';
+
+        if ($startdate != "" and $enddate != "") {
+            array_push($conditionsendorsementbyWeek, "date(created) between '$startdate' and '$enddate'");
+        } else {
+            $conditionsendorsementbyWeek[] = 'MONTH(created)=MONTH(CURRENT_DATE())';
+            $conditionsendorsementbyWeek[] = 'YEAR(created) =YEAR(CURRENT_DATE())';
+        }
+
+
+
         $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseReplies', 'EndorseCoreValues', 'EndorseHashtag')));
         $endorsementbyWeek = $this->Endorsement->find("all", array("conditions" => $conditionsendorsementbyWeek, "group" => "date_format(created,'%U')", "order" => "created", "fields" => array("count(*) as cnt", "date(created) as cdate")));
 //        echo $this->Endorsement->getLastQuery();
@@ -818,26 +854,42 @@ class ReportsController extends AppController {
         $startdate = $enddate = '';
 
 //        pr($this->request->data);
-        if (!empty($this->request->data["startdaterandc"]) && !empty($this->request->data["enddaterandc"])) {
+        if (!empty($this->request->data["startdate"]) && !empty($this->request->data["enddate"])) {
             $requestdata = $this->request->data;
-            $startdate = $this->Common->dateConvertServer($requestdata["startdaterandc"]);
-            $enddate = $this->Common->dateConvertServer($requestdata["enddaterandc"]);
+            $startdate = $this->Common->dateConvertServer($requestdata["startdate"]);
+            $enddate = $this->Common->dateConvertServer($requestdata["enddate"]);
+        } else {
+            $now = new DateTime();
+            $back = $now->sub(DateInterval::createFromDateString('29 days'));
+            $startdate = $back->format('Y-m-d');
+            $enddate = date('Y-m-d');
         }
-
-
 
         $until = new DateTime();
         if ($organization_id == 0) {//426 //415
             $interval = new DateInterval('P1M'); //3 months
         } else {
             $interval = new DateInterval('P12M'); //12 months
+//            $interval = new DateInterval('P1D'); //12 months
         }
 
         $from = $until->sub($interval);
+
         $last12Mnth = $from->format('Y-m-t');
 
+//        echo "startdate = " . $startdate;
+//        echo "<br/>enddate = " . $enddate;
+        // Function call with passing the start date and end date
+        $DailyDateArray = $this->getDatesFromRange($startdate, $enddate);
+//        var_dump($Date);
+
+
         $acitveUserConditions = array();
-        $acitveUserConditions["ApiSession.created >"] = $last12Mnth;
+
+
+        $acitveUserConditions['(CAST(ApiSession.created AS DATE) BETWEEN ? AND ? )'] = array($startdate, $enddate);
+
+//        $acitveUserConditions["ApiSession.created >"] = $last12Mnth;
         $acitveUserConditions["UserOrganization.organization_id"] = $organization_id;
 //        $acitveUserConditions["DefaultOrg.organization_id"] = $organization_id;
 //        $acitveUserConditions["DefaultOrg.status"] = 1;
@@ -854,7 +906,10 @@ class ReportsController extends AppController {
 //                )
 //            )
 //        );
-        $params['fields'] = array('ApiSession.*');
+//        $params['fields'] = array('ApiSession.*');
+
+        $params['group'] = array('DATE(ApiSession.created)');
+        $params['fields'] = array('COUNT(ApiSession.id) AS login_counts', 'DATE(ApiSession.created) AS login_date');
         $params['joins'] = array(
             array(
                 'table' => 'api_sessions',
@@ -863,85 +918,96 @@ class ReportsController extends AppController {
                 'conditions' => array(
                     'ApiSession.user_id = UserOrganization.user_id',
                 )
-            ) /*,
-            array(
-                'table' => 'default_orgs',
-                'alias' => 'DefaultOrg',
-                'type' => 'LEFT',
-                'conditions' => array(
-                    'DefaultOrg.user_id = UserOrganization.user_id',
-                )
-            )*/
+            ) /* ,
+                  array(
+                  'table' => 'default_orgs',
+                  'alias' => 'DefaultOrg',
+                  'type' => 'LEFT',
+                  'conditions' => array(
+                  'DefaultOrg.user_id = UserOrganization.user_id',
+                  )
+                  ) */
         );
 //        pr($params);
 //        exit;
-                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
+        $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
 
         $activeUserData = $this->UserOrganization->find("all", $params);
 //        echo $this->UserOrganization->getLastQuery();
 //        exit;
 //        pr($activeUserData);
 //        exit;
-        $monthwiseallData = array();
+        $dailyAllData = array();
         foreach ($activeUserData as $index => $data) {
-            $month = date("M-y", strtotime($data['ApiSession']['created']));
-            $monthwiseallData[$month][] = $data;
+
+//            pr($data); exit;
+            $count = $data[0]['login_counts'];
+            $date = $data[0]['login_date'];
+            $month = date("M-y", strtotime($data[0]['login_counts']));
+            $dailyAllData[$date] = (int) $count;
         }
+//        pr($dailyAllData); exit;
         $activeMonthwiseCounts = array();
         $orgActiveUserCountArray = array();
 //        pr($monthwiseallData);
-        foreach ($monthwiseallData as $monthIndex => $mnthData) {
-            foreach ($mnthData as $index => $data) {
-//                pr($data);
-                $SessionId = $data['ApiSession']['id'];
-                //DATA CALCULATION FOR ORGANIZATION Users
-                if (!isset($activeMonthwiseCounts[$monthIndex][$SessionId])) {
-                    $activeMonthwiseCounts[$monthIndex][$SessionId] = $SessionId;
+//        pr($DailyDateArray); exit;
+        if (!empty($DailyDateArray)) {
+            foreach ($DailyDateArray as $i => $daily_date) {
+                if (!isset($dailyAllData[$daily_date])) {
+                    $dailyAllData[$daily_date] = 0;
                 }
             }
         }
+        ksort($dailyAllData);
+        $totalActiveUsers = array();
+        foreach ($dailyAllData as $dateIndex => $counts) {
+            $totalActiveUsers[] = $counts;
+        }
+//        $totalActiveUsers  = $dailyAllData;
 //        pr($activeMonthwiseCounts);
 //        exit;
         //Calculation for dynamic months range on date range selection
-        $date1 = new DateTime($enddate);
-        $date2 = new DateTime($startdate);
-        $diff = $date1->diff($date2);
-        $monthsDiff = (($diff->format('%y') * 12) + $diff->format('%m'));
+//        $date1 = new DateTime($enddate);
+//        $date2 = new DateTime($startdate);
+//        $diff = $date1->diff($date2);
+//        $monthsDiff = (($diff->format('%y') * 12) + $diff->format('%m'));
+//
+//        if ($startdate != "" and $enddate != "") {
+//            for ($i = 0; $i <= $monthsDiff; $i++) {
+//                $months[] = date("M-y", strtotime($enddate . " -$i months"));
+//            }
+//            $months = array_reverse($months);
+//        } else {
+//            for ($i = 0; $i <= 11; $i++) {
+//                $months[] = date("M-y", strtotime(date('Y-m-01') . " -$i months"));
+//            }
+//            $months = array_reverse($months);
+//        }
+//        foreach ($months as $index => $monthID) {
+//            //Monthwise Org Endorsement Count Data
+//            if (isset($activeMonthwiseCounts[$monthID])) {
+//                $orgActiveUserCountArray[$monthID] = count($activeMonthwiseCounts[$monthID]);
+//            } else {
+////                foreach ($corevaluesIDsArray as $indx => $cvID) {
+//                $orgActiveUserCountArray[$monthID] = 0;
+////                }
+//            }
+//        }
+////        pr($orgActiveUserCountArray);
+////        exit;
+//        $monthsnew = json_encode($months);
+//        $totalActiveUsers = array();
+//        foreach ($orgActiveUserCountArray as $monthID => $totalCount) {
+//            $totalActiveUsers[] = array($totalCount);
+//        }
 
 
 
-        if ($startdate != "" and $enddate != "") {
-            for ($i = 0; $i <= $monthsDiff; $i++) {
-                $months[] = date("M-y", strtotime($enddate . " -$i months"));
-            }
-            $months = array_reverse($months);
-        } else {
-            for ($i = 0; $i <= 11; $i++) {
-                $months[] = date("M-y", strtotime(date('Y-m-01') . " -$i months"));
-            }
-            $months = array_reverse($months);
-        }
+        $DailyDateArray = json_encode($DailyDateArray);
 
-        foreach ($months as $index => $monthID) {
-            //Monthwise Org Endorsement Count Data
-            if (isset($activeMonthwiseCounts[$monthID])) {
-                $orgActiveUserCountArray[$monthID] = count($activeMonthwiseCounts[$monthID]);
-            } else {
-//                foreach ($corevaluesIDsArray as $indx => $cvID) {
-                $orgActiveUserCountArray[$monthID] = 0;
-//                }
-            }
-        }
-//        pr($orgActiveUserCountArray);
-//        exit;
-        $monthsnew = json_encode($months);
-        $totalActiveUsers = array();
-        foreach ($orgActiveUserCountArray as $monthID => $totalCount) {
-            $totalActiveUsers[] = array($totalCount);
-        }
         $totalActiveUsers = json_encode($totalActiveUsers); //exit;
-
-        $this->set(compact("endorsementbyWeek", "endorsementbyday", "monthsnew", "totalActiveUsers"));
+//        pr($totalActiveUsers);
+        $this->set(compact("endorsementbyWeek", "endorsementbyday", "DailyDateArray", "totalActiveUsers"));
         echo $this->render('/Elements/leaderboard_barchart');
         exit;
     }

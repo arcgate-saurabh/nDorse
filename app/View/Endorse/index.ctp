@@ -744,12 +744,13 @@ function remove_emoji($text) {
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $.get('https://www.guardian.co.uk/culture/2012/jun/21/jimmy-carr-apologises-error-tax',
+        $.get('https://blog.sliceit.com/bad-credit-lets-fix-that/',
                 function (data) {
                     var MetaData = $(data).find('meta[name=adescription]').attr("content");
                     console.log("MetaData");
                     console.log(MetaData);
                 });
+                
 
 
 

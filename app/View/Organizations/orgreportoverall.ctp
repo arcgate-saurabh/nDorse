@@ -154,9 +154,9 @@ $orgid = $organization_id;
                                 <button id="resetdates1" title="Click to Reset Date"  class="btn btn-info btn-xs resetendorsementsfilters1 leaderboardreportResetButton" type="button">Reset Date</button>
                                 <?php echo $this->Form->End(); ?> </div>
                         </div>
-                        <div class="row date-range hide" id="leaderboarddatepicker2" style="margin-top:15px;">
+                        <div class="row date-range" id="leaderboarddatepicker2" style="margin-top:15px;">
                             <div class="col-md-3" >
-                                <h4 class="date-range">Select Date Range 2</h4>
+                                <h4 class="date-range">Select Date Range</h4>
                             </div>
                             <?php echo $this->Form->Create("daterangerandc"); ?>
                             <input type="hidden" value="menu1" name="reporttab" />
@@ -353,6 +353,73 @@ $orgid = $organization_id;
                 $(".hiddenloader").addClass("hidden");
                 $(document).find("#report_" + reportNumber).css("display", "block");
                 $("#content-loading-img").hide();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                $(".hiddenloader").addClass("hidden");
+                return false;
+            }
+        });
+
+    });
+    $(document).on("click", ".leaderboardreportfilterbutton2", function () {
+
+        var reportNumber = 1;
+
+        $('.reports-section').fadeOut(200);
+        $('#report_' + reportNumber).fadeIn(800);
+        var organizationID = '<?php echo $organization_id; ?>';
+        var startdaterandc = $("#startdaterandc_2").val();
+        var enddaterandc = $("#enddaterandc_2").val();
+        console.log("#report_" + reportNumber);
+        if (reportNumber == 1) {
+            $(document).find("#saveasspreadsheetleaderboard-new").css("display", "none");
+            $(document).find("#leaderboarddatepicker").css("display", "none");
+            $(document).find("#leaderboarddatepicker2").css("display", "block");
+
+        } else {
+            $(document).find("#saveasspreadsheetleaderboard-new").css("display", "block");
+            $(document).find("#leaderboarddatepicker").css("display", "block");
+            $(document).find("#leaderboarddatepicker2").css("display", "none");
+        }
+
+        switch (reportNumber) {
+            case '1':
+                reportName = 'ndorsement_history_day_weeks';
+                break;
+            case '2':
+                reportName = 'ndorsement_history_leaderboard';
+                break;
+            case '3':
+                reportName = 'ndorsement_history_department';
+                break;
+            default:
+                reportName = 'ndorsement_history_day_weeks';
+                break;
+        }
+
+        $(".hiddenloader").removeClass("hidden");
+        $.ajax({
+            type: "POST",
+            url: siteurl + 'reports/' + reportName,
+            dataType: 'html',
+            data: {organization_id: organizationID, startdate: startdaterandc, enddate: enddaterandc},
+            success: function (response) {
+//                console.log(response);
+//                return false;
+//                $(".reports").css("display", "none");
+//                renderGraph1();
+                $(document).find("#report_" + reportNumber).html('');
+                $(document).find("#report_" + reportNumber).html(response);
+                $(document).find("#report_" + reportNumber).css("display", "block");
+                $(".hiddenloader").addClass("hidden");
+                setTimeout(function () {
+                    renderGraph1();
+                }, 1000);
+
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
