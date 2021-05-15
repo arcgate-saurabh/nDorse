@@ -7454,13 +7454,13 @@ class ApiController extends AppController {
 
                 $start_date = "";
                 $end_date = "";
-                if (isset($this->request->data["start_date"]) && $this->request->data["start_date"] != "") {
+             /*   if (isset($this->request->data["start_date"]) && $this->request->data["start_date"] != "") {
                     $start_date = $this->request->data["start_date"];
                 }
                 if (isset($this->request->data["end_date"]) && $this->request->data["end_date"] != "") {
                     $end_date = $this->request->data["end_date"];
                 }
-
+*/
 
 
 
@@ -7492,12 +7492,12 @@ class ApiController extends AppController {
                         array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, "user_id like '%" . '"' . $user_id . '"' . "%'",)
                     );
                 }
-                if ($start_date != "") {
+             /*   if ($start_date != "") {
                     $NEWconditionarray["FeedTran.created >= "] = date("Y-m-d 00:00:00", $start_date);
                 }
                 if ($end_date != "") {
                     $NEWconditionarray["FeedTran.created <= "] = date("Y-m-d 23:59:59", $end_date);
-                }
+                } */
 //(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
 //OR 
 //(visibility_check = 0 and org_id = 123  )
@@ -8162,6 +8162,7 @@ class ApiController extends AppController {
             ));
         }
     }
+
 
     public function getLiveFeeds2() { /// Function clone Created by babulal prasad to test on live site
         if ($this->request->is('post')) {
