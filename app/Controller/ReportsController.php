@@ -909,14 +909,32 @@ class ReportsController extends AppController {
 //        $params['fields'] = array('ApiSession.*');
 
         $params['group'] = array('DATE(ApiSession.created)');
-        $params['fields'] = array('COUNT(ApiSession.id) AS login_counts', 'DATE(ApiSession.created) AS login_date');
+        $params['fields'] = array('COUNT(DISTINCT ApiSession.user_id) AS login_counts', 'DATE(ApiSession.created) AS login_date');
+//        $params['joins'] = array(
+//            array(
+//                'table' => 'api_sessions',
+//                'alias' => 'ApiSession',
+//                'type' => 'LEFT',
+//                'conditions' => array(
+//                    'ApiSession.user_id = UserOrganization.user_id1',
+//                )
+//            ) /* ,
+//                  array(
+//                  'table' => 'default_orgs',
+//                  'alias' => 'DefaultOrg',
+//                  'type' => 'LEFT',
+//                  'conditions' => array(
+//                  'DefaultOrg.user_id = UserOrganization.user_id',
+//                  )
+//                  ) */
+//        );
         $params['joins'] = array(
             array(
-                'table' => 'api_sessions',
-                'alias' => 'ApiSession',
+                'table' => 'user_organizations',
+                'alias' => 'UserOrganization',
                 'type' => 'LEFT',
                 'conditions' => array(
-                    'ApiSession.user_id = UserOrganization.user_id',
+                    'UserOrganization.user_id = ApiSession.user_id',
                 )
             ) /* ,
                   array(
@@ -930,9 +948,10 @@ class ReportsController extends AppController {
         );
 //        pr($params);
 //        exit;
-        $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
+//        $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
 
-        $activeUserData = $this->UserOrganization->find("all", $params);
+//        $activeUserData = $this->UserOrganization->find("all", $params);
+        $activeUserData = $this->ApiSession->find("all", $params);
 //        echo $this->UserOrganization->getLastQuery();
 //        exit;
 //        pr($activeUserData);
