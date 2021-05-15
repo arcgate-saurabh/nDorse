@@ -15820,7 +15820,8 @@ class ApiController extends AppController {
 
                         foreach ($allNotificationsList as $index => $notificationDATA) {
                             //pr($notificationDATA); exit;
-                            $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
+//                            $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
+                            $img = Router::url('/', true) . "app/webroot/img/user.png";
                             if ($notificationDATA["User"]["image"] != "") {
                                 $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $notificationDATA["User"]["image"];
                             }
