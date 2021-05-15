@@ -6532,8 +6532,791 @@ class ApiController extends AppController {
             ));
         }
     }
+    
+     public function getLiveFeeds() {
 
-    public function getLiveFeeds() {
+        if ($this->request->is('post')) {
+            $statusConfig = Configure::read("statusConfig");
+            $loggedInUser = $this->Auth->user();
+//            pr($loggedInUser); exit;
+            $user_id = $loggedInUser['id'];
+//$loggedinUser = $this->Auth->user();
+//        $params = array();
+//        $params['fields'] = "*";
+//        $params['conditions'] = array("DefaultOrg.user_id" => $loggedinUser['id']);
+//        $defaultOrganization = $this->DefaultOrg->find("first", $params);
+            $department_id = $this->Common->getUserCurrentDept($user_id, $loggedInUser['current_org']['id']);
+            $entity_id = $this->Common->getUserCurrentSubOrg($user_id, $loggedInUser['current_org']['id']);
+
+//            pr($loggedInUser); exit;
+            if (isset($loggedInUser['current_org'])) {
+                $org_id = $loggedInUser['current_org']['id'];
+                $keyword = "";
+
+                $params = array();
+                $params['fields'] = "user_id,entity_id,department_id";
+                $params['conditions'] = array(
+                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1);
+
+                $userdepartmentorg = $this->UserOrganization->find("all", $params);
+//                pr($userdepartmentorg);
+//                exit;
+                $entity_user_array = array();
+                $department_user_array = array();
+                foreach ($userdepartmentorg as $userorgval) {
+
+                    if ($userorgval["UserOrganization"]["entity_id"] > 0) {
+                        $entity_user_array[$userorgval["UserOrganization"]["entity_id"]][] = $userorgval["UserOrganization"]["user_id"];
+                    }
+                    if ($userorgval["UserOrganization"]["department_id"] > 0) {
+                        $department_user_array[$userorgval["UserOrganization"]["department_id"]][] = $userorgval["UserOrganization"]["user_id"];
+                    }
+                }
+//pr($entity_user_array);
+//echo "<hr>";
+//pr($department_user_array);exit;
+//
+
+                if (isset($this->request->data["type"]) && $this->request->data["type"] != "") {
+                    $type = $this->request->data["type"];
+                }
+
+                $subcenterId = '';
+
+
+                if (isset($this->request->data["subcenter_id"]) && $this->request->data["subcenter_id"] != "") {
+                    if ($this->request->data["subcenter_id"] == 0) {
+                        $subcenterId = '';
+                    } else {
+                        $subcenterId = $this->request->data["subcenter_id"];
+                    }
+                }
+
+                $feed_type = $feed_id = "";
+                $endorse_search_id = "";
+//                pr($this->request->data);exit;
+                if (isset($this->request->data["feed_type"]) && $this->request->data["feed_type"] != "") {
+                    $feed_type = $this->request->data["feed_type"];
+                    if (isset($this->request->data["feed_id"]) && $this->request->data["feed_id"] != '') {
+                        $feed_id = $this->request->data["feed_id"];
+                    }
+                }
+
+
+
+
+                $start_date = "";
+                $end_date = "";
+
+                $limit = Configure::read("pageLimit");
+                if (isset($this->request->data["page"]) && $this->request->data["page"] > 1) {
+                    $page = $this->request->data["page"];
+                    $offset = $page * $limit;
+                } else {
+                    $page = 1;
+                    $offset = 0;
+                }
+
+                /* NEW CODE START */
+//Getting total feeds count
+                $NEWconditionarray = $postFeedIds = $endorseFeedIds = $feedArray = array();
+//pr($this->request->data);
+                if (isset($this->request->data["endorse_type"]) && $this->request->data["endorse_type"] == "user") {
+                    $NEWconditionarray = array("user_id like '%" . '"' . $this->request->data["endorse_id"] . '"' . "%'");
+                }
+
+                if (isset($subcenterId) && $subcenterId != "") {
+                    $NEWconditionarray["AND"] = array('OR' => array("FeedTran.subcenter_by" => $subcenterId, "FeedTran.subcenter_for" => $subcenterId));
+                    //"FeedTran.subcenter_for"] = $subcenterId;
+                }
+
+
+
+                if (isset($this->request->data["endorse_type"]) && $this->request->data["endorse_type"] == "department") {
+                    $NEWconditionarray["FeedTran.dept_id"] = $this->request->data["endorse_id"];
+                }
+
+
+                if (isset($feed_type) && $feed_type != '') {
+                    $NEWconditionarray["FeedTran.feed_type"] = $feed_type;
+                    if (isset($feed_id) && $feed_id != '') {
+                        $NEWconditionarray["FeedTran.feed_id"] = $feed_id;
+                    }
+                }
+
+                if (isset($type) && $type == 'endorser') {
+                    $NEWconditionarray["FeedTran.feed_type"] = 'endorse';
+                }
+
+
+                /* Condition added by Babulal prasad to filter scheduled posts */
+//                                $NEWconditionarray["FeedTran.org_id"] = $org_id;
+                $NEWconditionarray["FeedTran.status"] = 1;
+
+
+                $NEWconditionarray["OR"] = array(
+                    array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
+                                    "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
+                                    "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
+                    array("visibility_check" => 0, 'FeedTran.org_id' => $org_id)
+                );
+//(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
+//OR 
+//(visibility_check = 0 and org_id = 123  )
+
+
+                /*                 * ***************** */
+
+
+                $NEWparams['fields'] = "count(*) as cnt";
+                $NEWparams['conditions'] = $NEWconditionarray;
+//$NEWparams['order'] = 'FeedTran.created desc';
+                $NEWparams['order'] = 'FeedTran.publish_date desc';
+                $totaleFeeds = $this->FeedTran->find("all", $NEWparams);
+//                pr($totaleFeeds); exit;
+//                echo $this->FeedTran->getLastQuery();exit;
+//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+//                pr($log);
+//                exit;
+
+                $totalLiveFeed = $totaleFeeds[0][0]["cnt"];
+                $totalpage = ceil($totalLiveFeed / $limit);
+                $NEWconditionarray["FeedTran.endorse_type !="] = 'private';
+
+//Getting live feeds
+//$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
+//pr($NEWconditionarray); exit;
+                $paramsFeed['fields'] = "*";
+                $paramsFeed['conditions'] = $NEWconditionarray;
+                $paramsFeed['limit'] = $limit;
+                $paramsFeed['page'] = $page;
+                $paramsFeed['offset'] = $offset;
+
+//                $paramsFeed['joins'] = array(
+//                    array(
+//                        'table' => 'endorsements',
+//                        'alias' => 'Endorsement',
+//                        'type' => 'LEFT',
+//                        'conditions' => array(
+//                            'FeedTran.feed_id = Endorsement.id',
+//                            'FeedTran.feed_type = "endorse"',
+//                            'Endorsement.type != "private"'
+//                        )
+//                    )
+//                );
+//                pr($paramsFeed);
+                $paramsFeed['order'] = 'FeedTran.created desc';
+                $FeedTranRes = $this->FeedTran->find("all", $paramsFeed);
+//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+//                pr($log);
+//                exit;
+//                pr($FeedTranRes);
+//                exit;
+                if (!empty($FeedTranRes)) {
+                    foreach ($FeedTranRes as $index => $feedTransData) {
+                        $feedArray[$feedTransData['FeedTran']['id']]['feed_id'] = $feedTransData['FeedTran']['feed_id'];
+                        $feedArray[$feedTransData['FeedTran']['id']]['feed_type'] = $feedTransData['FeedTran']['feed_type'];
+                        if ($feedTransData['FeedTran']['feed_type'] == 'post') {
+                            $postFeedIds[] = $feedTransData['FeedTran']['feed_id'];
+                        } else {
+                            $endorseFeedIds[] = $feedTransData['FeedTran']['feed_id'];
+                        }
+                    }
+                }
+
+                $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                $this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id));
+
+//                pr($feedArray);
+//                pr($postFeedIds);
+//                pr($endorseFeedIds);
+//                exit;
+
+                /* NEW CODE END */
+                $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
+                $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
+//                pr($userOrganization);
+//                exit;
+
+                $params = array();
+                $params['fields'] = "count(*) as cnt";
+
+
+                if ($type == "endorser") {
+                    $conditionarray["Endorsement.endorser_id"] = $user_id;
+                } elseif ($type == "endorsed") {
+//                    $updateArray['ndorsed_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    $conditionarray["Endorsement.endorsed_id"] = $user_id;
+                } else {
+//                    $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+//                    $conditionarray["Endorsement.type != "] = "private";
+                }
+
+
+
+//Condition changed after discuss with rohan @2-feb-2018 by Babulal Prasad
+//if ($userOrganization['UserOrganization']['user_role'] != 2) {
+                $conditionarray["Endorsement.type != "] = "private";
+// }
+
+
+                $conditionarray["Endorsement.id"] = $endorseFeedIds;
+
+                $params['conditions'] = $conditionarray;
+                $params['order'] = 'Endorsement.created desc';
+                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseCoreValues', 'EndorseReplies')));
+                $params['joins'] = array(
+                    array(
+                        'table' => 'endorsement_likes',
+                        'alias' => 'EndorsementLike',
+                        'type' => 'LEFT',
+                        'conditions' => array(
+                            'Endorsement.id =EndorsementLike.endorsement_id ',
+                            'EndorsementLike.user_id =' . $user_id
+                        )
+                    )
+//                    , array(
+//                        'table' => 'endorse_attachments',
+//                        'alias' => 'EndorseAttachment',
+//                        'type' => 'LEFT',
+//                        'conditions' => array(
+//                            'Endorsement.id = EndorseAttachment.endorsement_id ',
+//                            'EndorseAttachment.type = "emojis"'
+//                        )
+//                    )
+                );
+
+                $params['fields'] = "*,UNIX_TIMESTAMP(Endorsement.created) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                $params['order'] = 'Endorsement.created desc';
+                $this->Endorsement->unbindModel(array('hasMany' => array('EndorseCoreValues', 'EndorseReplies')));
+                $this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
+//pr($params);
+//exit;
+                $endorsement = $this->Endorsement->find("all", $params);
+//                echo $this->Endorsement->getLastQuery();exit;
+//                $log = $this->Endorsement->getDataSource()->getLog(false, false);
+//                pr($log);
+//                exit;
+//pr($endorsement); 
+// exit;
+                $endorsmentarray = array();
+                $departmentarray = array();
+                $entityarray = array();
+                $userarray = array();
+                $core_values = $this->getOrgValues($org_id, "OrgCoreValues", 1);
+                $coreval = array();
+                foreach ($core_values as $cvalue) {
+                    $coreval[$cvalue["id"]] = $cvalue["name"] . "&&&&" . $cvalue["color_code"];
+                }
+
+                $organizationDATA = $this->getOrgValues($org_id, "Organization", 1);
+                $public_endorse_visible = 0;
+                if ($organizationDATA[0]['allow_comments'] == 1 && $organizationDATA[0]['public_endorse_visible'] == 1) {
+                    $public_endorse_visible = 1;
+                }
+
+                $serverCurrentTime = "";
+//                pr($endorsement);exit;
+                $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
+                $emojis_url = str_replace("http", "https", $emojis_url);
+//                pr($endorsement); exit;
+
+                foreach ($endorsement as $key => $value) {
+//                    pr($value["EndorseAttachments"]);
+                    $displayflag = 0;
+                    $endorsval = $value["Endorsement"];
+                    $endorsval["created"] = $value[0]["create_date"];
+                    $serverCurrentTime = $value[0]["curr_time"];
+                    $endorsimgcount = $endorsval["image_count"];
+                    $endorsecorevalue = $value["EndorseCoreValues"];
+                    $endorsmentarray[$key]["endorse"] = $endorsval;
+                    $endorsmentarray[$key]["imagecount"] = $endorsval["image_count"];
+
+//                    echo "EMOJI COUNT : ".count($value["EndorseAttachments"]);
+
+                    $endorsmentarray[$key]["emojis_count"] = count($value["EndorseAttachments"]);
+                    $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
+
+//                    if (isset($value["EndorseAttachment"]['name']) && $value["EndorseAttachment"]['name'] != '') {
+                    if (!empty($value["EndorseAttachments"])) {
+                        $endorsmentarray[$key]["bitmojis_image"] = '';
+//                        pr($value["EndorseAttachments"]); exit;
+                        if (count($value["EndorseAttachments"]) > 0) {
+                            //pr($endorsementAttachment);
+                            foreach ($value["EndorseAttachments"] as $iCount => $endorsementAttachment) {
+                                if ($endorsementAttachment["type"] == 'image') {
+                                    $tempEndorseImages = Router::url('/', true) . "app/webroot/" . ENDORSE_IMAGE_DIR . "small/";
+                                    //$tempEndorseImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
+                                } else {
+                                    $tempEndorseImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
+                                }
+                                if (strpos($tempEndorseImages, 'localhost') < 0 || strpos($tempEndorseImages, 'staging') < 0) {
+                                    $tempEndorseImages = str_replace("http", "https", $tempEndorseImages);
+                                }
+
+                                $endorsmentarray[$key]["bitmoji_images"][] = $tempEndorseImages . $endorsementAttachment['name'];
+                            }
+                        }
+                    } else {
+                        $endorsmentarray[$key]["bitmojis_image"] = '';
+                        $endorsmentarray[$key]["bitmoji_images"] = array();
+                    }
+
+
+                    $endorsmentarray[$key]["reply"] = $endorsval["is_reply"];
+
+                    if ($value["EndorsementLike"]["id"] != "") {
+                        $endorsmentarray[$key]["like"] = 1;
+                    } else {
+                        $endorsmentarray[$key]["like"] = 0;
+                    }
+//$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
+
+                    $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
+                    $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
+//pr($userOrganization['UserOrganization']['public_ndorse_visible_tc']); exit;
+
+
+                    if ($endorsval["endorsement_for"] == "department") {
+                        $endorsmentarray[$key]["reply"] = 0;
+                        if ($user_id == $endorsval["endorser_id"] || $userOrganization['UserOrganization']['user_role'] == 2) {
+                            $displayflag = 1;
+                        } elseif (isset($department_user_array[$endorsval["endorsed_id"]])) {
+                            if (in_array($user_id, $department_user_array[$endorsval["endorsed_id"]])) {
+                                $displayflag = 1;
+                            }
+                        }
+
+                        if (!in_array($endorsval["endorsed_id"], $departmentarray)) {
+                            $departmentarray[] = $endorsval["endorsed_id"];
+                        }
+                    } elseif ($endorsval["endorsement_for"] == "entity") {
+                        $endorsmentarray[$key]["reply"] = 0;
+                        if ($user_id == $endorsval["endorser_id"] || $userOrganization['UserOrganization']['user_role'] == 2) {
+                            $displayflag = 1;
+                        } elseif (isset($entity_user_array[$endorsval["endorsed_id"]])) {
+                            if (in_array($user_id, $entity_user_array[$endorsval["endorsed_id"]])) {
+                                $displayflag = 1;
+                            }
+                        }
+                        if (!in_array($endorsval["endorsed_id"], $entityarray)) {
+                            $entityarray[] = $endorsval["endorsed_id"];
+                        }
+                    } else {
+                        if (!in_array($endorsval["endorsed_id"], $userarray)) {
+
+                            $userarray[] = $endorsval["endorsed_id"];
+                        }
+
+                        if (in_array($user_id, array($endorsval["endorser_id"], $endorsval["endorsed_id"])) || $userOrganization['UserOrganization']['user_role'] == 2) {
+                            $displayflag = 1;
+                        } else {
+                            $endorsmentarray[$key]["reply"] = 0;
+                        }
+                    }
+
+                    if (!in_array($endorsval["endorser_id"], $userarray)) {
+                        $userarray[] = $endorsval["endorser_id"];
+                    }
+                    $corevaluearray = array();
+                    foreach ($endorsecorevalue as $eval) {
+
+
+                        if (!in_array($eval["value_id"], $corevaluearray)) {
+                            if (isset($coreval[$eval["value_id"]])) {
+                                $ncval = explode("&&&&", $coreval[$eval["value_id"]]);
+                                $corevaluearray[] = array("name" => $ncval[0], "color_code" => $ncval[1]);
+                            }
+                        }
+                    }
+                    $endorsmentarray[$key]["corevalue"] = $corevaluearray;
+                    $endorsmentarray[$key]["displayflag"] = $displayflag;
+                }
+
+
+                $userinfo = $this->User->find('all', array(
+                    'conditions' => array('User.id' => $userarray),
+                    'fields' => array('id', 'fname', 'lname', 'image')
+                ));
+                $userdata = array();
+                foreach ($userinfo as $userval) {
+
+                    $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
+                    if ($userval["User"]["image"] != "") {
+                        $userdata[$userval["User"]["id"]] .= "&&&&" . Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["User"]["image"];
+                    }
+                }
+
+                $department = array();
+                $entity = array();
+                if (!empty($departmentarray)) {
+                    $departmentarr = $this->getOrgValues($org_id, "OrgDepartments", 1);
+                    if (!empty($departmentarr)) {
+                        foreach ($departmentarr as $dval) {
+                            $department[$dval["id"]] = $dval["name"];
+                        }
+                    }
+                }
+
+                if (!empty($entityarray)) {
+                    $entity1 = $this->getOrgValues($org_id, "Entity", 1);
+                    if (!empty($entity1)) {
+                        foreach ($entity1 as $dval) {
+                            $entity[$dval["id"]] = $dval["name"];
+                        }
+                    }
+                }
+                $newarray = array();
+
+                foreach ($endorsmentarray as $key => $eval) {
+                    $key = $eval["endorse"]["id"];
+                    $newarray[$key]["id"] = $eval["endorse"]["id"];
+                    $newarray[$key]["is_like"] = $eval["like"];
+                    $newarray[$key]["is_read"] = $eval["endorse"]["is_read"];
+                    $newarray[$key]["endorsement_for"] = $eval["endorse"]["endorsement_for"];
+                    $newarray[$key]["endorsed_id"] = $eval["endorse"]["endorsed_id"];
+                    $newarray[$key]["endorser_id"] = $eval["endorse"]["endorser_id"];
+//	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
+// print_r($newarray);
+                    if (isset($userdata[$eval["endorse"]["endorser_id"]])) {
+                        $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorser_id"]]);
+                        $newarray[$key]["endorser_name"] = $newuserdata[0];
+                        if (isset($newuserdata[1])) {
+
+//$newarray[$key]["endorser_image"] = $newuserdata[1];
+
+                            $needle = 'default.jpg';
+                            if (strpos($newuserdata[1], $needle) !== false) {
+                                $newarray[$key]["endorser_image"] = '';
+                            } else {
+                                $newarray[$key]["endorser_image"] = $newuserdata[1];
+                            }
+                        }
+                    } else {
+                        $newarray[$key]["endorser_name"] = "";
+                    }
+
+                    $newarray[$key]["type"] = $eval["endorse"]["type"];
+                    if ($eval["displayflag"] == 1) {
+                        $newarray[$key]["message"] = $eval["endorse"]["message"];
+                    } else {
+                        $newarray[$key]["message"] = "";
+                    }
+                    $newarray[$key]["like_count"] = $eval["endorse"]["like_count"];
+                    $newarray[$key]["created"] = $eval["endorse"]["created"];
+                    if ($eval["displayflag"] == 1) {
+                        $newarray[$key]["imagecount"] = $eval["imagecount"];
+                        $newarray[$key]["emojiscount"] = $eval["emojis_count"];
+                        $newarray[$key]["bitmojiscount"] = $eval["bitmojis_count"];
+                        $newarray[$key]["bitmojis_image"] = $eval["bitmojis_image"];
+                        $newarray[$key]["bitmoji_images"] = $eval["bitmoji_images"];
+                        $newarray[$key]["is_reply"] = $eval["reply"];
+                    } else {
+                        $newarray[$key]["imagecount"] = 0;
+                        $newarray[$key]["emojiscount"] = 0;
+                        $newarray[$key]["is_reply"] = 0;
+                    }
+                    $newarray[$key]["corevalues"] = $eval["corevalue"];
+
+                    if ($eval["endorse"]["endorsement_for"] == "user") {
+                        if (isset($userdata[$eval["endorse"]["endorsed_id"]])) {
+                            $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorsed_id"]]);
+//pr($newuserdata); 
+//                        pr($eval["endorse"]);
+                            $newarray[$key]["endorsed_name"] = $newuserdata[0];
+                            if (isset($newuserdata[1])) {
+//$newarray[$key]["endorsed_image"] = $newuserdata[1];
+                                $needle = 'default.jpg';
+                                if (strpos($newuserdata[1], $needle) !== false) {
+                                    $newarray[$key]["endorsed_image"] = '';
+                                } else {
+                                    $newarray[$key]["endorsed_image"] = $newuserdata[1];
+                                }
+                            }
+                        }
+                    } elseif ($eval["endorse"]["endorsement_for"] == "department") {
+                        if (isset($department[$eval["endorse"]["endorsed_id"]]))
+                            $newarray[$key]["endorsed_name"] = $department[$eval["endorse"]["endorsed_id"]];
+                        else
+                            $newarray[$key]["endorsed_name"] = '';
+                    } elseif ($eval["endorse"]["endorsement_for"] == "entity") {
+                        if (isset($entity[$eval["endorse"]["endorsed_id"]]))
+                            $newarray[$key]["endorsed_name"] = $entity[$eval["endorse"]["endorsed_id"]];
+                        else
+                            $newarray[$key]["endorsed_name"] = '';
+                    }
+                    $newarray[$key]["list_type"] = 'endorse';
+
+//$newarray[$key]["public_endorse_visible"] = $loggedInUser['current_org']['public_endorse_visible'];
+                    $newarray[$key]["public_endorse_visible"] = $public_endorse_visible;
+
+//Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
+                    if (!in_array($user_id, array($eval["endorse"]["endorser_id"], $eval["endorse"]["endorsed_id"]))) {
+                        if ($eval["endorse"]["type"] == 'standard' && $public_endorse_visible == 0) {
+//$newarray[$key]["message"] = "";
+                        } else {
+                            $newarray[$key]["message"] = $eval["endorse"]["message"];
+                        }
+                    }
+                }
+                $endorseServerTime = $serverCurrentTime;
+                $returndata1 = array("endorse_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
+//pr($returndata1); 
+
+
+
+                /* GETTING POST DATA START */
+
+                $conditionarrayPost = array();
+                $conditionarrayPost["Post.id"] = $postFeedIds;
+                $params['conditions'] = $conditionarrayPost;
+                $params['order'] = 'Post.created desc';
+
+                $params['joins'] = array(
+                    array(
+                        'table' => 'post_likes',
+                        'alias' => 'PostLike',
+                        'type' => 'LEFT',
+                        'conditions' => array(
+                            'Post.id = PostLike.post_id ',
+                            'PostLike.user_id =' . $user_id
+                        )
+                    ),
+                    array(
+                        'table' => 'post_schedules',
+                        'alias' => 'PostSchedule',
+                        'type' => 'LEFT',
+                        'conditions' => array(
+                            'Post.id = PostSchedule.post_id ',
+                        )
+                    )
+                );
+
+//                $params['fields'] = "*,UNIX_TIMESTAMP(PostSchedule.utc_post_datetime) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                $params['fields'] = "*,UNIX_TIMESTAMP(Post.post_publish_date) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                $params['order'] = 'Post.created desc';
+//$params['group'] = 'Post.id';
+// pr($params); exit;
+//$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
+//$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
+                $endorsement = $this->Post->find("all", $params);
+//                $log = $this->Post->getDataSource()->getLog(false, false);
+//                pr($log);
+
+                $endorsmentarray = array();
+                $departmentarray = array();
+                $entityarray = array();
+                $userarray = array();
+                $core_values = $this->getOrgValues($org_id, "OrgCoreValues", 1);
+                $coreval = array();
+                foreach ($core_values as $cvalue) {
+                    $coreval[$cvalue["id"]] = $cvalue["name"] . "&&&&" . $cvalue["color_code"];
+                }
+
+                $serverCurrentTime = "";
+
+                foreach ($endorsement as $key => $value) {
+                    $postAttachmentImages = array();
+//                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
+//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
+//                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
+//                        $endorsmentarray[$key]["post_image"] = "";
+//                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
+//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
+//                    } else {
+//                        $endorsmentarray[$key]["post_image"] = array();
+//                    }
+                    $postAttachmentemoji = array();
+                    $postAttachmentimg = array();
+                    $postAttachmentFiles = array();
+
+                    if (isset($value["PostAttachments"]) && !empty($value["PostAttachments"])) {
+                        foreach ($value["PostAttachments"] as $index => $postAttchment) {
+                            if ($postAttchment['type'] == 'emojis') {
+                                //$temppImages = Router::url('/', true) . EMOJIS_IMAGE_DIR . $postAttchment['name'];
+                                $temppImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR . $postAttchment['name'];
+                                if (strpos($temppImages, 'localhost') < 0 || strpos($temppImages, 'staging') < 0) {
+                                    $temppImages = str_replace("http", "https", $temppImages);
+                                }
+//                                $temppImages = str_replace("http", "https", $temppImages);
+
+                                $postAttachmentemoji[] = $temppImages;
+                            } else if ($postAttchment['type'] == 'image') {
+                                $temppImages1 = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $postAttchment['name'];
+                                $temppImages1 = str_replace("http", "https", $temppImages1);
+                                $postAttachmentimg[] = $temppImages1;
+                            } else if ($postAttchment['type'] == 'files') {
+                                $temppImages2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $postAttchment['name'];
+                                $temppImages2 = str_replace("http", "https", $temppImages2);
+                                $postAttachmentFiles[] = $temppImages2;
+                            }
+                        }
+                        $postAttachmentImages = array_merge($postAttachmentimg, $postAttachmentemoji);
+                    }
+
+                    $displayflag = 0;
+                    $endorsval = $value["Post"];
+                    $publishedDate = $value[0]["create_date"];
+                    $endorsval["created"] = $value[0]["create_date"];
+                    $serverCurrentTime = $value[0]["curr_time"];
+                    $endorsimgcount = $endorsval["image_count"];
+                    $endorsmentarray[$key]["post"] = $endorsval;
+                    $endorsmentarray[$key]["post_attachment"] = $postAttachmentImages;
+                    $endorsmentarray[$key]["post_attachment_files"] = count($postAttachmentFiles);
+                    $endorsmentarray[$key]["imagecount"] = $endorsval["image_count"];
+                    $endorsmentarray[$key]["emojis_count"] = $endorsval["emojis_count"];
+//                    $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
+                    $endorsmentarray[$key]["user_id"] = $endorsval["user_id"];
+                    $endorsmentarray[$key]["published_date"] = $publishedDate;
+
+                    $endorsmentarray[$key]["reply"] = $endorsval["is_reply"];
+
+                    if ($value["PostLike"]["id"] != "") {
+                        $endorsmentarray[$key]["like"] = 1;
+                    } else {
+                        $endorsmentarray[$key]["like"] = 0;
+                    }
+
+                    $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
+                    $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $endorsval["user_id"], "UserOrganization.organization_id" => $org_id)));
+
+                    $jobTitle = '';
+
+                    if (isset($userOrganization['UserOrganization']['job_title_id']) && $userOrganization['UserOrganization']['job_title_id'] != '') {
+                        $jobTitleData = $this->OrgJobTitle->findById($userOrganization['UserOrganization']['job_title_id']);
+                        if (isset($jobTitleData['OrgJobTitle']) && !empty($jobTitleData['OrgJobTitle'])) {
+                            $jobTitle = $jobTitleData['OrgJobTitle']['title'];
+                        } else {
+                            $jobTitle = '';
+                        }
+                    }
+                    $endorsmentarray[$key]["user_job_title"] = $jobTitle;
+                    $userarray[] = $endorsval["user_id"];
+                    $endorsmentarray[$key]["displayflag"] = $displayflag;
+                }
+//pr($endorsmentarray);exit;
+                $userinfo = $this->User->find('all', array(
+                    'conditions' => array('User.id' => $userarray),
+                    'fields' => array('id', 'fname', 'lname', 'image', 'about')
+                ));
+//pr($userinfo);
+                $userdata = array();
+                foreach ($userinfo as $userval) {
+                    $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
+                    if ($userval["User"]["image"] != "") {
+                        $userdata[$userval["User"]["id"]] .= "&&&&" . Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["User"]["image"];
+                    }
+                    $userabout[$userval["User"]["id"]]['about'] = trim($userval["User"]["about"]);
+                }
+
+                $newarray = array();
+//pr($endorsmentarray); exit;
+                foreach ($endorsmentarray as $key => $eval) {
+                    $key = $eval["post"]["id"];
+                    $newarray[$key]["id"] = $eval["post"]["id"];
+                    $newarray[$key]["is_like"] = $eval["like"];
+                    $newarray[$key]["is_read"] = $eval["post"]["is_read"];
+                    $newarray[$key]["post_id"] = $eval["post"]["id"];
+                    $newarray[$key]["user_id"] = $eval["post"]["user_id"];
+                    $newarray[$key]["post_image"] = $eval["post_attachment"];
+                    $newarray[$key]["post_files"] = $eval["post_attachment_files"];
+                    $newarray[$key]["comments_count"] = $eval['post']["comments_count"];
+                    $newarray[$key]["user_job_title"] = $eval["user_job_title"];
+
+                    if (isset($userdata[$eval["post"]["user_id"]])) {
+                        $newuserdata = explode("&&&&", $userdata[$eval["post"]["user_id"]]);
+                        $newarray[$key]["user_name"] = $newuserdata[0];
+                        $newarray[$key]["user_about"] = $userabout[$userval["User"]["id"]]['about'];
+                        if (isset($newuserdata[1])) {
+
+                            $needle = 'default.jpg';
+                            if (strpos($newuserdata[1], $needle) !== false) {
+                                $newarray[$key]["user_image"] = '';
+                            } else {
+                                $newarray[$key]["user_image"] = $newuserdata[1];
+                            }
+                        }
+                    } else {
+                        $newarray[$key]["user_name"] = "";
+                    }
+//pr($newarray);
+//exit;
+                    $newarray[$key]["message"] = $eval["post"]["message"];
+                    $newarray[$key]["title"] = $eval["post"]["title"];
+
+                    $newarray[$key]["like_count"] = $eval["post"]["like_count"];
+//$newarray[$key]["created"] = $eval["post"]["created"];
+                    $newarray[$key]["created"] = $eval["published_date"];
+
+                    $newarray[$key]["imagecount"] = $eval["imagecount"];
+                    $newarray[$key]["emojiscount"] = $eval["emojis_count"];
+//                    $newarray[$key]["bitmojiscount"] = $eval["bitmojis_count"];
+                    $newarray[$key]["is_reply"] = $eval["reply"];
+                    $newarray[$key]["list_type"] = 'wallpost';
+                }
+                if ($loggedInUser['current_org']['joined'] == 0) {
+
+                    $updateArray['UserOrganization.joined'] = 1;
+//$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                    if ($this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                        $this->Session->write('Auth.User.current_org.joined', 1);
+                        $this->JoinOrgCode->updateAll(array("is_expired" => 1), array("email" => $loggedInUser['email'], "organization_id" => $org_id));
+                    }
+                }
+
+                $returndata2 = array("post_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
+
+//pr($returndata2);
+                $liveFeedDATA = array();
+                foreach ($feedArray as $feedId => $feedData) {
+                    if ($feedData['feed_type'] == 'post') {
+                        if (isset($returndata2['post_data'][$feedData['feed_id']]))
+                            $liveFeedDATA[] = $returndata2['post_data'][$feedData['feed_id']];
+                    } else {
+                        if (isset($returndata1['endorse_data'][$feedData['feed_id']]))
+                            $liveFeedDATA[] = $returndata1['endorse_data'][$feedData['feed_id']];
+                    }
+                }
+                $resServerTime = '';
+                if (isset($endorseServerTime) && $endorseServerTime != '') {
+                    $resServerTime = $endorseServerTime;
+                } elseif (isset($serverCurrentTime) && $serverCurrentTime != '') {
+                    $resServerTime = $serverCurrentTime;
+                }
+//                pr($liveFeedDATA);
+//                exit;
+
+                /* GETTING POST DATA END */
+                $returndata = array("endorse_data" => $liveFeedDATA, "total_page" => $totalpage, "server_time" => $resServerTime);
+
+
+
+
+                $this->set(array(
+                    'result' => array("status" => true
+                        , "msg" => "Organization Endorsement ",
+                        "data" => $returndata),
+                    '_serialize' => array('result')
+                ));
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => ""),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed."),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+
+    public function getLiveFeeds_new() {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
