@@ -1532,6 +1532,7 @@ class ApiController extends AppController {
             $this->loadModel("UserFollowing");
             $followingIdsArray = array();
             $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $authuser["id"], 'status' => 1)));
+            $userinfo['is_following'] = false;
             if (!empty($userFollowings)) {
                 $userFollowings = array_shift($userFollowings);
                 $userFollowings = $userFollowings['UserFollowing'];
