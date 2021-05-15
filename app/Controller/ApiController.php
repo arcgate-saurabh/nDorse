@@ -6533,7 +6533,7 @@ class ApiController extends AppController {
         }
     }
     
-     public function getLiveFeeds() {
+     public function getLiveFeeds_old() {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
@@ -7316,7 +7316,7 @@ class ApiController extends AppController {
         }
     }
 
-    public function getLiveFeeds_new() {
+    public function getLiveFeeds() {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
@@ -7485,11 +7485,12 @@ class ApiController extends AppController {
                         array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, $Usercondition)
                     );
                 } else {
+                    
                     $NEWconditionarray["OR"] = array(
                         array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
                                         "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
                                         "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
-                        array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, "user_id like '%" . '"' . $user_id . '"' . "%'",)
+                        array("visibility_check" => 0, 'FeedTran.org_id' => $org_id /*, "user_id like '%" . '"' . $user_id . '"' . "%'",*/)
                     );
                 }
              /*   if ($start_date != "") {
