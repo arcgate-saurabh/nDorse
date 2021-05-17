@@ -902,6 +902,7 @@ class ClientController extends AppController {
                 $alldetailsorg = $this->Common->OrgInfoClient($loggedinUser["token"], $org_id);
 //                $postdatafororginfo = array("token" => $loggedinUser["token"], "oid" => $org_id);
 //                $jsondatafororginfo = json_decode($this->Apicalls->curlget("getOrganization.json", $postdatafororginfo), true);
+//                pr($jsondatafororginfo); exit;
 //                $alldetailsorg = array();
 //                if ($jsondatafororginfo["result"]["status"] == true) {
 //                    $streetcity = array();
