@@ -2133,7 +2133,7 @@ class ApiController extends AppController {
                     $rootUrl = Router::url('/', true);
                     $rootUrl = str_replace("http", "https", $rootUrl);
                     $orgArray["Organization"]["health_url"] = $rootUrl . "img/" . $orgArray["Organization"]["health_url"];
-                    pr($orgArray); exit;
+//                    pr($orgArray); exit;
                     $this->set(array(
                         'result' => array("status" => true
                             , "msg" => "Organization info ", 'data' => $orgArray),
