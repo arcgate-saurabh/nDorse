@@ -2122,7 +2122,12 @@ class ApiController extends AppController {
                     $orgArray["total_endorsement"] = count($corevaluesendorsement); //$cinfo;
                     $orgArray["org_core_values"] = $core_value;
                     $orgArray["total_endorsement_month"] = $total_value;
-                    $orgArray["departments"] = $this->getOrgValues($org_id, "OrgDepartments");
+                    if($org_id == 426){
+                        $orgArray["departments"] = array();
+                    }else{
+                        $orgArray["departments"] = $this->getOrgValues($org_id, "OrgDepartments");
+                    }
+                    
                     $orgArray["entity"] = $this->getOrgValues($org_id, "Entity");
                     $orgArray["job_titles"] = $this->getOrgValues($org_id, "OrgJobTitles");
                     $rootUrl = Router::url('/', true);
