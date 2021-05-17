@@ -900,6 +900,7 @@ class ClientController extends AppController {
             if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
                 //=====api for org data
                 $alldetailsorg = $this->Common->OrgInfoClient($loggedinUser["token"], $org_id);
+                
 //                $postdatafororginfo = array("token" => $loggedinUser["token"], "oid" => $org_id);
 //                $jsondatafororginfo = json_decode($this->Apicalls->curlget("getOrganization.json", $postdatafororginfo), true);
 //                pr($jsondatafororginfo); exit;

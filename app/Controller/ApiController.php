@@ -2098,9 +2098,9 @@ class ApiController extends AppController {
                         )
                     );
                     $params['group'] = 'EndorseCoreValue.endorsement_id';
-                    $params['order'] = 'Endorsement.id asc';
+                    //$params['order'] = 'Endorsement.id asc';
                     $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
-
+                    $this->Endorsement->recursive = -1;
                     $corevaluesendorsement = $this->Endorsement->find("all", $params);
 
 //                $log = $this->Endorsement->getDataSource()->getLog(false, false);
