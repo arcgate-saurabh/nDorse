@@ -73,8 +73,10 @@ echo $this->Element($headerpage, array('data' => $data));
             </div>
         </section>
         <?php
-        $portalLink = Router::url('/', true) . "daisy/index/" . base64_encode($orgDetail['Organization']['id']);
-        $portalLink = str_replace("http", "https", $portalLink);
+        //https://daisy.ndorse.net/daisy/index/MTQ4
+//        $portalLink = Router::url('/', true) . "daisy/index/" . base64_encode($orgDetail['Organization']['id']);
+        $portalLink = "https://daisy.ndorse.net/daisy/index/" . base64_encode($orgDetail['Organization']['id']);
+//        $portalLink = str_replace("http", "https", $portalLink);
         echo $this->Form->create('Organization');
         echo $this->Form->input('id', array('type' => 'hidden', 'value' => $orgDetail['Organization']['id']));
 //        echo $this->Form->input('portallink', array('type' => 'text', 'value' => $portalLink));
