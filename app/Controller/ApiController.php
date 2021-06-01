@@ -16885,15 +16885,23 @@ class ApiController extends AppController {
 //            $file = new File($file, true);
 //            $file->write($requestJson);
 //            
-            $user_email = $lastName = $uniqueAccountName = $dept = $uid = '';
+            $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId= '';
             $firstName = '';
             $userData = array();
             if (isset($this->request->data['uid'][0]) && $this->request->data['uid'][0] != '') {
                 $uid = $uniqueAccountName = $this->request->data['uid'][0];
             }
+            if (isset($this->request->data['employee_id'][0]) && $this->request->data['employee_id'][0] != '') {
+                $employeeId = $this->request->data['employee_id'][0];
+            }else{ // If we will not be getting employee id in response of sso login then use uid as employeeId
+                $employeeId = $uid;
+            }
+            
+            
             if (isset($uniqueAccountName) && $uniqueAccountName != '') {
 //                $user_email = $this->request->data['mail'][0];
-                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
+//                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
+                $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $employeeId)));
             }
 
             if (isset($this->request->data['mail'][0]) && $this->request->data['mail'][0] != '') {
@@ -16911,6 +16919,7 @@ class ApiController extends AppController {
             if (isset($this->request->data['uid'][0]) && $this->request->data['uid'][0] != '') {
                 $uniqueAccountName = $this->request->data['uid'][0];
             }
+            
 
 
 
@@ -17132,6 +17141,7 @@ class ApiController extends AppController {
                 $userAdDATA['User']['source'] = 'ADFS';
                 $userAdDATA['User']['email'] = $user_email;
                 $userAdDATA['User']['username'] = $UPN;
+                $userAdDATA['User']['employee_id'] = $employeeId;
                 $userAdDATA['User']['role'] = array_search('endorser', $roleList);
                 $userAdDATA['User']['secret_code'] = $this->getSecretCode("user");
                 $userAdDATA['User']['last_app_used'] = "NOW()";

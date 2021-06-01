@@ -13,7 +13,7 @@ function isInteger(str) {
     if (Math.floor(str) == str) {
         status = true;
     } else {
-        // value is not an integer, show some validation error
+// value is not an integer, show some validation error
     }
 
     return status;
@@ -32,7 +32,6 @@ function createAlert(targetDivCriteria, alertType, message) {
     if (!alertType)
         alertclass = 'alert-danger';
     str = '<div class=" alert ' + alertclass + '" id="flashMessage" style="">' + message + '</div>';
-
     $(targetDivCriteria).html(str);
     hideAlert();
 }
@@ -42,13 +41,11 @@ function uploadajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgcode)
 
     var val = uploadarray[index];
     var targetData = val.data;
-
     if ($.trim(targetData[8]) == "") {
         targetData[8] = 0;
     }
 
     console.log(targetData);
-
     next = index + 1;
     $.ajax({
         type: 'POST',
@@ -64,6 +61,10 @@ function uploadajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgcode)
                 result = "Successful";
                 imageicon = "<div class='successfulupload'></div>";
                 //imageicon = siteurl+"/app/webroot/img/test-pass-icon.png";
+            } else if (result == "User updated but Email not updated") {
+                var comment = result;
+                result = "Partial";
+                imageicon = "<div class='unsuccessfulupload'></div>";
             } else {
                 var comment = result;
                 result = "Unsuccessful";
@@ -78,7 +79,7 @@ function uploadajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgcode)
 //            console.log(val.data[6]);
             if (userstatus === 0) {
                 console.log("inactive");
-                if (result == "Unsuccessful") {
+                if (result == "Unsuccessful" || result == "Partial") {
                     comment = comment.replace(/\n/g, "<br />");
                     $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").html(comment);
                 } else {
@@ -97,7 +98,7 @@ function uploadajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgcode)
                 //$('<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + ' (User is set to inactive since quota is over)</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>').appendTo("#bulkuserstable");
             } else {
                 console.log("active");
-                if (result == "Unsuccessful") {
+                if (result == "Unsuccessful" || result == "Partial") {
                     $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text(comment);
                 }
                 //var resultstring = '<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>';
@@ -128,7 +129,6 @@ function uploadajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgcode)
             //}
         }
     });
-
 }
 
 // upload user function
@@ -137,7 +137,6 @@ function uploadadfsajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
     var val = uploadarray[index];
 //    console.log(val); return false;
     var targetData = val.data;
-
     if ($.trim(targetData[8]) == "") {
         targetData[8] = 0;
     }
@@ -155,7 +154,6 @@ function uploadadfsajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
 
             //success++;
             var result = data.result;
-
             if (result == "Updated" || result == "Inserted") {
                 var comment = result;
                 result = "Successful";
@@ -227,7 +225,6 @@ function uploadadfsajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
             //}
         }
     });
-
 }
 // end
 
@@ -238,7 +235,6 @@ function uploadLCMCajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
     var val = uploadarray[index];
 //    console.log(val); return false;
     var targetData = val.data;
-
     if ($.trim(targetData[8]) == "") {
         targetData[8] = 0;
     }
@@ -268,7 +264,6 @@ function uploadLCMCajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
             }
 
             console.log(data);
-
             var userstatus = data.status;
             //$("#bulkuserstable tr").find("td[emailresult='"+val.email1+"']").html(result+' <img src="'+imageicon+'"/>');
             $("#bulkuserstable tr").find("td[emailresult='" + val.email1 + "']").html(result + imageicon);
@@ -327,7 +322,6 @@ function uploadLCMCajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
             //}
         }
     });
-
 }
 // end
 
@@ -362,7 +356,6 @@ function changestatus(id, url, status, file) {
                             var userrole = jsonparser.role;
                             var encodeid = jsonparser.encodeid;
                             var is_purchase = jsonparser.is_purchase;
-
                             var newchanges = "Activate";
                             $('#orgstatus_' + id + ' h3').text('Organization Status: Inactive');
                             // alert(userrole);
@@ -380,10 +373,7 @@ function changestatus(id, url, status, file) {
                             $("#orgstatus_" + id).attr("type", "normal");
                             $("#purchase_" + id).html(uphtml);
                             $("#purchase_" + id).hide();
-
                             $("#row_" + id).addClass("inactive");
-
-
                             $("#statuschanges_" + id).children("a").remove();
                             url = "'" + url + "'";
                             file = "'" + file + "'";
@@ -394,7 +384,6 @@ function changestatus(id, url, status, file) {
                 }
             }
         });
-
 //        bootbox.confirm(smsg, function (result) {
 //
 //            if (result == true) {
@@ -456,24 +445,20 @@ function changestatus(id, url, status, file) {
                     var newchanges = "Inactivate";
                     if (file == "Organization") {
                         $('#orgstatus_' + id + ' h3').text('Organization Status: Active');
-
                         $("#purchase_" + id).show();
                     } else {
                         $('#statusactivity_' + id).text('Active');
                     }
                     $("#row_" + id).removeClass("inactive");
-
                 } else {
                     var newchanges = "Activate";
                     if (file == "Organization") {
                         $('#orgstatus_' + id + ' h3').text('Organization Status: Inactive');
-
                         $("#purchase_" + id).hide();
                     } else {
                         $('#statusactivity_' + id).text('Inactive');
                     }
                     $("#row_" + id).addClass("inactive");
-
                 }
                 $("#statuschanges_" + id).children("a").remove();
                 url = "'" + url + "'";
@@ -504,7 +489,6 @@ function changeGuestNdorseStatus(id, status) {
     }
 
     url = siteurl + 'ajax/changeguestndorsementstatus';
-
     bootbox.confirm({
         title: smsg,
         message: ' ',
@@ -525,7 +509,6 @@ function changeGuestNdorseStatus(id, status) {
                         var userrole = jsonparser.role;
                         var encodeid = jsonparser.encodeid;
                         var is_purchase = jsonparser.is_purchase;
-
                         var newchanges = "Activate";
                         $('#orgstatus_' + id + ' h3').text('Organization Status: Inactive');
                         // alert(userrole);
@@ -543,13 +526,9 @@ function changeGuestNdorseStatus(id, status) {
                         $("#orgstatus_" + id).attr("type", "normal");
                         $("#purchase_" + id).html(uphtml);
                         $("#purchase_" + id).hide();
-
                         $("#row_" + id).addClass("inactive");
-
-
                         $("#statuschanges_" + id).children("a").remove();
                         $("#feedback_section_" + id).fadeOut();
-
                         if (status == 3) {
                             alert('Guest nomination has been drafted successfully.');
                         } else if (status == 2) {
@@ -571,12 +550,7 @@ function changeGuestNdorseStatus(id, status) {
             }
         }
     });
-
     return false;
-
-
-
-
 //    if (status == 1) {
 //        var stype = $("#orgstatus_" + id).attr("type");
 //        var smsg = "Are you sure you want to inactivate this organization?";
@@ -649,7 +623,6 @@ function changeVideoStatus(org_id, id, status) {
         siteurl = siteurl.replace("https", "http");
     }
     url = siteurl + 'ajax/changevideostatus';
-
     bootbox.confirm({
         title: smsg,
         message: ' ',
@@ -718,8 +691,8 @@ function deleteEndorser(id) {
 //===========================upload csv for bulk user
 function uploadcsvbulkuser(orgid, orgname, orgcode) {
     if ($('#uploadedfile').is(':visible') == true) {
-        //$('#myModalbulkusersimports').modal('show');
-        //$("#bulkuserstable").html("");
+//$('#myModalbulkusersimports').modal('show');
+//$("#bulkuserstable").html("");
         var filed = $(".hidefileupload").prop("files")[0];
         var reader = new FileReader();
         reader.readAsText(filed);
@@ -752,7 +725,6 @@ function uploadcsvbulkuser(orgid, orgname, orgcode) {
                     //$('<tr class="bulkusersrow"><td class="emailsusers col-md-3">' + data[tmp][0] + '</td></tr>').appendTo("#bulkuserstable");
                     myVals.push({email1: email, data: data[tmp]});
                     $('<tr><td>' + email + '</td><td emailresult=' + email + '>Processing.....</td><td emailcomment=' + email + '>Processing.....</td></tr>').appendTo(".bulkuploadtable");
-
                 }
             }
             //$("#bulkuserstable").empty();
@@ -843,9 +815,7 @@ function uploadcsvbulkuser(orgid, orgname, orgcode) {
 //            }
             $('#uploadedfile').remove();
             $('#bulkuserbutton').val("");
-
         };
-
     } else {
         alert("Choose File First");
         return false;
@@ -857,8 +827,8 @@ function uploadcsvbulkuser(orgid, orgname, orgcode) {
 //===========================upload csv for bulk ADFS user
 function uploadcsvbulkADFSuser(orgid, orgname, orgcode) {
     if ($('#uploadedfile').is(':visible') == true) {
-        //$('#myModalbulkusersimports').modal('show');
-        //$("#bulkuserstable").html("");
+//$('#myModalbulkusersimports').modal('show');
+//$("#bulkuserstable").html("");
         var filed = $(".hidefileupload").prop("files")[0];
         var reader = new FileReader();
         reader.readAsText(filed);
@@ -891,7 +861,6 @@ function uploadcsvbulkADFSuser(orgid, orgname, orgcode) {
                     //$('<tr class="bulkusersrow"><td class="emailsusers col-md-3">' + data[tmp][0] + '</td></tr>').appendTo("#bulkuserstable");
                     myVals.push({email1: email, data: data[tmp]});
                     $('<tr><td>' + email + '</td><td emailresult=' + email + '>Processing.....</td><td emailcomment=' + email + '>Processing.....</td></tr>').appendTo(".bulkuploadtable");
-
                 }
             }
             //$("#bulkuserstable").empty();
@@ -982,9 +951,7 @@ function uploadcsvbulkADFSuser(orgid, orgname, orgcode) {
 //            }
             $('#uploadedfile').remove();
             $('#bulkuserbutton').val("");
-
         };
-
     } else {
         alert("Choose File First");
         return false;
@@ -994,15 +961,14 @@ function uploadcsvbulkADFSuser(orgid, orgname, orgcode) {
 //===========================upload csv for bulk NEW LCMC user user
 function uploadcsvbulkNEWLCMCuser(orgid, orgname, orgcode) {
     if ($('#uploadedfile').is(':visible') == true) {
-        //$('#myModalbulkusersimports').modal('show');
-        //$("#bulkuserstable").html("");
+//$('#myModalbulkusersimports').modal('show');
+//$("#bulkuserstable").html("");
         var filed = $(".hidefileupload").prop("files")[0];
         var reader = new FileReader();
         reader.readAsText(filed);
         var myVals = new Array();
         reader.onload = function (event) {
             var csvData = event.target.result;
-
             try {
                 data = $.csv.toArrays(csvData);
                 dataObj = $.csv.toObjects(csvData);
@@ -1029,7 +995,6 @@ function uploadcsvbulkNEWLCMCuser(orgid, orgname, orgcode) {
                     //$('<tr class="bulkusersrow"><td class="emailsusers col-md-3">' + data[tmp][0] + '</td></tr>').appendTo("#bulkuserstable");
                     myVals.push({email1: email, data: data[tmp]});
                     $('<tr><td>' + email + '</td><td emailresult=' + email + '>Processing.....</td><td emailcomment=' + email + '>Processing.....</td></tr>').appendTo(".bulkuploadtable");
-
                 }
             }
             //$("#bulkuserstable").empty();
@@ -1120,9 +1085,7 @@ function uploadcsvbulkNEWLCMCuser(orgid, orgname, orgcode) {
 //            }
             $('#uploadedfile').remove();
             $('#bulkuserbutton').val("");
-
         };
-
     } else {
         alert("Choose File First");
         return false;
@@ -1186,7 +1149,7 @@ function uploadcsvbulklinks() {
 
 //==clearing data on live endorsement page
 $(document).on("click", "body", function (event) {
-    //=to close search org when externally clicked
+//=to close search org when externally clicked
     var clnew = $(event.target).attr("class");
     var searcheddata = $("#livesearch").html();
     if ($("#pagename").val() == "liveendorsements") {
@@ -1194,7 +1157,6 @@ $(document).on("click", "body", function (event) {
             $("#livesearch").html("");
             $("#searchliveendorsements").val("");
             $("#clearsearcheddata").attr("disabled", "disabled");
-
         }
     }
 
@@ -1313,7 +1275,6 @@ function changestatususers(id, ps) {
                 $("#changestatus_" + id).html(changestatusbox);
                 $('.close').trigger('click');
                 $("." + parseData.user_id + "_one").hide();
-
             } else {
                 $('.close').trigger('click');
                 $("." + parseData.user_id + "_one").hide();
@@ -1641,7 +1602,6 @@ $(document).on("keyup", "#searchliveendorsements", function () {
         $(".search-loader").addClass("search-icn").removeClass('search-loader');
     }
 });
-
 var livesearchdataobject = {}
 //==========searching data after clicking
 $(document).on("click", ".livesearchdata", function () {
@@ -1672,7 +1632,6 @@ $(document).on("click", ".livesearchdata", function () {
         }
     });
 });
-
 $("#submitfilterendorsement").click(function () {
     var jobtitles = $("#jobtitlefilter").val();
     var departments = $("#departmentfilter").val();
@@ -1704,14 +1663,12 @@ $(document).on("click", "#submitfilterusers", function () {
     var searchkeyword = $("#searchkeyword").val();
     searchusers(searchkeyword);
 });
-
 function searchusers(searchvalue) {
 
     var jobtitles = $("#jobtitlefilter").val();
     var departments = $("#departmentfilter").val();
     var status = $("#statusFilter").val();
     var usertype = $("#usertypeFilter").val();
-
     var orgid = $("#orgid").val();
     $(".search-icn").addClass("search-loader").removeClass('search-icn');
     delay(function () {
@@ -1747,17 +1704,14 @@ function searchusers(searchvalue) {
 $(document).on("keyup", "#searchorganization", function () {
     filterorganizationlist();
 });
-
 $(document).on("mouseup", ".orgfilterradio", function () {
     delay(function () {
         filterorganizationlist()
     }, 200);
 });
-
 function filterorganizationlist() {
     var searchvalue = $('#searchorganization').val();
     var orgType = $("input[name=orgtype]:checked").val();
-
     if ((searchvalue.length >= "0")) {
         $(".search-icn").addClass("search-loader").removeClass('search-icn');
         delay(function () {
@@ -1765,11 +1719,9 @@ function filterorganizationlist() {
             console.log("before 2 : " + siteurl);
             console.log(siteurl.indexOf('localhost') > 0);
             console.log(siteurl.indexOf('staging') > 0);
-
             if ((siteurl.indexOf('localhost') > 0) || (siteurl.indexOf('staging') > 0)) {
 
                 console.log((siteurl.indexOf('https')));
-
 //                if (siteurl.indexOf('https') > 0) {
                 siteurl = siteurl.replace("https", "http");
 //                }
@@ -1846,8 +1798,6 @@ $(document).on("keyup", "#searchallusers", function () {
     }
 
 });
-
-
 function deleteuser(uid) {
     $("#myModa2_deleteusers").modal("show");
     $("#myModa2_deleteusers #deleteclick").attr("onclick", "");
@@ -1988,7 +1938,6 @@ function searchleaderboard(searchvalue, orgid) {
 
         }
     });
-
 }
 
 //=================renew subscription popup
@@ -2017,10 +1966,8 @@ function overwritesubscription(org_id) {
     //upgradeadminsubscriptionInfoForm
     $("#overwriteadminsubscriptionIndexForm").validate().resetForm();
     $("#overwrite_org_id").val(org_id);
-
     $("#overwrite_org_id_amt").val("");
     $("#overwrite_org_id_users").val("");
-
     $("#myModal2_overwritesubscription").modal("show")
     $("#myModal2_overwritesubscription .modal-title").text("Override Subscription");
 }
@@ -2030,10 +1977,8 @@ function upgradesubscription(org_id) {
     $("#updateadminsubscriptionsubmit").prop("disabled", false);
     $("#upgradeadminsubscriptionIndexForm").validate().resetForm();
     $("#up_org_id").val(org_id);
-
     $("#upgrade_amt").val("");
     $("#upgrade_users").val("");
-
     $("#myModal2_upgradesubscription").modal("show")
     $("#myModal2_upgradesubscription .modal-title").text("Upgrade Subscription");
 }
@@ -2044,10 +1989,7 @@ function downgradesubscription(org_id, pool_qty) {
     //$("#downgrade_active_users1").hide();
     // $("#downgrade_active_users").html("");
     $("#suadmin_downgrade_amt").show();
-
-
     $("#disp_user_option").hide();
-
     var userquota = 0;
     $.ajax({
         type: "POST",
@@ -2058,7 +2000,6 @@ function downgradesubscription(org_id, pool_qty) {
             var parseData = JSON.parse(data);
             var userdata = parseData.fresult;
             var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradesubscription(' + up_org_id + ')">Upgrade</button>&nbsp;<button class="btn btn-xs btn-info" onclick="downgradesubscription(' + up_org_id + ',' + parseData.qty + ')">Downgrade</button>&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + up_org_id + ')" >Terminate Subscription</button>';
-
             //  downgrade_active_users
 
             for (tmp in userdata) {
@@ -2085,16 +2026,12 @@ function downgradesubscription(org_id, pool_qty) {
             }
 
             $("#myModal2_downgradesubscription .modal-title").text("Downgrade Subscription (Max users allowed: " + allowed_users + ")");
-
         }
     });
     $("#down_org_id").val(org_id);
     $("#pool_qty").val(pool_qty);
-
-
     $("#downgrade_amt").val("");
     $("#downgrade_users").val("");
-
     $("#myModal2_downgradesubscription").modal("show")
 
 }
@@ -2103,7 +2040,6 @@ function terminatesubscription(org_id) {
     //$("#upgradeadminsubscriptionIndexForm").validate().resetForm();
     $("#adminterminatesubscriptionsubmit").prop("disabled", false);
     $("#terminate_org_id").val(org_id);
-
     $("#adminterminatesubscriptionsubmit").attr("type", "mannual");
     $("#myModal2_terminatesubscription").modal("show")
     $("#myModal2_terminatesubscription .modal-title").text("Terminate Subscription");
@@ -2206,12 +2142,7 @@ function bulkactive(org_id) {
     console.log(org_id);
     //$("#upgradeadminsubscriptionIndexForm").validate().resetForm();
     $("#bulk_org_id").val(org_id);
-
-
-
-
     $("#bulk_active_users").html("");
-
     $("#active_users_no").val("");
     $("#bulkactiveuserOldestActive").val("yes");
     var userquota = 0;
@@ -2223,8 +2154,6 @@ function bulkactive(org_id) {
             console.log(data);
             var parseData = JSON.parse(data);
             var userdata = parseData.fresult;
-
-
             //  downgrade_active_users
 
             for (tmp in userdata) {
@@ -2258,14 +2187,8 @@ function bulkinactive(org_id) {
     console.log(org_id);
     //$("#upgradeadminsubscriptionIndexForm").validate().resetForm();
     $("#inbulk_org_id").val(org_id);
-
-
-
-
     $("#bulk_inactive_users").html("");
-
     $("#inactive_users_no").val("");
-
     var userquota = 0;
     $.ajax({
         type: "POST",
@@ -2275,8 +2198,6 @@ function bulkinactive(org_id) {
             console.log(data);
             var parseData = JSON.parse(data);
             var userdata = parseData.fresult;
-
-
             //  downgrade_active_users
 
             for (tmp in userdata) {
@@ -2315,7 +2236,6 @@ function revertsubscription(org_id, qty) {
         data: {targetid: org_id},
         success: function (data, textStatus, xhr) {
             var parseData = JSON.parse(data);
-
             var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradesubscription(' + org_id + ')">Upgrade</button>&nbsp;<button class="btn btn-xs btn-info" onclick="downgradesubscription(' + org_id + ',' + (qty) + ')">Downgrade</button>&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + org_id + ')" >Terminate Subscription</button>';
             if (parseData.type == "trial") {
                 var uphtml = '<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + org_id + ')" >Terminate Subscription</button>';
@@ -2334,7 +2254,6 @@ function revertsubscription(org_id, qty) {
             }
         },
     });
-
 }
 function AllitemDisplay()
 {
@@ -2350,8 +2269,6 @@ function itemSearch(searchtext)
         // AllitemDisplay();
         jQuery("div.checkboxsearch").each(function () {
             var strsearch = jQuery(this).attr('username');
-
-
             if (strsearch.indexOf(searchtext.toLowerCase()) >= 0)
             {
                 jQuery(this).show();
@@ -2378,8 +2295,6 @@ function itemSearchactiveuser(searchtext)
         // AllitemDisplay();
         jQuery("div.checkboxsearchuseractive").each(function () {
             var strsearch = jQuery(this).attr('username');
-
-
             if (strsearch.indexOf(searchtext.toLowerCase()) >= 0)
             {
                 jQuery(this).show();
@@ -2405,8 +2320,6 @@ function itemSearchinactiveuser(searchtext)
         // AllitemDisplay();
         jQuery("div.checkboxsearchuserinactive").each(function () {
             var strsearch = jQuery(this).attr('username');
-
-
             if (strsearch.indexOf(searchtext.toLowerCase()) >= 0)
             {
                 jQuery(this).show();
@@ -2428,18 +2341,16 @@ function itemSearchinactiveuser(searchtext)
 function itemSearchReinviteUser(searchtext) {
     console.log(searchtext);
     if (searchtext != "") {
-        // AllitemDisplay();
+// AllitemDisplay();
         jQuery("div.checkboxsearchuserreinvite").each(function () {
             var strsearch = jQuery(this).attr('username');
-
-
             if (strsearch.indexOf(searchtext.toLowerCase()) >= 0)
             {
                 jQuery(this).show();
             } else
             {
-                //checkpr
-                // $("#checkpr"+jQuery(this).attr("id")).removeAttr('checked');
+//checkpr
+// $("#checkpr"+jQuery(this).attr("id")).removeAttr('checked');
                 jQuery(this).hide();
             }
         });
@@ -2552,8 +2463,6 @@ var delay = (function () {
         timer = setTimeout(callback, ms);
     };
 })();
-
-
 var element = $("#html-content-holder"); // global variable
 var getCanvas; // global variable
 
@@ -2567,7 +2476,6 @@ function printable() {
             delay(function () {
                 $.print("#img_val");
             }, 2000);
-
             //document.getElementById("myForm").submit();
         }
     });
@@ -2606,7 +2514,6 @@ function saveallendorsement(divId, orgid, information, type) {
     var spreadsheetobject = {};
     var i = 0;
     var ifAttachment = 0;
-
     $("#" + divId + " tr").each(function () {
         if ($(this).is(":visible") == true) {
             var abc = new Array();
@@ -2660,7 +2567,6 @@ function saveallendorsement(divId, orgid, information, type) {
             var jsonparse = $.parseJSON(data);
             var url = siteurl + 'xlsxfolder/' + jsonparse.filename;
             window.open(url, '_self');
-
 //            $("#samplelink")
 //                .attr({
 //                'download': 'export.xlsx',
@@ -2676,7 +2582,6 @@ function saveallendorsement(divId, orgid, information, type) {
 
         }
     });
-
 }
 
 //===function to save all endorsements as spreadsheet
@@ -2691,7 +2596,6 @@ function saveallposts(divId, orgid, information, type, userSelected) {
     var spreadsheetobject = {};
     var i = 0;
     var ifAttachment = 0;
-
     $("#" + divId + " tr").each(function () {
         if ($(this).is(":visible") == true) {
             var abc = new Array();
@@ -2747,7 +2651,6 @@ function saveallposts(divId, orgid, information, type, userSelected) {
             var jsonparse = $.parseJSON(data);
             var url = siteurl + 'xlsxfolder/' + jsonparse.filename;
             window.open(url, '_self');
-
 //            $("#samplelink")
 //                .attr({
 //                'download': 'export.xlsx',
@@ -2763,11 +2666,9 @@ function saveallposts(divId, orgid, information, type, userSelected) {
 
         }
     });
-
 }
 
 var htmldata = "";
-
 //=function to delete faq
 $(document).on("click", ".deletefaq", function () {
     var idtodelete = $(this).attr("data-idfaq");
@@ -2819,12 +2720,10 @@ $(document).on("click", ".editfaq", function () {
         }
     });
 });
-
 //============to collect emails and mail and change table
 $(document).on("click", "#reinviteemails", function () {
     var emails = {};
     var emailsflow = {};
-
     //var orgid = $("#orgid").val(); 
     var totalchecked = 0;
     $('#myModal_invitations .css-checkbox').each(function () {
@@ -2841,7 +2740,6 @@ $(document).on("click", "#reinviteemails", function () {
 
     var emailsflow = JSON.stringify(emailsflow);
     var emails = JSON.stringify(emails);
-
     var orgdetails = $("#orgdetails").val();
     $.ajax({
         type: "POST",
@@ -2854,12 +2752,10 @@ $(document).on("click", "#reinviteemails", function () {
             //$(".modal-title").text("");
             //$(".modal-title").text("Invitations Sent");
             alertbootbox("Invitations Sent");
-
             //===========unchecking the selected values
             $('#myModal_invitations .css-checkbox').prop("checked", false)
         },
     });
-
 })
 
 //==================button for bulk users upload
@@ -2870,8 +2766,6 @@ $(document).on("click", "#choosefilebulkusers", function () {
 $(document).on("click", "#choosefileexistingusers", function () {
     $("#bulkimagesbutton").trigger("click");
 });
-
-
 //============popup to show users profile
 $(document).on("click", ".usersprofile", function () {
     var userorgid = $(this).attr("data-userorgid");
@@ -2907,7 +2801,6 @@ $(document).on("click", ".usersprofile", function () {
                 var jobtitle = jsonparser.data["OrgJobTitle"].title;
                 //$("#jobtitle").val("");
                 $("#jobtitle").val(jobtitle);
-
                 var subcenter_name = jsonparser.data["OrgSubcenter"].long_name;
                 //$("#jobtitle").val("");
                 $("#subcenter").val(subcenter_name);
@@ -2916,7 +2809,6 @@ $(document).on("click", ".usersprofile", function () {
         }
     });
 });
-
 var allendorsements = "";
 //=comments section of allendrosement
 function clickcomment() {
@@ -2951,7 +2843,7 @@ var allorglisting = "";
 $(document).on("keyup", "#searchannouncementsorg", function () {
     var searchvalue = trimAndLowerCaseString($(this).val());
     if (searchvalue.length >= 2) {
-        //delay(function () {
+//delay(function () {
         $(".announcementstatus-cb div.checkbox").each(function () {
             var orgname = trimAndLowerCaseString($(this).attr("searchorg"));
             if (orgname.indexOf(searchvalue) > -1) {
@@ -2969,7 +2861,7 @@ $(document).on("keyup", "#searchannouncementsorg", function () {
 $(document).on("keyup", "#searchannouncements", function () {
     var searchvalue = trimAndLowerCaseString($(this).val());
     if (searchvalue.length >= 2) {
-        //delay(function () {
+//delay(function () {
         $(".mail-to-org-checkbox div.checkbox").each(function () {
             var orgname = trimAndLowerCaseString($(this).attr("searchorgannouncement"));
             if (orgname.indexOf(searchvalue) > -1) {
@@ -2983,12 +2875,11 @@ $(document).on("keyup", "#searchannouncements", function () {
         $(".mail-to-org-checkbox div.checkbox").show();
     }
 });
-
 //Search users for announcements
 $(document).on("keyup", "#searchannouncementsusers", function () {
     var searchvalue = trimAndLowerCaseString($(this).val());
     if (searchvalue.length >= 2) {
-        //delay(function () {
+//delay(function () {
         $(".mail-to-user-checkbox div.checkbox").each(function () {
             var orgname = trimAndLowerCaseString($(this).attr("searchuserannouncement"));
             if (orgname.indexOf(searchvalue) > -1) {
@@ -3006,7 +2897,7 @@ $(document).on("keyup", "#searchannouncementsusers", function () {
 $(document).on("keyup", "#searchannouncementsdept", function () {
     var searchvalue = trimAndLowerCaseString($(this).val());
     if (searchvalue.length >= 2) {
-        //delay(function () {
+//delay(function () {
         $(".mail-to-dept-checkbox div.checkbox").each(function () {
             var orgname = trimAndLowerCaseString($(this).attr("searchdeptannouncement"));
             if (orgname.indexOf(searchvalue) > -1) {
@@ -3024,7 +2915,7 @@ $(document).on("keyup", "#searchannouncementsdept", function () {
 $(document).on("keyup", "#searchannouncementssuborg", function () {
     var searchvalue = trimAndLowerCaseString($(this).val());
     if (searchvalue.length >= 2) {
-        //delay(function () {
+//delay(function () {
         $(".mail-to-suborg-checkbox div.checkbox").each(function () {
             var orgname = trimAndLowerCaseString($(this).attr("searchsuborgannouncement"));
             if (orgname.indexOf(searchvalue) > -1) {
@@ -3038,10 +2929,9 @@ $(document).on("keyup", "#searchannouncementssuborg", function () {
         $(".mail-to-suborg-checkbox div.checkbox").show();
     }
 });
-
 $(document).ready(function () {
 
-    //=======on cliking outside modal
+//=======on cliking outside modal
     $("body").click(function (event) {
         var clnew = $(event.target).attr('id');
         //=======to get a click outside this modal
@@ -3049,7 +2939,6 @@ $(document).ready(function () {
             window.location.reload();
         }
     });
-
     $(".closebulkimport").on("click", function () {
         window.location.reload();
     })
@@ -3058,18 +2947,17 @@ $(document).ready(function () {
     }
 
 
-    //============common functionality for all select all buttons
+//============common functionality for all select all buttons
 
     selectallfunctionality("mailingselectall", "mailingcbclass");
     selectallfunctionality("mailingselectalluser", "mailingcbclassuser");
     selectallfunctionality("mailingselectalldept", "mailingcbclassdept");
     selectallfunctionality("mailingselectallsuborg", "mailingcbclasssuborg");
     selectallfunctionality("announcementselectall", "announcementscbclass");
-
     //============function to clicking on comment
     clickcomment();
     $('#bt_updateSubscription').on('hidden.bs.modal', function (e) {
-        // do something...
+// do something...
         $("#updateadminsubscriptionIndexForm").validate().resetForm();
         if ($("#bt_updateSubscription #reload").val() == 'reload') {
             window.location.reload();
@@ -3080,14 +2968,13 @@ $(document).ready(function () {
         allendorsements = $("#searchendorsement").html();
     }
 
-    //=====showing tooltip on glyphicons
+//=====showing tooltip on glyphicons
     $('[data-toggle="tooltip"]').tooltip({
         placement: 'bottom'
     });
     //=======clearing the faq question answer if open
     $("#faqQuestion").val("");
     $("#faqAnswer").val("");
-
     //=deleting the faq item
 
 
@@ -3103,11 +2990,7 @@ $(document).ready(function () {
             $("#faqAnswer").val("");
         }
         $("#faqSettingForm").submit();
-
-
-
     });
-
     //=validating faq submit form
     $("#faqSettingForm").validate({
         ignore: [],
@@ -3162,8 +3045,6 @@ $(document).ready(function () {
             });
         }
     });
-
-
     $("#checkout").validate({
         rules: {
             'usercount': {
@@ -3181,7 +3062,6 @@ $(document).ready(function () {
         }
 
     });
-
     $("#updateadminsubscriptionIndexForm").validate({
         rules: {
             'data[updateadminsubscription][userCount]': {
@@ -3198,13 +3078,12 @@ $(document).ready(function () {
             }
         }
     });
-
     $("#updateadminsubscriptionIndexForm").ajaxForm({
         url: siteurl + "subscription/update",
         dataType: 'json',
         beforeSubmit: function () {
             $("#bt_updateSubscription button[type=submit], input[type=submit]").prop("disabled", true);
-            return $("#updateadminsubscriptionIndexForm").valid();// TRUE when form is valid, FALSE will cancel submit
+            return $("#updateadminsubscriptionIndexForm").valid(); // TRUE when form is valid, FALSE will cancel submit
         },
         success: function (response) {
 //            $("#available_quota_" + response.og).html(response.available_quota);
@@ -3230,7 +3109,6 @@ $(document).ready(function () {
             return false;
         }
     });
-
     //save as spreadsheet for users endorsements page listing reports
     $(".endorsementssas").on("click", function () {
         var userid = $(this).attr("data-userid");
@@ -3257,14 +3135,11 @@ $(document).ready(function () {
             }
         });
     });
-
     //====reset dates on click
     $("#resetdates").on("click", function () {
         $("#startdaterandc").val("");
         $("#enddaterandc").val("");
     });
-
-
     jQuery('#searchuser').keyup(function (event) {
 
         var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -3272,7 +3147,6 @@ $(document).ready(function () {
         AllitemDisplay();
         var searchtext1 = $('#searchuser').val();
         itemSearch(searchtext1);
-
         //}
 
     });
@@ -3282,9 +3156,7 @@ $(document).ready(function () {
         //if(keycode == '13'){
         AllitemDisplay();
         var searchtext1 = $('#searchactiveuser').val();
-
         itemSearchactiveuser(searchtext1);
-
         //}
 
     });
@@ -3294,22 +3166,17 @@ $(document).ready(function () {
         //if(keycode == '13'){
         AllitemDisplay();
         var searchtext1 = $('#searchinactiveuser').val();
-
         itemSearchinactiveuser(searchtext1);
-
         //}
 
     });
-
     jQuery('#searchReinviteUser').keyup(function (event) {
 
         var keycode = (event.keyCode ? event.keyCode : event.which);
         //if(keycode == '13'){
         AllitemDisplay();
         var searchtext1 = $('#searchReinviteUser').val();
-
         itemSearchReinviteUser(searchtext1);
-
         //}
 
     });
@@ -3319,11 +3186,7 @@ $(document).ready(function () {
         //if(keycode == '13'){
         //alert("test"+$('#users').val());
         var price = $('#users').val() * 10.80;
-
         $("#amt").val(price.toFixed(2));
-
-
-
         //}
 
     });
@@ -3333,11 +3196,7 @@ $(document).ready(function () {
         //if(keycode == '13'){
         //alert("test"+$('#users').val());
         var price = $('#upgrade_users').val() * 10.80;
-
         $("#upgrade_amt").val(price.toFixed(2));
-
-
-
         //}
 
     });
@@ -3347,30 +3206,20 @@ $(document).ready(function () {
         //if(keycode == '13'){
         //alert("test"+$('#users').val());
         var price = $('#overwrite_users').val() * 10.80;
-
         $("#overwrite_amt").val(price.toFixed(2));
-
-
-
         //}
 
     });
-
     jQuery('#convertUsers').keyup(function (event) {
 
         var keycode = (event.keyCode ? event.keyCode : event.which);
         //if(keycode == '13'){
         //alert("test"+$('#convertUsers').val());
         var price = $(this).val() * annual_price_per_user;
-
         $("#convertAmt").val(price.toFixed(2));
-
-
-
         //}
 
     });
-
     //jQuery('#downgrade_users').keyup(function (event) {
     //
     //
@@ -3407,7 +3256,6 @@ $(document).ready(function () {
     //$.print("#printable");
     //========================binding the button click of printing options
     bindButtonClick();
-
     $(".resetendorsementsfilters").click(function () {
         $("#jobtitlefilter").val("");
         $("#departmentfilter").val("");
@@ -3418,14 +3266,12 @@ $(document).ready(function () {
             $("#filter-nDorsements").removeClass("in");
         }
     });
-
     $(".resetUserlistFilters").click(function () {
 
         $("#jobtitlefilter").val("");
         $("#departmentfilter").val("");
         $("#statusFilter").val("");
         $("#usertypeFilter").val("");
-
 //        $(".datesubmitter").trigger("click");
         if (!$("#filter-nDorsements").is(":hidden")) {
             $("#submitfilterusers").trigger("click");
@@ -3433,7 +3279,6 @@ $(document).ready(function () {
         }
 
     });
-
     //======saveas spreadsheetleaderboard
     $("#saveasspreadsheetleaderboard").on("click", function () {
         var startdate = $("#startdaterandc").val();
@@ -3471,14 +3316,11 @@ $(document).ready(function () {
             }
         });
     });
-
-
     //======save as spreadsheetleaderboard NEW
     $("#saveasspreadsheetleaderboard-new").on("click", function () {
 
         $(document).find("#saveasspreadsheetleaderboard-new").prop("disabled", true);
         $(document).find("#export-loader-img").show();
-
         var startdate = $("#startdaterandc_1").val();
         var enddate = $("#enddaterandc_1").val();
         var orgid = $("#randcorgid").val();
@@ -3520,7 +3362,6 @@ $(document).ready(function () {
             }
         });
     });
-
     $("#submitfilterendorsement").click(function () {
         var jobtitles = $("#jobtitlefilter").val();
         var departments = $("#departmentfilter").val();
@@ -3547,7 +3388,6 @@ $(document).ready(function () {
             }
         });
     });
-
     $("#submitdaisyfilterendorsement").click(function () {
 //        alert("TEST");
         var jobtitles = $("#jobtitlefilter").val();
@@ -3575,8 +3415,7 @@ $(document).ready(function () {
             }
         });
     });
-     
-   $("#submitguestfilterendorsement").click(function () {
+    $("#submitguestfilterendorsement").click(function () {
 //        alert("TEST");
         var jobtitles = $("#jobtitlefilter").val();
         var departments = $("#departmentfilter").val();
@@ -3664,7 +3503,7 @@ $(document).ready(function () {
         totalendorsements();
     }
 
-    //===fetch value after a delay to send request less than the desired requests
+//===fetch value after a delay to send request less than the desired requests
     $('#searchallendorsement').keyup(function () {
         var jobtitles = $("#jobtitlefilter").val();
         var departments = $("#departmentfilter").val();
@@ -3681,7 +3520,6 @@ $(document).ready(function () {
 //        }, 1000);
         /*}*/
     });
-
     //===fetch value after a delay to send request less than the desired requests
     $('#searchallguestendorsement').keyup(function () {
         var jobtitles = $("#jobtitlefilter").val();
@@ -3699,8 +3537,6 @@ $(document).ready(function () {
 //        }, 1000);
         /*}*/
     });
-
-
     //===fetch value after a delay to send request less than the desired requests
     $('#searchalldaisyendorsement').keyup(function () {
         var jobtitles = $("#jobtitlefilter").val();
@@ -3718,7 +3554,6 @@ $(document).ready(function () {
 //        }, 1000);
         /*}*/
     });
-    
     //===fetch value after a delay to send request less than the desired requests
     $('#searchallguestendorsement').keyup(function () {
         var jobtitles = $("#jobtitlefilter").val();
@@ -3736,7 +3571,6 @@ $(document).ready(function () {
 //        }, 1000);
         /*}*/
     });
-
     /***** Code to search run time from all post added by babulal prasad @23-nov-2017 ***/
     function searchpostruntime() {
         var searchvalue = $("#searchallpost").val();
@@ -3794,7 +3628,6 @@ $(document).ready(function () {
                     //===finding te total data and create offet accordingly
                     var searchvalue = $("#searchorgowners").val();
                     var totalrecords = $(".tableusersindex tr").length - 1;
-
                     if ($("#totaluserrecords").val() <= totalrecords) {
                         $(".hiddenloader").remove();
                         return false;
@@ -3814,19 +3647,15 @@ $(document).ready(function () {
                                 $("#divloader").hide();
                                 $(data).appendTo(".table-condensed tbody");
                                 $(".hiddenloader").addClass("hidden");
-
                             }
                         });
                     }, 1000)
                 } else if ($("#pagename").val() == "userslisting") {
                     var searchkeyword = $("#searchkeyword").val();
-
                     var jobtitles = $("#jobtitlefilter").val();
                     var departments = $("#departmentfilter").val();
                     var status = $("#statusFilter").val();
                     var usertype = $("#usertypeFilter").val();
-
-
                     var totalrecords = $("#mytable tr").length - 1;
                     console.log(totalrecords);
                     var orgid = $("#orgid").val();
@@ -3879,7 +3708,6 @@ $(document).ready(function () {
                                 }
                                 $(data).appendTo(".containerorg");
                                 $(".hiddenloader").addClass("hidden");
-
                             }
                         });
                     }, 1000)
@@ -3919,14 +3747,12 @@ $(document).ready(function () {
                                         return false;
                                     }
                                     $("#searchendorsement").append(data);
-
                                     //$(".search-loader").addClass("search-icn").removeClass('search-loader');
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
 
                                 }
                             });
-
                         } else {
                             if ($("#totalrecords").val() <= totalrecords) {
                                 $(".hiddenloader").remove();
@@ -3947,7 +3773,6 @@ $(document).ready(function () {
                                         }
                                         $(data).appendTo("#searchendorsement");
                                         $(".hiddenloader").addClass("hidden");
-
                                     }
                                 });
                             });
@@ -3958,13 +3783,10 @@ $(document).ready(function () {
                     var listStatus = $(".statusbttn.active").attr("data-value");
                     var totalrecords = $("#searchendorsement section").length;
                     var orgid = $("#org_id").val();
-
                     console.log("total records :" + $("#totalrecords").val() + "<=" + totalrecords);
                     console.log("orgid :" + orgid);
                     console.log("listStatus :" + listStatus);
                     return false;
-
-
                     if ($("#totalrecords").val() <= totalrecords) {
                         $(".hiddenloader").remove();
                         return false;
@@ -4026,7 +3848,6 @@ $(document).ready(function () {
         }
 
     });
-
     //Added By Babulal Prasad @29-may-2018 //To filter guest nDorsement result
     $(".statusbttn").click(function () {
         if ($("#pagename").val() == "guestendorsements") {
@@ -4043,7 +3864,6 @@ $(document).ready(function () {
             $(".heading_status_type").html(statusClass);
             $("#disclaimerText").html(statusClass);
             $(".hiddenloader").removeClass("hidden");
-
             if (siteurl.indexOf('staging') > -1) {
                 if (siteurl.indexOf('https') > -1) {
                     siteurl = siteurl.replace("https", "http");
@@ -4084,7 +3904,6 @@ $(document).ready(function () {
             $(".heading_status_type").html(statusClass);
             $("#disclaimerText").html(statusClass);
             $(".hiddenloader").removeClass("hidden");
-
             if (siteurl.indexOf('staging') > -1) {
                 if (siteurl.indexOf('https') > -1) {
                     siteurl = siteurl.replace("https", "http");
@@ -4113,11 +3932,9 @@ $(document).ready(function () {
             }, 1000)
         }
     });
-
     //===============validating new password form and force submit
     $("#passwordresetsubmit").click(function () {
         $("#userresetInfoForm").submit();
-
     })
     //===============validating new password form
     $("#userresetInfoForm").validate({
@@ -4161,8 +3978,6 @@ $(document).ready(function () {
         }
 
     });
-
-
     //===============faq form
     $("#faqbutton").click(function () {
         $("#faqform").validate({
@@ -4259,7 +4074,6 @@ $(document).ready(function () {
             }
 
         });
-
     })
     //===============validating new password form
 
@@ -4288,11 +4102,6 @@ $(document).ready(function () {
 
     $("#mytable").tablesorter();
     $('#leaderboardtable').tablesorter();
-
-
-
-
-
     $('#mytable th').click(function () {
         //========to fixing the role of other than the one clicked
         if ($(this).attr("id") == "role") {
@@ -4310,7 +4119,6 @@ $(document).ready(function () {
             $(this).find(".statusup").hide();
         }
     });
-
     //========function to click out side the menu to close menu
     $("body").click(function (event) {
         var clnew = $(event.target).attr('class');
@@ -4318,7 +4126,6 @@ $(document).ready(function () {
             $("div#wrapper").removeClass("toggled");
         }
     });
-
     //clicking outside will close the arrow box
     $(document).mouseup(function (e) {
         var container = $(".arrow_box");
@@ -4327,12 +4134,10 @@ $(document).ready(function () {
             container.hide();
         }
     });
-
     //=============on cancel of modal of delete button
     $(document).on("click", ".canceldelete", function () {
         $('.close').trigger('click');
     });
-
     //===============to go one page back with cancel
     $(document).on("click", "#clientformcancel, #orgformcancel", function () {
         window.history.back();
@@ -4353,7 +4158,6 @@ $(document).ready(function () {
             success: function (data, textStatus, xhr) {
 //                console.log(data);
                 var jsonresult = $.parseJSON(data);
-
 //                console.log("TEST");
 //                console.log(jsonresult); return false;
 
@@ -4393,15 +4197,11 @@ $(document).ready(function () {
             },
         });
     });
-
-
     //===============datepicker for client form
     $("#datepicker_dob").datepicker(dateparameters);
-
     $('.datepickerrandc').each(function () {
         $(this).datepicker(dateparameters);
     });
-
     //=================on clicking of refresh
     $(document).on('click', '#refresh', function () {
         window.location.reload();
@@ -4410,7 +4210,6 @@ $(document).ready(function () {
     $(document).on('click', '#choosefile_bulklinks', function () {
         $('#uploadlinksfile').trigger('click');
     });
-
     //=================check file type for bulk user import
     $(document).on('change', '#bulkuserbutton, #bulkimagesbutton', function () {
         var buttonid = $(this)[0]["id"];
@@ -4437,7 +4236,6 @@ $(document).ready(function () {
             }
         }
     });
-
     //=================check file type for bulk links import
     $(document).on('change', '#uploadlinksfile', function () {
         var filename = $(this).val();
@@ -4453,7 +4251,6 @@ $(document).ready(function () {
             $('<p id="uploadedlinksfile">' + $(this).val() + '</p>').insertAfter('#uploadfile_bulklinks');
         }
     });
-
     //========states filter by country name by ajax saurabh
     $(".country").change(function () {
 
@@ -4473,15 +4270,12 @@ $(document).ready(function () {
                 {
                     $('.states').html('');
                     $('#selectstate').hide();
-
                     $('#selectstatetext').show();
                 } else {
                     $('.states').html('');
                     $('#state_name').val('');
                     $('#selectstatetext').hide();
                     $('#selectstate').show();
-
-
                     optionsHtml = '<option value="">' + 'Select' + '</option>';
                     console.log(response);
                     r = response;
@@ -4492,13 +4286,10 @@ $(document).ready(function () {
                 }
             }
         });
-
     });
-
     $('#client_upload_photo').bind("click", function () {
         $('#photo').click();
     });
-
     $("#org_remove_photo").click(function () {
         var current_image = $('#org_image_name').val();
         if (current_image == "") {
@@ -4524,7 +4315,6 @@ $(document).ready(function () {
 
                 }
             });
-
         }
     });
     // end
@@ -4561,10 +4351,8 @@ $(document).ready(function () {
 
                 }
             });
-
         }
     });
-
     $("#PostViewForm").validate({
         rules: {
             'data[Post][content]': {
@@ -4610,7 +4398,6 @@ $(document).ready(function () {
             }
         }
     });
-
     //Create New Client validations 
     $("#UserCreateclientForm").validate({
         errorPlacement: function (error, element) {
@@ -4706,7 +4493,6 @@ $(document).ready(function () {
             },
         }
     });
-
     //Create New Client validations //Added by Babulal Prasad @04-june-2018
     $("#UserEditcuserForm").validate({
         rules: {
@@ -4772,7 +4558,6 @@ $(document).ready(function () {
 //            },
         }
     });
-
     //=================Create New Client validations 
     $("#UserCreateendorserForm").validate({
         rules: {
@@ -4824,7 +4609,6 @@ $(document).ready(function () {
 //            },
         }
     });
-
     //Create org validations starts here
     $("#OrgCreateorgForm").validate({
         errorPlacement: function (error, element) {
@@ -4908,7 +4692,6 @@ $(document).ready(function () {
 
         },
     });
-
     $("#OrgEditorgForm").validate({
         rules: {
             'data[Org][name]': {
@@ -4989,7 +4772,6 @@ $(document).ready(function () {
             }
         },
     });
-
     //News letter validation
 
     $("#UserNewsletterForm").validate({
@@ -5079,7 +4861,6 @@ $(document).ready(function () {
         }
 
     });
-
     //===================global settings form
 //    $("#submit_setting").click(function () {
 //        tinyMCE.triggerSave();
@@ -5096,7 +4877,6 @@ $(document).ready(function () {
     $("#submit_general_setting").click(function () {
         $("#generalSettingForm").submit();
     });
-
     $("#generalSettingForm").validate({
         rules: {
             'data[general][value]': {
@@ -5109,7 +4889,6 @@ $(document).ready(function () {
             },
         }
     });
-
     $("#tandc_submit_setting").click(function () {
         tinyMCE.triggerSave();
         //var x = tinyMCE.activeEditor.getContent({format: 'text'})
@@ -5120,8 +4899,6 @@ $(document).ready(function () {
         }
         $("#termsandconditionsSettingForm").submit();
     });
-
-
     //====announcement for superadmin
     $("#mailingorg_submit_setting").click(function () {
         var counter = 0;
@@ -5191,7 +4968,6 @@ $(document).ready(function () {
         }
         $("#MailingOrgAnnouncementeditForm").submit();
     });
-
     $("#MailingOrgAnnouncementeditForm").validate({
         ignore: [],
         rules: {
@@ -5205,7 +4981,6 @@ $(document).ready(function () {
             }
         }
     });
-
     $("#MailingOrgSettingForm").validate({
         ignore: [],
         rules: {
@@ -5219,7 +4994,6 @@ $(document).ready(function () {
             }
         }
     });
-
     //====announcement for orgadmin
 
     $("#mailingorgadmin_submit_setting").click(function () {
@@ -5235,8 +5009,6 @@ $(document).ready(function () {
                 counter++;
             }
         });
-
-
         if (counter == 0) {
             alertbootbox("Atleast select a organization");
             return false;
@@ -5255,7 +5027,6 @@ $(document).ready(function () {
         }
         $("#MailingOrgAnnouncementsForm").submit();
     });
-
     $("#MailingOrgAnnouncementsForm").validate({
         ignore: [],
         rules: {
@@ -5269,7 +5040,6 @@ $(document).ready(function () {
             }
         }
     });
-
     //=======terms and settings global settings super admin
     $("#termsandconditionsSettingForm").validate({
         ignore: [],
@@ -5284,10 +5054,6 @@ $(document).ready(function () {
             }
         }
     });
-
-
-
-
     //===============validating admin subscription form and force submit
     $('#adminsubscriptionMode').change(function () {
         var subtype = $(this).val();
@@ -5301,8 +5067,6 @@ $(document).ready(function () {
             $("#suadmin_subscription_trial").show();
             // $("#suadmin_subscription_paid").hide();
             $("#suadmin_subscription_amt").hide();
-
-
         } else if (subtype == "paid") {
             $("#adminsubscriptionTrialDuration").val(1);
             $("#suadmin_subscription_trial").hide();
@@ -5312,7 +5076,6 @@ $(document).ready(function () {
     });
     $('#downgradeadminsubscriptionNewest').change(function () {
         var subtype = $(this).val();
-
         if (subtype == "no") {
             $("#select_user").val("yes");
             $("#downgrade_active_users1").show();
@@ -5320,12 +5083,10 @@ $(document).ready(function () {
             jQuery(".checkselect").removeAttr('checked');
             $("#select_user").val("no");
             $("#downgrade_active_users1").hide();
-
         }
     });
     $('#bulkactiveuserOldestActive').change(function () {
         var subtype = $(this).val();
-
         if (subtype == "no") {
 
             $("#bulk_active_users1").show();
@@ -5333,29 +5094,24 @@ $(document).ready(function () {
             // jQuery(".checkselect").removeAttr('checked');
 
             $("#bulk_active_users1").hide();
-
         }
     });
     $(document).on("click", "#adminsubscriptionsubmit", function () {
         //$("#adminsubscriptionsubmit").click(function () {
         $("#adminsubscriptionIndexForm").submit();
-
     });
     $(document).on("click", "#downgradeadminsubscriptionsubmit", function () {
         //$("#adminsubscriptionsubmit").click(function () {
 
         $("#downgradeadminsubscriptionIndexForm").submit();
-
     });
     $(document).on("click", "#updateadminsubscriptionsubmit", function () {
         //$("#adminsubscriptionsubmit").click(function () {
         $("#upgradeadminsubscriptionIndexForm").submit();
-
     });
     $(document).on("click", "#overwriteadminsubscriptionsubmit", function () {
         //$("#adminsubscriptionsubmit").click(function () {
         $("#overwriteadminsubscriptionIndexForm").submit();
-
     });
     $(document).on("click", "#adminterminatesubscriptionsubmit", function () {
         //$("#adminsubscriptionsubmit").click(function () {
@@ -5389,7 +5145,6 @@ $(document).ready(function () {
                                     if (response.status) {
 
                                         var uphtml = "";
-
                                         if (optnew == 1) {
                                             var uphtml = ' <button class="btn btn-xs btn-info" onclick="purchasesubscription(' + elementId + ')">Sell Subscription</button>';
                                         } else {
@@ -5444,9 +5199,7 @@ $(document).ready(function () {
                         var parseData = JSON.parse(data);
                         // is_deleted
                         $("#myModal2_bulkactiveuser").modal("hide");
-
                         var page_ndorse_url = window.location.href;
-
                         if (parseData.update == 1) {
                             alertbootboxcb("Users activated successfully.", function () {
                                 window.location.reload();
@@ -5493,14 +5246,12 @@ $(document).ready(function () {
                     success: function (data) {
                         console.log(data);
                         $("#myModal2_bulkactiveuser").modal("hide");
-
                         var parseData = JSON.parse(data);
                         var page_ndorse_url = window.location.href;
                         if (parseData.update == 1) {
                             alertbootboxcb("Users activated successfully.", function () {
                                 window.location.reload();
                             });
-
 //                            bootbox.alert("Users activated successfully.", function () {
 //                                window.location.reload();
 //                            });
@@ -5575,7 +5326,6 @@ $(document).ready(function () {
                                     alertbootboxcb("Users inactivated successfully.", function () {
                                         window.location.reload();
                                     });
-
 //                                    bootbox.alert("Users inactivated successfully.", function () {
 //                                        window.location.reload();
 //                                    });
@@ -5604,7 +5354,6 @@ $(document).ready(function () {
                             // window.location.reload(); 
                         } else {
                             alertbootbox("no quota available");
-
                             //bootbox.alert("no quota available");
                         }
 
@@ -5702,15 +5451,8 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var bulk_org_id = $("#bulk_org_id").val();
-
             var active_users_no = $("#active_users_no").val();
-
-
-
             var optionusers = $("#bulkactiveuserOldestActive").val();
-
-
-
             if (optionusers == "no") {
                 var selectedid = "";
                 var selectcount = 0;
@@ -5747,7 +5489,6 @@ $(document).ready(function () {
                     // is_deleted
 
                     var page_ndorse_url = window.location.href;
-
                     if (page_ndorse_url.search("info") > 0) {
                         alertbootboxcb("users inactive successfully.", function () {
                             window.location.reload();
@@ -5782,18 +5523,13 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var down_org_id = $("#down_org_id").val();
-
             var users_qty = $("#downgrade_users").val();
-
             var amt = $("#downgrade_amt").val();
-
-
             console.log(users_qty + " " + $("#pool_qty").val());
             var callbackflag = 0;
             // alert(users_qty+" "+$("#pool_qty").val());
             if (users_qty > parseInt(($("#pool_qty").val()))) {
                 alertbootbox("You cannot downgrade the subscription since number of users to downgrade are more than the maximum users allowed.");
-
                 return false;
             }
             var inactuserndorse = 0;
@@ -5848,9 +5584,7 @@ $(document).ready(function () {
                                         success: function (data) {
                                             console.log(data);
                                             var parseData = JSON.parse(data);
-
                                             var uphtml = ' <button class="btn btn-xs btn-info" onclick="purchasesubscription(' + down_org_id + ')">Sell Subscription</button>';
-
                                             var page_ndorse_url = window.location.href;
                                             if (page_ndorse_url.search("info") > 0) {
                                                 window.location.reload();
@@ -5886,13 +5620,10 @@ $(document).ready(function () {
                             alertbootboxcb("Subscription downgraded successfully", function () {
                                 window.location.reload();
                             });
-
                         } else {
                             $("#purchase_" + down_org_id).html(uphtml);
                             alertbootbox("Subscription downgraded successfully");
                             $("#available_quota_" + down_org_id).html((parseData.qty + 10));
-
-
                         }
                     }
                 }
@@ -5924,11 +5655,8 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var up_org_id = $("#up_org_id").val();
-
             var users_qty = $("#upgrade_users").val();
-
             var amt = $("#upgrade_amt").val();
-
             var oldest = $("#upgradeadminsubscriptionOldest").val();
             $("#updateadminsubscriptionsubmit").prop("disabled", true);
             $.ajax({
@@ -5940,7 +5668,6 @@ $(document).ready(function () {
                     var parseData = JSON.parse(data);
                     var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradesubscription(' + up_org_id + ')">Upgrade</button>&nbsp;<button class="btn btn-xs btn-info" onclick="downgradesubscription(' + up_org_id + ',' + (parseData.qty) + ')">Downgrade</button>&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + up_org_id + ')" >Terminate Subscription</button>';
                     $("#available_quota_" + up_org_id).html(parseData.qty + 10);
-
                     var page_ndorse_url = window.location.href;
                     $("#myModal2_upgradesubscription").modal("hide")
 
@@ -5952,7 +5679,6 @@ $(document).ready(function () {
                     } else {
                         $("#purchase_" + up_org_id).html(uphtml);
                         alertbootbox("Subscription uprgaded successfully");
-
                     }
 
                 }
@@ -5985,9 +5711,7 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var overwrite_org_id = $("#overwrite_org_id").val();
-
             var users_qty = $("#overwrite_users").val();
-
             var amt = $("#overwrite_amt").val();
             var url = siteurl + "subscription/cancel/" + overwrite_org_id;
             $.ajax({
@@ -6005,23 +5729,18 @@ $(document).ready(function () {
                                 console.log(data);
                                 var parseData = JSON.parse(data);
                                 var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradesubscription(' + parseData.org_id + ')">Upgrade</button>&nbsp;<button class="btn btn-xs btn-info" onclick="downgradesubscription(' + parseData.org_id + ',' + (users_qty) + ')">Downgrade</button>&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + parseData.org_id + ')" >Terminate Subscription</button>';
-
-
                                 var page_ndorse_url = window.location.href;
                                 $("#myModal2_overwritesubscription").modal("hide")
                                 if (page_ndorse_url.search("info") > 0) {
                                     alertbootboxcb("Manual Subscription created successfully.", function () {
                                         window.location.reload();
                                     });
-
                                 } else {
                                     $("#orgstatus_" + parseData.org_id).attr("type", "ndorse");
                                     alertbootboxcb("Subscription Override successfully.", function () {
                                         $("#available_quota_" + parseData.org_id).html((parseInt(users_qty) + 10));
                                         $("#purchase_" + parseData.org_id).html(uphtml);
                                     });
-
-
                                 }
 
                             }
@@ -6034,8 +5753,6 @@ $(document).ready(function () {
 
                 }
             });
-
-
         }
 
     });
@@ -6083,7 +5800,6 @@ $(document).ready(function () {
             var users_qty = $("#users").val();
             var duration = $("#adminsubscriptionTrialDuration").val();
             var amt = $("#amt").val();
-
             $("#adminsubscriptionsubmit").prop("disabled", true);
             $.ajax({
                 type: "POST",
@@ -6101,9 +5817,7 @@ $(document).ready(function () {
                         var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradesubscription(' + sale_org_id + ')">Upgrade</button>&nbsp;<button class="btn btn-xs btn-info" onclick="downgradesubscription(' + sale_org_id + ',' + users_qty + ')">Downgrade</button>&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + sale_org_id + ')" >Terminate Subscription</button>';
                     }
                     var parseData = JSON.parse(data);
-
                     var page_ndorse_url = window.location.href;
-
                     $("#myModal2_purchasesubscription").modal("hide");
                     if (page_ndorse_url.search("info") > 0) {
                         alertbootboxcb(msg, function () {
@@ -6112,13 +5826,10 @@ $(document).ready(function () {
                     } else {
 
                         $("#orgstatus_" + sale_org_id).attr("type", "ndorse");
-
                         alertbootboxcb(msg, function () {
                             $("#purchase_" + sale_org_id).html(uphtml);
-
                             $("#available_quota_" + sale_org_id).html(parseInt(users_qty) + 10);
                         });
-
                     }
 
                 }
@@ -6126,7 +5837,6 @@ $(document).ready(function () {
         }
 
     });
-
     $("#adminterminatesubscriptionIndexForm").ajaxForm({
         url: siteurl + "ajax/terminate",
         beforeSend: function () {
@@ -6135,7 +5845,6 @@ $(document).ready(function () {
         success: function (data) {
 
             var parseData = JSON.parse(data);
-
             if (parseData.status) {
                 var del_org_id = parseData.org_id;
                 termmsg = "";
@@ -6145,7 +5854,6 @@ $(document).ready(function () {
                 } else {
                     var uphtml = ' <button class="btn btn-xs btn-info" onclick="purchasesubscription(' + del_org_id + ')">Sell Subscription</button>';
                     $("#available_quota_" + del_org_id).html(10);
-
                 }
 
                 var page_ndorse_url = window.location.href;
@@ -6154,7 +5862,6 @@ $(document).ready(function () {
                     alertbootboxcb("Subscription terminated successfully." + termmsg, function () {
                         window.location.reload();
                     });
-
                 } else {
                     $("#orgstatus_" + del_org_id).attr("type", "ndorse");
                     alertbootboxcb("Subscription terminated successfully." + termmsg, function () {
@@ -6171,10 +5878,6 @@ $(document).ready(function () {
             return false;
         }
     });
-
-
-
-
 //    $("#UserSettingForm").validate({
 //        ignore: [],
 //        rules: {
@@ -6197,11 +5900,8 @@ $(document).ready(function () {
 
     $('#UserDepartment , #UserSkills, #UserHobbies , #UserJobTitle').change(function () {
         var divselectid = $(this).attr("id");
-
         var selval1 = String($(this).val());
-
         var selval = selval1.split(",");
-
         if (selval.indexOf("other") > 0)
         {
 
@@ -6222,12 +5922,10 @@ $(document).ready(function () {
         }
 
     });
-
     $("#OrgphotoSetorgimageForm").change(function () {
 
         $("#OrgphotoSetorgimageForm").submit();
     });
-
     $("#OrgphotoSetorgcpImageForm").change(function () {
 
         $("#OrgphotoSetorgcpImageForm").submit();
@@ -6238,29 +5936,21 @@ $(document).ready(function () {
     $("#clientformsubmit").click(function () {
         $("#UserCreateclientForm").submit();
     });
-
     $("#endorserformsubmit").click(function () {
         $("#UserCreateendorserForm").submit();
     });
-
-
     $("#editclientformsubmit").click(function () {
         $("#UserEditclientForm").submit();
     });
     $("#editcuserformsubmit").click(function () {
         $("#UserEditcuserForm").submit();
     });
-
     $("#orgformsubmit").click(function () {
         $("#OrgCreateorgForm").submit();
     });
-
-
-
     $("#editorgformsubmit").click(function () {
         $("#OrgEditorgForm").submit();
     });
-
     $("#UserphotoSetimageForm").ajaxForm({
         url: userprofile,
         success: function (data) {
@@ -6302,7 +5992,6 @@ $(document).ready(function () {
             return false;
         }
     });
-
     $("#UserProfessionalForm").validate({
         rules: {
             'data[User][type]': {
@@ -6339,7 +6028,6 @@ $(document).ready(function () {
         }
 
     });
-
 //    // change password validation
 //    $("#UserChangePasswordForm").validate({
 //        rules: {
@@ -6588,7 +6276,6 @@ $(document).ready(function () {
             },
         }
     });
-
     $("#superAdminFormSubmit").click(function () {
         $("#UserAddSuperAdminForm").submit();
     })
@@ -6610,7 +6297,6 @@ $(document).ready(function () {
             }
         });
     });
-
     $("#convertSubscriptionForm").validate({
         rules: {
             'data[convertSubscription][amount]': {
@@ -6639,11 +6325,9 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             $("#convertSubscriptionSubmit").prop("disabled", true);
-
             var orgId = $("#convertToPaidOrgId").val();
             var usersCount = $("#convertUsers").val();
             var amount = $("#convertAmt").val();
-
             $.ajax({
                 type: "POST",
                 url: siteurl + 'ajax/convertToPaid',
@@ -6654,7 +6338,6 @@ $(document).ready(function () {
                         var msg = "Subscription converted to paid successfully";
                         var page_ndorse_url = window.location.href;
                         $("#myModal2_convertToPaid").modal("hide");
-
                         if (page_ndorse_url.search("info") > 0) {
                             alertbootboxcb(msg, function () {
                                 window.location.reload();
@@ -6662,13 +6345,10 @@ $(document).ready(function () {
                         } else {
                             var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradesubscription(' + orgId + ')">Upgrade</button>&nbsp;<button class="btn btn-xs btn-info" onclick="downgradesubscription(' + orgId + ',' + usersCount + ')">Downgrade</button>&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscription(' + orgId + ')" >Terminate Subscription</button>';
                             $("#orgstatus_" + orgId).attr("type", "ndorse");
-
                             alertbootboxcb(msg, function () {
                                 $("#purchase_" + orgId).html(uphtml);
-
                                 $("#available_quota_" + orgId).html((parseInt(usersCount) + freeUserPool));
                             });
-
                         }
                     } else {
                         alertbootbox("Subcription cannot be converted to paid. Please try again.");
@@ -6678,7 +6358,6 @@ $(document).ready(function () {
         }
 
     });
-
     $('input[type=radio][class=js_userStatusRadio]').change(function () {
 //        $("input[type=radio][class=js_inviteRadio]").removeAttr('checked');
 
@@ -6690,11 +6369,7 @@ $(document).ready(function () {
             $("input[type=radio][class=js_inviteRadio][value=1]").prop('checked', true);
         }
     });
-
-
 });
-
-
 // Document ready end
 
 $(document).on("click", ".js_cancelSubscription", function (e) {
@@ -6739,12 +6414,7 @@ $(document).on("click", ".js_cancelSubscription", function (e) {
             }
         }
     });
-
-
 });
-
-
-
 $(document).on("click", ".js_updateSubscription", function (e) {
     var action = $(this).attr('act');
     var orgId = $(this).attr('og');
@@ -6754,11 +6424,9 @@ $(document).on("click", ".js_updateSubscription", function (e) {
     $("#bt_updateSubscription #action").val(action);
     $("#bt_updateSubscription #updateType").html(action);
     $("#bt_updateSubscription #organizationId").val($(this).attr('og'));
-
     $("#bt_updateSubscription").modal("show")
 
     var title = "";
-
     if (action == 'upgrade') {
         title = "Upgrade Subscription";
         $("#bt_updateSubscription .modal-title").text(title);
@@ -6773,13 +6441,10 @@ $(document).on("click", ".js_updateSubscription", function (e) {
                 $("#bt_updateSubscription .modal-title").text(title);
             }
         });
-
     }
 
 
 });
-
-
 //=======ajax call for attached image
 $(document).on("click", ".attachedimage", function () {
     var endorsementid = $(this).attr("data-eid");
@@ -6804,7 +6469,6 @@ $(document).on("click", ".attachedimage", function () {
         }
     });
 });
-
 //===on clicking image to download in all endorsement
 $(document).on("click", ".imagesattached", function () {
     var checkclass = $(this).children("img").hasClass("checkedimage-allendorsement");
@@ -6846,7 +6510,7 @@ $(document).on("click", "#allendorsements-attachedimages", function () {
             }
         });
     }
-    //$("#myModalViewImages").modal("hide");
+//$("#myModalViewImages").modal("hide");
 
 })
 
@@ -6861,7 +6525,6 @@ $(document).on("change", "#MailingOrgAttachment", function () {
     var fileObj = this.files[0];
     var mimeType = fileObj.type;
     var error = false;
-
     if (mimeType.split('/')[0] != 'image') {
         var validExtension = ["ppt", "pptx", "doc", "docx", "xls", "xlsx", "pdf"];
         var fileName = fileObj.name;
@@ -6911,14 +6574,8 @@ function bulkReinvite(org_id) {
     console.log(org_id);
     //$("#upgradeadminsubscriptionIndexForm").validate().resetForm();
     $("#reinvite_org_id").val(org_id);
-
-
-
-
     $("#bulkReinvite").html("");
-
     $("#inactive_users_no").val("");
-
     var userquota = 0;
     $.ajax({
         type: "POST",
@@ -6928,8 +6585,6 @@ function bulkReinvite(org_id) {
             console.log(data);
             var parseData = JSON.parse(data);
             var userdata = parseData.fresult;
-
-
             //  downgrade_active_users
 
             for (tmp in userdata) {
@@ -6990,10 +6645,9 @@ $(document).on("click", ".reinviteuserbulksubmit", function () {
             }
         });
     }
-    // $("#bulkactiveuser").submit();
+// $("#bulkactiveuser").submit();
 
 });
-
 $(document).on("click", ".inviteOtherOrg", function () {
     var userId = $(this).attr('rel');
     $(".checkOrgInviteSelect").removeAttr('checked');
@@ -7015,7 +6669,6 @@ $(document).on("click", ".inviteOtherOrg", function () {
         }
     });
 });
-
 $(document).on("keyup", "#searchAllOrgs", function (event) {
 
     var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -7023,11 +6676,9 @@ $(document).on("keyup", "#searchAllOrgs", function (event) {
     $(".checkboxOrgInvite").show();
     var searchtext1 = $('#searchAllOrgs').val();
     itemSearchAllOrgs(searchtext1);
-
     //}
 
 });
-
 function itemSearchAllOrgs(searchtext) {
     console.log(searchtext);
     if (searchtext != "") {
@@ -7035,7 +6686,6 @@ function itemSearchAllOrgs(searchtext) {
         jQuery("div.checkboxOrgInvite").each(function () {
             var strsearch = jQuery(this).attr('orgName');
             strsearch = strsearch.toLowerCase();
-
             if (strsearch.indexOf(searchtext.toLowerCase()) >= 0)
             {
                 jQuery(this).show();
@@ -7054,7 +6704,6 @@ function itemSearchAllOrgs(searchtext) {
 $(document).on("change", ".checkOrgInviteSelect", function () {
     $(".checkOrgInviteSelect").not(this).attr("checked", false);
 });
-
 $(document).on("click", "#inviteToOtherOrgSubmit", function () {
     console.log('in');
     var invite_user_id = $("#inviteUserId").val();
@@ -7072,7 +6721,6 @@ $(document).on("click", "#inviteToOtherOrgSubmit", function () {
 //                }
         }
     });
-
     $.ajax({
         type: "POST",
         url: siteurl + 'ajax/orgInviteUser',
@@ -7088,7 +6736,6 @@ $(document).on("click", "#inviteToOtherOrgSubmit", function () {
     // $("#bulkactiveuser").submit();
 
 });
-
 function upgradeSubscriptionTrial(orgId) {
     $("#upgradeTrialSubscriptionSubmit").prop("disabled", false);
     $("#upgradeTrialSubscriptionForm").validate().resetForm();
@@ -7124,7 +6771,6 @@ $("#upgradeTrialSubscriptionForm").validate({
         var orgId = $("#trialUpgradeOrgId").val();
         var users = $("#trialUsers").val();
         var duration = $("#trialDuration").val();
-
         $("#upgradeTrialSubscriptionSubmit").prop("disabled", true);
         $.ajax({
             type: "POST",
@@ -7142,7 +6788,6 @@ $("#upgradeTrialSubscriptionForm").validate({
                     //                    var parseData = JSON.parse(data);
 
                     var page_ndorse_url = window.location.href;
-
                     $("#myModal2_upgradesubscriptiontrial").modal("hide");
                     if (page_ndorse_url.search("info") > 0) {
                         alertbootboxcb(msg, function () {
@@ -7157,7 +6802,6 @@ $("#upgradeTrialSubscriptionForm").validate({
 
                             $("#available_quota_" + orgId).html(response.poolAvailable);
                         });
-
                     }
                 }
 
@@ -7166,14 +6810,12 @@ $("#upgradeTrialSubscriptionForm").validate({
     }
 
 });
-
 $(document).on("click", "#upgradeTrialSubscriptionSubmit", function () {
 //        $("#upgradeTrialSubscriptionForm").submit();
 
     var orgId = $("#trialUpgradeOrgId").val();
     var users = $("#trialUsers").val();
     var duration = $("#trialDuration").val();
-
     if (($.trim(users) == "" || $.trim(users) == 0) && $.trim(duration) == "") {
         alertbootbox("Please enter either users or time duration to upgrade the subscription");
         return;
@@ -7197,7 +6839,6 @@ $(document).on("click", "#upgradeTrialSubscriptionSubmit", function () {
 //                    var parseData = JSON.parse(data);
 
                 var page_ndorse_url = window.location.href;
-
                 $("#myModal2_upgradesubscriptiontrial").modal("hide");
                 if (page_ndorse_url.search("info") > 0) {
                     alertbootboxcb(msg, function () {
@@ -7212,23 +6853,17 @@ $(document).on("click", "#upgradeTrialSubscriptionSubmit", function () {
 
                         $("#available_quota_" + orgId).html(response.poolAvailable);
                     });
-
                     var poolPurchased = response.poolAvailable - freeUserPool;
                     var uphtml = '<button class="btn btn-xs btn-info" onclick="upgradeSubscriptionTrial(' + orgId + ')" >Upgrade</button>' +
                             '&nbsp;<button class="btn btn-xs btn-info" onclick="convertToPaidManual(' + orgId + ', ' + poolPurchased + ', ' + poolPurchased * annual_price_per_user + ')" >Convert to paid</button>' +
                             '&nbsp;<button class="btn btn-xs btn-danger" onclick="terminatesubscriptiontrial(' + orgId + ')" >Terminate Subscription</button>';
-
                     $("#purchase_" + orgId).html(uphtml);
-
                 }
             }
 
         }
     });
-
 });
-
-
 var convertMinUsers;
 function convertToPaidManual(orgId, userCount, amount) {
     amount = userCount * annual_price_per_user;
@@ -7242,10 +6877,7 @@ function convertToPaidManual(orgId, userCount, amount) {
 
 $(document).on("click", "#convertSubscriptionSubmit", function () {
     $("#convertSubscriptionForm").submit();
-
-
 });
-
 function dowloadAllUserList() {
     $("#reportsLoader").show();
     $.ajax({

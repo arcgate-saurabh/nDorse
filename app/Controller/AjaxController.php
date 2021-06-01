@@ -651,7 +651,10 @@ class AjaxController extends AppController {
             $idvalue = "";
             $status = "";
         } else {
-            $userExist = $this->User->findByEmail($email);
+
+//            $userExist = $this->User->findByEmail($email);
+            $userExist = $this->User->findByEmployeeId($employeeId);
+//            pr($userExist); exit;
             if (!empty($userExist)) {
                 $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $userExist['User']['id'], "UserOrganization.organization_id" => $orgId, "UserOrganization.status !=" => 2)));
             } else {
@@ -663,6 +666,7 @@ class AjaxController extends AppController {
                 $user = $userExist['User'];
                 $template = "invitation_admin_existing";
                 $queryresult = "Updated";
+
 
 //                pr($filedata);
 //                pr($userOrganization);
@@ -676,6 +680,22 @@ class AjaxController extends AppController {
                 $UserID = $userExist['User']['id'];
                 $user['id'] = $UserID;
                 $user['daisy_enabled'] = $daisyEnabled;
+                $user['fname'] = $fname;
+                $user['lname'] = $lname;
+                $queryresultUpdateEmail = '';
+
+                if ($userExist['User']['email'] != $email) {
+                    $duplicateEmail = $this->User->find("first", array("conditions" => array("email" => $email, "id !=" => $UserID)));
+                    if ($duplicateEmail) {
+                        $queryresultUpdateEmail = "Email not updated";
+                    } else {
+                        $user['email'] = $email;
+                        $user['username'] = $email;
+                    }
+                }
+
+
+
 
 
                 $this->User->id = $UserID;
@@ -686,7 +706,9 @@ class AjaxController extends AppController {
                     if ($this->User->save($user, array('id' => $UserID))) {
                         $user['id'] = $this->User->id;
                         $template = "invitation_admin_existing";
-                        $queryresult = "Updated";
+                        $queryresult = ($queryresultUpdateEmail != '') ? "User updated but " . $queryresultUpdateEmail : $queryresult;
+
+//                        $queryresult = "Updated";
                     } else {
                         //Error on saving
                         $queryresult = "Error in saving user";
@@ -726,7 +748,7 @@ class AjaxController extends AppController {
                         $departmentId = $deptRecord['OrgDepartment']['id'];
                     }
                 } else {
-                    $departmentId = "";
+                    $departmentId = 0;
                 }
 
                 //JobTitle set
@@ -825,7 +847,8 @@ class AjaxController extends AppController {
                 } else {
                     $user = $userExist['User'];
                     $template = "invitation_admin_existing";
-                    $queryresult = "Updated";
+                    $queryresult = ($queryresultUpdateEmail != '') ? "Updated & " . $queryresultUpdateEmail : $queryresult;
+//                    $queryresult = "Updated";
                 }
 
 
@@ -4345,8 +4368,7 @@ class AjaxController extends AppController {
         echo $htmlstring = $this->render('/Elements/allendorsementslisting');
         exit;
     }
-    
-    
+
     //Added By Babulal Prasad @24-APril-2021 To filter on all guest nDorsements in admin
     function searchallguestendorsement2() {
         $this->layout = "ajax_new";
@@ -4742,7 +4764,7 @@ class AjaxController extends AppController {
 //            $user_id[] = $userorguserid["UserOrganization"]["user_id"];
 //        }
     }
-    
+
     function filterallguestendorsement() {
         $this->layout = "ajax_new";
         $this->autoRender = false;

@@ -55,7 +55,7 @@ foreach ($checkarray as $fieldvalue) {
     </section>
     <!--Used to display validation errors-->
     <?php if ($errormsg != '') { ?>
-        <div class="error-createclient"><?php //echo $errormsg;             ?></div>
+        <div class="error-createclient"><?php //echo $errormsg;              ?></div>
         <?php
     }
     echo $this->Form->create('User');
@@ -67,14 +67,24 @@ foreach ($checkarray as $fieldvalue) {
             <form class="form-horizontal">
                 <section>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-1">
+                        <div class="col-md-6">
+                            <div class="col-md-2">
                                 <div class="labelCus">ID</div>
                             </div>
-                            <div class="col-md-11">
+                            <div class="col-md-10">
                                 <input type="text" id="inputEmail" value="<?php
                                 echo $userdata['User']['id'];
                                 ?>" class="form-control"  >
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">
+                                <div class="labelCus">Employee ID</div>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" id="inputEmail" value="<?php
+                                echo $userdata['User']['employee_id'];
+                                ?>" class="form-control" readonly = 'readonly'  >
                             </div>
                         </div>
                     </div>
