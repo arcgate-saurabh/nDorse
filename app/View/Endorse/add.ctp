@@ -172,28 +172,31 @@
             </div>
             <div class="modal-body" style="max-height:250px; overflow:auto;">
                 <?php if (!empty($emojis->custom)) { ?>
-                <div class="sticker-container-edit">
-                    <?php
-                    foreach ($emojis->custom as $emoji) {
-                        ?>
-                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
-                            <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
-                        </div>
-                    <?php } ?>
+                    <div class="sticker-container-edit">
+                        <?php
+                        foreach ($emojis->custom as $emoji) {
+                            ?>
+                            <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                            </div>
+                        <?php } ?>
 
-                </div>
-                <hr/>
+                    </div>
+                    <hr/>
                 <?php } ?>
-                <div class="sticker-container-edit">
-                    <?php
-                    foreach ($emojis->default as $emoji) {
-                        ?>
-                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
-                            <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
-                        </div>
-                    <?php } ?>
+                <?php if (!empty($emojis->default)) { ?>
+                    <div class="sticker-container-edit">
+                        <?php
+                        foreach ($emojis->default as $emoji) {
+                            ?>
+                            <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                            </div>
+                        <?php } ?>
 
-                </div>
+                    </div>
+                <?php } ?>
+
                 <?php /* foreach ($emojis->default as $emoji) { ?>
                   <div class="sticker-container" >
                   <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
