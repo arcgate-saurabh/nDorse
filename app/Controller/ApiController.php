@@ -2122,12 +2122,12 @@ class ApiController extends AppController {
                     $orgArray["total_endorsement"] = count($corevaluesendorsement); //$cinfo;
                     $orgArray["org_core_values"] = $core_value;
                     $orgArray["total_endorsement_month"] = $total_value;
-                    if($org_id == 426){
+                    if ($org_id == 426) {
                         $orgArray["departments"] = array();
-                    }else{
+                    } else {
                         $orgArray["departments"] = $this->getOrgValues($org_id, "OrgDepartments");
                     }
-                    
+
                     $orgArray["entity"] = $this->getOrgValues($org_id, "Entity");
                     $orgArray["job_titles"] = $this->getOrgValues($org_id, "OrgJobTitles");
                     $rootUrl = Router::url('/', true);
@@ -6537,8 +6537,8 @@ class ApiController extends AppController {
             ));
         }
     }
-    
-     public function getLiveFeeds_old() {
+
+    public function getLiveFeeds_old() {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
@@ -7459,13 +7459,13 @@ class ApiController extends AppController {
 
                 $start_date = "";
                 $end_date = "";
-             /*   if (isset($this->request->data["start_date"]) && $this->request->data["start_date"] != "") {
-                    $start_date = $this->request->data["start_date"];
-                }
-                if (isset($this->request->data["end_date"]) && $this->request->data["end_date"] != "") {
-                    $end_date = $this->request->data["end_date"];
-                }
-*/
+                /*   if (isset($this->request->data["start_date"]) && $this->request->data["start_date"] != "") {
+                  $start_date = $this->request->data["start_date"];
+                  }
+                  if (isset($this->request->data["end_date"]) && $this->request->data["end_date"] != "") {
+                  $end_date = $this->request->data["end_date"];
+                  }
+                 */
 
 
 
@@ -7482,7 +7482,7 @@ class ApiController extends AppController {
                                 return "JSON_CONTAINS(user_id, JSON_ARRAY('$ids'))";
                             }, $followingIdsArray));
 //                            pr($Usercondition); exit;
-                            
+
                     $NEWconditionarray["OR"] = array(
                         array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids" => $followingIdsArray,
                                         "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
@@ -7490,20 +7490,20 @@ class ApiController extends AppController {
                         array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, $Usercondition)
                     );
                 } else {
-                    
+
                     $NEWconditionarray["OR"] = array(
                         array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
                                         "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
                                         "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
-                        array("visibility_check" => 0, 'FeedTran.org_id' => $org_id /*, "user_id like '%" . '"' . $user_id . '"' . "%'",*/)
+                        array("visibility_check" => 0, 'FeedTran.org_id' => $org_id /* , "user_id like '%" . '"' . $user_id . '"' . "%'", */)
                     );
                 }
-             /*   if ($start_date != "") {
-                    $NEWconditionarray["FeedTran.created >= "] = date("Y-m-d 00:00:00", $start_date);
-                }
-                if ($end_date != "") {
-                    $NEWconditionarray["FeedTran.created <= "] = date("Y-m-d 23:59:59", $end_date);
-                } */
+                /*   if ($start_date != "") {
+                  $NEWconditionarray["FeedTran.created >= "] = date("Y-m-d 00:00:00", $start_date);
+                  }
+                  if ($end_date != "") {
+                  $NEWconditionarray["FeedTran.created <= "] = date("Y-m-d 23:59:59", $end_date);
+                  } */
 //(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
 //OR 
 //(visibility_check = 0 and org_id = 123  )
@@ -8168,7 +8168,6 @@ class ApiController extends AppController {
             ));
         }
     }
-
 
     public function getLiveFeeds2() { /// Function clone Created by babulal prasad to test on live site
         if ($this->request->is('post')) {
@@ -14874,9 +14873,10 @@ class ApiController extends AppController {
         }
 
 
-
+        $emojis_array = array();
+        
         if ($personalizedBitmoji == 0) {
-            $emojis_array = array();
+
 //            $Emojisdata = $this->Emojis->find("all");
 //
 //            foreach ($Emojisdata as $emojisval) {
@@ -16885,7 +16885,7 @@ class ApiController extends AppController {
 //            $file = new File($file, true);
 //            $file->write($requestJson);
 //            
-            $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId= '';
+            $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId = '';
             $firstName = '';
             $userData = array();
             if (isset($this->request->data['uid'][0]) && $this->request->data['uid'][0] != '') {
@@ -16893,11 +16893,11 @@ class ApiController extends AppController {
             }
             if (isset($this->request->data['employee_id'][0]) && $this->request->data['employee_id'][0] != '') {
                 $employeeId = $this->request->data['employee_id'][0];
-            }else{ // If we will not be getting employee id in response of sso login then use uid as employeeId
+            } else { // If we will not be getting employee id in response of sso login then use uid as employeeId
                 $employeeId = $uid;
             }
-            
-            
+
+
             if (isset($uniqueAccountName) && $uniqueAccountName != '') {
 //                $user_email = $this->request->data['mail'][0];
 //                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
@@ -16919,7 +16919,7 @@ class ApiController extends AppController {
             if (isset($this->request->data['uid'][0]) && $this->request->data['uid'][0] != '') {
                 $uniqueAccountName = $this->request->data['uid'][0];
             }
-            
+
 
 
 
