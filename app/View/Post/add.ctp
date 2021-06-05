@@ -242,7 +242,7 @@ echo $this->Html->script('moment_timezone_with_data');
                         <?php } ?>
                         <?php if (empty($emojis->default) && empty($emojis->custom)) { ?>  
                             <div class="sticker-container-edit">
-                                No stickers available.
+                                <p style="color:darkslategray;"> No stickers available.</p>
                             </div>
                         <?php } ?>
 

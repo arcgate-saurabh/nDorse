@@ -196,7 +196,11 @@
 
                     </div>
                 <?php } ?>
-
+                <?php if (empty($emojis->default) && empty($emojis->custom)) { ?>  
+                    <div class="sticker-container-edit">
+                        <p style="color:darkslategray;"> No stickers available.</p>
+                    </div>
+                <?php } ?>
                 <?php /* foreach ($emojis->default as $emoji) { ?>
                   <div class="sticker-container" >
                   <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
