@@ -171,6 +171,7 @@
                 <h4 class="modal-title" >Select Stickers</h4>
             </div>
             <div class="modal-body" style="max-height:250px; overflow:auto;">
+                <?php if (!empty($emojis->custom)) { ?>
                 <div class="sticker-container-edit">
                     <?php
                     foreach ($emojis->custom as $emoji) {
@@ -182,6 +183,7 @@
 
                 </div>
                 <hr/>
+                <?php } ?>
                 <div class="sticker-container-edit">
                     <?php
                     foreach ($emojis->default as $emoji) {

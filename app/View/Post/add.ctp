@@ -214,17 +214,19 @@ echo $this->Html->script('moment_timezone_with_data');
             <div class="modal-body">
                 <div class="addSticker">
                     <div class="sticker-content">
-                        <div class="sticker-container-edit">
-                            <?php
-                            foreach ($emojis->custom as $emoji) {
-                                ?>
-                                <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
-                                    <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
-                                </div>
-                            <?php } ?>
+                        <?php if (!empty($emojis->custom)) { ?>
+                            <div class="sticker-container-edit">
+                                <?php
+                                foreach ($emojis->custom as $emoji) {
+                                    ?>
+                                    <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                                        <img src="<?php echo $emoji->url; ?>" class="attached-item" alt="">
+                                    </div>
+                                <?php } ?>
 
-                        </div>
-                        <hr/>
+                            </div>
+                            <hr/>
+                        <?php } ?>
                         <div class="sticker-container-edit">
                             <?php
                             foreach ($emojis->default as $emoji) {
@@ -238,23 +240,22 @@ echo $this->Html->script('moment_timezone_with_data');
 
                     </div>
                 </div>
-                <?php
-               /* foreach ($emojis->custom as $emoji) {
-                    ?>
-                    <div class="sticker-container" >
-                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
-                            <img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/>
-                        </div>
-                    </div>
-                <?php } ?>
-                <div class="clearfix"></div> 
-                <?php
-                foreach ($emojis->default as $emoji) {
-                    ?>
-                    <div class="sticker-container" >
-                        <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
-                    </div>
-                <?php } */?>
+                <?php /* foreach ($emojis->custom as $emoji) {
+                  ?>
+                  <div class="sticker-container" >
+                  <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>">
+                  <img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/>
+                  </div>
+                  </div>
+                  <?php } ?>
+                  <div class="clearfix"></div>
+                  <?php
+                  foreach ($emojis->default as $emoji) {
+                  ?>
+                  <div class="sticker-container" >
+                  <div class="sticker-img js_addSticker" rel="<?php echo $emoji->image; ?>"><img src="<?php echo $emoji->url; ?>" class="attached-item" width="90" alt=""/></div>
+                  </div>
+                  <?php } */ ?>
                 <div class="clearfix"></div> 
             </div>
             <div class="modal-footer">
