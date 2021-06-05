@@ -240,7 +240,7 @@ echo $this->Html->script('moment_timezone_with_data');
 
                             </div>
                         <?php } ?>
-                        <?php if (!empty($emojis->default) && !empty($emojis->custom)) { ?>  
+                        <?php if (empty($emojis->default) && empty($emojis->custom)) { ?>  
                             <div class="sticker-container-edit">
                                 No stickers available.
                             </div>
