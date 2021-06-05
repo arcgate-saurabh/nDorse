@@ -198,7 +198,7 @@
                 <?php } ?>
                 <?php if (empty($emojis->default) && empty($emojis->custom)) { ?>  
                     <div class="sticker-container-edit">
-                        <p style="color:darkslategray;"> No stickers available.</p>
+                        <p style="color:darkslategray;">Stickers are not available.</p>
                     </div>
                 <?php } ?>
                 <?php /* foreach ($emojis->default as $emoji) { ?>
