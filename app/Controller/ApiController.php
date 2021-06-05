@@ -14932,7 +14932,7 @@ class ApiController extends AppController {
         } else {
             $this->set(array(
                 'result' => array("status" => false
-                    , "msg" => "No stickers available", "data" => $emojis_array_all, "data_new" => $emojis_array),
+                    , "msg" => "No stickers available", "data" => $emojis_array_all, "data_new" => array()),
                 '_serialize' => array('result')
             ));
         }
