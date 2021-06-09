@@ -2,7 +2,7 @@
 $(document).ready(function () {
 
     //========set image
-    $('#org_upload_photo ').bind("click", function () {
+    $('#org_upload_photo').bind("click", function () {
         $('#photo').click();
     });
 

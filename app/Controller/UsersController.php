@@ -1482,13 +1482,15 @@ class UsersController extends AppController {
     }
 
     public function nextId() {
-        $result = $this->User->query("SELECT Auto_increment FROM information_schema.tables AS NextId  WHERE table_name='users' AND table_schema='" . DATABASESCHEMANAME . "'");
-        return $result[0]['NextId']['Auto_increment'];
+        $col_name = "AUTO_INCREMENT";
+        $result = $this->User->query("SELECT $col_name FROM information_schema.tables AS NextId  WHERE table_name='users' AND table_schema='" . DATABASESCHEMANAME . "'");
+        return $result[0]['NextId'][$col_name];
     }
 
     public function nextOrgId() {
-        $result = $this->Organization->query("SELECT Auto_increment FROM information_schema.tables AS NextId  WHERE table_name='organizations' AND table_schema='" . DATABASESCHEMANAME . "'");
-        return $result[0]['NextId']['Auto_increment'];
+        $col_name = "AUTO_INCREMENT";
+        $result = $this->Organization->query("SELECT $col_name FROM information_schema.tables AS NextId  WHERE table_name='organizations' AND table_schema='" . DATABASESCHEMANAME . "'");
+        return $result[0]['NextId'][$col_name];
     }
 
     public function existingcorevalues($id) {
