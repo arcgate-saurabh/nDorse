@@ -12869,29 +12869,29 @@ class ApiController extends AppController {
 //));
     }
 
-    public function checkADFSLoginSession() {
-        $this->autoRender = false;
-        $this->layout = false;
-//        pr($this->request->data); 
-        $data = array();
-        $apiurl = $this->request->data['sso_url'];
-//        exit;
-//        $apiurl = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp';
-        $this->log($apiurl, 'debug');
-        $headers[] = "Accept: */*";
-        $headers[] = "Connection: Keep-Alive";
-        $headers[] = "Content-type: application/x-www-form-urlencoded;charset=UTF-8";
-        $headers[] = "Cookie: " . $this->Apicalls->getToken();
-        $cSession = curl_init();
-        curl_setopt($cSession, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($cSession, CURLOPT_COOKIESESSION, TRUE);
-        curl_setopt($cSession, CURLOPT_URL, $apiurl);
-        curl_setopt($cSession, CURLOPT_POST, true);
-        curl_setopt($cSession, CURLOPT_POSTFIELDS, http_build_query($data));
-        ob_start();
-        curl_exec($cSession);
-        $result = ob_get_contents();
-    }
+//    public function checkADFSLoginSession() {
+//        $this->autoRender = false;
+//        $this->layout = false;
+////        pr($this->request->data); 
+//        $data = array();
+//        $apiurl = $this->request->data['sso_url'];
+////        exit;
+////        $apiurl = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp';
+//        $this->log($apiurl, 'debug');
+//        $headers[] = "Accept: */*";
+//        $headers[] = "Connection: Keep-Alive";
+//        $headers[] = "Content-type: application/x-www-form-urlencoded;charset=UTF-8";
+//        $headers[] = "Cookie: " . $this->Apicalls->getToken();
+//        $cSession = curl_init();
+//        curl_setopt($cSession, CURLOPT_HTTPHEADER, $headers);
+//        curl_setopt($cSession, CURLOPT_COOKIESESSION, TRUE);
+//        curl_setopt($cSession, CURLOPT_URL, $apiurl);
+//        curl_setopt($cSession, CURLOPT_POST, true);
+//        curl_setopt($cSession, CURLOPT_POSTFIELDS, http_build_query($data));
+//        ob_start();
+//        curl_exec($cSession);
+//        $result = ob_get_contents();
+//    }
 
     public function getTimelyUpdates() {
         if ($this->request->is('post')) {
@@ -14874,7 +14874,7 @@ class ApiController extends AppController {
 
 
         $emojis_array = array();
-        
+
         if ($personalizedBitmoji == 0) {
 
 //            $Emojisdata = $this->Emojis->find("all");
@@ -16887,23 +16887,43 @@ class ApiController extends AppController {
 //            $file = new File($file, true);
 //            $file->write($requestJson);
 //            
-            $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId = '';
-            $firstName = '';
+            $firstName = $reponseEmpID = $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId = '';
+
             $userData = array();
             if (isset($this->request->data['uid'][0]) && $this->request->data['uid'][0] != '') {
                 $uid = $uniqueAccountName = $this->request->data['uid'][0];
             }
+
             if (isset($this->request->data['employee_id'][0]) && $this->request->data['employee_id'][0] != '') {
-                $employeeId = $this->request->data['employee_id'][0];
+                $reponseEmpID = $employeeId = $this->request->data['employee_id'][0];
             } else { // If we will not be getting employee id in response of sso login then use uid as employeeId
                 $employeeId = $uid;
             }
 
 
-            if (isset($uniqueAccountName) && $uniqueAccountName != '') {
+            $checkFlag = $emailUpdate = $empIDUpdate = 0; // Create new user
+            if (isset($reponseEmpID) && $reponseEmpID != '') {
 //                $user_email = $this->request->data['mail'][0];
 //                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
-                $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $employeeId)));
+                $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $reponseEmpID)));
+                if (!empty($userData)) { // Check user with UID 
+                    $emailUpdate = ($userData['User']['id'] != $user_email) ? 1 : 0;
+                } else {
+                    $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $uniqueAccountName)));
+                    if (!empty($userData)) { // Check user with email
+                        $empIDUpdate = 1;
+                        $emailUpdate = ($userData['User']['id'] != $user_email) ? 1 : 0;
+                    } else {
+                        $checkFlag = 1;
+                    }
+                }
+            } else {
+                $checkFlag = 1;
+            }
+            
+            if($checkFlag){
+                $user_email = $this->request->data['mail'][0];
+                $userData = $this->User->find('first', array('conditions' => array('User.email' => $user_email)));
             }
 
             if (isset($this->request->data['mail'][0]) && $this->request->data['mail'][0] != '') {
@@ -16929,12 +16949,22 @@ class ApiController extends AppController {
             $organizationData = $this->Organization->findById($org_id);
             $organization = $organizationData['Organization'];
 //            pr($userData); exit;
+
+
             if (!empty($userData)) {
                 /*                 * *** LOGIN ON NDORSE SERVER SESSION***** */
 
                 $roleList = $this->Common->setSessionRoles();
 //                pr($roleList); exit;
                 $this->User->id = $userData['User']['id'];
+                
+                if($emailUpdate){
+                    $saved = $this->User->saveField("email", $user_email);
+                }
+                if($empIDUpdate){
+                    $saved = $this->User->saveField("employee_id", $reponseEmpID);
+                }
+                
                 $saved = $this->User->saveField("ad_accountname", $uniqueAccountName);
 //                pr($saved); exit;
                 if ($saved) {
