@@ -1314,6 +1314,113 @@ class AjaxController extends AppController {
     }
 
     /* Created by : Babulal Prasad
+     * at : 30-Sept-2019
+     * Desc : New fields(daisy enabled,status) added and if user exist then update the information
+     */
+
+    function updatebulkusersempidcsv() {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+        $this->loadModel("User");
+        $filedata = $this->request->data["targetdata"];
+
+        //Extract fields from filedata
+
+        $currentEmpID = $filedata[0];
+        $newEmpID = $filedata[1];
+        $email = $filedata[2];
+        $department = $filedata[3];
+
+        $orgId = $this->request->data["orgId"];
+
+        $error = false;
+
+        if ((!filter_var($email, FILTER_VALIDATE_EMAIL)) || $email == "") {
+            $queryresult = "Check Email";
+            $idvalue = "";
+            $status = "";
+        } else if (trim($newEmpID == "") || trim($newEmpID == "")) {
+            $queryresult = "New employee id is Empty";
+            $idvalue = "";
+            $status = "";
+        } else {
+//            pr($currentEmpID);
+            if ($currentEmpID != '') {
+
+                $userExist = $this->User->find('first', array('conditions' => array('User.employee_id' => $currentEmpID)));
+                $queryresult = "Updated by old id.";
+            } else {
+                $userExist = $this->User->findByEmail($email);
+                $queryresult = "Updated by email.";
+            }
+
+            //Check for duplicate empID
+            if (($currentEmpID != $newEmpID) && (!empty($userExist))) {
+                $empIdExist = $this->User->find('first', array('conditions' => array('User.employee_id' => $newEmpID)));
+            }
+
+            if (empty($empIdExist)) {
+                if (!empty($userExist)) {
+
+                    $user = $userExist['User'];
+
+
+                    $user = array();
+
+                    $UserID = $userExist['User']['id'];
+                    $user['id'] = $UserID;
+                    $user['employee_id'] = $newEmpID;
+
+                    $this->User->id = $UserID;
+
+                    $this->User->setValidation('edit');
+                    $this->User->set($user);
+                    if ($this->User->validates()) {
+                        if ($this->User->save($user, array('id' => $UserID))) {
+                            $user['id'] = $this->User->id;
+                            $queryresult = "Updated";
+                            $idvalue = $UserID;
+                        } else {
+                            //Error on saving
+                            $queryresult = "Error in saving user";
+                            $idvalue = "";
+                            $status = "";
+                            $error = true;
+                        }
+                    } else {
+                        //Error on validation
+                        $errors = $this->User->validationErrors;
+                        $errormsg = "";
+                        foreach ($errors as $error) {
+                            $errormsg .= $error[0] . "\n";
+                        }
+                        $queryresult = $errormsg;
+                        $idvalue = "";
+                        $status = "";
+                        $error = true;
+                    }
+                } else {
+                    //Error on saving
+                    $queryresult = "User not found by given details.";
+                    $idvalue = "";
+                    $status = "";
+                    $error = true;
+                }
+            } else {
+                //Error on saving
+                    $queryresult = "new Empid already assigned.";
+                    $idvalue = "";
+                    $status = "";
+                    $error = true;
+            }
+        }
+
+        $result = array("id" => $idvalue, "result" => $queryresult, "status" => 'active');
+        echo json_encode($result);
+        exit();
+    }
+
+    /* Created by : Babulal Prasad
      * at : 12-jan-2020
      * Desc : 
      */

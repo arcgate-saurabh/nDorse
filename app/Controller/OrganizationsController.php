@@ -4272,5 +4272,9 @@ class OrganizationsController extends AppController {
     public function bulkimportadfs($orgId) {
         $this->set(compact('orgId'));
     }
+    
+    public function bulkempupdate($orgId) {
+        $this->set(compact('orgId'));
+    }
 
 }

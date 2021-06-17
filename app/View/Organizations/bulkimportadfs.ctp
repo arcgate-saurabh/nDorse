@@ -41,41 +41,7 @@
         </div>
     </div>
 </section>
-<section class="" style="color: white;">
-    <div class="col-md-6 col-lg-6">
-        <div class="BulkImport header-bg-nav">
-            <h4>Bulk Update EmployeeIds</h4>
-            <div>
-                <input type="file" id="bulkuserbutton" class="hidefileupload hidden">
-                <div class="pull-right BrowseButton">
-                    <div class="choosefile">
-                        <h6 id="choosefilebulkusers">Choose File </h6>
-                        <span>
-                            <input value="Upload" onclick="uploadcsvbulkEmpIdUpdate(<?php echo $orgId;?>)" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
-                        
-                        </span> 
-                        <a href="javascript:void(0)" data-toggle="collapse" data-target="#ToolTip02" aria-expanded="false" aria-controls="ToolTip02">
-                            <!--<img src="/ndorse/prod2/img/helpIcon.png" alt="">-->
-                        </a> 
-                    </div>
-                    <div class="collapse Popover" id="ToolTip02">
-                        <div class="well">
-                            <ul class="list-inline">
-                                <li>Step1: Download the empty template (CSV file) from website by clicking on Download template button.</li>
-                                <li></li>
-                                <li>Step2: Fill in the details in that CSV file. Save it in your computer’s hard drive.</li>
-                                <li></li>
-                                <li>Step3: Upload that CSV file to server by clicking on “Upload” button.</li>
-                            </ul>
-                            <span class="pull-right popOverArrow"><img src="/ndorse/prod2/img/popOverArrow.png" alt=""></span> 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-</section>
+
 <!--<section class="row footer-bg bulk-users">
     <div class="col-md-6 col-lg-6">
         <div class="BulkImport">

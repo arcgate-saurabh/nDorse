@@ -120,6 +120,14 @@ $loggeinUser = AuthComponent::user();
                                 Copy Link
                             </a>
                         </p>
+                        <br/>
+                        <p class="tooltip2">
+                            EmployeeID update link :  <span id="update_link"><?php echo Router::url('/', true, true) . 'organizations/bulkempupdate/' . $orgdetails['id']; ?></span>
+                            <a onclick="myFunction2()" onmouseout="outFunc()" class="btn btn-default btn-sm ml15"  style="word-wrap: break-word;">
+                                <span class="tooltiptext" id="myTooltip2" style="word-wrap: break-word;"></span>
+                                Copy Link
+                            </a>
+                        </p>
                     <?php } ?>    
                 </div>
             </div>
@@ -145,6 +153,17 @@ $loggeinUser = AuthComponent::user();
             document.execCommand("copy");
             $temp.remove();
             var tooltip = document.getElementById("myTooltip1");
+            //tooltip.innerHTML = "Link Copied: " + myCode;
+            tooltip.innerHTML = "Link Copied";
+        }
+        function myFunction2() {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            var myCode = $('#update_link').html();
+            $temp.val(myCode).select();
+            document.execCommand("copy");
+            $temp.remove();
+            var tooltip = document.getElementById("myTooltip2");
             //tooltip.innerHTML = "Link Copied: " + myCode;
             tooltip.innerHTML = "Link Copied";
         }
