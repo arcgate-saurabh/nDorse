@@ -1335,11 +1335,12 @@ class AjaxController extends AppController {
 
         $error = false;
 
-        if ((!filter_var($email, FILTER_VALIDATE_EMAIL)) || $email == "") {
-            $queryresult = "Check Email";
-            $idvalue = "";
-            $status = "";
-        } else if (trim($newEmpID == "") || trim($newEmpID == "")) {
+//        if ((!filter_var($email, FILTER_VALIDATE_EMAIL)) || $email == "") {
+//            $queryresult = "Check Email";
+//            $idvalue = "";
+//            $status = "";
+//        } else
+            if (trim($newEmpID == "") || trim($newEmpID == "")) {
             $queryresult = "New employee id is Empty";
             $idvalue = "";
             $status = "";
