@@ -16888,7 +16888,7 @@ class ApiController extends AppController {
 //            $file->write($requestJson);
 //            
             $firstName = $reponseEmpID = $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId = '';
-
+            $user_email = $this->request->data['mail'][0];
             $userData = array();
             if (isset($this->request->data['uid'][0]) && $this->request->data['uid'][0] != '') {
                 $uid = $uniqueAccountName = $this->request->data['uid'][0];
@@ -16907,12 +16907,12 @@ class ApiController extends AppController {
 //                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
                 $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $reponseEmpID)));
                 if (!empty($userData)) { // Check user with UID 
-                    $emailUpdate = ($userData['User']['id'] != $user_email) ? 1 : 0;
+                    $emailUpdate = ($userData['User']['email'] != $user_email) ? 1 : 0;
                 } else {
                     $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $uniqueAccountName)));
                     if (!empty($userData)) { // Check user with email
                         $empIDUpdate = 1;
-                        $emailUpdate = ($userData['User']['id'] != $user_email) ? 1 : 0;
+                        $emailUpdate = ($userData['User']['email'] != $user_email) ? 1 : 0;
                     } else {
                         $checkFlag = 1;
                     }

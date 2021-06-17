@@ -227,6 +227,103 @@ function uploadadfsajaxcsv(index, arraylength, uploadarray, orgid, orgname, orgc
     });
 }
 // end
+// 
+// upload user function
+function updateadfsempidajaxcsv(index, arraylength, uploadarray, orgid) {
+
+    var val = uploadarray[index];
+    console.log(val); return false;
+    var targetData = val.data;
+    if ($.trim(targetData[8]) == "") {
+        targetData[8] = 0;
+    }
+
+//    console.log(targetData); return false;
+
+    next = index + 1;
+    $.ajax({
+        type: 'POST',
+        async: true,
+        dataType: 'json',
+        url: siteurl + 'ajax/uploadbulkusersadfscsv',
+        data: {targetdata: targetData, orgId: orgid, orgName: orgname, orgcode: orgcode},
+        success: function (data, textStatus, xhr) {
+
+            //success++;
+            var result = data.result;
+            if (result == "Updated" || result == "Inserted") {
+                var comment = result;
+                result = "Successful";
+                imageicon = "<div class='successfulupload'></div>";
+                //imageicon = siteurl+"/app/webroot/img/test-pass-icon.png";
+            } else {
+                var comment = result;
+                result = "Unsuccessful";
+                imageicon = "<div class='unsuccessfulupload'></div>";
+                //imageicon = siteurl+"/app/webroot/img/test-fail-icon.png";
+            }
+
+            console.log(data);
+            var userstatus = data.status;
+            //$("#bulkuserstable tr").find("td[emailresult='"+val.email1+"']").html(result+' <img src="'+imageicon+'"/>');
+            $("#bulkuserstable tr").find("td[emailresult='" + val.email1 + "']").html(result + imageicon);
+            $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").html("");
+//            console.log(val.data[6]);
+
+            if (userstatus === 0) {
+                console.log("inactive");
+                if (result == "Unsuccessful") {
+                    comment = comment.replace(/\n/g, "<br />");
+                    $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").html(comment);
+                } else {
+                    var displayMsg = "";
+                    console.log(val);
+                    var statusUser = val.data[8];
+                    if (statusUser == 1 || statusUser == 2) {
+                        displayMsg = "User is set to inactive since subscription limit is over";
+                    } else {
+                        displayMsg = "User is set to inactive";
+                    }
+                    $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").html(displayMsg);
+                }
+
+                //var resultstring = '<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + ' (User is set to inactive since quota is over)</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>';
+                //$('<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + ' (User is set to inactive since quota is over)</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>').appendTo("#bulkuserstable");
+            } else {
+                console.log("active");
+//                if (result == "Unsuccessful") {
+                $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text(comment);
+//                }
+                //var resultstring = '<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>';
+                //$('<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>').appendTo("#bulkuserstable");
+            }
+
+            //console.log(finalresult[val.email1]);
+            //if (success >= mylength)
+            //{
+            //    //window.location.reload();
+            //}
+            if (arraylength > next) {
+                uploadadfsajaxcsv(next, arraylength, uploadarray, orgid, orgname, orgcode)
+            }
+
+        },
+        error: function (data, xhr) {
+            $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").html("Failed <div class='unsuccessfulupload'></div>");
+            $("#bulkuserstable tr").find("td[emailresult='" + val.email1 + "']").html();
+            //$('<div class="row bulkusersrow" style=""><div class="emailsusers col-md-9">' + email + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-fail-icon.png"/></div></div>').appendTo("#bulkuserstable");
+            // success++;
+            if (arraylength > next) {
+                uploadadfsajaxcsv(next, arraylength, uploadarray, orgid, orgname, orgcode)
+            }
+            //if (success >= mylength)
+            //{
+            //    window.location.reload();
+            //}
+        }
+    });
+}
+// end
 
 
 // Migration new LCMC ORG users function
@@ -868,6 +965,142 @@ function uploadcsvbulkADFSuser(orgid, orgname, orgcode) {
             if (mylength > 0) {
                 //alert("mylength : "+mylength);
                 uploadadfsajaxcsv(0, mylength, myVals, orgid, orgname, orgcode);
+            }
+            //var success = 0;
+            //var finalresult = {};
+            //var x = new Array();
+            //delay(function () {
+            //    $.each(myVals, function (index, val) {
+            //        $.ajax({
+            //            type: 'POST',
+            //            async: false,
+            //            dataType: 'json',
+            //            url: siteurl + 'ajax/uploadbulkuserscsv',
+            //            data: {targetdata: val.data, orgId: orgid, orgName: orgname, orgcode: orgcode},
+            //            success: function (data, textStatus, xhr) {
+            //
+            //                success++;
+            //                var result = data.result;
+            //                console.log(result+"---test");
+            //                if (result == "Updated" || result == "Inserted") {
+            //                    result = "Successful";
+            //                    imageicon = "<div class='successfulupload'></div>";
+            //                    //imageicon = siteurl+"/app/webroot/img/test-pass-icon.png";
+            //                } else {
+            //                    var comment = result;
+            //                    result = "Unsuccessful";
+            //                    imageicon = "<div class='unsuccessfulupload'></div>";
+            //                    //imageicon = siteurl+"/app/webroot/img/test-fail-icon.png";
+            //                }
+            //                var userstatus = data.status;
+            //                //$("#bulkuserstable tr").find("td[emailresult='"+val.email1+"']").html(result+' <img src="'+imageicon+'"/>');
+            //                $("#bulkuserstable tr").find("td[emailresult='" + val.email1 + "']").html(result + imageicon);
+            //                $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text("");
+            //                if (userstatus == 0) {
+            //                    if (result == "Unsuccessful") {
+            //                        $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text(comment);
+            //                    } else {
+            //                        $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text("User is set to inactive since subscription limit is over");
+            //                    }
+            //
+            //                    //var resultstring = '<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + ' (User is set to inactive since quota is over)</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>';
+            //                    //$('<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + ' (User is set to inactive since quota is over)</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>').appendTo("#bulkuserstable");
+            //                }else if(userstatus == 3) {
+            //                    $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text("");
+            //                }
+            //                else{
+            //                    if (result == "Unsuccessful") {
+            //                        $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").text(comment);
+            //                    }
+            //                    //var resultstring = '<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>';
+            //                    //$('<div class="row bulkusersrow" ><div class="emailsusers col-md-9">' + val.email1 + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-pass-icon.png"/></div></div>').appendTo("#bulkuserstable");
+            //                }
+            //
+            //                //console.log(finalresult[val.email1]);
+            //                if (success >= mylength)
+            //                {
+            //                    //window.location.reload();
+            //                }
+            //            },
+            //            error: function (xhr) {
+            //                $("#bulkuserstable tr").find("td[emailcomment = '" + val.email1 + "']").html("Failed <div class='unsuccessfulupload'></div>");
+            //                $("#bulkuserstable tr").find("td[emailresult='" + val.email1 + "']").html();
+            //                //$('<div class="row bulkusersrow" style=""><div class="emailsusers col-md-9">' + email + '</div><div class="responseusers col-md-3" >' + result + ' <img src="' + siteurl + '/app/webroot/img/test-fail-icon.png"/></div></div>').appendTo("#bulkuserstable");
+            //                success++;
+            //                if (success >= mylength)
+            //                {
+            //                    //window.location.reload();
+            //                }
+            //            }
+            //        });
+            //
+            //
+            //    });
+            //
+            //}, 1000);
+
+//            for (tmp in myVals) {
+//                var values = myVals[tmp];
+//                var email = values.email1;
+//                console.log(email);
+//                console.log(finalresult.email);
+//                $(finalresult[email]).appendTo("#bulkuserstable");
+//            }
+            $('#uploadedfile').remove();
+            $('#bulkuserbutton').val("");
+        };
+    } else {
+        alert("Choose File First");
+        return false;
+    }
+}
+
+//===========================Bulk update employeeID ===//
+function uploadcsvbulkEmpIdUpdate(orgid) {
+    if ($('#uploadedfile').is(':visible') == true) {
+//$('#myModalbulkusersimports').modal('show');
+//$("#bulkuserstable").html("");
+        var filed = $(".hidefileupload").prop("files")[0];
+        var reader = new FileReader();
+        reader.readAsText(filed);
+        var myVals = new Array();
+        reader.onload = function (event) {
+            var csvData = event.target.result;
+            console.log(csvData); //exit;
+            try {
+                data = $.csv.toArrays(csvData);
+                dataObj = $.csv.toObjects(csvData);
+                console.log(data);
+                console.log(dataObj);
+            } catch (err) {
+                console.log(err);
+                alertbootbox("Invalid CSV");
+                return false;
+            }
+            
+            if (data[0].length < 2 || data[0].length > 2) { 
+                alertbootbox("Something wrong with the sheet 1");
+                return false;
+            }
+            $('#myModalbulkusersimports').modal('show');
+            $("#bulkuserstable").html("");
+            var counter = 1;
+            $('<table class="table table-striped table-hover"><tbody class="bulkuploadtable"><td>Emails</td><td>Status</td><td>Comments</td></tbody></table>').appendTo("#bulkuserstable");
+            for (tmp in data) {
+                pr(tmp); exit;
+                if (tmp != 0 && data[tmp][1] != "") {
+                    var email = data[tmp][2];
+                    var newEmpID = data[tmp][1];
+                    //$('<tr class="bulkusersrow"><td class="emailsusers col-md-3">' + data[tmp][0] + '</td></tr>').appendTo("#bulkuserstable");
+                    myVals.push({email1: email, data: data[tmp]});
+                    $('<tr><td>' + newEmpID + '</td><td emailresult=' + newEmpID + '>Processing.....</td><td emailcomment=' + newEmpID + '>Processing.....</td></tr>').appendTo(".bulkuploadtable");
+                }
+            }
+            //$("#bulkuserstable").empty();
+            var mylength = myVals.length;
+            if (mylength > 0) {
+                //alert("mylength : "+mylength);
+                updateadfsempidajaxcsv(0, mylength, myVals, orgid);
             }
             //var success = 0;
             //var finalresult = {};

@@ -51,15 +51,8 @@
                     <div class="choosefile">
                         <h6 id="choosefilebulkusers">Choose File </h6>
                         <span>
-                            <?php if ($orgId == 148) { ?>
-                                <input value="Upload" onclick="uploadcsvbulkADFSuser(148, 'ArcGate', '81099')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
-                            <?php } elseif ($orgId == 415) { ?>
-                                <input value="Upload" onclick="uploadcsvbulkADFSuser(415, 'LGH', '0009e')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
-                            <?php } elseif ($orgId == 425) { ?>
-                                <input value="Upload" onclick="uploadcsvbulkADFSuser(425, 'LCMC', '55924')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
-                            <?php } elseif ($orgId == 426) { ?>
-                                <input value="Upload" onclick="uploadcsvbulkNEWLCMCuser(426, 'LCMC', '56b60')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
-                            <?php } ?>
+                            <input value="Upload" onclick="uploadcsvbulkEmpIdUpdate(<?php echo $orgId;?>)" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
+                        
                         </span> 
                         <a href="javascript:void(0)" data-toggle="collapse" data-target="#ToolTip02" aria-expanded="false" aria-controls="ToolTip02">
                             <!--<img src="/ndorse/prod2/img/helpIcon.png" alt="">-->
