@@ -243,6 +243,11 @@ class OrganizationsController extends AppController {
                 }
             }
             $countermonthlyendorsements = $coreValuesID;
+
+            //Sub Center Quick view nDorsement counter
+            //dated on 16jun21
+            $subcentersCurrentMonthEndorsements = $this->Endorsement->subcenterCurrentMonthEndorsementsDict($id);
+            
 //            pr($coreValuesID);
 //            exit;
 //            echo $this->Endorsement->getLastQuery(); 
@@ -393,6 +398,9 @@ class OrganizationsController extends AppController {
                     if (!in_array($subID, $subCountExist)) {
                         $subcenterUserCountArray[$subID] = 0;
                     }
+                    if (!array_key_exists($subID, $subcentersCurrentMonthEndorsements)) {
+                        $subcentersCurrentMonthEndorsements[$subID] = 0;
+                    }
                 }
 
                 //pr($subcenterUserCountArray);
@@ -421,7 +429,7 @@ class OrganizationsController extends AppController {
             //BP
             // end
 //            pr($adminusrarray); exit;
-            $this->set(compact('totalusers', 'adminusrarray', 'activeusercount', 'inactiveusercount', 'orgdata', 'coredata', 'org_user_data', 'uploadedemssage', 'invitations_array', 'pendingrequescounter', 'invitation_pending', 'invitation_accepted', 'endorsementformonth', 'corevalueendorsedcounter', 'totalrecords', 'countermonthlyendorsements', 'totalendorsements', 'inviationStats', 'pendindnDorsementCount', 'departments', 'entities', 'jobtitles', 'totalADFSUsers', 'activeAdfsUsers', 'orgSubcenterDetail', 'subcenterUserCountArray'));
+            $this->set(compact('totalusers', 'adminusrarray', 'activeusercount', 'inactiveusercount', 'orgdata', 'coredata', 'org_user_data', 'uploadedemssage', 'invitations_array', 'pendingrequescounter', 'invitation_pending', 'invitation_accepted', 'endorsementformonth', 'corevalueendorsedcounter', 'totalrecords', 'countermonthlyendorsements', 'totalendorsements', 'inviationStats', 'pendindnDorsementCount', 'departments', 'entities', 'jobtitles', 'totalADFSUsers', 'activeAdfsUsers', 'orgSubcenterDetail', 'subcenterUserCountArray','subcentersCurrentMonthEndorsements'));
             $this->set('authUser', $this->Auth->user());
         }
     }

@@ -427,7 +427,7 @@ $orgid = $orgdata['Organization']['id'];
                         <div class="infoFlexBoxCol">
                             <h4 class="" style="color: #fff;margin: 0;"><strong><?php echo $data['short_name']; ?></strong></h4>
                             <h5 class="no-subcrip" style="color: #fff;"><strong>Total User: <?php echo $subcenterUserCountArray[$data['id']];?></strong></h5>
-                            <h5 class="no-subcrip" style="color: #fff;"><strong>Current Month nDorsements: 0</strong></h5>
+                            <h5 class="no-subcrip" style="color: #fff;"><strong>Current Month nDorsements: <?php echo $subcentersCurrentMonthEndorsements[$data['id']];?></strong></h5>
                         </div>
                     <?php } ?>
                 </div>
