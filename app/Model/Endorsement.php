@@ -53,7 +53,7 @@ class Endorsement extends AppModel {
      * 
      * */
     public function subcenterCurrentMonthEndorsementsDict($organization_id=0){
-        $data = [];
+        $data = array();
         $criteria = array();
         $day1_month_date = date("Y-m-01");
         $criteria['conditions'] = array("Endorsement.organization_id" => $organization_id, "Endorsement.created >" => $day1_month_date);
