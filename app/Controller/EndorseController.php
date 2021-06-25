@@ -173,8 +173,8 @@ class EndorseController extends AppController {
 
     public function index() {
         $loggedinUser = $this->Auth->user();
-//        pr($loggedinUser);
-//        exit;
+        //pr($loggedinUser);
+        //exit;
         if ($this->Session->check('Auth.User')) {
             if (isset($loggedinUser['current_org'])) {
                 $orgName = $loggedinUser['current_org']->name;
@@ -205,7 +205,7 @@ class EndorseController extends AppController {
 
 
                 $jsondata = $this->Apicalls->curlpost("getLiveFeeds.json", $postdata);
-//                pr($jsondata); exit;
+                //pr($jsondata); exit;
                 $jsondatadecoded = json_decode($jsondata, true);
                 $org_id = $loggedinUser['current_org']->id;
                 $postdata = array("token" => $loggedinUser["token"], "org_id" => $org_id);
