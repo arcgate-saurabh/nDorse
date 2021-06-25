@@ -572,8 +572,7 @@ function changestatus(id, url, status, file) {
 //====================change status of guest nDorsement approve reject and draft
 function changeGuestNdorseStatus(id, status) {
 //    alert(id + " " + status);
-
-
+    
     if (status == 1) {
         var smsg = "Are you sure you want to approve this nominations?";
     } else if (status == 2) {
@@ -627,16 +626,23 @@ function changeGuestNdorseStatus(id, status) {
                         $("#row_" + id).addClass("inactive");
                         $("#statuschanges_" + id).children("a").remove();
                         $("#feedback_section_" + id).fadeOut();
+                        
+                        var nomination_type = "Guest";
+                        if (window.location.href.indexOf("daisy") > -1) {
+                            nomination_type = "Daisy";
+                        } 
+
                         if (status == 3) {
-                            alert('Guest nomination has been drafted successfully.');
+                            alert(nomination_type +' nomination has been drafted successfully.');
+                            //alert('Guest nomination has been drafted successfully.');
                         } else if (status == 2) {
-                            alert('Guest nomination has been rejected successfully.');
+                            alert(nomination_type +' nomination has been rejected successfully.');
                         } else if (status == 4) {
-                            alert('Guest nomination has been deleted successfully.');
+                            alert(nomination_type +' nomination has been deleted successfully.');
                         } else if (status == 0) {
-                            alert('Guest nomination has been marked to pending successfully.');
+                            alert(nomination_type +' nomination has been marked to pending successfully.');
                         } else {
-                            alert('Guest nomination has been approved successfully.');
+                            alert(nomination_type +' nomination has been approved successfully.');
                         }
 
 //                        url = "'" + url + "'";

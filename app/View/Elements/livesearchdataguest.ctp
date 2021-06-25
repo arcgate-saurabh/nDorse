@@ -88,10 +88,23 @@ if (!empty($orgdata["Endorsement"])) {
                     </div>
                 </div>
 
+                <?php
+                /**
+                *Ticket:285 Issues to Clean Up 
+                *Revert Pending DAISY Nomination Tool back to proper tool options.
+                *25jun2021
+                */
+                ?>
                 <div class="col-md-3">
                     <div class="pull-right ">
                         <div class="col-md-6 col-sm-12">
-                            <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
+                            <?php if (isset($endorsement['status']) && $endorsement['type'] == 'daisy') { ?>
+                                <a href="javascript:void(0);" rel="<?php echo $endorsement['id']; ?>_one" class="dots">
+                                    <?php echo $this->Html->Image("3dots.png", array("align" => "pull-right")); ?>
+                                </a>
+                            <?php } ?>
+
+                            <?php if (isset($endorsement['status']) && $endorsement['status'] != 1 && $endorsement['type'] == 'guest') { ?>
                                 <a href="javascript:void(0);" rel="<?php echo $endorsement['id']; ?>_one" class="dots">
                                     <?php echo $this->Html->Image("3dots.png", array("align" => "pull-right")); ?>
                                 </a>
@@ -101,35 +114,53 @@ if (!empty($orgdata["Endorsement"])) {
                                     <?php echo $this->Html->Image("popupArrow.png"); ?>
                                 </div>
                                 <ul>
-                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
+                                    <?php //pr($endorsement); ?>
+                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 1 && $endorsement['type'] == 'guest' && $endorsement['status'] != 2 && $endorsement['status'] != 3) 
+                                    { 
+                                        ?>
                                         <li>
                                             <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 1)">Approve to Live</a>
                                         </li>
                                         <?php
                                     }
-                                    /*  if (isset($endorsement['status']) && $endorsement['status'] != 2) {
-                                      ?>
+                                        ?>
+
+                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 0 && $endorsement['type'] == 'daisy') 
+                                    {   ?>
+                                        <li>
+                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 0)">Move to Pending</a>
+                                        </li>
+                                        <?php 
+                                    }   
+                                        ?>
+
+                                    <?php 
+                                    if (isset($endorsement['status']) && ($endorsement['status'] != 1 && $endorsement['type'] == 'daisy')) {
+                                        ?>
                                       <li>
-                                      <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 2)">Not Selected</a>
+                                      <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 1)">Move to Selected</a>
                                       </li>
-                                      <?php } */
-                                    ?>
-                                    <?php if (isset($endorsement['status']) && ($endorsement['status'] != 3 && $endorsement['status'] != 1)) { ?>
+                                        <?php 
+                                    }
+                                        ?>
+                                    <?php
+                                    //pr($endorsement['status']); 
+                                    if (isset($endorsement['status']) && ($endorsement['type'] == 'daisy' && $endorsement['status'] != 2)) {
+                                        ?>
+                                      <li>
+                                      <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 2)">Move to Not Selected</a>
+                                      </li>
+                                        <?php 
+                                    }
+                                        ?>
+                                    <?php if (isset($endorsement['status']) && ($endorsement['status'] != 1 && $endorsement['status'] != 2 && $endorsement['status'] != 3 && $endorsement['type'] == 'guest')) { ?>
                                         <li>
                                             <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 3)">Hold</a>
                                         </li>
                                     <?php } ?>
-                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
-                                        <li>
-                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 4)">Delete</a>
-                                        </li>
-                                    <?php } ?>
-                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 0 && $endorsement['type'] == 'daisy') { ?>
-                                        <li>
-                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 0)">Move to Pending</a>
-                                        </li>
-                                    <?php } ?>
-                                    <?php if ($endorsement['type'] == 'daisy') { ?>
+                                    
+                                    
+                                    <?php if (isset($endorsement['status']) && $endorsement['type'] == 'daisy') { ?>
                                         <li>
                                             <a href="javascript:void(0)" id="edit_link_<?php echo $endorsement["id"]; ?>"
                                                data-deptid="<?php echo $endorsement["department_id"]; ?>"
@@ -141,6 +172,11 @@ if (!empty($orgdata["Endorsement"])) {
                                                data-userid ="<?php echo $endorsement["endorsed_id"]; ?>" 
                                                data-id="<?php echo $endorsement["id"]; ?>" 
                                                data-comment="<?php echo $endorsement["message"]; ?>" class="editDaisyNominations">Edit</a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (isset($endorsement['status']) && $endorsement['status'] != 1) { ?>
+                                        <li>
+                                            <a href="javascript:void(0)" onclick="changeGuestNdorseStatus('<?php echo $endorsement["id"]; ?>', 4)">Delete</a>
                                         </li>
                                     <?php } ?>
                                 </ul>
