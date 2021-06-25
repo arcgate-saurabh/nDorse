@@ -274,7 +274,9 @@ class AjaxController extends AppController {
             /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
             $userIdEncrypted = base64_encode($userid);
             $rootUrl = Router::url('/', true);
-            $rootUrl = str_replace("http", "https", $rootUrl);
+            //$rootUrl = str_replace("http", "https", $rootUrl);
+            //Added by saurabh on 23/06/2021
+            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
             $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
             $viewVars["pathToRender"] = $pathToRender;
             /*             * * */
@@ -540,7 +542,9 @@ class AjaxController extends AppController {
 // $orguser = $loggedInUser['fname']." ".$loggedInUser['lname'];
                 if ($euser["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    $rootUrl = str_replace("http", "https", $rootUrl);
+                    //$rootUrl = str_replace("http", "https", $rootUrl);
+                    //Added by saurabh on 23/06/2021
+                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                     $euser["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $euser["image"];
                 }
                 $userval['UserOrganization']['status'] = array_search($userval['UserOrganization']['status'], $statusConfig);
@@ -570,7 +574,9 @@ class AjaxController extends AppController {
                 /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                 $userIdEncrypted = base64_encode($euser["id"]);
                 $rootUrl = Router::url('/', true);
-                $rootUrl = str_replace("http", "https", $rootUrl);
+                //$rootUrl = str_replace("http", "https", $rootUrl);
+                //Added by saurabh on 23/06/2021
+                //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                 $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                 $viewVars["pathToRender"] = $pathToRender;
                 /*                 * */
@@ -596,8 +602,9 @@ class AjaxController extends AppController {
         }
     }
 
-    /* Modified by : Babulal Prasad
-     * at : 16-May-2019
+    /** Modified by : Babulal Prasad by 16-May-2019
+     * 
+     * @modified - 21jun2021 by saurabh
      * Desc : New fields(daisy enabled,status) added and if user exist then update the information
      */
 
@@ -614,9 +621,11 @@ class AjaxController extends AppController {
         $this->loadModel("Email");
         $this->loadModel("Subscription");
 
+        $this->loadModel("OrgSubcenter");
+
         $roleList = $this->Common->setSessionRoles();
         $filedata = $this->request->data["targetdata"];
-//        pr($filedata); exit;
+        //pr($filedata); exit;
         //Extract fields from filedata
 
         $employeeId = $filedata[0];
@@ -635,8 +644,6 @@ class AjaxController extends AppController {
         $subCenterName = $filedata[12];
 
 
-
-
         $orgId = $this->request->data["orgId"];
         $orgName = $this->request->data["orgName"];
         $orgCode = $this->request->data["orgcode"];
@@ -650,10 +657,21 @@ class AjaxController extends AppController {
             $queryresult = "First Name or Last Name is Empty";
             $idvalue = "";
             $status = "";
+        } else if (trim($employeeId == "")) {
+            $queryresult = "Employee ID is Empty";
+            $idvalue = "";
+            $status = "";
         } else {
 
 //            $userExist = $this->User->findByEmail($email);
             $userExist = $this->User->findByEmployeeId($employeeId);
+            
+            //Added by saurabh 
+            //$subcenterExist = $this->OrgSubcenter->findByLongName($subCenterName);
+
+            $subcenterExist = $this->OrgSubcenter->find("first", array("conditions" => array("OrgSubcenter.long_name" => $subCenterName, "OrgSubcenter.org_id" => $orgId, "OrgSubcenter.status" => 1)));
+            //ends here
+            
 //            pr($userExist); exit;
             if (!empty($userExist)) {
                 $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $userExist['User']['id'], "UserOrganization.organization_id" => $orgId, "UserOrganization.status !=" => 2)));
@@ -693,9 +711,6 @@ class AjaxController extends AppController {
                         $user['username'] = $email;
                     }
                 }
-
-
-
 
 
                 $this->User->id = $UserID;
@@ -777,13 +792,39 @@ class AjaxController extends AppController {
                     $jobtitleId = "";
                 }
 
+                //org_subcenters id saurabh
+                $subcenterId = 0;   
+                if($subcenterExist) 
+                {
+                    if (!empty($subCenterName)) {
+                        $subcenterRecord = $this->OrgSubcenter->find("first", array("conditions" => array("long_name" => $subCenterName, "org_id" => $orgId, "status" => 1))); //check active status also
+                        if (empty($subcenterRecord)) {
+                            $subcenterArray = array(
+                                "org_id" => $orgId,
+                                "long_name" => $subCenterName,
+                                "from_master" => 0,
+                                "status" => 1
+                            );
+                            $this->OrgSubcenter->create();
+                            $this->OrgSubcenter->save($subcenterArray);
+                            $subcenterId = $this->OrgSubcenter->getLastInsertId();
+                        } else {
+                            $subcenterId = $subcenterRecord['OrgSubcenter']['id'];
+                        }
+                    } else {
+                        $subcenterId = 0;
+                    }
+                }
+                    
                 $UserOrgID = $userOrganization['UserOrganization']['id'];
 
                 $newUserOrganization = array(
                     "department_id" => $departmentId,
                     "job_title_id" => $jobtitleId,
                     "status" => $status,
+                    "subcenter_id" => $subcenterId, //saurabh
                 );
+
 //                pr($newUserOrganization); exit;
                 $saved = $this->UserOrganization->updateAll($newUserOrganization, array('UserOrganization.id' => $UserOrgID));
 
@@ -924,6 +965,31 @@ class AjaxController extends AppController {
                         $subOrgId = 0;
                     }
 
+                    //org_subcenters id saurabh
+                    $subcenterId = 0;
+                    if($subcenterExist) 
+                    {
+                        if (!empty($subCenterName)) {
+                            $subcenterRecord = $this->OrgSubcenter->find("first", array("conditions" => array("long_name" => $subCenterName, "org_id" => $orgId, "status" => 1)));
+                            if (empty($subcenterRecord)) {
+                                $subcenterArray = array(
+                                    "org_id" => $orgId,
+                                    "long_name" => $subCenterName,
+                                    "from_master" => 0,
+                                    "status" => 1
+                                );
+                                $this->OrgSubcenter->create();
+                                $this->OrgSubcenter->save($subcenterArray);
+                                $subcenterId = $this->OrgSubcenter->getLastInsertId();
+                            } else {
+                                $subcenterId = $subcenterRecord['OrgSubcenter']['id'];
+                            }
+                        } else {
+                            $subcenterId = 0;
+                        }
+                    }
+
+
                     $newUserOrganization = array(
                         "organization_id" => $orgId,
                         "user_id" => $user['id'],
@@ -935,7 +1001,8 @@ class AjaxController extends AppController {
                         "department_id" => $departmentId,
                         "job_title_id" => $jobtitleId,
                         "entity_id" => $subOrgId,
-                        "user_role" => array_search('endorser', $roleList)
+                        "user_role" => array_search('endorser', $roleList),
+                        "subcenter_id" => $subcenterId,
                     );
 
                     $saved = $this->UserOrganization->save($newUserOrganization);
@@ -965,7 +1032,10 @@ class AjaxController extends AppController {
                         /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
                         $userIdEncrypted = base64_encode($user['id']);
                         $rootUrl = Router::url('/', true);
-                        $rootUrl = str_replace("http", "https", $rootUrl);
+                        //$rootUrl = str_replace("http", "https", $rootUrl);
+                        //Added by saurabh on 23/06/2021
+                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        
                         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                         $viewVars["pathToRender"] = $pathToRender;
                         /**/
@@ -2019,7 +2089,10 @@ class AjaxController extends AppController {
                         /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
                         $userIdEncrypted = base64_encode($user['id']);
                         $rootUrl = Router::url('/', true);
-                        $rootUrl = str_replace("http", "https", $rootUrl);
+                        //$rootUrl = str_replace("http", "https", $rootUrl);
+                        //Added by saurabh on 23/06/2021
+                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        
                         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                         $viewVars["pathToRender"] = $pathToRender;
                         /**/
@@ -2925,7 +2998,9 @@ class AjaxController extends AppController {
             $logged_in_user_id = $this->Auth->user('id');
             $userIdEncrypted = base64_encode($logged_in_user_id);
             $rootUrl = Router::url('/', true);
-            $rootUrl = str_replace("http", "https", $rootUrl);
+            //$rootUrl = str_replace("http", "https", $rootUrl);
+            //Added by saurabh on 23/06/2021
+            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
             $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
             $viewVars["pathToRender"] = $pathToRender;
             /**/
@@ -7244,11 +7319,15 @@ class AjaxController extends AppController {
 //                        $src = 'data: '.mime_content_type($image).';base64,'.$base64;
                         //$imagesarray[] = $src;
                         $rootUrl = Router::url('/', true);
-                        $rootUrl = str_replace("http", "https", $rootUrl);
+                        //$rootUrl = str_replace("http", "https", $rootUrl);
+                        //Added by saurabh on 23/06/2021
+                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                         $imagesarray[] = $rootUrl . ENDORSE_IMAGE_DIR . $dataimages["EndorseAttachment"]["name"];
                     } else {
                         $rootUrl = Router::url('/', true);
-                        $rootUrl = str_replace("http", "https", $rootUrl);
+                        //$rootUrl = str_replace("http", "https", $rootUrl);
+                        //Added by saurabh on 23/06/2021
+                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                         $imagesarray[] = $rootUrl . EMOJIS_IMAGE_DIR . $dataimages["EndorseAttachment"]["name"];
                     }
                 }
@@ -7580,7 +7659,9 @@ class AjaxController extends AppController {
             /** Added by Babulal Prasad @7-feb-2017 to unsubscribe from emails * */
             $userIdEncrypted = base64_encode($user["User"]['id']);
             $rootUrl = Router::url('/', true);
-            $rootUrl = str_replace("http", "https", $rootUrl);
+            //$rootUrl = str_replace("http", "https", $rootUrl);
+            //Added by saurabh on 23/06/2021
+            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
             $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
             $viewVars["pathToRender"] = $pathToRender;
             /**/
@@ -7680,7 +7761,9 @@ class AjaxController extends AppController {
         /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
         $userIdEncrypted = base64_encode($userId);
         $rootUrl = Router::url('/', true);
-        $rootUrl = str_replace("http", "https", $rootUrl);
+        //$rootUrl = str_replace("http", "https", $rootUrl);
+        //Added by saurabh on 23/06/2021
+        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
         $viewVars["pathToRender"] = $pathToRender;
         /*         * * */

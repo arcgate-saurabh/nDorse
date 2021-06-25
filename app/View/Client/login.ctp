@@ -2,7 +2,9 @@
 echo $this->Element("commonModal");
 echo $this->Element("iframeModal");
 $rootUrl = Router::url('/', true);
-$rootUrl = str_replace("http", "https", $rootUrl);
+//$rootUrl = str_replace("http", "https", $rootUrl);
+//Added by saurabh on 23/06/2021
+//$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
 ?>
 <div class="login ">
     <div class="text-center"><img src="<?php echo Router::url('/', true); ?>img/logo.png" width="125" alt="" /> </div>

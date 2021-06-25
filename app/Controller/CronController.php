@@ -3266,7 +3266,9 @@ class CronController extends AppController {
                                 /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                                 $userIdEncrypted = base64_encode($uID);
                                 $rootUrl = Router::url('/', true);
-                                $rootUrl = str_replace("http", "https", $rootUrl);
+                                //$rootUrl = str_replace("http", "https", $rootUrl);
+                                //Added by saurabh on 23/06/2021
+                                //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                                 $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                                 $viewVars["pathToRender"] = $pathToRender;
                                 /*                                 * * */
@@ -3371,7 +3373,9 @@ class CronController extends AppController {
                                     /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                                     $userIdEncrypted = base64_encode($uID);
                                     $rootUrl = Router::url('/', true);
-                                    $rootUrl = str_replace("http", "https", $rootUrl);
+                                    //$rootUrl = str_replace("http", "https", $rootUrl);
+                                    //Added by saurabh on 23/06/2021
+                                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                                     $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                                     $viewVars["pathToRender"] = $pathToRender;
                                     /*                                     * * */

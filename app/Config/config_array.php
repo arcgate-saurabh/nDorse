@@ -21,7 +21,9 @@ Configure::write("DAISY_Awards", $daisy_awards_array);
 
 $emojis_array = array();
 $rootUrl = Router::url('/', true);
-$rootUrl = str_replace("http", "https", $rootUrl);
+//$rootUrl = str_replace("http", "https", $rootUrl);
+//Added by saurabh on 23/06/2021
+//$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
 $emojis_url = $rootUrl . EMOJIS_IMAGE_DIR;
 //$emojis_array[] = array("image"=>"awesome.gif","url"=>$emojis_url."awesome.gif");
 //$emojis_array[] = array("image"=>"goodjob.gif","url"=>$emojis_url."goodjob.gif");

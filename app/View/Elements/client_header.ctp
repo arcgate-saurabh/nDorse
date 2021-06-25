@@ -473,7 +473,9 @@ $paramsaction = trim($this->params["action"]);
                 $rootUrl = Router::url('/', true);
 
                 if ((strpos($rootUrl, 'localhost') == '') || (strpos($rootUrl, 'localhost') < 0)) {
-                    $rootUrl = str_replace("http", "https", $rootUrl);
+                    //$rootUrl = str_replace("http", "https", $rootUrl);
+                    //Added by saurabh on 23/06/2021
+                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                 }
                 if (strpos($rootUrl, 'staging') > 0) {
                     $rootUrl = str_replace("https", "http", $rootUrl);

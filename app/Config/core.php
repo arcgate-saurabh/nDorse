@@ -127,6 +127,14 @@
 	//Configure::write('App.fullBaseUrl', 'http://example.com');
 
 /**
+* SET https Protocol for LIVE
+* @modified 17jun21
+* Note--uncomment below code on LIVE
+*/
+// $fullBaseUrl = preg_replace("/^http:/i", "https:", Configure :: read ('App.fullBaseUrl'));
+// Configure :: write ('App.fullBaseUrl', $fullBaseUrl);
+
+/**
  * Web path to the public images directory under webroot.
  * If not set defaults to 'img/'
  */
