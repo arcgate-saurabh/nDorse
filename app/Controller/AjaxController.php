@@ -662,7 +662,7 @@ class AjaxController extends AppController {
             $idvalue = "";
             $status = "";
         } else {
-
+            $queryresultUpdateEmail = "";
 //            $userExist = $this->User->findByEmail($email);
             $userExist = $this->User->findByEmployeeId($employeeId);
             
@@ -670,6 +670,14 @@ class AjaxController extends AppController {
             //$subcenterExist = $this->OrgSubcenter->findByLongName($subCenterName);
 
             $subcenterExist = $this->OrgSubcenter->find("first", array("conditions" => array("OrgSubcenter.long_name" => $subCenterName, "OrgSubcenter.org_id" => $orgId, "OrgSubcenter.status" => 1)));
+            if (trim($subCenterName)!= "" && empty($subcenterExist)){
+                $queryresult = "Sub center does not exist";
+                $idvalue = "";
+                $status = "";
+                $result = array("id" => $idvalue, "result" => $queryresult, "status" => $status);
+                echo json_encode($result);
+                exit();
+            }
             //ends here
             
 //            pr($userExist); exit;
@@ -836,7 +844,7 @@ class AjaxController extends AppController {
 
                 $statusConfig = Configure::read("statusConfig");
 
-                $sendInvite = false;
+                $sendInvite = 0;
                 if ($sendInvitation == 1 && $status == 1) {
                     $sendInvite = 1;
                 }
