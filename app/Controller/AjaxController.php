@@ -663,14 +663,16 @@ class AjaxController extends AppController {
             $status = "";
         } else {
             $queryresultUpdateEmail = "";
-//            $userExist = $this->User->findByEmail($email);
+//          $userExist = $this->User->findByEmail($email);
             $userExist = $this->User->findByEmployeeId($employeeId);
             
-            //Added by saurabh 
-            //$subcenterExist = $this->OrgSubcenter->findByLongName($subCenterName);
-
+            /**
+            *Added by saurabh for checking if sub-center exists or not in org_subcenters table.
+            */
             $subcenterExist = $this->OrgSubcenter->find("first", array("conditions" => array("OrgSubcenter.long_name" => $subCenterName, "OrgSubcenter.org_id" => $orgId, "OrgSubcenter.status" => 1)));
-            if (trim($subCenterName)!= "" && empty($subcenterExist)){
+            
+            if (trim($subCenterName)!= "" && empty($subcenterExist))
+            {
                 $queryresult = "Sub center does not exist";
                 $idvalue = "";
                 $status = "";
@@ -8271,6 +8273,44 @@ class AjaxController extends AppController {
         exit;
     }
 
+    /**
+    *This function is created by saurabh for adding loggedin user details in api_session_logs table.
+    */
+    // public function addApiSessionLogs()
+    // {
+    //     $this->layout = "ajax_new";
+    //     $this->autoRender = false;
+    //     $this->loadModel("ApiSessionLogs");
+        
+    //     $logged_in_user_role = $this->Auth->user('role');
+    //     $logged_in_user_id = $this->Auth->user('id');
+    //     $logged_in_user_token = $this->Auth->user('token');
+    //     //print_r($logged_in_user_role); exit;
+    //     //echo '-----';
+    //     //print_r($this->Auth->User()); exit;
+        
+
+    //     if ($logged_in_user_role > 1) {
+    //         //$token = md5(uniqid() . $logged_in_user_id . time());
+
+    //         $apiSessionLogs = array();
+    //         $apiSessionLogs['user_id'] = $logged_in_user_id;
+    //         $apiSessionLogs['token'] = $logged_in_user_token; //$token;
+    //         $apiSessionLogs['order'] = array("ApiSessionLogs.created DESC");
+            
+    //         $this->ApiSessionLogs->clear();
+    //         $this->ApiSessionLogs->set(array("ApiSessionLogs" => $apiSessionLogs));
+    //         $this->ApiSessionLogs->save();    
+
+    //         echo json_encode(array("msg" => "Api session logs successfully created", 'status' => true,));
+    //         exit;
+    //     } 
+    //     else 
+    //     {
+    //         echo json_encode(array("msg" => "Problem in creating logs. Please login again! ", 'status' => false,));
+    //         exit;
+    //     }   
+    // }
 }
 
 //end of ajax controller class
