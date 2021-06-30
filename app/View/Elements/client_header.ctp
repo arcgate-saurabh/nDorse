@@ -478,7 +478,7 @@ $paramsaction = trim($this->params["action"]);
                     //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
                 }
                 if (strpos($rootUrl, 'staging') > 0) {
-                    $rootUrl = str_replace("https", "http", $rootUrl);
+                    //$rootUrl = str_replace("https", "http", $rootUrl);
                 }
                 echo $this->Form->create('endorsementType', array('class' => 'select-type', 'url' => $rootUrl . "endorse/add"));
                 ?> 
