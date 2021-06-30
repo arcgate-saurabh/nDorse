@@ -34,7 +34,7 @@
 
 
 
-            if ((siteurl.indexOf('localhost') > -1) || (siteurl.indexOf('staging') > -1)) {
+            if (siteurl.indexOf('localhost') > -1) {
                 if (siteurl.indexOf('https') > -1) {
                     siteurl = siteurl.replace("http", "https");
                 }
@@ -42,7 +42,7 @@
                 if (siteurl.indexOf('https') > -1) {
 
                 } else {
-                    siteurl = siteurl.replace("http", "https");
+                    //siteurl = siteurl.replace("http", "https");
                 }
             }
 

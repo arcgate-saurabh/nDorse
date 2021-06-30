@@ -38,7 +38,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
             }
 
             var siteurl = '<?php echo Router::url('/', true); ?>';
-            if ((siteurl.indexOf('localhost') > -1) || (siteurl.indexOf('staging') > -1)) {
+            if (siteurl.indexOf('localhost') > -1){
                 if (siteurl.indexOf('https') > -1) {
                     siteurl = siteurl.replace("https", "http");
                 }
@@ -46,7 +46,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 if (siteurl.indexOf('https') > -1) {
 
                 } else {
-                    siteurl = siteurl.replace("http", "https");
+                    //siteurl = siteurl.replace("http", "https");
                 }
             }
             

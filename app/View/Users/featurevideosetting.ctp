@@ -299,7 +299,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
         $(".heading_status_type").html(statusClass);
         $(".hiddenloader").removeClass("hidden");
 
-        if ((siteurl.indexOf('localhost')> -1) || (siteurl.indexOf('staging') > -1)) {
+        if (siteurl.indexOf('localhost') > -1) {
             if (siteurl.indexOf('https') > -1) {
                 siteurl = siteurl.replace("http", "https");
             }

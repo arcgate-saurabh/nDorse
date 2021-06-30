@@ -3172,6 +3172,11 @@ $(document).on("keyup", "#searchannouncementssuborg", function () {
 });
 $(document).ready(function () {
 
+    /**
+    *This function is created by saurabh for calling addApiSessionLogs method for 
+    * adding loggedin user details in api_session_logs table on document load event.
+    */
+    //generateApiSessionLog(); 
 //=======on cliking outside modal
     $("body").click(function (event) {
         var clnew = $(event.target).attr('id');
@@ -4105,11 +4110,11 @@ $(document).ready(function () {
             $(".heading_status_type").html(statusClass);
             $("#disclaimerText").html(statusClass);
             $(".hiddenloader").removeClass("hidden");
-            if (siteurl.indexOf('staging') > -1) {
-                if (siteurl.indexOf('https') > -1) {
-                    siteurl = siteurl.replace("https", "http");
-                }
-            }
+            // if (siteurl.indexOf('staging') > -1) {
+            //     if (siteurl.indexOf('https') > -1) {
+            //         siteurl = siteurl.replace("https", "http");
+            //     }
+            // }
 
             setTimeout(function () {
                 $.ajax({
@@ -4145,11 +4150,11 @@ $(document).ready(function () {
             $(".heading_status_type").html(statusClass);
             $("#disclaimerText").html(statusClass);
             $(".hiddenloader").removeClass("hidden");
-            if (siteurl.indexOf('staging') > -1) {
-                if (siteurl.indexOf('https') > -1) {
-                    siteurl = siteurl.replace("https", "http");
-                }
-            }
+            // if (siteurl.indexOf('staging') > -1) {
+            //     if (siteurl.indexOf('https') > -1) {
+            //         siteurl = siteurl.replace("https", "http");
+            //     }
+            // }
 
             setTimeout(function () {
                 $.ajax({
@@ -7184,5 +7189,29 @@ $(document).on("change", "#userresetShowPassword", function () {
 
 });
 
+/**
+*This function is created by saurabh for calling addApiSessionLogs method for adding loggedin user details in api_session_logs table on document load event.
+*/
+// function generateApiSessionLog() 
+// {
+//     $.ajax({
+//         type: 'POST',
+//         url: siteurl + 'ajax/addApiSessionLogs',
+//         //data: {userid: userid, orgid: orgid},
+//         success: function (response) {
+//             if (response.success) {
+//                 //console.log("Api session log created for user successfully.");
+//                 setInterval(generateApiSessionLog, 10000); // The interval set to 5 seconds
+//             } else {
+//                 //console.log("There seems to be some issue in generating logs. Please try again.")
+//             }    
+//         },
+
+//         error: function (jqXHR, textStatus, errorThrown) {
+//             console.log("There seems to be some issue in generating logs. Please login and try again.")
+//         }
+
+//     });
+// }
 
  

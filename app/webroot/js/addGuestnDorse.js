@@ -27,7 +27,7 @@ $(document).on("keyup", "#endorsementSearchKeyGuest", function () {
             if (siteurl.indexOf('https') > -1) {
 
             } else {
-                siteurl = siteurl.replace("http", "https");
+                //siteurl = siteurl.replace("http", "https");
             }
         }
 
@@ -76,7 +76,7 @@ $(document).on("keyup", "#daisySearchKeyGuest", function () {
             if (siteurl.indexOf('https') > -1) {
 
             } else {
-                siteurl = siteurl.replace("http", "https");
+                //siteurl = siteurl.replace("http", "https");
             }
         }
 
@@ -129,7 +129,7 @@ $(document).on("keyup", "#endorseDepartmentName", function () {
             if (siteurl.indexOf('https') > -1) {
 
             } else {
-                siteurl = siteurl.replace("http", "https");
+                //siteurl = siteurl.replace("http", "https");
             }
         }
 

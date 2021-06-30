@@ -31,7 +31,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
         <script type='text/javascript'>
             var siteUrl = '<?php echo Router::url('/', true); ?>';
 
-            if ((siteUrl.indexOf('localhost') > -1) || (siteUrl.indexOf('staging') > -1)) {
+            if (siteUrl.indexOf('localhost') > -1) {
                 if (siteurl.indexOf('https') > -1) {
                     siteUrl = siteUrl.replace("https", "http");
                 }
@@ -40,7 +40,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 if (siteUrl.indexOf('https') > -1) {
 
                 } else {
-                    siteUrl = siteUrl.replace("http", "https");
+                    //siteUrl = siteUrl.replace("http", "https");
                 }
             }
 
@@ -58,18 +58,18 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
             var siteurl = '<?php echo Router::url('/', true); ?>';
 
+            siteurl = siteUrl;
+            // if ((siteurl.indexOf('localhost') > -1) || (siteurl.indexOf('staging') > -1)) {
+            //     if (siteurl.indexOf('https') > -1) {
+            //         siteurl = siteurl.replace("https", "http");
+            //     }
+            // }else if (siteurl.indexOf('ndorse.net') > -1) {
+            //     if (siteurl.indexOf('https') > -1) {
 
-            if ((siteurl.indexOf('localhost') > -1) || (siteurl.indexOf('staging') > -1)) {
-                if (siteurl.indexOf('https') > -1) {
-                    siteurl = siteurl.replace("https", "http");
-                }
-            }else if (siteurl.indexOf('ndorse.net') > -1) {
-                if (siteurl.indexOf('https') > -1) {
-
-                } else {
-                    siteurl = siteurl.replace("http", "https");
-                }
-            }
+            //     } else {
+            //         siteurl = siteurl.replace("http", "https");
+            //     }
+            // }
 
 
 //            else{
