@@ -21,6 +21,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="google-site-verification" content="f0Afx96zB2-kLMvH_8xh84MH7Fr8scbLMt1U2i3BPRc" />
         <?php echo $this->Html->charset(); ?>
