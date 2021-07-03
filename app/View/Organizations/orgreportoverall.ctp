@@ -146,7 +146,11 @@ $orgid = $organization_id;
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <?php /*
                                     <input id="enddaterandc_1" readonly="readonly" name="enddaterandc_1" type='text' value="<?php echo $this->Time->Format($datesarray1["enddate_1"], DATEFORMAT) ?>" class="form-control datepickerrandc" placeholder="End Date"/>
+                                    */ ?>
+                                    
+                                    <input id="enddaterandc_1" readonly="readonly" name="enddaterandc_1" type='text' value="<?php echo $datesarray1["enddate_1"]; ?>" class="form-control datepickerrandc" placeholder="End Date"/>
                                 </div>
                             </div>
                             <div class="col-md-3">
