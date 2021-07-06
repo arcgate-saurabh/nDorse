@@ -7,7 +7,7 @@ class ApiController extends AppController {
         "OrgDepartments", "OrgJobTitles", "Endorsement", "Country", "State", "DefaultOrg", "Verification", "Subscription", "EndorseAttachment",
         "EndorseCoreValue", "LoginStatistics", 'OrgRequests', 'EndorsementLike', 'EndorseReplies', 'Badge', 'PasswordCode', "GlobalSetting",
         "Topendorser", "globalsettingFaq", "Emojis", "JoinOrgCode", "Post", "PostAttachment", "PostTrans", "PostLike", "PostComment", "FeedTran", "PostSchedule",
-        "OrgJobTitle", "PostEventCount", "EndorseReply", "OrgVideo", "EndorsementComment", "OrgHashtag", "EndorseHashtag");
+        "OrgJobTitle", "PostEventCount", "EndorseReply", "OrgVideo", "EndorsementComment", "OrgHashtag", "EndorseHashtag", "ApiSessionLogs");
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -55,9 +55,7 @@ class ApiController extends AppController {
 //$this->Common->sendEmail($this->request->data['email'], $subject, $template, $viewVars);
 //                    exec("nohup wget " . Router::url('/', true) . "/cron/verificationEmails > /dev/null 2>&1 &");
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     exec("wget -bqO- " . $rootUrl . "/cron/verificationEmails &> /dev/null");
 //                    exec( "php ".WWW_ROOT."cron_scheduler.php /cron/verificationEmails/ > /dev/null &");
                     $this->set(array(
@@ -465,9 +463,7 @@ class ApiController extends AppController {
 
                         if ($currentOrg["image"] != "") {
                             $rootUrl = Router::url('/', true);
-                            //$rootUrl = str_replace("http", "https", $rootUrl);
-                            //Added by saurabh on 23/06/2021
-                            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                            //$rootUrl = str_replace("http:", "https:", $rootUrl);
                             $currentOrg["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $currentOrg["image"];
                         }
 
@@ -534,9 +530,7 @@ class ApiController extends AppController {
 
                     if ($returnData["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $returnData["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $returnData["image"];
                     }
                     if (strtotime($returnData["dob"]) > 0) {
@@ -866,9 +860,7 @@ class ApiController extends AppController {
                             $this->Organization->saveField('image', $imageName);
                         }
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $imageUrl = $rootUrl . ORG_IMAGE_DIR . $imageName;
 
                         $this->request->data['image'] = $imageUrl;
@@ -962,9 +954,7 @@ class ApiController extends AppController {
 
                     if ($orgArray["Organization"]["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $orgArray["Organization"]["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $orgArray["Organization"]["image"];
                     }
                     $coreinfo = $this->OrgCoreValues->find("all", array(
@@ -1021,9 +1011,7 @@ class ApiController extends AppController {
                     /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                     $userIdEncrypted = base64_encode($this->Auth->user('id'));
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                     $viewVars["pathToRender"] = $pathToRender;
                     /*                     * * */
@@ -1316,9 +1304,7 @@ class ApiController extends AppController {
                     $badgeInfo['trophy_id'] = $badge['Trophy']['id'];
                     $badgeInfo['count'] = empty($badge['Badge']['count']) ? 0 : (int) $badge['Badge']['count'];
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $badgeInfo['image'] = $rootUrl . TROPHY_IMAGE_DIR . $badge['Trophy']['image'];
 
                     $userBadges[] = $badgeInfo;
@@ -1476,9 +1462,7 @@ class ApiController extends AppController {
                     $badgeInfo['trophy_id'] = $badge['Trophy']['id'];
                     $badgeInfo['count'] = empty($badge['Badge']['count']) ? 0 : (int) $badge['Badge']['count'];
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $badgeInfo['image'] = $rootUrl . TROPHY_IMAGE_DIR . $badge['Trophy']['image'];
 
                     $userBadges[] = $badgeInfo;
@@ -1577,9 +1561,7 @@ class ApiController extends AppController {
 // $userinfo["users"]["entity"] = "";
                 if (isset($userinfo["user_data"]["image"]) && $userinfo["user_data"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
 //                    $userinfo["user_data"]["image"] = str_replace(Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/", "", $userinfo["user_data"]["image"]);
                     $userinfo["user_data"]["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userinfo["user_data"]["image"];
                 }
@@ -1713,9 +1695,7 @@ class ApiController extends AppController {
 
                     if ($userinfo["users"]["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $userinfo["users"]["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userinfo["users"]["image"];
 //$userinfo["users"]["image"] = $userinfo["users"]["image"];
                     }
@@ -1760,9 +1740,7 @@ class ApiController extends AppController {
                         /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
                         $userIdEncrypted = base64_encode($userinfo["id"]);
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                         $viewVars["pathToRender"] = $pathToRender;
                         /**/
@@ -1930,9 +1908,7 @@ class ApiController extends AppController {
                             /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
                             $userIdEncrypted = base64_encode($user_id);
                             $rootUrl = Router::url('/', true);
-                            //$rootUrl = str_replace("http", "https", $rootUrl);
-                            //Added by saurabh on 23/06/2021
-                            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                            //$rootUrl = str_replace("http:", "https:", $rootUrl);
                             $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                             $viewVars["pathToRender"] = $pathToRender;
                             /**/
@@ -1947,9 +1923,7 @@ class ApiController extends AppController {
                             /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
                             $userIdEncrypted = base64_encode($user_id);
                             $rootUrl = Router::url('/', true);
-                            //$rootUrl = str_replace("http", "https", $rootUrl);
-                            //Added by saurabh on 23/06/2021
-                            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                            //$rootUrl = str_replace("http:", "https:", $rootUrl);
                             $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                             $viewVars["pathToRender"] = $pathToRender;
                             /**/
@@ -2018,9 +1992,7 @@ class ApiController extends AppController {
 
                 if ($orgArray["Organization"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $orgArray["Organization"]["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $orgArray["Organization"]["image"];
                 }
                 if (!empty($orgArray)) {
@@ -2159,9 +2131,7 @@ class ApiController extends AppController {
                     $orgArray["entity"] = $this->getOrgValues($org_id, "Entity");
                     $orgArray["job_titles"] = $this->getOrgValues($org_id, "OrgJobTitles");
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $orgArray["Organization"]["health_url"] = $rootUrl . "img/" . $orgArray["Organization"]["health_url"];
 //                    pr($orgArray); exit;
                     $this->set(array(
@@ -2566,9 +2536,7 @@ class ApiController extends AppController {
 
                 if ($userval["User"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $userval["User"]["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["User"]["image"];
                 }
 
@@ -2733,9 +2701,7 @@ class ApiController extends AppController {
 // $orguser = $loggedInUser['fname']." ".$loggedInUser['lname'];
                 if ($euser["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $euser["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $euser["image"];
                 }
                 $userval['UserOrganization']['status'] = array_search($userval['UserOrganization']['status'], $statusConfig);
@@ -2763,9 +2729,7 @@ class ApiController extends AppController {
                 /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                 $userIdEncrypted = base64_encode($euser["id"]);
                 $rootUrl = Router::url('/', true);
-                //$rootUrl = str_replace("http", "https", $rootUrl);
-                //Added by saurabh on 23/06/2021
-                //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                //$rootUrl = str_replace("http:", "https:", $rootUrl);
                 $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                 $viewVars["pathToRender"] = $pathToRender;
                 /*                 * */
@@ -2815,11 +2779,9 @@ class ApiController extends AppController {
             foreach ($userinfo as $userval) {
                 if ($userval["users"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $userttimage = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["users"]["image"];
-                    $userttimage = str_replace("http", "https", $userttimage);
+                    //$userttimage = str_replace("http:", "https:", $userttimage);
                     $userval["users"]["image"] = $userttimage;
                 }
                 $userval['UserOrganization']["role"] = $roleList[$userval['UserOrganization']["user_role"]];
@@ -2831,9 +2793,7 @@ class ApiController extends AppController {
                 /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                 $userIdEncrypted = base64_encode($user_id);
                 $rootUrl = Router::url('/', true);
-                //$rootUrl = str_replace("http", "https", $rootUrl);
-                //Added by saurabh on 23/06/2021
-                //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                //$rootUrl = str_replace("http:", "https:", $rootUrl);
                 $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                 $viewVars["pathToRender"] = $pathToRender;
                 /*                 * * */
@@ -2875,9 +2835,7 @@ class ApiController extends AppController {
             foreach ($userinfo as $userval) {
                 if ($userval["users"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $userval["users"]["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["users"]["image"];
                 }
                 $userval["users"]["name"] = $userval["users"]["fname"] . " " . $userval["users"]["lname"];
@@ -2967,9 +2925,7 @@ class ApiController extends AppController {
                     }
                     if ($val1["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $val1["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $val1["image"];
                     }
                     if ($type != "public") {
@@ -3171,9 +3127,7 @@ class ApiController extends AppController {
 //  $val1["role"] = $role;   
                     }
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $val1["health_url"] = $rootUrl . "img/" . $val1["health_url"];
                     if ($val1["image"] != "") {
                         $val1["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $val1["image"];
@@ -3331,9 +3285,7 @@ class ApiController extends AppController {
 
                 if ($val["Organization"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $val["Organization"]["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $val["Organization"]["image"];
                 }
 
@@ -3990,10 +3942,7 @@ class ApiController extends AppController {
                                             /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                                             $userIdEncrypted = base64_encode($uID);
                                             $rootUrl = Router::url('/', true);
-                                            //$rootUrl = str_replace("http", "https", $rootUrl);
-                                            //Added by saurabh on 23/06/2021
-                                            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                                            
+                                            //$rootUrl = str_replace("http:", "https:", $rootUrl);
                                             $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                                             $viewVars["pathToRender"] = $pathToRender;
                                             /*                                             * * */
@@ -4124,10 +4073,7 @@ class ApiController extends AppController {
                                                         /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                                                         $userIdEncrypted = base64_encode($uID);
                                                         $rootUrl = Router::url('/', true);
-                                                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                                                        //Added by saurabh on 23/06/2021
-                                                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                                                        
+                                                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                                                         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                                                         $viewVars["pathToRender"] = $pathToRender;
                                                         /*                                                         * * */
@@ -4809,10 +4755,7 @@ class ApiController extends AppController {
                 /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
                 $userIdEncrypted = base64_encode($endorserID);
                 $rootUrl = Router::url('/', true);
-                //$rootUrl = str_replace("http", "https", $rootUrl);
-                //Added by saurabh on 23/06/2021
-                //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                
+                //$rootUrl = str_replace("http:", "https:", $rootUrl);
                 $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                 $viewVars["pathToRender"] = $pathToRender;
                 /**/
@@ -4995,9 +4938,7 @@ class ApiController extends AppController {
                 /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
 //                $userIdEncrypted = base64_encode($endorserID);
 //                $rootUrl = Router::url('/', true);
-//                $rootUrl = str_replace("http", "https", $rootUrl);
-                  //Added by saurabh on 23/06/2021
-                  //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
+//                $rootUrl = str_replace("http:", "https:", $rootUrl);
 //                $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
 //                $viewVars["pathToRender"] = $pathToRender;
 //                /**/
@@ -5542,10 +5483,7 @@ class ApiController extends AppController {
                         /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                         $userIdEncrypted = base64_encode($organization['admin_id']);
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                        
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                         /*                         * * */
 
@@ -5779,10 +5717,7 @@ class ApiController extends AppController {
                         /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
                         $userIdEncrypted = base64_encode($organization['admin_id']);
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                        
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
                         /*                         * * */
                         $viewVars = serialize(array("org_name" => $organization['Organization']['name'], 'user' => $loggedinUser, "pathToRender" => $pathToRender));
@@ -6889,7 +6824,7 @@ class ApiController extends AppController {
                 $serverCurrentTime = "";
 //                pr($endorsement);exit;
                 $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
-                $emojis_url = str_replace("http", "https", $emojis_url);
+                //$emojis_url = str_replace("http:", "https:", $emojis_url);
 //                pr($endorsement); exit;
 
                 foreach ($endorsement as $key => $value) {
@@ -6922,7 +6857,7 @@ class ApiController extends AppController {
                                     $tempEndorseImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
                                 }
                                 if (strpos($tempEndorseImages, 'localhost') < 0 || strpos($tempEndorseImages, 'staging') < 0) {
-                                    $tempEndorseImages = str_replace("http", "https", $tempEndorseImages);
+                                    //$tempEndorseImages = str_replace("http:", "https:", $tempEndorseImages);
                                 }
 
                                 $endorsmentarray[$key]["bitmoji_images"][] = $tempEndorseImages . $endorsementAttachment['name'];
@@ -7207,18 +7142,18 @@ class ApiController extends AppController {
                                 //$temppImages = Router::url('/', true) . EMOJIS_IMAGE_DIR . $postAttchment['name'];
                                 $temppImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR . $postAttchment['name'];
                                 if (strpos($temppImages, 'localhost') < 0 || strpos($temppImages, 'staging') < 0) {
-                                    $temppImages = str_replace("http", "https", $temppImages);
+                                    //$temppImages = str_replace("http:", "https:", $temppImages);
                                 }
-//                                $temppImages = str_replace("http", "https", $temppImages);
+//                                $temppImages = str_replace("http:", "https:", $temppImages);
 
                                 $postAttachmentemoji[] = $temppImages;
                             } else if ($postAttchment['type'] == 'image') {
                                 $temppImages1 = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $postAttchment['name'];
-                                $temppImages1 = str_replace("http", "https", $temppImages1);
+                                //$temppImages1 = str_replace("http:", "https:", $temppImages1);
                                 $postAttachmentimg[] = $temppImages1;
                             } else if ($postAttchment['type'] == 'files') {
                                 $temppImages2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $postAttchment['name'];
-                                $temppImages2 = str_replace("http", "https", $temppImages2);
+                                //$temppImages2 = str_replace("http:", "https:", $temppImages2);
                                 $postAttachmentFiles[] = $temppImages2;
                             }
                         }
@@ -7737,7 +7672,7 @@ class ApiController extends AppController {
                 $serverCurrentTime = "";
 //                pr($endorsement);exit;
                 $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
-                $emojis_url = str_replace("http", "https", $emojis_url);
+                //$emojis_url = str_replace("http:", "https:", $emojis_url);
 //                pr($endorsement); exit;
 
                 foreach ($endorsement as $key => $value) {
@@ -7770,7 +7705,7 @@ class ApiController extends AppController {
                                     $tempEndorseImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
                                 }
                                 if (strpos($tempEndorseImages, 'localhost') < 0 || strpos($tempEndorseImages, 'staging') < 0) {
-                                    $tempEndorseImages = str_replace("http", "https", $tempEndorseImages);
+                                    //$tempEndorseImages = str_replace("http:", "https:", $tempEndorseImages);
                                 }
 
                                 $endorsmentarray[$key]["bitmoji_images"][] = $tempEndorseImages . $endorsementAttachment['name'];
@@ -8055,18 +7990,18 @@ class ApiController extends AppController {
                                 //$temppImages = Router::url('/', true) . EMOJIS_IMAGE_DIR . $postAttchment['name'];
                                 $temppImages = Router::url('/', true) . BITMOJIS_IMAGE_DIR . $postAttchment['name'];
                                 if (strpos($temppImages, 'localhost') < 0 || strpos($temppImages, 'staging') < 0) {
-                                    $temppImages = str_replace("http", "https", $temppImages);
+                                    //$temppImages = str_replace("http:", "https:", $temppImages);
                                 }
-//                                $temppImages = str_replace("http", "https", $temppImages);
+//                                $temppImages = str_replace("http:", "https:", $temppImages);
 
                                 $postAttachmentemoji[] = $temppImages;
                             } else if ($postAttchment['type'] == 'image') {
                                 $temppImages1 = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $postAttchment['name'];
-                                $temppImages1 = str_replace("http", "https", $temppImages1);
+                                //$temppImages1 = str_replace("http:", "https:", $temppImages1);
                                 $postAttachmentimg[] = $temppImages1;
                             } else if ($postAttchment['type'] == 'files') {
                                 $temppImages2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $postAttchment['name'];
-                                $temppImages2 = str_replace("http", "https", $temppImages2);
+                                //$temppImages2 = str_replace("http:", "https:", $temppImages2);
                                 $postAttachmentFiles[] = $temppImages2;
                             }
                         }
@@ -8666,15 +8601,15 @@ class ApiController extends AppController {
                         foreach ($value["PostAttachments"] as $index => $postAttchment) {
                             if ($postAttchment['type'] == 'emojis') {
                                 $ttmpImg = Router::url('/', true) . EMOJIS_IMAGE_DIR . $postAttchment['name'];
-                                $ttmpImg = str_replace("http", "https", $ttmpImg);
+                                //$ttmpImg = str_replace("http:", "https:", $ttmpImg);
                                 $postAttachmentemoji[] = $ttmpImg;
                             } else if ($postAttchment['type'] == 'image') {
                                 $ttmpImg1 = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $postAttchment['name'];
-                                $ttmpImg1 = str_replace("http", "https", $ttmpImg1);
+                                //$ttmpImg1 = str_replace("http:", "https:", $ttmpImg1);
                                 $postAttachmentimg[] = $ttmpImg1;
                             } else if ($postAttchment['type'] == 'files') {
                                 $ttmpImg2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $postAttchment['name'];
-                                $ttmpImg2 = str_replace("http", "https", $ttmpImg2);
+                                //$ttmpImg2 = str_replace("http:", "https:", $ttmpImg2);
                                 $postAttachmentFiles[] = $ttmpImg2;
                             }
                         }
@@ -9441,19 +9376,19 @@ class ApiController extends AppController {
 
                         if ($attachval["name"] != "" && $attachval["type"] == "image") {
                             $tempIimgs = Router::url('/', true) . "app/webroot/" . ENDORSE_IMAGE_DIR . "small/" . $attachval["name"];
-                            $tempIimgs = str_replace("http", "https", $tempIimgs);
+                            //$tempIimgs = str_replace("http:", "https:", $tempIimgs);
                             $attachedimg[] = $tempIimgs;
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "emojis") {
                             $tempIimgs1 = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $attachval["name"];
                             if (strpos($tempIimgs1, 'localhost') < 0 || strpos($tempIimgs1, 'staging') < 0) {
-                                $tempIimgs1 = str_replace("http", "https", $tempIimgs1);
+                                //$tempIimgs1 = str_replace("http:", "https:", $tempIimgs1);
                             }
                             $emojisimg[] = $tempIimgs1;
 //                            $emojisimg[] = $attachval["name"];
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "bitmojis") {
 //                            $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
                             $tempIimgs2 = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $attachval["name"];
-                            $tempIimgs2 = str_replace("http", "https", $tempIimgs2);
+                            //$tempIimgs2 = str_replace("http:", "https:", $tempIimgs2);
                             $bitmojisimg[] = $tempIimgs2;
                         }
                     }
@@ -9912,7 +9847,7 @@ class ApiController extends AppController {
             if (!empty($userinfo)) {
                 if (isset($userinfo[0]['User']['image'])) {
                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userinfo[0]['User']['image'];
-                    $userImage = str_replace("http", "https", $userImagehttp);
+                    //$userImage = str_replace("http:", "https:", $userImagehttp);
                 }
                 if (isset($userinfo[0][0]['fullname']) && $userinfo[0][0]['fullname'] != '') {
                     $userName = $userinfo[0][0]['fullname'];
@@ -10044,11 +9979,11 @@ class ApiController extends AppController {
                     foreach ($attachedimage as $attachval) {
                         if ($attachval["name"] != "" && $attachval["type"] == "image") {
                             $tmpImageee = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . "small/" . $attachval["name"];
-                            $attachedimg[] = str_replace("http", "https", $tmpImageee);
+                            //$attachedimg[] = str_replace("http:", "https:", $tmpImageee);
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "emojis") {
                             $tmpImageee1 = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $attachval["name"];
                             if (strpos($tmpImageee1, 'localhost') < 0 || strpos($tmpImageee1, 'staging') < 0) {
-                                $tmpImageee1 = str_replace("http", "https", $tmpImageee1);
+                                //$tmpImageee1 = str_replace("http:", "https:", $tmpImageee1);
                             }
                             $emojisimg[] = $tmpImageee1;
 //                            $emojisimg[] = $attachval["name"];
@@ -10056,7 +9991,7 @@ class ApiController extends AppController {
                             $fileData = json_decode($attachval["name"], true);
                             $orgUrl = $fileData['url'];
                             $tmpImageee2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $orgUrl;
-                            $fileData['url'] = str_replace("http", "https", $tmpImageee2);
+                            //$fileData['url'] = str_replace("http:", "https:", $tmpImageee2);
                             $fileData['url_web'] = POST_FILE_DIR . $orgUrl;
                             $postAttachmentFiles[] = $fileData;
                         }
@@ -11660,10 +11595,7 @@ class ApiController extends AppController {
 
                     if ($currentOrg["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                        
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $currentOrg["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $currentOrg["image"];
                     }
 
@@ -12555,7 +12487,7 @@ class ApiController extends AppController {
 //            $resetPasswordURL = Router::url('/', true) . "client/resetpassword/" . $link;
 //
 //            if (strpos($resetPasswordURL, 'localhost') < 0) {
-//                $resetPasswordURL = str_replace("http", "https", $resetPasswordURL);
+//                $resetPasswordURL = str_replace("http:", "https:", $resetPasswordURL);
 //            }
 
 
@@ -12582,7 +12514,7 @@ class ApiController extends AppController {
                 $url = Router::url('/', true) . "/cron/forgotPasswordEmails &> /dev/null";
 
                 if (strpos($url, 'localhost') < 0 || strpos($url, 'staging') < 0) {
-                    $url = str_replace("http", "https", $url);
+                    //$url = str_replace("http:", "https:", $url);
                 }
 
 //                echo $url; exit;
@@ -12962,6 +12894,7 @@ class ApiController extends AppController {
 //    }
 
     public function getTimelyUpdates() {
+
         if ($this->request->is('post')) {
 
             /* Added by Babulal Prasad at 25-Sept-2019
@@ -12981,7 +12914,36 @@ class ApiController extends AppController {
             $userRole = "";
             $userOrgStatusUpdated = false;
 
-//Get feeds update
+            /**
+            * Added by saurabh for api session logs
+            */
+            $this->loadModel("ApiSessionLogs");
+            
+            if ($loggedInUser["id"]) 
+            {
+                $apiSessionLogs = array();
+                $apiSessionLogs['user_id'] = $loggedInUser["id"];
+                $apiSessionLogs['token'] = $loggedInUser["token"]; //$token;
+                $apiSessionLogs['order'] = array("ApiSessionLogs.created DESC");
+                //$apiSessionLogs['status'] = $logged_in_user_status; 
+                
+                $this->ApiSessionLogs->clear();
+                $this->ApiSessionLogs->set(array("ApiSessionLogs" => $apiSessionLogs));
+                $this->ApiSessionLogs->save();    
+
+                $apiMsg = "Api session logs successfully created for user ". $loggedInUser['id'] . " email---> " . $loggedInUser['email'] . " token---> " . $loggedInUser['token'];
+                $this->log($apiMsg, "getTimelyUpdates");
+            } 
+            else 
+            {
+                $apiMsg = "Problem in creating logs. Please login again! for user ". $loggedInUser['id'] . " email---> " . $loggedInUser['email'] . " token---> " . $loggedInUser['token'];
+                $this->log($apiMsg, "getTimelyUpdates");
+            }   
+
+            $returnData['api_session_logs'] = array("user_id" => $loggedInUser['id'], "token" => $loggedInUser['token'], "msg" => $apiMsg);
+            //ends here
+
+            //Get feeds update
             if (isset($loggedInUser['current_org'])) {
                 $userOrg = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $loggedInUser['id'], "organization_id" => $loggedInUser['current_org']['id']), 'order' => 'UserOrganization.id desc'));
 
@@ -14828,7 +14790,7 @@ class ApiController extends AppController {
         $Emojis = Configure::read("Emojis");
         $emojis_url = Router::url('/', true) . EMOJIS_IMAGE_DIR;
         if (strpos($emojis_url, 'localhost') < 0) {
-            $emojis_url = str_replace("http", "https", $emojis_url);
+            //$emojis_url = str_replace("http:", "https:", $emojis_url);
         }
         //pr($this->request->data);exit;
         $personalizedBitmoji = 0;
@@ -14846,7 +14808,7 @@ class ApiController extends AppController {
         $BitEmojis = Configure::read("Bitmojis");
         $bit_emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
         if (strpos($bit_emojis_url, 'localhost') < 0) {
-            $bit_emojis_url = str_replace("http", "https", $bit_emojis_url);
+            //$bit_emojis_url = str_replace("http:", "https:", $bit_emojis_url);
         }
         if ($personalizedBitmoji == 0) {
             $emojis_array = array();
@@ -14919,7 +14881,7 @@ class ApiController extends AppController {
         $Emojis = Configure::read("Emojis");
         $emojis_url = Router::url('/', true) . EMOJIS_IMAGE_DIR;
         if (strpos($emojis_url, 'localhost') < 0) {
-            $emojis_url = str_replace("http", "https", $emojis_url);
+            //$emojis_url = str_replace("http:", "https:", $emojis_url);
         }
 //        pr($this->request->data);exit;
         $personalizedBitmoji = 0;
@@ -14937,7 +14899,7 @@ class ApiController extends AppController {
         $BitEmojis = Configure::read("Bitmojis");
         $bit_emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
         if (strpos($bit_emojis_url, 'localhost') < 0) {
-            $bit_emojis_url = str_replace("http", "https", $bit_emojis_url);
+            //$bit_emojis_url = str_replace("http:", "https:", $bit_emojis_url);
         }
 
 
@@ -15019,7 +14981,7 @@ class ApiController extends AppController {
         $Emojis = Configure::read("Bitmojis");
         $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
         if (strpos($emojis_url, 'localhost') < 0) {
-            $emojis_url = str_replace("http", "https", $emojis_url);
+            //$emojis_url = str_replace("http:", "https:", $emojis_url);
         }
         $emojis_array = array();
         $this->loadModel('Bitmojis');
@@ -16082,10 +16044,10 @@ class ApiController extends AppController {
                                 $userImage = $postLikedata['User']['image'];
                                 if (isset($userImage) && $userImage != '') {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userImage;
-                                    $userImage = str_replace("http", "https", $userImagehttp);
+                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
                                 } else {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/img/user.png";
-                                    $userImage = str_replace("http", "https", $userImagehttp);
+                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
                                 }
                                 $postLikeArray[$index]['user_image'] = $userImage;
                                 $postLikeArray[$index]['post_like_id'] = $postLikedata['PostLike']['id'];
@@ -16143,10 +16105,10 @@ class ApiController extends AppController {
                                 $userImage = $postLikedata['User']['image'];
                                 if (isset($userImage) && $userImage != '') {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userImage;
-                                    $userImage = str_replace("http", "https", $userImagehttp);
+                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
                                 } else {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/img/user.png";
-                                    $userImage = str_replace("http", "https", $userImagehttp);
+                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
                                 }
                                 $endorsementLikeArray[$index]['user_image'] = $userImage;
                                 $endorsementLikeArray[$index]['endorsement_like_id'] = $postLikedata['EndorsementLike']['id'];
@@ -16230,14 +16192,14 @@ class ApiController extends AppController {
                                 if (isset($video_url) && $video_url != '') {
                                     $video_urlhttp = Router::url('/', true) . "app/webroot/" . VIDEO_DIR . $video_url;
                                     if (strpos($video_urlhttp, 'localhost') < 0) {
-                                        $video_urlhttp = str_replace("http", "https", $video_urlhttp);
+                                        //$video_urlhttp = str_replace("http:", "https:", $video_urlhttp);
                                     }
                                 }
                                 $videoThumbnailhttp = '';
                                 if (isset($videoThumbnail) && $videoThumbnail != '') {
                                     $videoThumbnailhttp = Router::url('/', true) . "app/webroot/" . $videoThumbnail;
                                     if (strpos($videoThumbnailhttp, 'localhost') < 0) {
-                                        $videoThumbnailhttp = str_replace("http", "https", $videoThumbnailhttp);
+                                        //$videoThumbnailhttp = str_replace("http:", "https:", $videoThumbnailhttp);
                                     }
                                 }
                                 //$orgVideoListArray[$index] = $videoList['OrgVideo'];
@@ -16580,10 +16542,7 @@ class ApiController extends AppController {
 
                     if ($currentOrg["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                        
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $currentOrg["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $currentOrg["image"];
                     }
 
@@ -16618,10 +16577,7 @@ class ApiController extends AppController {
 
                 if ($returnData["image"] != "") {
                     $rootUrl = Router::url('/', true);
-                    //$rootUrl = str_replace("http", "https", $rootUrl);
-                    //Added by saurabh on 23/06/2021
-                    //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                    
+                    //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $returnData["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $returnData["image"];
                 }
                 if (strtotime($returnData["dob"]) > 0) {
@@ -16824,10 +16780,7 @@ class ApiController extends AppController {
 //                        /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
 //                        $userIdEncrypted = base64_encode($organization['admin_id']);
 //                        $rootUrl = Router::url('/', true);
-//                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                          //Added by saurabh on 23/06/2021
-                          //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                          
+//                        $rootUrl = str_replace("http:", "https:", $rootUrl);
 //                        $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
 //                        /*                         * * */
 //
@@ -17146,10 +17099,7 @@ class ApiController extends AppController {
 
                         if ($currentOrg["image"] != "") {
                             $rootUrl = Router::url('/', true);
-                            //$rootUrl = str_replace("http", "https", $rootUrl);
-                            //Added by saurabh on 23/06/2021
-                            //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                            
+                            //$rootUrl = str_replace("http:", "https:", $rootUrl);
                             $currentOrg["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $currentOrg["image"];
                         }
 
@@ -17184,10 +17134,7 @@ class ApiController extends AppController {
 
                     if ($returnData["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                        
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $returnData["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $returnData["image"];
                     }
                     if (strtotime($returnData["dob"]) > 0) {
@@ -17386,10 +17333,7 @@ class ApiController extends AppController {
 
                     if ($organization["image"] != "") {
                         $rootUrl = Router::url('/', true);
-                        //$rootUrl = str_replace("http", "https", $rootUrl);
-                        //Added by saurabh on 23/06/2021
-                        //$rootUrl = preg_replace("/^http:/i", "https:", $rootUrl);
-                        
+                        //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $organization["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $organization["image"];
                     }
 

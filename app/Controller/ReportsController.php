@@ -794,7 +794,12 @@ class ReportsController extends AppController {
         return $array;
     }
 
+    /**
+    *Modified by saurabh on 29june2021.
+    *Now updating and getting data from ApiSessionLogs instead of ApiSessions.
+    */
     public function ndorsement_history_day_weeks() {
+        $this->loadModel('ApiSessionLogs');
         $this->layout = "ajax_new";
         $this->autoRender = false;
         $organization_id = $this->request->data['organization_id'];
@@ -887,7 +892,7 @@ class ReportsController extends AppController {
         $acitveUserConditions = array();
 
 
-        $acitveUserConditions['(CAST(ApiSession.created AS DATE) BETWEEN ? AND ? )'] = array($startdate, $enddate);
+        $acitveUserConditions['(CAST(ApiSessionLogs.created AS DATE) BETWEEN ? AND ? )'] = array($startdate, $enddate);
 
 //        $acitveUserConditions["ApiSession.created >"] = $last12Mnth;
         $acitveUserConditions["UserOrganization.organization_id"] = $organization_id;
@@ -908,8 +913,8 @@ class ReportsController extends AppController {
 //        );
 //        $params['fields'] = array('ApiSession.*');
 
-        $params['group'] = array('DATE(ApiSession.created)');
-        $params['fields'] = array('COUNT(DISTINCT ApiSession.user_id) AS login_counts', 'DATE(ApiSession.created) AS login_date');
+        $params['group'] = array('DATE(ApiSessionLogs.created)');
+        $params['fields'] = array('COUNT(DISTINCT ApiSessionLogs.user_id) AS login_counts', 'DATE(ApiSessionLogs.created) AS login_date');
 //        $params['joins'] = array(
 //            array(
 //                'table' => 'api_sessions',
@@ -934,7 +939,7 @@ class ReportsController extends AppController {
                 'alias' => 'UserOrganization',
                 'type' => 'LEFT',
                 'conditions' => array(
-                    'UserOrganization.user_id = ApiSession.user_id',
+                    'UserOrganization.user_id = ApiSessionLogs.user_id',
                 )
             ) /* ,
                   array(
@@ -951,7 +956,7 @@ class ReportsController extends AppController {
 //        $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies', 'EndorseHashtag')));
 
 //        $activeUserData = $this->UserOrganization->find("all", $params);
-        $activeUserData = $this->ApiSession->find("all", $params);
+        $activeUserData = $this->ApiSessionLogs->find("all", $params);
 //        echo $this->UserOrganization->getLastQuery();
 //        exit;
 //        pr($activeUserData);
