@@ -12953,8 +12953,9 @@ class ApiController extends AppController {
                         "status" => '1',
                         "id" => $loggedInUser["id"]
                 )));
+                
                 if (isset($tncStatus) && !empty($tncStatus)){
-                    $tncValue = $incStatus->terms_accept;
+                    $tncValue = $tncStatus["User"]["terms_accept"];
                 }
             }
 
