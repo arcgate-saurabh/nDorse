@@ -12949,7 +12949,7 @@ class ApiController extends AppController {
             if ($loggedInUser["id"]) 
             {
                 $tncStatus = $this->User->find("first", array("conditions" => array(
-                        "terms_accept" => $loggedInUser["terms_accept"],
+                        //"terms_accept" => $loggedInUser["terms_accept"],
                         "status" => '1',
                         "id" => $loggedInUser["id"]
                 )));
@@ -15966,46 +15966,46 @@ class ApiController extends AppController {
     /**
     *Added by saurabh for modifying accept_terms value.
     */
-    // public function acceptTermsAndCondition() 
-    // {
-    //     if ($this->request->is('post')) 
-    //     {
-    //         if (isset($this->request->data['token'])) {
-    //             //pr($this->request->data);
-    //             //exit;
-    //             $statusConfig = Configure::read("statusConfig");
-    //             $loggedInUser = $this->Auth->user();
-    //             //pr($loggedInUser); exit;
-    //             if (isset($loggedInUser['id'])) {
+    public function acceptTermsAndCondition() 
+    {
+        if ($this->request->is('post')) 
+        {
+            if (isset($this->request->data['token'])) {
+                //pr($this->request->data);
+                //exit;
+                $statusConfig = Configure::read("statusConfig");
+                $loggedInUser = $this->Auth->user();
+                //pr($loggedInUser); exit;
+                if (isset($loggedInUser['id'])) {
                     
-    //                 $this->loadModel('User');
-    //                 $id = $this->request->data['id'];
-    //                 $tncModification['User']['id'] = $id;
-    //                 $tncModification['User']['terms_accept'] = 1; //0= false, 1= true 
-    //                 $allID = $this->User->save($tncModification);
-    //                 //$saved = $this->User->saveField("terms_accept", 1);
+                    $this->loadModel('User');
+                    $id = $this->request->data['id'];
+                    $tncModification['User']['id'] = $id;
+                    $tncModification['User']['terms_accept'] = 1; //0= false, 1= true 
+                    $allID = $this->User->save($tncModification);
+                    //$saved = $this->User->saveField("terms_accept", 1);
                     
-    //                 $this->set(array(
-    //                     'result' => array("status" => true
-    //                         , "msg" => "Terms and condition accepted.", 'data' => true),
-    //                     '_serialize' => array('result')
-    //                 ));
-    //             }
-    //         } else {
-    //             $this->set(array(
-    //                 'result' => array("status" => false
-    //                     , "msg" => "Token is missing in request"),
-    //                 '_serialize' => array('result')
-    //             ));
-    //         }
-    //     } else {
-    //         $this->set(array(
-    //             'result' => array("status" => false
-    //                 , "msg" => "Get call not allowed."),
-    //             '_serialize' => array('result')
-    //         ));
-    //     }
-    // }
+                    $this->set(array(
+                        'result' => array("status" => true
+                            , "msg" => "Terms and condition accepted.", 'data' => true),
+                        '_serialize' => array('result')
+                    ));
+                }
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => "Token is missing in request"),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed."),
+                '_serialize' => array('result')
+            ));
+        }
+    }
 
     public function onCancelNotification() {
         if ($this->request->is('post')) {
