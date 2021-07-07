@@ -12946,17 +12946,19 @@ class ApiController extends AppController {
             /**
             * Added by saurabh for checking terms and condition value
             */
-            $tncStatus = "";
+            $tncValue = 0;
             if ($loggedInUser["id"]) 
             {
                 $tncStatus = $this->User->find("first", array("conditions" => array(
-                        //"terms_accept" => $loggedInUser["terms_accept"],
                         "status" => '1',
                         "id" => $loggedInUser["id"]
                 )));
+                if (isset($tncStatus) && !empty($tncStatus)){
+                    $tncValue = $incStatus->terms_accept;
+                }
             }
 
-            $returnData['terms_and_condition'] = array("terms_accept" => $loggedInUser['terms_accept'], "terms_accept_value" => $tncStatus);
+            $returnData['terms_and_condition'] = array("terms_accept" => $tncValue);
 
             //ends here
 
