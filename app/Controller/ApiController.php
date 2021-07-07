@@ -11,7 +11,7 @@ class ApiController extends AppController {
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow("register", "login", "logout", "getDefaultDepartments", "getDefaultJobTitles", "getOrganization", "getDefaultSkills", "getSubOrganizations", "getProfile", "saveprofile", "getPredefinedValues", "getDefaultHobbies", "isValidQRCode", "saveOrganization", "endorse", "saveEndorseAttachments", "getCountryStateList", "saveprofileorg", "getOrgoption", "saveOrgoption", "sendVerification", "joinOrganization", "searchInOrganization", "getEndorseList", "endorsedetails", "endorselike", "endorsereply", "mySearchInOrganization", "switchGroup", "getorganizationuser", "userOrgAdminAccessAction", "getjoinrequestUser", "acceptorgrequest", "endorsestats", "leaderboard", "forgotPassword", "resetPassword", "changepassword", "userOrgSearch", "getVariousOrganizationData", "termsConditions", "getTimelyUpdates", "recoverusername", "endorsementbydept", "endorsementbyday", "endorsementbycorevalues", "faq", "sendtermconditions", "getEmojis", "getBitmojis", "updateLastAppUsedTime", "renewSession", "endorsementbyjobtitles", "endorsementbyentity", "enterFeedTransData", "searchInOrganizationGuest", "guestEndorse", "getAllPendingListing", "onViewNotification", "onCancelNotification", "sendPushNotificationAndroid", "setnewpassword", "daisyEndorse", "searchInOrganizationDaisy", "ldapLogin", "getOrgShortCode", "ADFSClientLogin", "checkADFSLoginSession", "getOrgSubcenters", "getSubcenterCorevalues", "getOrgEmojis", "getPendingGuestnDorsements", "getUserFollowList");
+        $this->Auth->allow("register", "login", "logout", "getDefaultDepartments", "getDefaultJobTitles", "getOrganization", "getDefaultSkills", "getSubOrganizations", "getProfile", "saveprofile", "getPredefinedValues", "getDefaultHobbies", "isValidQRCode", "saveOrganization", "endorse", "saveEndorseAttachments", "getCountryStateList", "saveprofileorg", "getOrgoption", "saveOrgoption", "sendVerification", "joinOrganization", "searchInOrganization", "getEndorseList", "endorsedetails", "endorselike", "endorsereply", "mySearchInOrganization", "switchGroup", "getorganizationuser", "userOrgAdminAccessAction", "getjoinrequestUser", "acceptorgrequest", "endorsestats", "leaderboard", "forgotPassword", "resetPassword", "changepassword", "userOrgSearch", "getVariousOrganizationData", "termsConditions", "getTimelyUpdates", "recoverusername", "endorsementbydept", "endorsementbyday", "endorsementbycorevalues", "faq", "sendtermconditions", "getEmojis", "getBitmojis", "updateLastAppUsedTime", "renewSession", "endorsementbyjobtitles", "endorsementbyentity", "enterFeedTransData", "searchInOrganizationGuest", "guestEndorse", "getAllPendingListing", "onViewNotification", "onCancelNotification", "sendPushNotificationAndroid", "setnewpassword", "daisyEndorse", "searchInOrganizationDaisy", "ldapLogin", "getOrgShortCode", "ADFSClientLogin", "checkADFSLoginSession", "getOrgSubcenters", "getSubcenterCorevalues", "getOrgEmojis", "getPendingGuestnDorsements", "getUserFollowList", "acceptTermsAndCondition");
     }
 
     public function sendVerification() {
@@ -12943,6 +12943,22 @@ class ApiController extends AppController {
             $returnData['api_session_logs'] = array("user_id" => $loggedInUser['id'], "token" => $loggedInUser['token'], "msg" => $apiMsg);
             //ends here
 
+            /**
+            * Added by saurabh for checking terms and condition value
+            */
+            if ($loggedInUser["id"]) 
+            {
+                $tncStatus = $this->User->find("first", array("conditions" => array(
+                        "terms_accept" => $loggedInUser["terms_accept"],
+                        "status" => '1',
+                        "id" => $loggedInUser["id"]
+                )));
+            }
+
+            $returnData['terms_and_condition'] = array("terms_accept" => $loggedInUser['terms_accept']);
+
+            //ends here
+
             //Get feeds update
             if (isset($loggedInUser['current_org'])) {
                 $userOrg = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $loggedInUser['id'], "organization_id" => $loggedInUser['current_org']['id']), 'order' => 'UserOrganization.id desc'));
@@ -15946,6 +15962,50 @@ class ApiController extends AppController {
             ));
         }
     }
+
+    /**
+    *Added by saurabh for modifying accept_terms value.
+    */
+    // public function acceptTermsAndCondition() 
+    // {
+    //     if ($this->request->is('post')) 
+    //     {
+    //         if (isset($this->request->data['token'])) {
+    //             //pr($this->request->data);
+    //             //exit;
+    //             $statusConfig = Configure::read("statusConfig");
+    //             $loggedInUser = $this->Auth->user();
+    //             //pr($loggedInUser); exit;
+    //             if (isset($loggedInUser['id'])) {
+                    
+    //                 $this->loadModel('User');
+    //                 $id = $this->request->data['id'];
+    //                 $tncModification['User']['id'] = $id;
+    //                 $tncModification['User']['terms_accept'] = 1; //0= false, 1= true 
+    //                 $allID = $this->User->save($tncModification);
+    //                 //$saved = $this->User->saveField("terms_accept", 1);
+                    
+    //                 $this->set(array(
+    //                     'result' => array("status" => true
+    //                         , "msg" => "Terms and condition accepted.", 'data' => true),
+    //                     '_serialize' => array('result')
+    //                 ));
+    //             }
+    //         } else {
+    //             $this->set(array(
+    //                 'result' => array("status" => false
+    //                     , "msg" => "Token is missing in request"),
+    //                 '_serialize' => array('result')
+    //             ));
+    //         }
+    //     } else {
+    //         $this->set(array(
+    //             'result' => array("status" => false
+    //                 , "msg" => "Get call not allowed."),
+    //             '_serialize' => array('result')
+    //         ));
+    //     }
+    // }
 
     public function onCancelNotification() {
         if ($this->request->is('post')) {
