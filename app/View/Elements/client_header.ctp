@@ -412,7 +412,7 @@ $paramsaction = trim($this->params["action"]);
                             <div class="popDownArrow text-center"><?php echo $this->Html->image('popDownArrow.png'); ?></div>
                             <div class="nD-menu-well">
                                 <ul class="" style="list-style:none">
-                                    <li><a href="javascript:void(0);" class="ndorse-now-top" data-toggle="modal" data-target=".endorse-now-popupmodel">nDorse Now!</a></li>
+                                    <li><a href="javascript:void(0);" class="ndorse-now-top" xdata-toggle="modal" xdata-target=".endorse-now-popupmodel">nDorse Now!</a></li>
 
 
                                     <?php
@@ -563,5 +563,6 @@ $paramsaction = trim($this->params["action"]);
 <script>
     $(".ndorse-now-top").click(function () {
         $(document).find("#selected_user_id").val("");
+        $(".endorse-now-popupmodel button[type=submit]").click();
     });
 </script>
