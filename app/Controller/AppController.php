@@ -51,7 +51,7 @@ class AppController extends Controller {
         ),
         'Common', 'ViewCont', "Apicalls"
     );
-    var $uses = array("User", "ApiSession", 'UserOrganization', 'DefaultOrg', "LoginStatistics", "Organization", "OrgRequests");
+    var $uses = array("User", "ApiSession", "ApiSessionLogs", 'UserOrganization', 'DefaultOrg', "LoginStatistics", "Organization", "OrgRequests");
     public $publicAccess = array("site" => array("*"), "users" => array("login"), "client" => array("login", "register"), "ajax" => array("isLoggedIn"));
     public $clientControllers = array("client", "endorse", "cajax", "post");
 
@@ -302,11 +302,31 @@ class AppController extends Controller {
         }
     }
 
+
+//     public function checkApiSessionLogsStatus() {
+//         $params = array();
+//         $conditions = array('ApiSessionLogs.token' => $this->request->data['token']);
+//         $params['conditions'] = $conditions;
+//         $params['order'] = array("created DESC");
+
+//         $apiSessionLogs = $this->ApiSessionLogs->find("first", $params);
+// //        pr($apiSession);
+// //        exit;
+
+//         if (empty($apiSessionLogs)) {
+//             return "";
+//         } else {
+//             return $apiSessionLogs['ApiSessionLogs']['status'];
+//         }
+//     }
+
     /* CREATED BY BABULAL PRASAD @11-JUL-2019 TO LOGOUT FROM CURRENT SESSION * */
 
     public function logoutSystemSelf($userId, $token) {
         $params = array('user_id' => $userId, 'token' => $token);
         $this->ApiSession->updateAll(array("status" => "'logout'"), $params);
+        //added for api session logs
+        $this->ApiSessionLogs->updateAll(array("status" => "'logout'"), $params);
     }
 
     public function logoutSystem($userId, $status = "logout") {
@@ -316,6 +336,9 @@ class AppController extends Controller {
         }
         //UPDATE IF ALREADY LOGGED from 3 PLACES
         $apiUpdate = $this->checkLoggedAPISessionsCount($userId, $status);
+
+        //added for api session logs
+        //$apiSessionLogsUpdate = $this->checkLoggedAPISessionLogsCount($userId, $status);
     }
 
     /* CREATED BY BABULAL PRASAD @11-JUL-2019 TO ALLOW 3 USERS LOGIN AT A TIME * */
@@ -335,10 +358,38 @@ class AppController extends Controller {
                 $params = array('id' => $oldestApiSessionID);
                 $this->ApiSession->id = $oldestApiSessionID;
                 $user_data = $this->ApiSession->updateAll(array("status" => "'logout'"), $params);
+                
+                //Added for api session logs
+                //$user_data = $this->ApiSessionLogs->updateAll(array("status" => "'logout'"), $params);
             }
         }
         //exit;
     }
+
+    /**
+    *added for api session logs
+    */
+//     public function checkLoggedAPISessionLogsCount($userId, $status) {
+//         $params = array();
+//         $conditions = array('ApiSessionLogs.user_id' => $userId);
+//         $params['conditions'] = array('user_id' => $userId, 'status' => 'active');
+//         $params['order'] = array("created");
+//         $apiSessionLogs = $this->ApiSessionLogs->find("all", $params);
+// //        pr($apiSession); exit;
+//         $activeSessionCounts = 0;
+//         $activeSessionCounts = count($apiSessionLogs);
+//         if ($activeSessionCounts > 0) {
+//             $oldestApiSessionID = $apiSessionLogs[0]['ApiSession']['id'];
+//             if ($activeSessionCounts > 2) {
+//                 $params = array('id' => $oldestApiSessionID);
+//                 $this->ApiSessionLogs->id = $oldestApiSessionID;
+                
+//                 //Added for api session logs
+//                 $user_data = $this->ApiSessionLogs->updateAll(array("status" => "'logout'"), $params);
+//             }
+//         }
+//         //exit;
+//     }
 
     /* CREATED BY BABULAL PRASAD @11-JUL-2019 TO ALLOW 3 USERS LOGIN AT A TIME * */
 
@@ -370,7 +421,7 @@ class AppController extends Controller {
             $token = md5(uniqid() . $userId . time());
 
             $apiSession = array();
-
+            
             //if ($user_data) {
             //    $apiSession['id'] = $user_data['ApiSession']['id'];
             //}
@@ -382,6 +433,16 @@ class AppController extends Controller {
             $this->ApiSession->set(array("ApiSession" => $apiSession));
             $this->ApiSession->save();
 
+            //Added for api session logs
+            $apiSessionLogs = array();
+            $apiSessionLogs['user_id'] = $userId;
+            $apiSessionLogs['token'] = $token;
+
+            $this->ApiSessionLogs->clear();
+            $this->ApiSessionLogs->set(array("ApiSessionLogs" => $apiSessionLogs));
+            $this->ApiSessionLogs->save();
+            //ends here
+            
             $this->checkLoggedSTATISTICSSessionsCount($userId);
 
             $loginStats = array();
@@ -445,6 +506,47 @@ class AppController extends Controller {
         }
 
         return $secretCode;
+    }
+
+    /**
+    *This function is created by saurabh for adding loggedin user details in api_session_logs table.
+    */
+    public function addApiSessionLogs()
+    {
+        $loggedinUser = $this->Auth->user();
+        
+        if (!$this->Session->check('Auth.User')) {
+            echo json_encode(array("status" => false, "msg" => "Session expired please login again!" ));
+            exit;
+        }
+
+        $this->layout = "ajax_new";
+        $this->autoRender = false;
+        $this->loadModel("ApiSessionLogs");
+        
+        $logged_in_user_role = $this->Auth->user('role');
+        $logged_in_user_id = $this->Auth->user('id');
+        $logged_in_user_token = $this->Auth->user('token');
+
+        if (!empty($logged_in_user_token)) {
+            $apiSessionLogs = array();
+            $apiSessionLogs['user_id'] = $logged_in_user_id;
+            $apiSessionLogs['token'] = $logged_in_user_token; //$token;
+            $apiSessionLogs['order'] = array("ApiSessionLogs.created DESC");
+            //$apiSessionLogs['status'] = $logged_in_user_status; 
+            
+            $this->ApiSessionLogs->clear();
+            $this->ApiSessionLogs->set(array("ApiSessionLogs" => $apiSessionLogs));
+            $this->ApiSessionLogs->save();    
+
+            echo json_encode(array("msg" => "Api session logs successfully created", 'status' => true,));
+            exit;
+        } 
+        else 
+        {
+            echo json_encode(array("msg" => "Problem in creating logs. Please login again! ", 'status' => false,));
+            exit;
+        }   
     }
 
 }
