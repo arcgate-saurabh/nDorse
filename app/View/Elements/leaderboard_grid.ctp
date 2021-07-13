@@ -15,14 +15,15 @@
                     </thead>
                     <tbody class="scrollTbody" id="leaderboardsquare">
                         <?php
-//                        pr($subCenterArray);  exit;
+                        //pr($subCenterArray);  exit;
+                        //pr($subcenterNdorsementArray); exit;
                         echo $this->Element("leaderboardsearching-new", array('subCenterArray' => $subCenterArray, 'subcenterNdorsementArray' => $subcenterNdorsementArray));
                         ?>
                     </tbody>
                    <!--  <thead>
                         <tr>
                             <th width="35%" class="topBrdr">Total</th>
-                            <th width="30%" class="topBrdr"><?php echo ENDORSER; ?></th>
+                            <th width="30%" class="topBrdr"><?php //echo ENDORSER; ?></th>
                             <th width="30%" class="topBrdr">nDorsed</th>                            
                         </tr>
                     </thead> -->
@@ -42,6 +43,7 @@
                         </tr>
                     </thead>
                     <tbody class="scrollTbody" id="subcenterDepartment">
+                        <input type="hidden" id= "no_data_available" name="no_data_available" value="">
                         <?php
                         //pr($subcenterDepartmentArray); 
                         //exit;
@@ -103,7 +105,37 @@
                 $('.subcenter_row').removeClass('td-active');
                 $('#leaderboardsquare').addClass('tr-active');
                 $(this).addClass('td-active');
-                $(".subcenterdept_row").addClass('hide');
+                
+                $(".subcenterdept_row").addClass('hide');        
+                
+                /*
+                *Added for showing only selected sub center in sub center department
+                */
+                var deptscid = '';
+                var activescid = '';
+                var cntr = 0;
+                activescid = $(".td-active").attr("data-id");
+                $('#subcenterDepartment tr').each(function () {
+                    deptscid = $(this).attr('data-subcenter');
+                    if(activescid == deptscid) {
+                        $(this).removeClass('hide');
+                        cntr++;
+                    }
+                });
+
+                console.log(cntr);
+                if (cntr === 0) 
+                {
+                    //$('#subcenterDepartment > tbody:first-child').append('<tr><td>NO RESULTS FOUND</td></tr>');
+
+                    $('#no_data_available').attr('type', 'text');
+                    $('#no_data_available').val('NO RECORDS FOUND');
+                } else {
+                    $('#no_data_available').attr('type', 'hidden');
+                }
+                
+                //ends here
+
                 $(".subcenterdept_row_" + subcenterID).removeClass('hide');
                 $(".subcenteruser_row").addClass("hide");
                 $(".subcenteruser_" + subcenterID).removeClass("hide");
