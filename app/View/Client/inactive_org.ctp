@@ -12,3 +12,4 @@
     alertbootbox("<?php echo $alertMsg; ?>");
 </script>
 <?php } ?>
+<?php echo $this->element("/client/search_organization"); ?>

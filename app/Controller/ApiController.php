@@ -450,7 +450,7 @@ class ApiController extends AppController {
                             $currentOrg['job_title'] = "";
                         }
 
-
+                        $returnData["orgrole"]     = $defaultOrganization['UserOrganization'];
                         $currentOrg['org_role'] = $roleList[$defaultOrganization['UserOrganization']['user_role']];
                         if (!isset($defaultOrganization['UserOrganization']['subcenter_id']) || $defaultOrganization['UserOrganization']['subcenter_id'] == 0 || $defaultOrganization['UserOrganization']['subcenter_id'] == null) {
                             $currentOrg['subcenter_id'] = '';

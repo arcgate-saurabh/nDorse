@@ -1,10 +1,12 @@
 <?php
 
-class ClientController extends AppController {
+class ClientController extends AppController
+{
 
-    public $components = array('RequestHandler', "Auth", "Common", "Session", "Apicalls");
+    public $components = array('RequestHandler', "Auth", "Common", "Session", "Apicalls", "OrgManager");
 
-    public function beforeFilter() {
+    public function beforeFilter()
+    {
         parent::beforeFilter();
 
         $this->layout = "clientDefault";
@@ -16,14 +18,15 @@ class ClientController extends AppController {
         $this->Auth->allow('home_login', 'register', 'login', 'logout', 'forgotPassword', "getOrgShortCode", "verification", "index", "tnc", "recoverUsername", "faq", "fbLogin", "linkedinLogin", "googlelogin", "google_login", "setPassword", "resetpasswordset", 'ldaplogin', 'adfsclientlogin', 'adfslogin', 'adfsMobileLogin');
     }
 
-    public function login() {
-//        pr($this->request->data); exit;
-//        $successmsg = $this->Session->read('successmessage');
-//        
-//        if(isset($successmsg) && $successmsg !='' ){
-//            $this->Session->setFlash(__($this->Session->read('successmessage')), 'default', array('class' => 'alert alert-warning'));
-//            $this->Session->write('successmessage', "");
-//        }
+    public function login()
+    {
+        //        pr($this->request->data); exit;
+        //        $successmsg = $this->Session->read('successmessage');
+        //        
+        //        if(isset($successmsg) && $successmsg !='' ){
+        //            $this->Session->setFlash(__($this->Session->read('successmessage')), 'default', array('class' => 'alert alert-warning'));
+        //            $this->Session->write('successmessage', "");
+        //        }
         $loggedinUser = $this->Auth->user();
         if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
 
@@ -35,45 +38,45 @@ class ClientController extends AppController {
                 $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
             }
         }
-//        else if ($this->Cookie->read("remember_me_endorse_cookie")) {
-//            $remembermecookie = $this->Cookie->read("remember_me_endorse_cookie");
-//            $postData = array('token' => $remembermecookie);
-//
-//            $response = $this->Apicalls->curlpost("renewSession.json", $postData);
-//            $response = json_decode($response);
-//            $response = $response->result;
-//
-//            if ($response->status == 1) {
-//                $userData = (array) $response->data;
-//                $userData['portal'] = 'client';
-//                $userData['org_updates'] = (array) $userData['org_updates'];
-//                $this->Session->write('Auth.User', $userData);
-//                //set last login typ[e cookie
-//                $this->Cookie->write("portal_cookie", "client", true, "1 week");
-//                if (!$userData['profile_updated']) {
-//                    $this->redirect(array('controller' => 'client', 'action' => 'profile'));
-//                } else if (!isset($userData['current_org'])) {
-//                    $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
-//                } else {
-//                    $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
-//                }
-//            } else {
-//                $this->Cookie->delete('remember_me_endorse_cookie');
-//                $this->Cookie->delete('portal_cookie');
-//                $this->Session->setFlash(__($response->msg), 'default', array('class' => 'alert alert-warning'));
-//                $this->redirect(array('controller' => 'client', 'action' => 'login'));
-//            }
-//        } 
+        //        else if ($this->Cookie->read("remember_me_endorse_cookie")) {
+        //            $remembermecookie = $this->Cookie->read("remember_me_endorse_cookie");
+        //            $postData = array('token' => $remembermecookie);
+        //
+        //            $response = $this->Apicalls->curlpost("renewSession.json", $postData);
+        //            $response = json_decode($response);
+        //            $response = $response->result;
+        //
+        //            if ($response->status == 1) {
+        //                $userData = (array) $response->data;
+        //                $userData['portal'] = 'client';
+        //                $userData['org_updates'] = (array) $userData['org_updates'];
+        //                $this->Session->write('Auth.User', $userData);
+        //                //set last login typ[e cookie
+        //                $this->Cookie->write("portal_cookie", "client", true, "1 week");
+        //                if (!$userData['profile_updated']) {
+        //                    $this->redirect(array('controller' => 'client', 'action' => 'profile'));
+        //                } else if (!isset($userData['current_org'])) {
+        //                    $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+        //                } else {
+        //                    $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
+        //                }
+        //            } else {
+        //                $this->Cookie->delete('remember_me_endorse_cookie');
+        //                $this->Cookie->delete('portal_cookie');
+        //                $this->Session->setFlash(__($response->msg), 'default', array('class' => 'alert alert-warning'));
+        //                $this->redirect(array('controller' => 'client', 'action' => 'login'));
+        //            }
+        //        } 
         else if ($this->request->is('post')) {
             if ($this->Session->check('Auth.User')) {
-//                $this->Cookie->delete("remember_me_cookie");
+                //                $this->Cookie->delete("remember_me_cookie");
                 $this->Auth->logout();
             }
 
             $postData = $this->request->data['User'];
             //pr($postData);
             $response = $this->Apicalls->curlpost("login.json", $postData);
-//            pr($response); exit;
+            //            pr($response); exit;
             $response = json_decode($response);
             $response = $response->result;
             if ($response->status == 1) {
@@ -82,7 +85,7 @@ class ClientController extends AppController {
                 if (isset($userData['org_updates'])) {
                     $userData['org_updates'] = (array) $userData['org_updates'];
                 }
-//                pr($userData);die;
+                //                pr($userData);die;
                 $this->Session->write('Auth.User', $userData);
                 if (isset($userData['org_updates']) && ($userData['org_updates']['org_status'] != 'active' || $userData['org_updates']['user_status'] != "active")) {
                     $this->Session->write('from_login', true);
@@ -90,7 +93,7 @@ class ClientController extends AppController {
 
                 //set last login typ[e cookie
                 $this->Cookie->write("portal_cookie", "client", true, "1 week");
-//                echo 'here';die;
+                //                echo 'here';die;
                 //Set token in cookie and 
                 if (isset($this->request->data['User']['rememberme']) && $this->request->data['User']['rememberme'] == 1) {
                     $this->Cookie->write("remember_me_endorse_cookie", $this->request->data['User'], true, "1 week");
@@ -140,15 +143,16 @@ class ClientController extends AppController {
         $this->set('jsIncludes', array('register', "loginCommon"));
     }
 
-    public function home_login() {
+    public function home_login()
+    {
         $this->autoRender = false;
         //pr($this->request->data); exit;
-//        $successmsg = $this->Session->read('successmessage');
-//        
-//        if(isset($successmsg) && $successmsg !='' ){
-//            $this->Session->setFlash(__($this->Session->read('successmessage')), 'default', array('class' => 'alert alert-warning'));
-//            $this->Session->write('successmessage', "");
-//        }
+        //        $successmsg = $this->Session->read('successmessage');
+        //        
+        //        if(isset($successmsg) && $successmsg !='' ){
+        //            $this->Session->setFlash(__($this->Session->read('successmessage')), 'default', array('class' => 'alert alert-warning'));
+        //            $this->Session->write('successmessage', "");
+        //        }
         $loggedinUser = $this->Auth->user();
         if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
             if (!$loggedinUser['profile_updated']) {
@@ -159,45 +163,45 @@ class ClientController extends AppController {
                 $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
             }
         }
-//        else if ($this->Cookie->read("remember_me_endorse_cookie")) {
-//            $remembermecookie = $this->Cookie->read("remember_me_endorse_cookie");
-//            $postData = array('token' => $remembermecookie);
-//
-//            $response = $this->Apicalls->curlpost("renewSession.json", $postData);
-//            $response = json_decode($response);
-//            $response = $response->result;
-//
-//            if ($response->status == 1) {
-//                $userData = (array) $response->data;
-//                $userData['portal'] = 'client';
-//                $userData['org_updates'] = (array) $userData['org_updates'];
-//                $this->Session->write('Auth.User', $userData);
-//                //set last login typ[e cookie
-//                $this->Cookie->write("portal_cookie", "client", true, "1 week");
-//                if (!$userData['profile_updated']) {
-//                    $this->redirect(array('controller' => 'client', 'action' => 'profile'));
-//                } else if (!isset($userData['current_org'])) {
-//                    $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
-//                } else {
-//                    $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
-//                }
-//            } else {
-//                $this->Cookie->delete('remember_me_endorse_cookie');
-//                $this->Cookie->delete('portal_cookie');
-//                $this->Session->setFlash(__($response->msg), 'default', array('class' => 'alert alert-warning'));
-//                $this->redirect(array('controller' => 'client', 'action' => 'login'));
-//            }
-//        } 
+        //        else if ($this->Cookie->read("remember_me_endorse_cookie")) {
+        //            $remembermecookie = $this->Cookie->read("remember_me_endorse_cookie");
+        //            $postData = array('token' => $remembermecookie);
+        //
+        //            $response = $this->Apicalls->curlpost("renewSession.json", $postData);
+        //            $response = json_decode($response);
+        //            $response = $response->result;
+        //
+        //            if ($response->status == 1) {
+        //                $userData = (array) $response->data;
+        //                $userData['portal'] = 'client';
+        //                $userData['org_updates'] = (array) $userData['org_updates'];
+        //                $this->Session->write('Auth.User', $userData);
+        //                //set last login typ[e cookie
+        //                $this->Cookie->write("portal_cookie", "client", true, "1 week");
+        //                if (!$userData['profile_updated']) {
+        //                    $this->redirect(array('controller' => 'client', 'action' => 'profile'));
+        //                } else if (!isset($userData['current_org'])) {
+        //                    $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+        //                } else {
+        //                    $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
+        //                }
+        //            } else {
+        //                $this->Cookie->delete('remember_me_endorse_cookie');
+        //                $this->Cookie->delete('portal_cookie');
+        //                $this->Session->setFlash(__($response->msg), 'default', array('class' => 'alert alert-warning'));
+        //                $this->redirect(array('controller' => 'client', 'action' => 'login'));
+        //            }
+        //        } 
         else if ($this->request->is('post')) {
             if ($this->Session->check('Auth.User')) {
-//                $this->Cookie->delete("remember_me_cookie");
+                //                $this->Cookie->delete("remember_me_cookie");
                 $this->Auth->logout();
             }
 
             $postData = $this->request->data['User'];
-//            pr($postData);
+            //            pr($postData);
             $response = $this->Apicalls->curlpost("login.json", $postData);
-//            pr($response); exit;
+            //            pr($response); exit;
             $response = json_decode($response);
             $response = $response->result;
             if ($response->status == 1) {
@@ -206,7 +210,7 @@ class ClientController extends AppController {
                 if (isset($userData['org_updates'])) {
                     $userData['org_updates'] = (array) $userData['org_updates'];
                 }
-//                pr($userData);die;
+                //                pr($userData);die;
                 $this->Session->write('Auth.User', $userData);
                 if (isset($userData['org_updates']) && ($userData['org_updates']['org_status'] != 'active' || $userData['org_updates']['user_status'] != "active")) {
                     $this->Session->write('from_login', true);
@@ -214,7 +218,7 @@ class ClientController extends AppController {
 
                 //set last login typ[e cookie
                 $this->Cookie->write("portal_cookie", "client", true, "1 week");
-//                echo 'here';die;
+                //                echo 'here';die;
                 //Set token in cookie and 
                 if (isset($this->request->data['User']['rememberme']) && $this->request->data['User']['rememberme'] == 1) {
                     $this->Cookie->write("remember_me_endorse_cookie", $this->request->data['User'], true, "1 week");
@@ -233,7 +237,7 @@ class ClientController extends AppController {
                     $this->redirect(array('controller' => 'endorse', 'action' => 'index'));
                 }
             } else {
-//                pr($response); exit;
+                //                pr($response); exit;
                 if (isset($response->msg)) {
                     $errorMsg = $response->msg;
 
@@ -267,7 +271,8 @@ class ClientController extends AppController {
         $this->set('jsIncludes', array('register', "loginCommon"));
     }
 
-    private function setfbData() {
+    private function setfbData()
+    {
         App::import('Vendor', 'Facebook/facebook');
 
         $fbConfig = Configure::read("fbConfig");
@@ -276,7 +281,8 @@ class ClientController extends AppController {
         $this->set('fbLoginUrl', $this->Facebook->getLoginUrl(array('scope' => $fbPermissions, 'redirect_uri' => Router::url(array('controller' => 'client', 'action' => 'fbLogin'), true))));
     }
 
-    public function logout() {
+    public function logout()
+    {
         $loggedinUser = $this->Auth->user();
         $authorityName = '';
         if (isset($loggedinUser['current_org']->authority_name)) {
@@ -284,20 +290,20 @@ class ClientController extends AppController {
         }
 
         $postData = array("token" => $loggedinUser['token'], 'authority_name' => $authorityName);
-//        pr($postData);
+        //        pr($postData);
         $response = $this->Apicalls->curlpost("logout.json", $postData);
-//        pr($response);
-//        exit;
+        //        pr($response);
+        //        exit;
         $response = json_decode($response);
         $response = $response->result;
-//        pr($response);
-//        exit;
+        //        pr($response);
+        //        exit;
         if ($response->status == 1) {
             $this->Auth->logout();
-//            $this->Cookie->delete("remember_me_endorse_cookie");
+            //            $this->Cookie->delete("remember_me_endorse_cookie");
             $this->Cookie->delete("portal_cookie");
             if (isset($response->adfs_url) && $response->adfs_url != '') {
-//                echo $authorityName; exit;
+                //                echo $authorityName; exit;
                 if ($authorityName == 'lcmch-sp') {
                     $this->redirect('https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=lcmch-sp&logout');
                 } else {
@@ -309,19 +315,38 @@ class ClientController extends AppController {
         }
     }
 
-    public function logoutredirect() {
+    public function logoutredirect()
+    {
         $this->redirect(array('controller' => 'client', 'action' => 'login'));
     }
 
-    public function setOrg() {
+    public function setOrg()
+    {
+        $loggedinUser = $this->Auth->user();
+        //modified on 10jul21
+
+        if (isset($loggedinUser['terms_accept'])) {
+            if ($loggedinUser['terms_accept'] == 1) {
+
+                $isInactive = isset($loggedinUser['current_org']) && isset($loggedinUser['current_org']->status) && $loggedinUser['current_org']->status == "inactive";
+
+                if (!isset($loggedinUser['current_org']) || $isInactive) {
+
+                    $this->redirect(array("action" => "inactiveOrg"));
+                }
+            }
+        }
+        $termsAccept = isset($loggedinUser['terms_accept']) ? $loggedinUser['terms_accept'] : 0;
         $this->set('jsIncludes', array('createorgclient'));
         $this->set('noLeftMenu', true);
         $termsMessage = $this->Session->read("Message.flash.message");
+
         $this->Session->delete("Message.flash");
         $this->set('termsMessage', $termsMessage);
     }
 
-    public function inactiveOrg() {
+    public function inactiveOrg()
+    {
         $loggedinUser = $this->Auth->user();
         if ($this->Session->check('from_login')) {
             $this->set("alertMsg", $loggedinUser['org_updates']['msg']);
@@ -331,9 +356,41 @@ class ClientController extends AppController {
         if (isset($loggedinUser['org_updates']) && $loggedinUser['org_updates']['org_status'] == 'active' && $loggedinUser['org_updates']['user_status'] == "active") {
             $this->redirect(array('controller' => 'endorse'));
         }
+        /////////////////
+        $loggedinUser = $this->Auth->user();
+        $orgdata = array();
+        $userEndorserOrganizations = array();
+        if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
+            $userEndorserOrganizations = $this->OrgManager->userOrganizations($loggedinUser, "endorser");
+            if (isset($jsondatadecoded["result"]["data"])) {
+                $userEndorserOrganizations = $jsondatadecoded["result"]["data"];
+            }
+            $termsAccept = isset($loggedinUser['terms_accept']) ? $loggedinUser['terms_accept'] : 0;
+            if (!$termsAccept) {
+                $this->Session->setFlash(__('Accept End User License Agreement'), 'default', array('class' => 'alert alert-warning'));
+                $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+            }
+
+            $type = "public";
+            $postdata = array("token" => $loggedinUser["token"], "type" => $type, "limit" => 15);
+            $jsondata = $this->Apicalls->curlpost("getAllOrganization.json", $postdata);
+            $jsondatadecoded = json_decode($jsondata, true);
+            //$orgdata = isset($jsondatadecoded["result"]["data"]) ? $jsondatadecoded["result"]["data"] : $jsondatadecoded["result"]["msg"];
+            if (isset($jsondatadecoded["result"]["data"])) {
+                $orgdata = $jsondatadecoded["result"]["data"];
+            } else {
+                $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
+                $this->redirect($this->Auth->logout());
+            }
+        }
+        //print_r($userEndorserOrganizations); exit;
+        $this->set('jsIncludes', array('joinorg'));
+        $this->set('MenuName', 'Join Organization');
+        $this->set(compact("orgdata", "type", 'loggedinUser', "userEndorserOrganizations"));
     }
 
-    public function index() {
+    public function index()
+    {
         $loggedinUser = $this->Auth->user();
         if (empty($loggedinUser)) {
             $this->redirect(array('controller' => 'client', 'action' => 'login'));
@@ -352,7 +409,8 @@ class ClientController extends AppController {
         }
     }
 
-    public function register() {
+    public function register()
+    {
         $loggedinUser = $this->Auth->user();
         if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
             if (!$loggedinUser['profile_updated']) {
@@ -390,7 +448,7 @@ class ClientController extends AppController {
                         $userData['portal'] = 'client';
                         $this->Cookie->write("portal_cookie", "client", true, "1 week");
                         $this->Session->write('Auth.User', $userData);
-//                        pr($this->Auth->user());die;
+                        //                        pr($this->Auth->user());die;
                         $this->redirect(array('controller' => 'client', 'action' => 'editprofile'));
                     } else {
                         $msg = $response->msg;
@@ -414,7 +472,8 @@ class ClientController extends AppController {
         $this->set('jsIncludes', array('register'));
     }
 
-    public function joinanorganization() {
+    public function joinanorganization()
+    {
         if ($this->Session->check('Auth.User')) {
             $loggedinUser = $this->Auth->user();
 
@@ -445,7 +504,8 @@ class ClientController extends AppController {
         $this->set(compact("orgdata", "type", 'loggedinUser'));
     }
 
-    public function profile($id = 0) {
+    public function profile($id = 0)
+    {
         $errormsg = "";
         $successmsg = "";
         if ($this->Session->check('Auth.User')) {
@@ -473,14 +533,14 @@ class ClientController extends AppController {
             //Unix timestamp for a date MKTIME(0,0,0,mm,dd,yyyy) - 
             $startdate = mktime(0, 0, 0, 01, 01, 2021);
             $postdata = array("token" => $loggedinUser["token"], "start_date" => $startdate, "end_date" => "");
-//            pr($postdata);
+            //            pr($postdata);
             $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
             $jsondatadecoded = json_decode($jsondata, true);
-//            pr($jsondata);
-//            exit;
+            //            pr($jsondata);
+            //            exit;
             if ($jsondatadecoded["result"]["status"]) {
                 $endorsedatadata = $jsondatadecoded["result"]["data"];
-//                pr($endorsedatadata); exit;
+                //                pr($endorsedatadata); exit;
                 $this->set('statesdatanew', $endorsedatadata);
             } else {
                 $errormsg = $jsondatadecoded["result"]["msg"];
@@ -495,14 +555,14 @@ class ClientController extends AppController {
             $postdata = array("token" => $loggedinUser["token"], "user_id" => $user_id, "org_id" => $current_org);
             $jsondata = $this->Apicalls->curlpost("getProfile.json", $postdata);
 
-//            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast10Notifications.json", $postdata); //Show all last 10 notifications
-//            pr($jsondata);
-//            exit;
+            //            $jsonNotificationData = $this->Apicalls->curlpost("getAllLast10Notifications.json", $postdata); //Show all last 10 notifications
+            //            pr($jsondata);
+            //            exit;
 
             $jsondatadecoded = json_decode($jsondata, true);
-//            $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
-//
-//            $jsonNotificationDataArray = $jsonNotificationDataArray['result']['data']['AlertCenterNotification'];
+            //            $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
+            //
+            //            $jsonNotificationDataArray = $jsonNotificationDataArray['result']['data']['AlertCenterNotification'];
             $jsonNotificationDataArray = array();
             //$orgdata = isset($jsondatadecoded["result"]["data"]) ? $jsondatadecoded["result"]["data"] : $jsondatadecoded["result"]["msg"];
             if (isset($jsondatadecoded["result"]["data"])) {
@@ -529,21 +589,22 @@ class ClientController extends AppController {
         $jsonFollowingData = $this->Apicalls->curlget("getUserFollowList.json", $postdata);
         $postdata = array("token" => $loggedinUser["token"], 'type' => 'follower');
         $jsonFollowersData = $this->Apicalls->curlget("getUserFollowList.json", $postdata);
-        
-        $userFollowingList = json_decode($jsonFollowingData,true);
-        $userFollowerList = json_decode($jsonFollowersData,true);
+
+        $userFollowingList = json_decode($jsonFollowingData, true);
+        $userFollowerList = json_decode($jsonFollowersData, true);
         $userFollowingList = $userFollowingList['result']['data'];
         $userFollowerList = $userFollowerList['result']['data'];
-//        pr($userFollowingList);
-//        pr($userFollowerList);
-//exit;
+        //        pr($userFollowingList);
+        //        pr($userFollowerList);
+        //exit;
 
 
-//                        pr($endorsedatadata); exit;
+        //                        pr($endorsedatadata); exit;
         $this->set(compact("userFollowingList", "userFollowerList", "profiledata", "logindata", "isFollowing", "successmsg", "coreValuesData", "badgesData", "statesdata", "jsonNotificationDataArray"));
     }
 
-    public function resetpassword() {
+    public function resetpassword()
+    {
         $errormsg = "";
         $successmsg = "";
         if ($this->Session->check('Auth.User')) {
@@ -569,7 +630,8 @@ class ClientController extends AppController {
         $this->set(compact("successmsg", "errormsg"));
     }
 
-    public function resetpasswordset($code) {
+    public function resetpasswordset($code)
+    {
         $errormsg = $userName = $successmsg = "";
         $loggedinUser = $this->Auth->user();
         $codeExplode = explode("@$@", $code);
@@ -577,9 +639,9 @@ class ClientController extends AppController {
         $userIDEncrypt = $codeExplode[0];
         $code = $codeExplode[1];
         $passcodeData = $this->PasswordCode->find('all', array('conditions' => array('user_id_encpt' => $userIDEncrypt, 'expired' => 0, 'code' => $code)));
-//        echo $this->PasswordCode->getLastQuery(); exit;
-//        pr($passcodeData);
-//        exit;
+        //        echo $this->PasswordCode->getLastQuery(); exit;
+        //        pr($passcodeData);
+        //        exit;
         if (!empty($passcodeData)) {
             $userID = base64_decode($userIDEncrypt);
             $userData = $this->User->find('all', array('conditions' => array('id' => $userID, 'status' => 1)));
@@ -592,11 +654,11 @@ class ClientController extends AppController {
 
             if ($this->request->is('post')) {
 
-//                pr($this->request->data); 
+                //                pr($this->request->data); 
                 $postdata = array("id" => $this->request->data["User"]["id"], "password" => $this->request->data["User"]["new_password"], "confirm_password" => $this->request->data["User"]["confirm_password"]);
-//                pr($postdata ); /exit;
+                //                pr($postdata ); /exit;
                 $jsondata = $this->Apicalls->curlpost("setnewpassword.json", $postdata);
-//                pr($jsondata);
+                //                pr($jsondata);
 
                 $jsondatadecoded = json_decode($jsondata, true);
                 if ($jsondatadecoded["result"]["status"]) {
@@ -608,10 +670,10 @@ class ClientController extends AppController {
 
 
                 //setnewpassword
-//                exit;
-//                $postdata = array("token" => $loggedinUser["token"], "current_password" => $this->request->data["User"]["current_password"], "password" => $this->request->data["User"]["password"], "confirm_password" => $this->request->data["User"]["confirm_password"]);
-//                $jsondata = $this->Apicalls->curlpost("resetmypassword.json", $postdata);
-//            $this->redirect(array('controller' => 'client', 'action' => 'login'));
+                //                exit;
+                //                $postdata = array("token" => $loggedinUser["token"], "current_password" => $this->request->data["User"]["current_password"], "password" => $this->request->data["User"]["password"], "confirm_password" => $this->request->data["User"]["confirm_password"]);
+                //                $jsondata = $this->Apicalls->curlpost("resetmypassword.json", $postdata);
+                //            $this->redirect(array('controller' => 'client', 'action' => 'login'));
             }
         } else {
             $errormsg = "Link has been expired. Please try again to reset password.";
@@ -622,8 +684,9 @@ class ClientController extends AppController {
         $this->set(compact("userName", "errormsg", "userId"));
     }
 
-    public function editprofile() {
-//         pr($_SESSION);exit;
+    public function editprofile()
+    {
+        //         pr($_SESSION);exit;
         $errormsg = "";
         $successmsg = "";
         if ($this->Session->check('Auth.User')) {
@@ -703,7 +766,7 @@ class ClientController extends AppController {
                         }
                         //$skills = implode(",", $this->request->data["User"]["skills"]);
                     }
-//print_r($this->request->data["User"]["hobbies"]);
+                    //print_r($this->request->data["User"]["hobbies"]);
                     if (!empty($this->request->data["User"]["hobbies"])) {
                         $hobbiesarray = $this->request->data["User"]["hobbies"];
                         foreach ($hobbiesarray as $lvals) {
@@ -741,23 +804,25 @@ class ClientController extends AppController {
                     }
 
 
-                    $savedata = array("token" => $loggedinUser["token"], "fname" => $this->request->data["User"]["fname"], "lname" => $this->request->data["User"]["lname"], "about" => $this->request->data["User"]["about"], "street" => $this->request->data["User"]["street"], "mobile" => $this->request->data["User"]["mobile"],
+                    $savedata = array(
+                        "token" => $loggedinUser["token"], "fname" => $this->request->data["User"]["fname"], "lname" => $this->request->data["User"]["lname"], "about" => $this->request->data["User"]["about"], "street" => $this->request->data["User"]["street"], "mobile" => $this->request->data["User"]["mobile"],
                         "skills" => $skills, "hobbies" => $hobies, "dob" => $dobdate,
-                        "country" => $country, "state" => $state, "city" => $city, "zip" => $zip);
+                        "country" => $country, "state" => $state, "city" => $city, "zip" => $zip
+                    );
                     if ($imagedata != "") {
                         $savedata["image"] = $imagedata;
                     } elseif ($this->request->data["User"]["image"] == "") {
                         $savedata["image"] = "";
                     }
-//print_r($savedata);exit;
+                    //print_r($savedata);exit;
                     $jsondata = $this->Apicalls->curlpost("saveprofile.json", $savedata);
-//                    pr($jsondata);exit;
+                    //                    pr($jsondata);exit;
                     if (isset($_SESSION["tp_profile"]["fname"])) {
                         unset($_SESSION["tp_profile"]);
                     }
                     $jsondatadecoded = json_decode($jsondata, true);
-//                    pr($jsondatadecoded);
-//                    exit;
+                    //                    pr($jsondatadecoded);
+                    //                    exit;
                     if ($jsondatadecoded["result"]["status"]) {
                         $profiledata = $jsondatadecoded["result"]["data"];
                         $this->Session->write('Auth.User.image', $profiledata["image"]);
@@ -766,7 +831,7 @@ class ClientController extends AppController {
                         $this->Session->write('Auth.User.profile_updated', true);
                         //   $this->Session->write('Auth.User', $profiledata);
                         $loggedinUser = $this->Auth->user();
-//                        pr($loggedinUser); exit;
+                        //                        pr($loggedinUser); exit;
                         if (!isset($loggedinUser['profile_updated']) || !$loggedinUser['profile_updated']) {
                             $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
                         } else {
@@ -846,7 +911,8 @@ class ClientController extends AppController {
         $this->set(compact("profiledata", "skill", "hobbies", "selectedskills", "selectedhobbies", "successmsg", "errormsg", "countryarray", "statearray", "default_country", 'current_org'));
     }
 
-    public function tnc() {
+    public function tnc()
+    {
         if ($this->Session->check('Auth.User')) {
             $layout = "default";
             $response = $this->Apicalls->curlget("termsConditions.json", array("is_web" => 1));
@@ -861,16 +927,19 @@ class ClientController extends AppController {
         $this->set('layout', $layout);
     }
 
-    public function myorganizations() {
+    public function myorganizations()
+    {
         if ($this->Session->check('Auth.User')) {
             $loggedinUser = $this->Auth->user();
             if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
                 $defaultorg = "";
                 $type = "endorser";
+                $jsondatadecoded = $this->OrgManager->userOrganizations($loggedinUser, $type);
+                /*
                 $postdata = array("token" => $loggedinUser["token"], "type" => $type, "limit" => 15);
                 $jsondata = $this->Apicalls->curlpost("getAllOrganization.json", $postdata);
-//                pr($jsondata); exit;
-                $jsondatadecoded = json_decode($jsondata, true);
+                
+                $jsondatadecoded = json_decode($jsondata, true);*/
                 if (isset($jsondatadecoded["result"]["data"])) {
                     $orgdata = $jsondatadecoded["result"]["data"];
                 } else {
@@ -894,54 +963,55 @@ class ClientController extends AppController {
         $this->set(compact("orgdata", "type", "defaultorg"));
     }
 
-    function orginfo($org_id) {
+    function orginfo($org_id)
+    {
         if ($this->Session->check('Auth.User')) {
             $loggedinUser = $this->Auth->user();
             if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
                 //=====api for org data
                 $alldetailsorg = $this->Common->OrgInfoClient($loggedinUser["token"], $org_id);
-                
-//                $postdatafororginfo = array("token" => $loggedinUser["token"], "oid" => $org_id);
-//                $jsondatafororginfo = json_decode($this->Apicalls->curlget("getOrganization.json", $postdatafororginfo), true);
-//                pr($jsondatafororginfo); exit;
-//                $alldetailsorg = array();
-//                if ($jsondatafororginfo["result"]["status"] == true) {
-//                    $streetcity = array();
-//                    $statecountry = array();
-//                    $resultant = $jsondatafororginfo["result"]["data"];
-//                    $orgname = $resultant["Organization"]["name"];
-//                    $org_shortname = $resultant["Organization"]["short_name"];
-//                    $org_image = $resultant["Organization"]["image"];
-//                    $org_totalendorsements = $resultant["total_endorsement"];
-//                    $org_totalcv = $resultant["total_core_values"];
-//                    $org_total_endorsement_month = $resultant["total_endorsement_month"];
-//                    $org_core_values = $resultant["core_values"];
-//                    if ($resultant["Organization"]["street"] != "") {
-//                        array_push($streetcity, $resultant["Organization"]["street"]);
-//                    }
-//                    if ($resultant["Organization"]["city"] != "") {
-//                        array_push($streetcity, $resultant["Organization"]["city"]);
-//                    }
-//                    if ($resultant["Organization"]["state"] != "") {
-//                        array_push($statecountry, $resultant["Organization"]["state"]);
-//                    }
-//                    if ($resultant["Organization"]["country"] != "") {
-//                        array_push($statecountry, $resultant["Organization"]["country"]);
-//                    }
-//                    $zip = $resultant["Organization"]["zip"];
-//                    $alldetailsorg = array(
-//                        "org_name" => $orgname,
-//                        "org_sname" => $org_shortname,
-//                        "org_image" => $org_image,
-//                        "org_totalendorsements" => $org_totalendorsements,
-//                        "org_totalcv" => $org_totalcv,
-//                        "org_totalendorsementsmonth" => $org_total_endorsement_month,
-//                        "org_core_values" => $org_core_values,
-//                        "streetcity" => $streetcity,
-//                        "statecountry" => $statecountry,
-//                        "zip" => $zip
-//                    );
-//                }
+
+                //                $postdatafororginfo = array("token" => $loggedinUser["token"], "oid" => $org_id);
+                //                $jsondatafororginfo = json_decode($this->Apicalls->curlget("getOrganization.json", $postdatafororginfo), true);
+                //                pr($jsondatafororginfo); exit;
+                //                $alldetailsorg = array();
+                //                if ($jsondatafororginfo["result"]["status"] == true) {
+                //                    $streetcity = array();
+                //                    $statecountry = array();
+                //                    $resultant = $jsondatafororginfo["result"]["data"];
+                //                    $orgname = $resultant["Organization"]["name"];
+                //                    $org_shortname = $resultant["Organization"]["short_name"];
+                //                    $org_image = $resultant["Organization"]["image"];
+                //                    $org_totalendorsements = $resultant["total_endorsement"];
+                //                    $org_totalcv = $resultant["total_core_values"];
+                //                    $org_total_endorsement_month = $resultant["total_endorsement_month"];
+                //                    $org_core_values = $resultant["core_values"];
+                //                    if ($resultant["Organization"]["street"] != "") {
+                //                        array_push($streetcity, $resultant["Organization"]["street"]);
+                //                    }
+                //                    if ($resultant["Organization"]["city"] != "") {
+                //                        array_push($streetcity, $resultant["Organization"]["city"]);
+                //                    }
+                //                    if ($resultant["Organization"]["state"] != "") {
+                //                        array_push($statecountry, $resultant["Organization"]["state"]);
+                //                    }
+                //                    if ($resultant["Organization"]["country"] != "") {
+                //                        array_push($statecountry, $resultant["Organization"]["country"]);
+                //                    }
+                //                    $zip = $resultant["Organization"]["zip"];
+                //                    $alldetailsorg = array(
+                //                        "org_name" => $orgname,
+                //                        "org_sname" => $org_shortname,
+                //                        "org_image" => $org_image,
+                //                        "org_totalendorsements" => $org_totalendorsements,
+                //                        "org_totalcv" => $org_totalcv,
+                //                        "org_totalendorsementsmonth" => $org_total_endorsement_month,
+                //                        "org_core_values" => $org_core_values,
+                //                        "streetcity" => $streetcity,
+                //                        "statecountry" => $statecountry,
+                //                        "zip" => $zip
+                //                    );
+                //                }
                 //====end 
                 //=====api for myrole in organization
                 $postdata = array("token" => $loggedinUser["token"], "org_id" => $org_id);
@@ -1006,7 +1076,8 @@ class ClientController extends AppController {
         $this->set(compact("allexistinvalues", "optionsselected", "org_id", "alldetailsorg", "graphbycorevalues", "startdate", "enddate"));
     }
 
-    function createorg() {
+    function createorg()
+    {
         if ($this->Session->check('Auth.User')) {
             $country_code = 232;
             $errormsg = "";
@@ -1039,8 +1110,8 @@ class ClientController extends AppController {
             }
             $jobtitles = array_merge($jobtitles, array("other" => "other"));
             if ($this->request->is("post")) {
-//                pr($this->request->data);
-//                exit;
+                //                pr($this->request->data);
+                //                exit;
                 $imagedata = "";
                 if ($this->request->data["Org"]["Image"]["tmp_name"] != "") {
                     //======converting the image to base 64
@@ -1089,9 +1160,9 @@ class ClientController extends AppController {
                             //$totalsavedjobtitle++;
                         }
                     }
-//                        if($totalsavedjobtitle == 0){
-//                            $errormsg .= "Atleast one Job Title Needs to be Save & Active<br>"; 
-//                        }
+                    //                        if($totalsavedjobtitle == 0){
+                    //                            $errormsg .= "Atleast one Job Title Needs to be Save & Active<br>"; 
+                    //                        }
                 }
                 $entityarray = array();
                 //===============to save entities
@@ -1195,13 +1266,14 @@ class ClientController extends AppController {
         $this->set(compact("allvalues", "errormsg", "corevalues", "departments", "jobtitles", "country_code", 'listCountries', 'listState', 'stateselected'));
     }
 
-    public function forgotPassword() {
+    public function forgotPassword()
+    {
         $this->layout = null;
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             $response = $this->Apicalls->curlpost("forgotPassword.json", $postData);
-//            pr($response);
-//            exit;
+            //            pr($response);
+            //            exit;
             $response = json_decode($response);
             $response = $response->result;
 
@@ -1210,7 +1282,8 @@ class ClientController extends AppController {
         }
     }
 
-    public function recoverUsername() {
+    public function recoverUsername()
+    {
         $this->layout = null;
         if ($this->request->is('post')) {
             $postData = $this->request->data;
@@ -1223,7 +1296,8 @@ class ClientController extends AppController {
         }
     }
 
-    public function faq($param = "loginfaq") {
+    public function faq($param = "loginfaq")
+    {
         if ($this->Session->check('Auth.User')) {
             $layout = "default";
             $response = $this->Apicalls->curlget("faq.json", array("is_web" => "1"));
@@ -1238,7 +1312,8 @@ class ClientController extends AppController {
         $this->set('layout', $layout);
     }
 
-    public function leaderboard() {
+    public function leaderboard()
+    {
         if ($this->Session->check('Auth.User')) {
             $loggedinUser = $this->Auth->user();
             if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
@@ -1264,7 +1339,8 @@ class ClientController extends AppController {
         $this->set(compact("alldata", 'alldetailsorg'));
     }
 
-    public function whatsnew() {
+    public function whatsnew()
+    {
         if ($this->Session->check('Auth.User')) {
             $loggedinUser = $this->Auth->user();
             if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
@@ -1287,7 +1363,8 @@ class ClientController extends AppController {
         $this->set(compact("alldata"));
     }
 
-    public function fbLogin() {
+    public function fbLogin()
+    {
         if ($this->request->query('code')) {
             $this->setfbData();
             // User login successful
@@ -1321,7 +1398,8 @@ class ClientController extends AppController {
         }
     }
 
-    private function performLogin($postData, $profileData = array()) {
+    private function performLogin($postData, $profileData = array())
+    {
         try {
             $response = $this->Apicalls->curlpost("login.json", $postData);
             $response = json_decode($response);
@@ -1370,7 +1448,8 @@ class ClientController extends AppController {
         }
     }
 
-    public function linkedinLogin() {
+    public function linkedinLogin()
+    {
         $this->setLinkedInData();
 
         if ($this->request->query('code')) {
@@ -1396,20 +1475,22 @@ class ClientController extends AppController {
         }
     }
 
-    public function setLinkedInData() {
+    public function setLinkedInData()
+    {
         App::import('Vendor', 'LinkedIn/LinkedIn');
         $linkedinConfig = Configure::read("linkedinConfig");
         $linkedinConfig['callback_url'] = Router::url('/', true) . "client/linkedinLogin";
         $linkedinPermissions = Configure::read("linkedinPermissions");
         $this->LinkedIn = new LinkedIn(
-                $linkedinConfig
+            $linkedinConfig
         );
 
         $url = $this->LinkedIn->getLoginUrl($linkedinPermissions);
         $this->set("linkedinLoginUrl", $url);
     }
 
-    public function linkedinLoginOl() {
+    public function linkedinLoginOl()
+    {
         App::import('Vendor', 'LinkedIn/http');
         App::import('Vendor', 'LinkedIn/oauth_client');
 
@@ -1441,9 +1522,14 @@ class ClientController extends AppController {
                     $success = false;
                 } elseif (strlen($this->linkedinClient->access_token)) {
                     $successUser = $this->linkedinClient->CallAPI(
-                            'http://api.linkedin.com/v1/people/~:(id,email-address,first-name,last-name,location,picture-url,public-profile-url,formatted-name)', 'GET', array(
-                        'format' => 'json'
-                            ), array('FailOnAccessError' => true), $user);
+                        'http://api.linkedin.com/v1/people/~:(id,email-address,first-name,last-name,location,picture-url,public-profile-url,formatted-name)',
+                        'GET',
+                        array(
+                            'format' => 'json'
+                        ),
+                        array('FailOnAccessError' => true),
+                        $user
+                    );
                 }
             }
             $success = $this->linkedinClient->Finalize($success);
@@ -1451,7 +1537,7 @@ class ClientController extends AppController {
 
         if ($success) {
             //login
-//                       pr($user);die;
+            //                       pr($user);die;
             if ($successUser) {
                 if (!isset($user->emailAddress) || empty($user->emailAddress)) {
                     $this->Session->setFlash(__('Not able to get your email id. nDorse app requires your email id. So, use a LinkedIn id that is having your email id'), 'default', array('class' => 'alert alert-warning'));
@@ -1467,7 +1553,7 @@ class ClientController extends AppController {
                 $this->performLogin($postData, $profileData);
             }
         } else {
-//             $_SESSION["err_msg"] = $this->linkedinClient->error;
+            //             $_SESSION["err_msg"] = $this->linkedinClient->error;
             $this->Session->setFlash(__($this->linkedinClient->error), 'default', array('class' => 'alert alert-warning'));
             $this->redirect(array('controller' => 'client', 'action' => 'login'));
         }
@@ -1476,24 +1562,25 @@ class ClientController extends AppController {
     /**
      * This function will makes Oauth Api reqest
      */
-//    public function googlelogin() {
-//        $this->autoRender = false;
-//        App::import('Vendor', 'Google/src/config');
-//        App::import('Vendor', 'Google/src/Google_Client');
-//        App::import('Vendor', 'Google/src/contrib/Google_PlusService');
-//        App::import('Vendor', 'Google/src/contrib/Google_Oauth2Service');
-//        //require_once '../Config/google_login.php';
-//        $this->GoogleClient = new Google_Client();
-//        $this->GoogleClient->setScopes(Configure::read('googleScopeArray'));
-//        $this->GoogleClient->setApprovalPrompt('auto');
-//        $url = $this->GoogleClient->createAuthUrl();
-//        $this->redirect($url);
-//    }
+    //    public function googlelogin() {
+    //        $this->autoRender = false;
+    //        App::import('Vendor', 'Google/src/config');
+    //        App::import('Vendor', 'Google/src/Google_Client');
+    //        App::import('Vendor', 'Google/src/contrib/Google_PlusService');
+    //        App::import('Vendor', 'Google/src/contrib/Google_Oauth2Service');
+    //        //require_once '../Config/google_login.php';
+    //        $this->GoogleClient = new Google_Client();
+    //        $this->GoogleClient->setScopes(Configure::read('googleScopeArray'));
+    //        $this->GoogleClient->setApprovalPrompt('auto');
+    //        $url = $this->GoogleClient->createAuthUrl();
+    //        $this->redirect($url);
+    //    }
 
     /**
      * This function will handle Oauth Api response
      */
-    public function google_login() {
+    public function google_login()
+    {
         $this->autoRender = false;
 
         $this->setGoogleData();
@@ -1505,7 +1592,7 @@ class ClientController extends AppController {
             $this->GoogleClient->authenticate(); // Authenticate
 
             if ($this->GoogleClient->getAccessToken()) {
-//                $_SESSION['access_token'] = $this->GoogleClient->getAccessToken();
+                //                $_SESSION['access_token'] = $this->GoogleClient->getAccessToken();
                 $user = $oauth2->userinfo->get();
                 try {
                     if (!empty($user)) {
@@ -1533,7 +1620,8 @@ class ClientController extends AppController {
         exit;
     }
 
-    public function setGoogleData() {
+    public function setGoogleData()
+    {
         App::import('Vendor', 'Google/src/config');
         App::import('Vendor', 'Google/src/Google_Client');
         App::import('Vendor', 'Google/src/contrib/Google_PlusService');
@@ -1550,18 +1638,21 @@ class ClientController extends AppController {
         $this->set('gplusLoginUrl', $url);
     }
 
-    public function expire() {
+    public function expire()
+    {
         $this->Session->setFlash(__('Seems like Someone else has logged in on other Machines'), 'default', array('class' => 'alert alert-warning', 'action' => 'login'));
-//        $this->redirect(array('controller' => 'client', 'action' => 'login'));
+        //        $this->redirect(array('controller' => 'client', 'action' => 'login'));
     }
 
-    public function checkSession() {
+    public function checkSession()
+    {
         $loggedinUser = $this->Auth->user();
         $postdata['token'] = $loggedinUser['token'];
         $apiResponse = $this->Apicalls->curlpost("checkSession.json", $postdata);
     }
 
-    public function setPassword() {
+    public function setPassword()
+    {
         $this->layout = null;
         if ($this->request->is('post')) {
             $postData = $this->request->data;
@@ -1574,24 +1665,25 @@ class ClientController extends AppController {
         }
     }
 
-    public function ldaplogin() {
+    public function ldaplogin()
+    {
         $this->layout = null;
         if ($this->request->is('post')) {
             $postData = $this->request->data;
 
             $response = $this->Apicalls->curlpost("ldapLogin.json", $postData);
-//            pr($response);
-//            exit;
+            //            pr($response);
+            //            exit;
             $response = json_decode($response);
 
             if ($response->result->status) {
                 $userData = (array) $response->result->data;
-//                pr($userData); exit;
+                //                pr($userData); exit;
                 $userData['portal'] = 'client';
                 if (isset($userData['org_updates'])) {
                     $userData['org_updates'] = (array) $userData['org_updates'];
                 }
-//                pr($userData);die;
+                //                pr($userData);die;
                 $this->Session->write('Auth.User', $userData);
 
                 if (isset($userData['org_updates']) && ($userData['org_updates']['org_status'] != 'active' || $userData['org_updates']['user_status'] != "active")) {
@@ -1600,17 +1692,17 @@ class ClientController extends AppController {
 
                 //set last login typ[e cookie
                 $this->Cookie->write("portal_cookie", "client", true, "1 week");
-//                echo 'here';die;
+                //                echo 'here';die;
                 //Set token in cookie and 
-//            if (isset($this->request->data['User']['rememberme']) && $this->request->data['User']['rememberme'] == 1) {
-//                $this->Cookie->write("remember_me_endorse_cookie", $this->request->data['User'], true, "1 week");
-//            } else {
-//                if ($this->Cookie->read("remember_me_endorse_cookie")) {
-//                    $this->Cookie->delete("remember_me_endorse_cookie");
-//                }
-//            }
+                //            if (isset($this->request->data['User']['rememberme']) && $this->request->data['User']['rememberme'] == 1) {
+                //                $this->Cookie->write("remember_me_endorse_cookie", $this->request->data['User'], true, "1 week");
+                //            } else {
+                //                if ($this->Cookie->read("remember_me_endorse_cookie")) {
+                //                    $this->Cookie->delete("remember_me_endorse_cookie");
+                //                }
+                //            }
                 //redirect to some page
-//                pr($userData); exit;
+                //                pr($userData); exit;
                 if (!isset($userData['profile_updated'])) {
                     $this->redirect(array('controller' => 'client', 'action' => 'editprofile'));
                 } else if (!isset($userData['current_org']) || $userData['current_org']->joined == 0) {
@@ -1625,22 +1717,23 @@ class ClientController extends AppController {
                 //exit;
             }
         }
-//        exit;
+        //        exit;
     }
 
     /* Created by Babulal Prasad at 03-sept-2019
      * To get SSO ADFC login link using provided organization short code
      */
 
-    public function getOrgShortCode() {
+    public function getOrgShortCode()
+    {
         $this->autoRender = false;
         $this->layout = null;
         if ($this->request->is('post')) {
             $postData = $this->request->data;
-//            pr($postData); exit;
+            //            pr($postData); exit;
             $response = $this->Apicalls->curlpost("getOrgShortCode.json", $postData);
-//            pr($response);
-//            exit;
+            //            pr($response);
+            //            exit;
             $response = json_decode($response);
             $response = $response->result;
             echo json_encode(array("success" => $response->status, "msg" => $response->msg, 'adfs_link' => $response->adfs_link));
@@ -1652,7 +1745,8 @@ class ClientController extends AppController {
      * To get short code from SSO url(comes from third party site) and redirect to SSO ADFS login page.
      */
 
-    public function adfslogin() {
+    public function adfslogin()
+    {
         if (isset($this->request->params['shotcode']) && $this->request->params['shotcode'] != '') {
             $orgShortCode = $this->request->params['shotcode'];
             $postData['short_code'] = $orgShortCode;
@@ -1671,32 +1765,35 @@ class ClientController extends AppController {
         }
     }
 
-    function isMobileDevice() {
+    function isMobileDevice()
+    {
         return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
     }
 
-    public function adfsMobileLogin() {
+    public function adfsMobileLogin()
+    {
         $queryData = $this->request->query['query'];
         $postData = json_decode($queryData);
         pr($postData);
         exit;
-//        $this->redirect('/client/adfsclientlogin?query='.$queryData);
-//        $this->redirect(array('controller' => 'client', 'action' => 'adfsclientlogin', 'query' => $postData));
+        //        $this->redirect('/client/adfsclientlogin?query='.$queryData);
+        //        $this->redirect(array('controller' => 'client', 'action' => 'adfsclientlogin', 'query' => $postData));
         exit;
-//        pr($postData);
+        //        pr($postData);
         exit;
     }
 
-    public function adfsclientlogin() {
-//        $this->layout = null;
-//        pr($this->request->query);
-//        exit;
+    public function adfsclientlogin()
+    {
+        //        $this->layout = null;
+        //        pr($this->request->query);
+        //        exit;
         if (isset($this->request->query) && $this->request->query['query'] != '') {
             $queryData = $this->request->query['query'];
             $authorityname = $this->request->query['authorityname'];
-//            pr($this->isMobileDevice());
-//            exit;
-//            pr($queryData);
+            //            pr($this->isMobileDevice());
+            //            exit;
+            //            pr($queryData);
 
             if ($this->isMobileDevice()) { //Mobile Code
                 $queryData = '?query=' . $queryData . "&authorityname=" . $authorityname;
@@ -1707,23 +1804,23 @@ class ClientController extends AppController {
                 $postData['authorityname'] = $authorityname;
 
                 //$postData = $queryData;
-//                pr($postData);
-//                $postData = json_encode($postData);
-//                pr($postData);
-//                exit;
+                //                pr($postData);
+                //                $postData = json_encode($postData);
+                //                pr($postData);
+                //                exit;
                 $response = $this->Apicalls->curlpost("ADFSClientLogin.json", $postData);
-//                pr($response);
-//                exit;
+                //                pr($response);
+                //                exit;
                 $response = json_decode($response);
 
                 if ($response->result->status) {
                     $userData = (array) $response->result->data;
-//                pr($userData); exit;
+                    //                pr($userData); exit;
                     $userData['portal'] = 'client';
                     if (isset($userData['org_updates'])) {
                         $userData['org_updates'] = (array) $userData['org_updates'];
                     }
-//                pr($userData);die;
+                    //                pr($userData);die;
                     $this->Session->write('Auth.User', $userData);
 
                     if (isset($userData['org_updates']) && ($userData['org_updates']['org_status'] != 'active' || $userData['org_updates']['user_status'] != "active")) {
@@ -1732,7 +1829,7 @@ class ClientController extends AppController {
                     //set last login typ[e cookie
                     $this->Cookie->write("portal_cookie", "client", true, "1 week");
                     //redirect to some page
-//                pr($userData); exit;
+                    //                pr($userData); exit;
                     if (!isset($userData['profile_updated'])) {
                         $this->redirect(array('controller' => 'client', 'action' => 'editprofile'));
                     } else if (!isset($userData['current_org']) || $userData['current_org']->joined == 0) {
@@ -1756,7 +1853,8 @@ class ClientController extends AppController {
         exit;
     }
 
-    public function managerreport() {
+    public function managerreport()
+    {
         $this->layout = "managerReport";
         $layout = "managerReport";
         $loggedinUser = $this->Auth->user();
@@ -1785,7 +1883,7 @@ class ClientController extends AppController {
         $subcenterData = array();
         $postdata['org_id'] = $orgID;
         $SCjsondata = $this->Apicalls->curlpost("getOrgSubcenters.json", $postdata);
-//        pr($SCjsondata); exit;
+        //        pr($SCjsondata); exit;
         $subcenterData = array();
         if (isset($SCjsondata) && $SCjsondata != '') {
             $subcenterArray = json_decode($SCjsondata, true);
@@ -1803,7 +1901,7 @@ class ClientController extends AppController {
             }
         }
 
-//        pr($this->request->data); //exit;
+        //        pr($this->request->data); //exit;
 
 
         /* Calculate report data */
@@ -1865,21 +1963,22 @@ class ClientController extends AppController {
 
         $this->UserOrganization->recursive = 2;
         $endorsementdata = $this->UserOrganization->find("all", array("order" => "User.fname", "conditions" =>
-            array("UserOrganization.organization_id" => $organization_id, $subcenterCondition, $deptCondition, "UserOrganization.status" => array(1, 2, 3), "UserOrganization.user_role" => array(2, 3, 4, 6))));
-//        echo $this->UserOrganization->getLastQuery(); 
-//        echo $this->Endorsement->getLastQuery(); 
-//        exit;
-//        pr($endorsementdata);//exit;
+        array("UserOrganization.organization_id" => $organization_id, $subcenterCondition, $deptCondition, "UserOrganization.status" => array(1, 2, 3), "UserOrganization.user_role" => array(2, 3, 4, 6))));
+        //        echo $this->UserOrganization->getLastQuery(); 
+        //        echo $this->Endorsement->getLastQuery(); 
+        //        exit;
+        //        pr($endorsementdata);//exit;
 
         $arrayendorsementdetail = $this->Common->arrayforendorsementdetail($endorsementdata);
-//        pr($arrayendorsementdetail); exit;
+        //        pr($arrayendorsementdetail); exit;
 
         $datesarray = array("startdate" => $startdate, "enddate" => $enddate);
         $this->set('jsIncludes', array('endorse_charts'));
         $this->set(compact('datesarray', 'layout', 'subcenterData', 'orgDeptArray', 'arrayendorsementdetail', 'facility_id', 'departmentId', 'organization_id', 'orgName'));
     }
 
-    public function notifications($id = 0) {
+    public function notifications($id = 0)
+    {
         $errormsg = "";
         $successmsg = "";
         if ($this->Session->check('Auth.User')) {
@@ -1891,60 +1990,55 @@ class ClientController extends AppController {
                 $current_org = 0;
             }
             //Unix timestamp for a date MKTIME(0,0,0,mm,dd,yyyy) - 
-//            $startdate = mktime(0, 0, 0, 01, 01, 2021);
-//            $postdata = array("token" => $loggedinUser["token"], "start_date" => $startdate, "end_date" => "");
-////            pr($postdata);
-//            $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
-//            $jsondatadecoded = json_decode($jsondata, true);
-////            pr($jsondata);
-////            exit;
-//            if ($jsondatadecoded["result"]["status"]) {
-//                $endorsedatadata = $jsondatadecoded["result"]["data"];
-////                pr($endorsedatadata); exit;
-//                $this->set('statesdatanew', $endorsedatadata);
-//            } else {
-//                $errormsg = $jsondatadecoded["result"]["msg"];
-//                $this->Session->write('error', $errormsg);
-//                $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
-//            }
-//
+            //            $startdate = mktime(0, 0, 0, 01, 01, 2021);
+            //            $postdata = array("token" => $loggedinUser["token"], "start_date" => $startdate, "end_date" => "");
+            ////            pr($postdata);
+            //            $jsondata = $this->Apicalls->curlpost("endorsestats.json", $postdata);
+            //            $jsondatadecoded = json_decode($jsondata, true);
+            ////            pr($jsondata);
+            ////            exit;
+            //            if ($jsondatadecoded["result"]["status"]) {
+            //                $endorsedatadata = $jsondatadecoded["result"]["data"];
+            ////                pr($endorsedatadata); exit;
+            //                $this->set('statesdatanew', $endorsedatadata);
+            //            } else {
+            //                $errormsg = $jsondatadecoded["result"]["msg"];
+            //                $this->Session->write('error', $errormsg);
+            //                $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
+            //            }
+            //
             $user_id = $loggedinUser["id"];
             if (is_numeric($id) && $id > 0) {
                 $user_id = $id;
             }
             $postdata = array("token" => $loggedinUser["token"], "user_id" => $user_id, "org_id" => $current_org);
-//            $jsondata = $this->Apicalls->curlpost("getProfile.json", $postdata);
+            //            $jsondata = $this->Apicalls->curlpost("getProfile.json", $postdata);
 
             $jsonNotificationData = $this->Apicalls->curlpost("getAllLast15Notifications.json", $postdata); //Show all last 10 notifications
-//            pr($jsonNotificationData);
-//            exit;
-//            $jsondatadecoded = json_decode($jsondata, true);
+            //            pr($jsonNotificationData);
+            //            exit;
+            //            $jsondatadecoded = json_decode($jsondata, true);
             $jsonNotificationDataArray = json_decode($jsonNotificationData, true);
 
             $jsonNotificationDataArray = $jsonNotificationDataArray['result']['data']['AlertCenterNotification'];
             //$orgdata = isset($jsondatadecoded["result"]["data"]) ? $jsondatadecoded["result"]["data"] : $jsondatadecoded["result"]["msg"];
-//            if (isset($jsondatadecoded["result"]["data"])) {
-//                $profiledata = $jsondatadecoded["result"]["data"]["user_data"];
-//                $badgesData = $jsondatadecoded["result"]["data"]["badges"];
-//                $coreValuesData = $jsondatadecoded["result"]["data"]["core_value"];
-//                $statesdata = $jsondatadecoded["result"]["data"]["endorse_count"];
-//            } else {
-//                $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
-//                $this->redirect($this->Auth->logout());
-//            }
+            //            if (isset($jsondatadecoded["result"]["data"])) {
+            //                $profiledata = $jsondatadecoded["result"]["data"]["user_data"];
+            //                $badgesData = $jsondatadecoded["result"]["data"]["badges"];
+            //                $coreValuesData = $jsondatadecoded["result"]["data"]["core_value"];
+            //                $statesdata = $jsondatadecoded["result"]["data"]["endorse_count"];
+            //            } else {
+            //                $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
+            //                $this->redirect($this->Auth->logout());
+            //            }
         } else {
             $this->redirect(array('controller' => 'client', 'action' => 'login'));
         }
 
         $this->set('MenuName', 'Notifications');
         $logindata = $loggedinUser;
-//        $this->set('statesdatanew', $endorsedatadata);
-//                        pr($endorsedatadata); exit;
+        //        $this->set('statesdatanew', $endorsedatadata);
+        //                        pr($endorsedatadata); exit;
         $this->set(compact("jsonNotificationDataArray"));
     }
-
 }
-?>
-
-
-
