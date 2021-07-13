@@ -43,6 +43,7 @@
                         </tr>
                     </thead>
                     <tbody class="scrollTbody" id="subcenterDepartment">
+                        <input type="hidden" id= "no_data_available" name="no_data_available" value="">
                         <?php
                         //pr($subcenterDepartmentArray); 
                         //exit;
@@ -112,13 +113,27 @@
                 */
                 var deptscid = '';
                 var activescid = '';
+                var cntr = 0;
                 activescid = $(".td-active").attr("data-id");
                 $('#subcenterDepartment tr').each(function () {
                     deptscid = $(this).attr('data-subcenter');
                     if(activescid == deptscid) {
                         $(this).removeClass('hide');
-                    } 
+                        cntr++;
+                    }
                 });
+
+                console.log(cntr);
+                if (cntr === 0) 
+                {
+                    //$('#subcenterDepartment > tbody:first-child').append('<tr><td>NO RESULTS FOUND</td></tr>');
+
+                    $('#no_data_available').attr('type', 'text');
+                    $('#no_data_available').val('NO RECORDS FOUND');
+                } else {
+                    $('#no_data_available').attr('type', 'hidden');
+                }
+                
                 //ends here
 
                 $(".subcenterdept_row_" + subcenterID).removeClass('hide');
