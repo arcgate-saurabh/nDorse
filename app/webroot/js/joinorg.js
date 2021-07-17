@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var type = "public";
+var joinorg_type = "public";
 var joinorg_sel = ".join-org-grp"; var sel_offset = " ";
 //joinorg_sel = "", sel_offset = "";
 function searchallorganization() {
     $.ajax({
         url: siteurl + 'cajax/showallorg',
         type: "POST",
-        data: {type: type},
+        data: {type: joinorg_type},
         success: function (data, textStatus, xhr) {
             $(joinorg_sel+"#orglisting").html("");
             $(joinorg_sel+"#orglisting").append(data);
@@ -125,7 +125,7 @@ $(document).on("click", ".livesearchdata", function () {
     $.ajax({
         url: siteurl + 'cajax/livesearcheddata',
         type: "POST",
-        data: {orgid: orgid, type: type},
+        data: {orgid: orgid, type: joinorg_type},
         success: function (data, textStatus, xhr) {
             $("#livesearch").html("");
             $(joinorg_sel+"#orglisting").html("");
@@ -156,7 +156,7 @@ $(window).scroll(function () {
                     $.ajax({
                         type: "POST",
                         url: siteurl + 'cajax/moreorganizationsJoinorg',
-                        data: {pageval: pageval, type: type},
+                        data: {pageval: pageval, type: joinorg_type},
                         success: function (data, textStatus, xhr) {
                             if (data.length == 0) {
                                 checkresult = 0;

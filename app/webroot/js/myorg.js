@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+var myorg_sel =".myorg";
 var btnObj = {
     'confirm': {
         label: 'Yes',
@@ -21,7 +21,7 @@ $(window).scroll(function () {
     if ($(window).scrollTop() + $(window).height() == $(document).height()) {
         if (pagename == "myorg" && checkresult == 1) {
             //=======find the available records
-            var pageval = $("#orglisting .rec-org .col-md-4").length / 15;
+            var pageval = $(myorg_sel+"#orglisting .rec-org .col-md-4").length / 15;
             if (pageval % 1 === 0) {
                 $(".hiddenloader").removeClass("hidden");
                 delay(function () {
@@ -34,7 +34,7 @@ $(window).scroll(function () {
                                 checkresult = 0;
                             }
                             //orglisting
-                            $("#orglisting").append(data);
+                            $(myorg_sel+"#orglisting").append(data);
                         },
                     });
                 }, 500)
