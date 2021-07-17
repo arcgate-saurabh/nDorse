@@ -7790,6 +7790,6 @@ a.bkTndorse span {
     max-height: 350px;
     object-fit: cover;
 }
-.join-org-grp button.btn-orange{
+.join-org-grp button.btn-orange#clearsearcheddata{
     height: 58px;
 }
