@@ -18158,5 +18158,53 @@ class ApiController extends AppController {
             ));
         }
     }
+    
+    /** 
+     *  Post API Created by Saurabh to update endorsement message.
+     * */
+    public function updateEndorsementMessage() 
+    {
+        if ($this->request->is('post')) {
+
+            if (isset($this->request->data['token'])) {
+                
+                $token = $this->request->data['token'];
+                $userinfo = $this->getuserData($token, true);
+                $user_id = $userinfo['users']['id'];
+
+                $endorsement_id = $this->request->data['endorsement_id'];
+                $message = $this->request->data['message'];
+                
+                $loggedInUser = $this->Auth->user();
+
+                $endorsementMsg = $this->Endorsement->updateAll(array("message" => "'$message'"), array("endorser_id" => $user_id, 'id' => $endorsement_id));
+                //pr($updated); exit;
+                if ($endorsementMsg) {
+                    $this->set(array('result' => array("status" => true
+                            , "msg" => "Endorsement message updated successfully."),
+                        '_serialize' => array('result')
+                    ));
+                } else {
+                    $this->set(array('result' => array("status" => false
+                            , "msg" => "Endorsement message is not updated."),
+                        '_serialize' => array('result')
+                    ));
+                }
+            } else {
+                $this->set(array(
+                    'result' => array("status" => false
+                        , "msg" => "Token is missing in request"),
+                    '_serialize' => array('result')
+                ));
+            }
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed."),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+    //ends here
 
 }
