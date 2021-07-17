@@ -1,17 +1,16 @@
 <div class="row join-org join-org-grp" >
-
+    <?php /*
     <div class="text-center div-center">
-        <!--    <div id="flashmessage" class="alert"></div>-->
-        <!--    <p id="flashmessage"><?php // echo $this->Session->Flash();       ?></p>-->
         <?php echo $this->Form->Create("Organization", array("onsubmit" => "return false")); ?>
         <h3>Please enter the unique code in the box below to join an organization.</h3>
         <div class="form-group"> <?php echo $this->Form->input("secretcode", array("class" => "form-control", "placeholder" => "Organization Code", "label" => false)); ?> 
-          <!--                <input type="text" class="form-control text-center" id="email" name="data['organization']" placeholder="Enter code you recieved" />--> 
         </div>
         <div class="form-group">
             <button class="btn btn-block btn-orange" id="joinorganization" type="submit">Submit </button>
         </div>
-        <?php echo $this->Form->end(); ?> </div>
+        <?php echo $this->Form->end(); ?> 
+    </div>
+    */ ?>
     <div class="col-md-12 text-center"> <img src="<?php echo Router::url('/', true); ?>img/or-join.png" class="img-responsive" alt="" /> </div>
     <div class="text-center div-center" style="position:relative" >
         <h2>Search Organizations</h2>
