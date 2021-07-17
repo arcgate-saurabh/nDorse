@@ -18159,11 +18159,14 @@ class ApiController extends AppController {
         }
     }
     
-    /** 
+   /** 
      *  Post API Created by Saurabh to update endorsement message.
      * */
     public function updateEndorsementMessage() 
     {
+        $status = false;
+        $msg = "Get call not allowed.";
+        $data = array();
         if ($this->request->is('post')) {
 
             if (isset($this->request->data['token'])) {
@@ -18180,30 +18183,39 @@ class ApiController extends AppController {
                 $endorsementMsg = $this->Endorsement->updateAll(array("message" => "'$message'"), array("endorser_id" => $user_id, 'id' => $endorsement_id));
                 //pr($updated); exit;
                 if ($endorsementMsg) {
-                    $this->set(array('result' => array("status" => true
-                            , "msg" => "Endorsement message updated successfully."),
-                        '_serialize' => array('result')
-                    ));
+                    $status = true;
+                    $msg = "Endorsement message updated successfully.";
+                    $data = array("endorsement_id"=>$endorsement_id,"message"=>$message);
+                    // $this->set(array('result' => array("status" => true
+                    //         , "msg" => "Endorsement message updated successfully."),
+                    //     '_serialize' => array('result')
+                    // ));
                 } else {
-                    $this->set(array('result' => array("status" => false
-                            , "msg" => "Endorsement message is not updated."),
-                        '_serialize' => array('result')
-                    ));
+                    
+                    $msg = "Endorsement message could not be updated.";
+                    $data = array("endorsement_id"=>$endorsement_id);
+                    // $this->set(array('result' => array("status" => false
+                    //         , "msg" => "Endorsement message is not updated."),
+                    //     '_serialize' => array('result')
+                    // ));
                 }
             } else {
-                $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
-                    '_serialize' => array('result')
-                ));
+                $msg = "Token is missing in request";
+                
+                // $this->set(array(
+                //     'result' => array("status" => false
+                //         , "msg" => "Token is missing in request"),
+                //     '_serialize' => array('result')
+                // ));
             }
-        } else {
-            $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
-                '_serialize' => array('result')
-            ));
         }
+        $this->set(array(
+            'result' => array(
+                "status" => $status, "msg" => $msg, "data"=>$data
+            ),
+            '_serialize' => array('result')
+        )); 
+        
     }
     //ends here
 
