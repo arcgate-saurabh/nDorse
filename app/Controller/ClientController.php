@@ -358,8 +358,13 @@ class ClientController extends AppController
         }
         /////////////////
         $loggedinUser = $this->Auth->user();
-        $orgdata = array();
+        $join_orgdata = array();
+        $joinorg_type = "";
         $userEndorserOrganizations = array();
+        #myorg init
+        $type = "";
+        $defaultorg = "";
+        $orgdata = array();
         if (isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
             $userEndorserOrganizations = $this->OrgManager->userOrganizations($loggedinUser, "endorser");
             if (isset($jsondatadecoded["result"]["data"])) {
@@ -371,22 +376,49 @@ class ClientController extends AppController
                 $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
             }
 
-            $type = "public";
-            $postdata = array("token" => $loggedinUser["token"], "type" => $type, "limit" => 15);
+            $joinorg_type = "public";
+            $postdata = array("token" => $loggedinUser["token"], "type" => $joinorg_type, "limit" => 15);
             $jsondata = $this->Apicalls->curlpost("getAllOrganization.json", $postdata);
             $jsondatadecoded = json_decode($jsondata, true);
             //$orgdata = isset($jsondatadecoded["result"]["data"]) ? $jsondatadecoded["result"]["data"] : $jsondatadecoded["result"]["msg"];
+            if (isset($jsondatadecoded["result"]["data"])) {
+                $join_orgdata = $jsondatadecoded["result"]["data"];
+            } else {
+                $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
+                $this->redirect($this->Auth->logout());
+            }
+
+            #myorganization
+            
+            $type = "endorser";
+            $jsondatadecoded = $this->OrgManager->userOrganizations($loggedinUser, $type);
+            /*
+            $postdata = array("token" => $loggedinUser["token"], "type" => $type, "limit" => 15);
+            $jsondata = $this->Apicalls->curlpost("getAllOrganization.json", $postdata);
+            
+            $jsondatadecoded = json_decode($jsondata, true);*/
             if (isset($jsondatadecoded["result"]["data"])) {
                 $orgdata = $jsondatadecoded["result"]["data"];
             } else {
                 $this->Session->setFlash(__($jsondatadecoded["result"]["msg"]), 'default', array('class' => 'alert alert-warning'));
                 $this->redirect($this->Auth->logout());
             }
+            if (isset($loggedinUser["current_org"]) && !empty($loggedinUser["current_org"])) {
+                $defaultorg = $loggedinUser["current_org"]->id;
+            }
         }
-        //print_r($userEndorserOrganizations); exit;
-        $this->set('jsIncludes', array('joinorg'));
+        #join organization data
+        $js_list = array("joinorg");
+        #myorg
+        $js_list[] = "myorg";
+
+        $this->set('jsIncludes', $js_list);
         $this->set('MenuName', 'Join Organization');
-        $this->set(compact("orgdata", "type", 'loggedinUser', "userEndorserOrganizations"));
+        $this->set(compact("join_orgdata", "joinorg_type", 'loggedinUser', "userEndorserOrganizations","orgdata", "type", "defaultorg"));
+        #myorganization
+        //$this->set('jsIncludes', array('myorg'));
+        // $this->set('MenuName', 'My Organizations');
+        // $this->set(compact("orgdata", "type", "defaultorg"));
     }
 
     public function index()

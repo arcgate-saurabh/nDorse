@@ -4,14 +4,16 @@
  * and open the template in the editor.
  */
 var type = "public";
+var joinorg_sel = ".join-org-grp"; var sel_offset = " ";
+//joinorg_sel = "", sel_offset = "";
 function searchallorganization() {
     $.ajax({
         url: siteurl + 'cajax/showallorg',
         type: "POST",
         data: {type: type},
         success: function (data, textStatus, xhr) {
-            $("#orglisting").html("");
-            $("#orglisting").append(data);
+            $(joinorg_sel+"#orglisting").html("");
+            $(joinorg_sel+"#orglisting").append(data);
         }
     });
 }
@@ -56,7 +58,7 @@ $(document).on("click", ".closeflashmsg", function () {
 })
 
 //===========to join the request for any org
-$(document).on("click", "#joinrequestorg", function () {
+$(document).on("click", joinorg_sel+sel_offset+"#joinrequestorg", function () {
     var elem = $(this);
     var orgid = elem.attr("data-id");
     $.ajax({
@@ -75,7 +77,7 @@ $(document).on("click", "#joinrequestorg", function () {
 })
 
 //=====search organization
-$(document).on("keyup", "#searchorganization", function () {
+$(document).on("keyup", joinorg_sel+sel_offset+"#searchorganization", function () {
     var searchvalue = $(this).val();
     var lengthinputvalue = searchvalue.length;
     $("#livesearch").html("");
@@ -126,17 +128,17 @@ $(document).on("click", ".livesearchdata", function () {
         data: {orgid: orgid, type: type},
         success: function (data, textStatus, xhr) {
             $("#livesearch").html("");
-            $("#orglisting").html("");
-            $("#orglisting").append(data);
+            $(joinorg_sel+"#orglisting").html("");
+            $(joinorg_sel+"#orglisting").append(data);
         }
     });
 })
 
 //=clear data when clicked
-$(document).on("click", "#clearsearcheddata", function () {
-    $("#clearsearcheddata").attr("disabled", "disabled");
+$(document).on("click", joinorg_sel+sel_offset+"#clearsearcheddata", function () {
+    $(joinorg_sel+sel_offset+"#clearsearcheddata").attr("disabled", "disabled");
     $("#livesearch").html("");
-    $("#searchorganization").val("");
+    $(joinorg_sel+sel_offset+"#searchorganization").val("");
     searchallorganization();
 });
 
@@ -160,7 +162,7 @@ $(window).scroll(function () {
                                 checkresult = 0;
                             }
                             //orglisting
-                            $("#orglisting").append(data);
+                            $(joinorg_sel+"#orglisting").append(data);
                         },
                     });
                 }, 500)
@@ -181,8 +183,8 @@ $(document).on("click", "body", function (event) {
     var searcheddata = $("#livesearch").html();
     if (searcheddata.length > 0 && clnew != "livesearchdata") {
         $("#livesearch").html("");
-        $("#searchorganization").val("");
-        $("#clearsearcheddata").attr("disabled", "disabled");
+        $(joinorg_sel+sel_offset+"#searchorganization").val("");
+        $(joinorg_sel+sel_offset+"#clearsearcheddata").attr("disabled", "disabled");
 
     }
 })
@@ -262,7 +264,7 @@ $(document).on("click", "#sendmultiplerequest", function () {
 })
 
 
-$(document).on("click", ".rec-comp", function () {
+$(document).on("click", joinorg_sel+".rec-comp", function () {
     if (!$(this).hasClass('no-hand')) {
         if ($(this).children(".switchbutton").is(":visible") == true) {
             $(this).children(".switchbutton").remove();
@@ -284,7 +286,7 @@ $(document).on("click", ".rec-comp", function () {
 $(document).ready(function () {
     $("#OrganizationSecretcode").val("");
     //=clearing the val of search value whn refreshed
-    $("#searchorganization").val("");
+    $(joinorg_sel+"#searchorganization").val("");
 
 })
 function isNumberKey(evt) {

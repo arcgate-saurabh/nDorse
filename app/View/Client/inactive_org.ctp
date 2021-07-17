@@ -1,3 +1,5 @@
+<?php echo $this->element("/client/myorg",array("orgdata"=>$orgdata)); ?>
+
 <div class="congratulation">
   
     <div class=" col-md-12 text-center">
@@ -12,4 +14,5 @@
     alertbootbox("<?php echo $alertMsg; ?>");
 </script>
 <?php } ?>
-<?php echo $this->element("/client/search_organization"); ?>
+
+<?php echo $this->element("/client/search_organization",array("orgdata"=>$join_orgdata)); ?>

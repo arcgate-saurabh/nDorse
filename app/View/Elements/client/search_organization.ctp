@@ -1,5 +1,5 @@
+<div class="row join-org join-org-grp" >
 
-<div class="row join-org " >
     <div class="text-center div-center">
         <!--    <div id="flashmessage" class="alert"></div>-->
         <!--    <p id="flashmessage"><?php // echo $this->Session->Flash();       ?></p>-->
@@ -33,10 +33,10 @@
 
 </div>
 <?php //pr($orgdata["organization"]);?>
-<div id ="orglisting">
+<div class="join-org-grp" id ="orglisting">
     <?php
     if (isset($orgdata["organization"])) {
-        echo $this->Element("corganizationslisting");
+        echo $this->Element("corganizationslisting",array("orgdata"=>$orgdata,"type"=>$joinorg_type));
     } else {
         echo "<div class = 'nodataavailable'>$orgdata</div>";
     }
