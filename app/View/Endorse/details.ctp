@@ -175,16 +175,42 @@ if ($endorsedata["type"] == "anonymous") {
 
     <?php
     $message = remove_emoji($endorsedata["message"]);
-    if (trim($message) != "" && $ndorser_anonymous != "anonymous") {
+    if ($ndorser_anonymous != "anonymous") {
         ?>
-        <section>
-            <div class="nDorse-Details-msg">
-                <h3>Message :</h3>
-                <div class="mesg">
-                    <p><?php echo $message; ?></p>
+        <?php 
+        //pr($endorseMessageMinLimit);
+        if(isset($this->params->query['mode']) &&  $this->params->query['mode'] == "edit") { ?>
+           <section>
+                <div class="nDorse-Details-msg">
+                    <h3><?php if ($optionalComments != 0) { ?> <?php } ?> Share Your Story / Send a Message <span style="font-size:18px">(Max. 3000 Characters)</span>:</h3>
+                    <span class="character_counts">0 Character</span>
+                        <div class="mesg">
+                            <!-- <textarea class="js-add-msg js-get-msg" maxlength="3000" rows="5" cols="100"><?php //echo $message; ?></textarea> -->
+                            <!-- <div class="col-md-12"> -->
+                                <textarea id="user_msg_val" class="add-msg add-msg-val js-add-msg js-get-msg" data-min="<?php echo $endorseMessageMinLimit; ?>" name="message" data-optional="<?php echo $optionalComments; ?>"  maxlength="3000" rows="5" cols="100"><?php echo $message; ?>
+                                </textarea>
+                            <!-- </div> -->
+                        </div>
+
+                        
+                        <input type="button" class="btn btn-success js-edit-endorse-message" value="Save Message" data-endorse-id = "<?php echo $endorsedata["id"]; ?>" data-endorse-msg = "<?php echo $endorsedata["message"]; ?>" />
+                        
+                        <input type="button" class="btn btn-primary js-cancel-editing" value="Reset Message" data-endorse-id = "<?php echo $endorsedata["id"]; ?>" />
+                        <span class="error" id="endMessageError"></span>
+                        <span class="empty-message-err" style="margin-left: 1%; color: red;display: none;">Your message is empty. Please enter a message to post successfully.</span>
                 </div>
-            </div>
-        </section>
+                
+            </section>     
+        <?php } else { ?>
+            <section>
+                <div class="nDorse-Details-msg">
+                    <h3>Message :</h3>
+                    <div class="mesg">
+                        <p><?php echo $message; ?></p>
+                    </div>
+                </div>
+            </section>
+        <?php } ?>
     <?php } ?>
     <section>
         <div class="">
@@ -404,3 +430,10 @@ function remove_emoji($text) {
     return $text;
 }
 ?>
+<script type="text/javascript">
+    $(".character_counts").html($.trim($("#user_msg_val").val()).length + " Characters");
+
+    $('#user_msg_val').bind('keyup', function (e) {
+        $(".character_counts").html($.trim($(this).val()).length + " Characters");
+    });
+</script>

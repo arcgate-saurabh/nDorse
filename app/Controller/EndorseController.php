@@ -295,7 +295,7 @@ class EndorseController extends AppController {
 
 
 
-        $this->set('jsIncludes', array('endorse'));
+        $this->set('jsIncludes', array('endorse', 'editEndorsementMessage'));
         $this->set('addEndorse', true);
         $this->set('MenuName', 'Live Feed');
     }
@@ -440,6 +440,18 @@ class EndorseController extends AppController {
 
                 $jsondatadecoded = json_decode($jsondata, true);
                 //pr($jsondata); exit;
+
+                $Orgresponse = $this->Organization->findById($loggedinUser['current_org']->id);
+
+                if (!empty($Orgresponse)) {
+                    $this->set('optionalComments', $Orgresponse['Organization']['optional_comments']);
+                    $this->set('endorseMessageMinLimit', $Orgresponse['Organization']['endorse_message_min_limit']);
+                } else {
+                    $this->set('optionalComments', $loggedinUser['current_org']->optional_comments);
+                    $this->set('endorseMessageMinLimit', $loggedinUser['current_org']->endorse_message_min_limit);
+                }
+            
+                
                 if ($jsondatadecoded["result"]["status"]) {
                     $endorsedatadata = $jsondatadecoded["result"]["data"];
 
@@ -448,6 +460,8 @@ class EndorseController extends AppController {
                     $this->set('endorseCommentData', $jsonCommentdatadecoded);
                     $this->set('logged_user_id', $user_id);
                     $this->set('loggeduserimage', $loggedinUser['image']);
+                    $this->set('optionalComments', $loggedinUser['current_org']->optional_comments);
+                    $this->set('endorseMessageMinLimit', $loggedinUser['current_org']->endorse_message_min_limit);
 //                    pr($endorsedatadata);exit;
                 } else {
                     $errormsg = $jsondatadecoded["result"]["msg"];
@@ -461,7 +475,7 @@ class EndorseController extends AppController {
             $this->redirect(array('controller' => 'client', 'action' => 'login'));
         }
 
-        $this->set('jsIncludes', array('endorse_details'));
+        $this->set('jsIncludes', array('endorse_details', 'editEndorsementMessage'));
         $this->set('addEndorse', true);
         $this->set('MenuName', 'nDorsement Detail');
     }
@@ -1498,7 +1512,7 @@ class EndorseController extends AppController {
 
         $org_user_role = $loggedinUser['current_org']->org_role;
         $logged_user_id = $loggedinUser['id'];
-        $this->set('jsIncludes', array('endorse_stats', 'endorse-ndorsed-section', 'endorse-ndorser-section'));
+        $this->set('jsIncludes', array('endorse_stats', 'endorse-ndorsed-section', 'endorse-ndorser-section', 'editEndorsementMessage'));
         $this->set('addEndorse', true);
         $this->set('org_user_role', $org_user_role);
         $this->set('logged_user_id', $logged_user_id);

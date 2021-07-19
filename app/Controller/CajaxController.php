@@ -216,6 +216,21 @@ class CajaxController extends AppController {
         }
     }
 
+    function editndorsementmsg() {
+
+        $this->layout = "ajax";
+        $this->autoRender = false;
+        $loggeduser = $this->Auth->User();
+        $endorseid = $this->request->data["endorseid"];
+        $endorsemsg = $this->request->data["endorsemsg"];
+        try {
+            $ndorseData = array("token" => $loggeduser["token"], "e_id" => $endorseid, "e_message" => $endorsemsg);
+            echo $response = $this->Apicalls->curlpost("ndorseEditMessage.json", $ndorseData);
+        } catch (Exception $e) {
+            echo json_encode(array("data" => "", "msg" => $e));
+        }
+    }
+
     public function increasePostAttachmentClickCount() {
         $this->layout = "ajax";
         $this->autoRender = false;

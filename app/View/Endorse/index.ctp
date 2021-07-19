@@ -377,14 +377,21 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
                                         <div class="clearfix"></div>
                                         <div class="menu-cont">
                                             <ul>
-                                                <li class="delete-post hand delete-endorse-from-feed"  data-endorse-id="<?php echo $endorse['id']; ?>">Delete this nDorsement</li>
+                                                <li class="hand delete-endorse-from-feed"  data-endorse-id="<?php echo $endorse['id']; ?>"><i class="fa fa-trash"></i> Delete this nDorsement</li>
 
                                             </ul>
+                                            <!-- Edit nDorsement code starts here -->
+                                            <ul>
+                                                <li class="edit-post hand live-feeds-edit-ndorse-message" id="feed_<?php echo $endorse["id"]; ?>" endorse_id ="<?php echo $endorse["id"]; ?>"><i class="fa fa-pencil"></i> Edit message</li>
+
+                                            </ul>
+                                            <!-- Edit nDorsement code ends here -->
                                         </div>
                                     </div>
                                 </div>
                             <?php } ?>
                             <!-- Delete nDorsement code end -->                            
+
                             <div class="row hand">
                                 <div class="live-feeds-ndorse" id="feed_<?php echo $endorse["id"]; ?>" endorse_id ="<?php echo $endorse["id"]; ?>">
 

@@ -11327,6 +11327,48 @@ class ApiController extends AppController {
         }
     }
 
+    /**Added by saurabh to edit endorsement message
+    *
+    */
+    public function ndorseEditMessage() {
+
+        if ($this->request->is('post')) {
+            $e_id = $this->request->data["e_id"];
+            $e_message = $this->request->data["e_message"];
+            $loggedinUser = $this->Auth->user();
+            $user_id = $loggedinUser["id"];
+            $this->loadModel('Endorsement');
+            $this->Endorsement->id = $e_id;
+
+            $status = false;
+            $updateEndorsementMsg = "";
+            if(isset($e_message) && !empty($e_message))
+            {
+                $updateEndorsementMsg = $this->Endorsement->updateAll(array("message" => "'$e_message'"), array( 'id' => $e_id));
+            }
+            //pr($updateEndorsementMsg); exit;
+            if ($updateEndorsementMsg == 1) {
+                $msg = "Endorsement message updated successfully";
+                $status = true;
+            } else {
+                $msg = "Unable to update Endorsement message";
+                $status = false;
+            }
+            $this->set(array(
+                'result' => array("status" => $status
+                    , "msg" => $msg,
+                ),
+                '_serialize' => array('result')
+            ));
+        } else {
+            $this->set(array(
+                'result' => array("status" => false
+                    , "msg" => "Get call not allowed."),
+                '_serialize' => array('result')
+            ));
+        }
+    }
+
     public function publicndorseacceptcondition() {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
@@ -13192,7 +13234,8 @@ class ApiController extends AppController {
             if (!($userOrgStatusUpdated || $userRoleChanged)) {
                 $this->OrgRequests->bindModel(array('belongsTo' => array('Organization')));
                 $acceptedRequests = $this->OrgRequests->find("all", array("conditions" => array("OrgRequests.user_id" => $loggedInUser['id'], "OrgRequests.organization_id" => $loggedInUser['pending_requests'], "OrgRequests.status" => 1)));
-
+                //$counter = 0;
+                //to do
                 if (!empty($acceptedRequests)) {
                     $isRequestAccepted = true;
                     $acceptedOrgs = array();
