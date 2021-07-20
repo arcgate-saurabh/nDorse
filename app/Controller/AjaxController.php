@@ -2914,7 +2914,7 @@ class AjaxController extends AppController {
         $status = isset($this->request->data["status"]) ? $this->request->data["status"] : "";
         $usertype = isset($this->request->data["usertype"]) ? $this->request->data["usertype"] : "";
         //$conditions = ''; //commentedon 10jul21
-        $conditions = [];
+        $conditions = array();
 
         if (!empty($jobtitle)) {
             $conditions["UserOrganization.job_title_id"] = $jobtitle;
