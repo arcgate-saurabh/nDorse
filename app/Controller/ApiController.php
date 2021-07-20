@@ -13003,6 +13003,14 @@ class ApiController extends AppController {
 
             $returnData['terms_and_condition'] = array("terms_accept" => $tncValue);
 
+            //maintenance mode code starts here
+            $mainModeValue = 0;
+            if($mainModeValue == 0){
+                $msg = "Maintenance mode disabled";
+            } else {
+                $msg = "Maintenance mode enabled";
+            }
+            $returnData['maintenance_mode'] = array("m_mode" => $mainModeValue, "msg" =>$msg);
             //ends here
 
             //Get feeds update
