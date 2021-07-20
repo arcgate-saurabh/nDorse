@@ -27,13 +27,13 @@ $(document).on("click", ".live-feeds-edit-ndorse-message", function (event) {
         //alert(addMsgOptional); 
         var userMsgMinChar = $(document).find("#user_msg_val").attr('data-min');
         
-        if(userMsgMinChar == 0){
-            userMsgMinChar = 50;
-        }
+        // if(userMsgMinChar == 0){
+        //     userMsgMinChar = 50;
+        // }
 
-        if(addMsgOptional == 1){
-            addMsgOptional = 0;
-        }
+        // if(addMsgOptional == 1){
+        //     addMsgOptional = 0;
+        // }
         //alert(userMsgMinChar);
         error = false;
         if (addMsgOptional == 0) {
@@ -59,7 +59,7 @@ $(document).on("click", ".live-feeds-edit-ndorse-message", function (event) {
                     var status = jsonparser["result"]["status"];
                     if (jsonparser["result"]["status"]) {
                         alertbootboxcb(jsonparser["result"]["msg"], function () {
-                            //window.location.reload();
+                            window.location.href = siteurl + "endorse";
                         });
                     } else {
                         alertbootbox(jsonparser["result"]["msg"]);

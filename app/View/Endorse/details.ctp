@@ -197,7 +197,6 @@ if ($endorsedata["type"] == "anonymous") {
                         
                         <input type="button" class="btn btn-primary js-cancel-editing" value="Reset Message" data-endorse-id = "<?php echo $endorsedata["id"]; ?>" />
                         <span class="error" id="endMessageError"></span>
-                        <span class="empty-message-err" style="margin-left: 1%; color: red;display: none;">Your message is empty. Please enter a message to post successfully.</span>
                 </div>
                 
             </section>     
