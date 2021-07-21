@@ -63,9 +63,9 @@ class AppController extends Controller {
         */
         // Check if we are in offline mode
         
-        $clientIp[] = $this->request->clientIp();
+        $clientIp = $this->request->clientIp();
 
-        if(!in_array('127.0.0.1', $clientIp)) {
+        if(!in_array($clientIp, array("127.0.0.1","::1"))) {
         //pr(RequestHandler::getClientIp());
             $maintenanceModeVal = MAINTENANCE_MODE_VALUE; 
             if($maintenanceModeVal == 1)
