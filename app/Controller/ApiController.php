@@ -4,7 +4,7 @@ class ApiController extends AppController {
 
     public $components = array('RequestHandler', "Auth", "Common", "Image", "Session", 'Apicalls');
     var $uses = array("User", "ApiSession", "Department", "Organization", "UserOrganization", "Invite", "Email", "Entity", "OrgCoreValues",
-        "OrgDepartments", "OrgJobTitles", "Endorsement", "Country", "State", "DefaultOrg", "Verification", "Subscription", "EndorseAttachment",
+        "OrgDepartments", "OrgJobTitles", "Endorsement", "EndorsementLogs", "Country", "State", "DefaultOrg", "Verification", "Subscription", "EndorseAttachment",
         "EndorseCoreValue", "LoginStatistics", 'OrgRequests', 'EndorsementLike', 'EndorseReplies', 'Badge', 'PasswordCode', "GlobalSetting",
         "Topendorser", "globalsettingFaq", "Emojis", "JoinOrgCode", "Post", "PostAttachment", "PostTrans", "PostLike", "PostComment", "FeedTran", "PostSchedule",
         "OrgJobTitle", "PostEventCount", "EndorseReply", "OrgVideo", "EndorsementComment", "OrgHashtag", "EndorseHashtag", "ApiSessionLogs");
@@ -11354,6 +11354,24 @@ class ApiController extends AppController {
                 $msg = "Unable to update Endorsement message";
                 $status = false;
             }
+
+            if(isset($e_id) && !empty($e_id) && $status = true)
+            {
+                //new code starts here for nDorsement logs entry
+                    $this->loadModel('EndorsementLogs');
+                    $endorsementLogs = array();
+                    $endorsementLogs['endorser_id'] = $user_id;
+                    $endorsementLogs['endorsement_id'] = $e_id;
+                    $endorsementLogs['message'] = $e_message;
+                    $endorsementLogs['order'] = array("EndorsementLogs.created DESC");
+                    
+                    $this->EndorsementLogs->clear();
+                    $this->EndorsementLogs->set(array("EndorsementLogs" => $endorsementLogs));
+                    $this->EndorsementLogs->save();
+
+                //ends here
+            }
+
             $this->set(array(
                 'result' => array("status" => $status
                     , "msg" => $msg,
@@ -13004,11 +13022,11 @@ class ApiController extends AppController {
             $returnData['terms_and_condition'] = array("terms_accept" => $tncValue);
 
             //maintenance mode code starts here
-            $mainModeValue = 0;
+            $mainModeValue = MAINTENANCE_MODE_VALUE;
             if($mainModeValue == 0){
-                $msg = "Maintenance mode disabled";
+                $msg = MAINTENANCE_MODE_DISABLED;
             } else {
-                $msg = "Maintenance mode enabled";
+                $msg = MAINTENANCE_MODE_ENABLED;
             }
             $returnData['maintenance_mode'] = array("m_mode" => $mainModeValue, "msg" =>$msg);
             //ends here

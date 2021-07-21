@@ -58,6 +58,29 @@ class AppController extends Controller {
     public function beforeFilter() {
         parent::beforeFilter();
 
+        /**
+        * Maintenance mode code starts here (1-enabled, 0-disabled) on 21july2021
+        */
+        // Check if we are in offline mode
+        
+        $clientIp[] = $this->request->clientIp();
+
+        if(!in_array('127.0.0.1', $clientIp)) {
+        //pr(RequestHandler::getClientIp());
+            $maintenanceModeVal = MAINTENANCE_MODE_VALUE; 
+            if($maintenanceModeVal == 1)
+            {
+                // Check if we are already on the maintenance page
+                if ($this->request->controller == 'client' && $this->request->action == 'maintenance') {
+                    // Don't do anything - we don't want to redirect again.
+                } else {
+                    // Redirect to the maintenance page
+                    $this->redirect(array('controller' => 'client', 'action' => 'maintenance'));
+                }
+            }
+        }
+        //ends here
+        
         $this->Auth->authenticate = array(
             'Form' => array(
                 'fields' => array('username' => 'email', 'password' => 'password'),

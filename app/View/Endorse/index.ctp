@@ -197,7 +197,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
                                         <div class="clearfix"></div>
                                         <div class="menu-cont">
                                             <ul>
-                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel">
+                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".endorse-now-popupmodel" class="ndorse-now-top">
                                                     <li class="nDorse-now">nDorse Now!</li>
                                                 </a>
                                                 <?php if ($org_user_role == 'admin' || $logged_user_id == $endorse["user_id"]) { ?>
@@ -884,5 +884,10 @@ function remove_emoji($text) {
                 }
             });
         });
+    });
+</script>
+<script>
+    $(".ndorse-now-top").click(function () {
+        $(".endorse-now-popupmodel button[type=submit]").click();
     });
 </script>

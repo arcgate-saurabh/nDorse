@@ -20,13 +20,15 @@ define('DESIGNATEDADMIN', "Admin");
 define('NDORSEELITE', "nDorse Elite");
 define('COMPLETEINACTIVATE', 'Complete Inactivate');
 define('PARTIALLYINACTIVATE', 'Partially Inactivate');
-define('DATABASESCHEMANAME', 'ndorse_live');
+//define('DATABASESCHEMANAME', 'ndorse_live');
+define('DATABASESCHEMANAME', 'ndorse_local_db');
 define('DATEFORMAT', '%m-%d-%Y');
 define('SUPPORTEMAIL', 'support@ndorse.net');
+
 //define('GOOGLE_APP_NAME', 'My Project 1');
 //define('GOOGLE_OAUTH_CLIENT_ID', '527612708125-2k1bb4pfe302670nomrda9kjmtoa74iv.apps.googleusercontent.com');
 //define('GOOGLE_OAUTH_CLIENT_SECRET', '65fl2qI9zK4xMiWS2vCDyyZr');
 //define('GOOGLE_OAUTH_REDIRECT_URI', 'http://localhost/ndorsedev/organizations');
 //define("GOOGLE_SITE_NAME", 'http://localhost/ndorsedev');
-
+include_once('site_maintenance_constant.php');
   

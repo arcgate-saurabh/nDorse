@@ -9,13 +9,31 @@ class ClientController extends AppController
     {
         parent::beforeFilter();
 
+        //new code starts here
+        // Check if we are in offline mode
+        $maintenanceModeVal = MAINTENANCE_MODE_VALUE;
+        // if($maintenanceModeVal == 1)
+        // {
+        //     // Check if we are already on the maintenance page
+        //     if ($this->request->controller == 'client' && $this->request->action == 'maintenance') {
+        //     // Don't do anything - we don't want to redirect again.
+        //     } else {
+        //     // Redirect to the maintenance page
+        //         $this->redirect(array('controller' => 'client', 'action' => 'maintenance'));
+        //     }
+        // }
+        //ends here
+
         $this->layout = "clientDefault";
         $loggedinUser = $this->Auth->user();
-        if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
+        if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client' && $maintenanceModeVal !=1) {
             $this->layout = "clientlayout";
         }
 
-        $this->Auth->allow('home_login', 'register', 'login', 'logout', 'forgotPassword', "getOrgShortCode", "verification", "index", "tnc", "recoverUsername", "faq", "fbLogin", "linkedinLogin", "googlelogin", "google_login", "setPassword", "resetpasswordset", 'ldaplogin', 'adfsclientlogin', 'adfslogin', 'adfsMobileLogin');
+        $this->Auth->allow('home_login', 'register', 'login', 'logout', 'forgotPassword', "getOrgShortCode", "verification", "index", "tnc", "recoverUsername", "faq", "fbLogin", "linkedinLogin", "googlelogin", "google_login", "setPassword", "resetpasswordset", 'ldaplogin', 'adfsclientlogin', 'adfslogin', 'adfsMobileLogin','maintenance');
+    }
+
+    public function maintenance(){
     }
 
     public function login()
@@ -27,6 +45,7 @@ class ClientController extends AppController
         //            $this->Session->setFlash(__($this->Session->read('successmessage')), 'default', array('class' => 'alert alert-warning'));
         //            $this->Session->write('successmessage', "");
         //        }
+
         $loggedinUser = $this->Auth->user();
         if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client') {
 
