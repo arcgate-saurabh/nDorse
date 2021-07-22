@@ -53,10 +53,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 //                siteurl = siteurl.replace("https", "http");
 //            }
             var userprofile = '<?php echo Router::url('/', true); ?>setImage';
-            userprofile = userprofile.replace("http", "https");
+            //userprofile = userprofile.replace("http", "https");
 
             var imgurl = '<?php echo Router::url('/', true); ?>app/webroot/<?php echo PROFILE_IMAGE_DIR; ?>/';
-            imgurl = imgurl.replace("http", "https");
+            //commented for image upload issue
+            //imgurl = imgurl.replace("http", "https");
 
             var orguploadimage = '<?php echo Router::url('/', true); ?>setOrgImage';
             if (orguploadimage.indexOf('localhost') > 0) {
@@ -65,7 +66,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
 
             var orgimgurl = '<?php echo Router::url('/', true); ?>app/webroot/<?php echo ORG_IMAGE_DIR; ?>/';
-            orgimgurl = orgimgurl.replace("http", "https");
+            //commented for image upload issue
+            //orgimgurl = orgimgurl.replace("http", "https");
 
             var referer = '<?php echo $referer; ?>';
         </script>

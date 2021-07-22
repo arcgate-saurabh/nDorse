@@ -33,7 +33,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
         <?php } ?>
         <script type='text/javascript'>
             var userprofile = '<?php echo Router::url('/', true); ?>setImage';
-            userprofile = userprofile.replace("http", "https");
+            //commented for image upload issue
+            //userprofile = userprofile.replace("http", "https");
 
             var orguploadimage = '<?php echo Router::url('/', true); ?>setOrgImage';
             if (orguploadimage.indexOf('localhost') == -1) {
@@ -42,7 +43,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
 
             var orgcpuploadimage = '<?php echo Router::url('/', true); ?>setorgcpimage';
-            orgcpuploadimage = orgcpuploadimage.replace("http", "https");
+            //orgcpuploadimage = orgcpuploadimage.replace("http", "https");
 
             var siteurl = '<?php echo Router::url('/', true); ?>';
 
@@ -60,10 +61,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
             //alert("siteurl tset : " + siteurl)
             var imgurl = '<?php echo Router::url('/', true); ?>app/webroot/<?php echo PROFILE_IMAGE_DIR; ?>/';
-            imgurl = imgurl.replace("http", "https");
+            //commented for image upload issue
+            //imgurl = imgurl.replace("http", "https");
 
             var orgimgurl = '<?php echo Router::url('/', true); ?>app/webroot/<?php echo ORG_IMAGE_DIR; ?>/';
-            orgimgurl = orgimgurl.replace("http", "https");
+            //orgimgurl = orgimgurl.replace("http", "https");
 
             var Give_Admin_Control = '<?php echo Configure::read("Give_Admin_Control"); ?>';
             var Revoke_Admin_Control = '<?php echo Configure::read("Revoke_Admin_Control"); ?>';
