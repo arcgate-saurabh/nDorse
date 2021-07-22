@@ -15917,6 +15917,7 @@ class ApiController extends AppController {
     public function getAllLast15Notifications() {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
+            //sleep(30);
 //                pr($this->request->data); 
 //                exit; 
                 $statusConfig = Configure::read("statusConfig");
@@ -15963,17 +15964,18 @@ class ApiController extends AppController {
 //                    exit;
                     /*                     * ** Get All pending notification list END*** */
 
-
+                    sleep(40);
                     $this->set(array(
                         'result' => array("status" => true
                             , "msg" => "Last 15 notifications",
-                            "data" => $alertCenterNotificationArray),
+                            "data" => ""), //$alertCenterNotificationArray
                         '_serialize' => array('result')
                     ));
                 } else {
 
                     $this->redirect(array('controller' => 'client', 'action' => 'setOrg'));
                 }
+
             } else {
                 $this->set(array(
                     'result' => array("status" => false
