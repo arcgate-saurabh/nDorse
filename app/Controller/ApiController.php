@@ -9847,7 +9847,7 @@ class ApiController extends AppController {
             if (!empty($userinfo)) {
                 if (isset($userinfo[0]['User']['image'])) {
                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userinfo[0]['User']['image'];
-                    //$userImage = str_replace("http:", "https:", $userImagehttp);
+                    $userImage = $userImagehttp;
                 }
                 if (isset($userinfo[0][0]['fullname']) && $userinfo[0][0]['fullname'] != '') {
                     $userName = $userinfo[0][0]['fullname'];
@@ -9979,11 +9979,11 @@ class ApiController extends AppController {
                     foreach ($attachedimage as $attachval) {
                         if ($attachval["name"] != "" && $attachval["type"] == "image") {
                             $tmpImageee = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . "small/" . $attachval["name"];
-                            //$attachedimg[] = str_replace("http:", "https:", $tmpImageee);
+                            $attachedimg[] = $tmpImageee;
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "emojis") {
                             $tmpImageee1 = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $attachval["name"];
                             if (strpos($tmpImageee1, 'localhost') < 0 || strpos($tmpImageee1, 'staging') < 0) {
-                                //$tmpImageee1 = str_replace("http:", "https:", $tmpImageee1);
+                                $tmpImageee1 = $tmpImageee1;
                             }
                             $emojisimg[] = $tmpImageee1;
 //                            $emojisimg[] = $attachval["name"];
@@ -9991,7 +9991,7 @@ class ApiController extends AppController {
                             $fileData = json_decode($attachval["name"], true);
                             $orgUrl = $fileData['url'];
                             $tmpImageee2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $orgUrl;
-                            //$fileData['url'] = str_replace("http:", "https:", $tmpImageee2);
+                            $fileData['url'] = $tmpImageee2;
                             $fileData['url_web'] = POST_FILE_DIR . $orgUrl;
                             $postAttachmentFiles[] = $fileData;
                         }
@@ -16177,10 +16177,10 @@ class ApiController extends AppController {
                                 $userImage = $postLikedata['User']['image'];
                                 if (isset($userImage) && $userImage != '') {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userImage;
-                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
+                                    $userImage = $userImagehttp;
                                 } else {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/img/user.png";
-                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
+                                    $userImage = $userImagehttp;
                                 }
                                 $postLikeArray[$index]['user_image'] = $userImage;
                                 $postLikeArray[$index]['post_like_id'] = $postLikedata['PostLike']['id'];
@@ -16238,10 +16238,10 @@ class ApiController extends AppController {
                                 $userImage = $postLikedata['User']['image'];
                                 if (isset($userImage) && $userImage != '') {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userImage;
-                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
+                                    $userImage = $userImagehttp;
                                 } else {
                                     $userImagehttp = Router::url('/', true) . "app/webroot/img/user.png";
-                                    //$userImage = str_replace("http:", "https:", $userImagehttp);
+                                    $userImage = $userImagehttp;
                                 }
                                 $endorsementLikeArray[$index]['user_image'] = $userImage;
                                 $endorsementLikeArray[$index]['endorsement_like_id'] = $postLikedata['EndorsementLike']['id'];
