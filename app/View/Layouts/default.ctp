@@ -38,7 +38,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
             var orguploadimage = '<?php echo Router::url('/', true); ?>setOrgImage';
             if (orguploadimage.indexOf('localhost') == -1) {
-                orguploadimage = orguploadimage.replace("http", "https");
+                //orguploadimage = orguploadimage.replace("http", "https");
             }
 
 
