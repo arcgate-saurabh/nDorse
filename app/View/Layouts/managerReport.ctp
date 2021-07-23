@@ -50,10 +50,10 @@
 //                siteurl = siteurl.replace("https", "http");
 //            }
             var userprofile = '<?php echo Router::url('/', true); ?>setImage';
-            userprofile = userprofile.replace("http", "https");
+            //userprofile = userprofile.replace("http", "https");
 
             var imgurl = '<?php echo Router::url('/', true); ?>app/webroot/<?php echo PROFILE_IMAGE_DIR; ?>/';
-            imgurl = imgurl.replace("http", "https");
+            //imgurl = imgurl.replace("http", "https");
 
             var orguploadimage = '<?php echo Router::url('/', true); ?>setOrgImage';
             if (orguploadimage.indexOf('localhost') > 0) {
@@ -62,7 +62,7 @@
 
 
             var orgimgurl = '<?php echo Router::url('/', true); ?>app/webroot/<?php echo ORG_IMAGE_DIR; ?>/';
-            orgimgurl = orgimgurl.replace("http", "https");
+            //orgimgurl = orgimgurl.replace("http", "https");
 
         </script>
         <?php

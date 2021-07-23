@@ -42,7 +42,7 @@ $loggeinUser = AuthComponent::user();
                             <?php echo $this->Html->Image("edit_icon.png", array("data-toggle" => "tooltip", "title" => "Color Branding", "url" => array('controller' => 'organizations', 'action' => 'colorsettings', $orgdetails["id"]))); ?>
                         </span>
                     </div>
-                    <?php if ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425) { ?>
+                    <?php if ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425 || $orgdetails['id'] == 446) { ?>
                         <div class="themeEdit">
                             <span>AD Settings :</span> <?php echo ($orgdetails['theme'] == 1) ? '' : 'Custom'; ?> 
                             <span>
@@ -100,10 +100,10 @@ $loggeinUser = AuthComponent::user();
                     $shortCode = isset($orgdetails['short_code']) ? '' : $orgdetails['sname'];
                     ?>
                     <br/>
-                    <?php if ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425) { ?>
+                    <?php if ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425 || $orgdetails['id'] == 446) { ?>
                         <p>Short Code : <?php echo $shortCode; ?> </p>
                     <?php } ?>
-                    <?php if ($authUser["role"] == 1 && ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425)) {
+                    <?php if ($authUser["role"] == 1 && ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425 || $orgdetails['id'] == 446)) {
                         ?>
                         <p class="tooltip1">
                             Org SSO link :  <span id="portal_link"><?php echo Router::url('/', true, true) . 'sso/' . $shortCode; ?></span>

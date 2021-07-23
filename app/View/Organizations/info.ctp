@@ -260,7 +260,7 @@ $orgid = $orgdata['Organization']['id'];
                 </td>
                 <td id="counterpr"><?php echo $pendingrequescounter; ?></td>
             </tr>
-            <?php if ($orgid == 148 || $orgid == 415 || $orgid == 425) { ?>
+            <?php if ($orgid == 148 || $orgid == 415 || $orgid == 425 || $orgid == 446) { ?>
                 <tr>
                     <td>
                         ADFS Users(Active/Uploaded):

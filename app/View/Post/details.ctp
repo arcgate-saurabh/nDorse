@@ -275,7 +275,7 @@ $ndorser_anonymous = "user";
 
     if ((root.indexOf('localhost') > -1) || (root.indexOf('staging') > -1)) {
         if (root.indexOf('https') > -1) {
-            root = siteurl.replace("https", "http");
+            //root = siteurl.replace("https", "http");
         }
     }
     console.log(" root.indexOf('ndorse.net') :  " + root.indexOf('ndorse.net'));
@@ -284,7 +284,7 @@ $ndorser_anonymous = "user";
         if (root.indexOf('https') > -1) {
 
         } else {
-            root = root.replace("http", "https");
+            //root = root.replace("http", "https");
         }
     }
 

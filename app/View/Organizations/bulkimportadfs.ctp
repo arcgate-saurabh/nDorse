@@ -15,6 +15,8 @@
                                 <input value="Upload" onclick="uploadcsvbulkADFSuser(415, 'LGH', '0009e')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
                             <?php } elseif ($orgId == 425) { ?>
                                 <input value="Upload" onclick="uploadcsvbulkADFSuser(425, 'LCMC', '55924')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
+                            <?php } elseif ($orgId == 446) { ?>
+                                <input value="Upload" onclick="uploadcsvbulkADFSuser(446, 'TGHS', '55924')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
                             <?php } elseif ($orgId == 426) { ?>
                                 <input value="Upload" onclick="uploadcsvbulkNEWLCMCuser(426, 'LCMC', '56b60')" class="btn btn-default pull-right" id="uploadfile_bulkuser" type="button">
                             <?php } ?>

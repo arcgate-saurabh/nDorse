@@ -722,9 +722,9 @@ function changeVideoStatus(org_id, id, status) {
 
 
     if ((siteurl.indexOf('localhost') == -1) && (siteurl.indexOf('staging') == -1)) {
-        siteurl = siteurl.replace("http", "https");
+        //siteurl = siteurl.replace("http", "https");
     } else {
-        siteurl = siteurl.replace("https", "http");
+        //siteurl = siteurl.replace("https", "http");
     }
     url = siteurl + 'ajax/changevideostatus';
     bootbox.confirm({
