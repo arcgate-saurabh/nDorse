@@ -13471,7 +13471,6 @@ class ApiController extends AppController
                         $liveUpdatedCount = 0;
                     }
 
-                    /* author: Babulal
                     if ($ndorsedUpdated != "0000-00-00 00:00:00") {
                         $ndorsedUpdatedCount = $this->Endorsement->find("count", array("conditions" => array(
                             "organization_id" => $loggedInUser['current_org']['id'],
@@ -13483,22 +13482,6 @@ class ApiController extends AppController
                         //                         $sqllog = $this->Endorsement->getDataSource()->getLog(false, false);       
                         //  debug($sqllog);
                     } else {
-                        $ndorsedUpdatedCount = 0;
-                    } */
-
-                    /**
-                     * @modified on 28jul21
-                     * @author Dinesh, Dilbag
-                     * Earlier Endorsement table was used.
-                     * Now AlertCenterNotification table is looked for pending notification view
-                    */
-                    $this->loadModel('AlertCenterNotification');
-                    $ndorsedUpdatedCount = $this->AlertCenterNotification->find("count", array("conditions" => array(
-                        "organization_id" => $loggedInUser['current_org']['id'],
-                        "status" => 0,
-                        "user_id " => $loggedInUser['id']
-                    )));
-                    if (!isset($ndorsedUpdatedCount)){
                         $ndorsedUpdatedCount = 0;
                     }
 
