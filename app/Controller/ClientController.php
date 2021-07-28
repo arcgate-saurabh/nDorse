@@ -26,14 +26,15 @@ class ClientController extends AppController
 
         $this->layout = "clientDefault";
         $loggedinUser = $this->Auth->user();
-        if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client' && $maintenanceModeVal !=1) {
+        if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client' && $maintenanceModeVal != 1) {
             $this->layout = "clientlayout";
         }
 
-        $this->Auth->allow('home_login', 'register', 'login', 'logout', 'forgotPassword', "getOrgShortCode", "verification", "index", "tnc", "recoverUsername", "faq", "fbLogin", "linkedinLogin", "googlelogin", "google_login", "setPassword", "resetpasswordset", 'ldaplogin', 'adfsclientlogin', 'adfslogin', 'adfsMobileLogin','maintenance');
+        $this->Auth->allow('home_login', 'register', 'login', 'logout', 'forgotPassword', "getOrgShortCode", "verification", "index", "tnc", "recoverUsername", "faq", "fbLogin", "linkedinLogin", "googlelogin", "google_login", "setPassword", "resetpasswordset", 'ldaplogin', 'adfsclientlogin', 'adfslogin', 'adfsMobileLogin', 'maintenance');
     }
 
-    public function maintenance(){
+    public function maintenance()
+    {
     }
 
     public function login()
@@ -325,6 +326,8 @@ class ClientController extends AppController
                 //                echo $authorityName; exit;
                 if ($authorityName == 'lcmch-sp') {
                     $this->redirect('https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=lcmch-sp&logout');
+                } elseif ($authorityName == 'tgmc-sp') {
+                    $this->redirect('https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=tgmc-sp&logout');
                 } else {
                     $this->redirect('https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp&logout');
                 }
@@ -408,7 +411,7 @@ class ClientController extends AppController
             }
 
             #myorganization
-            
+
             $type = "endorser";
             $jsondatadecoded = $this->OrgManager->userOrganizations($loggedinUser, $type);
             /*
@@ -433,7 +436,7 @@ class ClientController extends AppController
 
         $this->set('jsIncludes', $js_list);
         $this->set('MenuName', 'Join Organization');
-        $this->set(compact("join_orgdata", "joinorg_type", 'loggedinUser', "userEndorserOrganizations","orgdata", "type", "defaultorg"));
+        $this->set(compact("join_orgdata", "joinorg_type", 'loggedinUser', "userEndorserOrganizations", "orgdata", "type", "defaultorg"));
         #myorganization
         //$this->set('jsIncludes', array('myorg'));
         // $this->set('MenuName', 'My Organizations');

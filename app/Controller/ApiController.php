@@ -1,27 +1,33 @@
 <?php
 
-class ApiController extends AppController {
+class ApiController extends AppController
+{
 
     public $components = array('RequestHandler', "Auth", "Common", "Image", "Session", 'Apicalls');
-    var $uses = array("User", "ApiSession", "Department", "Organization", "UserOrganization", "Invite", "Email", "Entity", "OrgCoreValues",
+    var $uses = array(
+        "User", "ApiSession", "Department", "Organization", "UserOrganization", "Invite", "Email", "Entity", "OrgCoreValues",
         "OrgDepartments", "OrgJobTitles", "Endorsement", "EndorsementLogs", "Country", "State", "DefaultOrg", "Verification", "Subscription", "EndorseAttachment",
         "EndorseCoreValue", "LoginStatistics", 'OrgRequests', 'EndorsementLike', 'EndorseReplies', 'Badge', 'PasswordCode', "GlobalSetting",
         "Topendorser", "globalsettingFaq", "Emojis", "JoinOrgCode", "Post", "PostAttachment", "PostTrans", "PostLike", "PostComment", "FeedTran", "PostSchedule",
-        "OrgJobTitle", "PostEventCount", "EndorseReply", "OrgVideo", "EndorsementComment", "OrgHashtag", "EndorseHashtag", "ApiSessionLogs");
+        "OrgJobTitle", "PostEventCount", "EndorseReply", "OrgVideo", "EndorsementComment", "OrgHashtag", "EndorseHashtag", "ApiSessionLogs"
+    );
 
-    public function beforeFilter() {
+    public function beforeFilter()
+    {
         parent::beforeFilter();
         $this->Auth->allow("register", "login", "logout", "getDefaultDepartments", "getDefaultJobTitles", "getOrganization", "getDefaultSkills", "getSubOrganizations", "getProfile", "saveprofile", "getPredefinedValues", "getDefaultHobbies", "isValidQRCode", "saveOrganization", "endorse", "saveEndorseAttachments", "getCountryStateList", "saveprofileorg", "getOrgoption", "saveOrgoption", "sendVerification", "joinOrganization", "searchInOrganization", "getEndorseList", "endorsedetails", "endorselike", "endorsereply", "mySearchInOrganization", "switchGroup", "getorganizationuser", "userOrgAdminAccessAction", "getjoinrequestUser", "acceptorgrequest", "endorsestats", "leaderboard", "forgotPassword", "resetPassword", "changepassword", "userOrgSearch", "getVariousOrganizationData", "termsConditions", "getTimelyUpdates", "recoverusername", "endorsementbydept", "endorsementbyday", "endorsementbycorevalues", "faq", "sendtermconditions", "getEmojis", "getBitmojis", "updateLastAppUsedTime", "renewSession", "endorsementbyjobtitles", "endorsementbyentity", "enterFeedTransData", "searchInOrganizationGuest", "guestEndorse", "getAllPendingListing", "onViewNotification", "onCancelNotification", "sendPushNotificationAndroid", "setnewpassword", "daisyEndorse", "searchInOrganizationDaisy", "ldapLogin", "getOrgShortCode", "ADFSClientLogin", "checkADFSLoginSession", "getOrgSubcenters", "getSubcenterCorevalues", "getOrgEmojis", "getPendingGuestnDorsements", "getUserFollowList", "acceptTermsAndCondition");
     }
 
-    public function sendVerification() {
+    public function sendVerification()
+    {
         if ($this->request->is('post')) {
             $this->Auth->logout();
 
             if (!filter_var($this->request->data['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid email address. Please check."),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid email address. Please check."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -29,8 +35,9 @@ class ApiController extends AppController {
 
             if ($this->User->email_registered($this->request->data)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "The email you entered is already registered.", 'isRegistered' => true),
+                    'result' => array(
+                        "status" => false, "msg" => "The email you entered is already registered.", 'isRegistered' => true
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -49,24 +56,26 @@ class ApiController extends AppController {
             $this->Verification->set($this->request->data);
             if ($this->Verification->validates()) {
                 if ($this->Verification->save()) {
-//$subject = "nDorse - Verify email";
-//$template = "verification";
-//$viewVars = array("verification_code" => $verificationCode);
-//$this->Common->sendEmail($this->request->data['email'], $subject, $template, $viewVars);
-//                    exec("nohup wget " . Router::url('/', true) . "/cron/verificationEmails > /dev/null 2>&1 &");
+                    //$subject = "nDorse - Verify email";
+                    //$template = "verification";
+                    //$viewVars = array("verification_code" => $verificationCode);
+                    //$this->Common->sendEmail($this->request->data['email'], $subject, $template, $viewVars);
+                    //                    exec("nohup wget " . Router::url('/', true) . "/cron/verificationEmails > /dev/null 2>&1 &");
                     $rootUrl = Router::url('/', true);
                     //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     exec("wget -bqO- " . $rootUrl . "/cron/verificationEmails &> /dev/null");
-//                    exec( "php ".WWW_ROOT."cron_scheduler.php /cron/verificationEmails/ > /dev/null &");
+                    //                    exec( "php ".WWW_ROOT."cron_scheduler.php /cron/verificationEmails/ > /dev/null &");
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Verification email sent successfully."),
+                        'result' => array(
+                            "status" => true, "msg" => "Verification email sent successfully."
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Could not send verification email now. Please try again."),
+                        'result' => array(
+                            "status" => false, "msg" => "Could not send verification email now. Please try again."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -79,21 +88,24 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Errors!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function register() {
+    public function register()
+    {
         if ($this->request->is('post')) {
             $this->Auth->logout();
 
@@ -106,31 +118,32 @@ class ApiController extends AppController {
             }
 
 
-//            if ($this->request->data['source'] == 'email' && !empty($userExist)) {
+            //            if ($this->request->data['source'] == 'email' && !empty($userExist)) {
             if (!empty($userExist)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "This email is already registered.", 'isRegistered' => true),
+                    'result' => array(
+                        "status" => false, "msg" => "This email is already registered.", 'isRegistered' => true
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
             }
-//            elseif (!empty($userExist)) {
-//                //print_r($userExist);
-//                //echo $this->request->data['source'] . '_id';
-//                //echo $this->request->data['source_id'];
-//                //echo "<hr>";
-//                //echo $userExist["User"][$this->request->data['source'] . '_id'];
-//                //exit; 
-//                if ($userExist["User"][$this->request->data['source'] . '_id'] == $this->request->data['source_id']) {
-//                    $this->set(array(
-//                        'result' => array("status" => false
-//                            , "msg" => "This email is already registered with " . $sourceArray[$this->request->data['source']] . ".", 'isRegistered' => true),
-//                        '_serialize' => array('result')
-//                    ));
-//                    return;
-//                }
-//            }
+            //            elseif (!empty($userExist)) {
+            //                //print_r($userExist);
+            //                //echo $this->request->data['source'] . '_id';
+            //                //echo $this->request->data['source_id'];
+            //                //echo "<hr>";
+            //                //echo $userExist["User"][$this->request->data['source'] . '_id'];
+            //                //exit; 
+            //                if ($userExist["User"][$this->request->data['source'] . '_id'] == $this->request->data['source_id']) {
+            //                    $this->set(array(
+            //                        'result' => array("status" => false
+            //                            , "msg" => "This email is already registered with " . $sourceArray[$this->request->data['source']] . ".", 'isRegistered' => true),
+            //                        '_serialize' => array('result')
+            //                    ));
+            //                    return;
+            //                }
+            //            }
 
 
 
@@ -148,8 +161,9 @@ class ApiController extends AppController {
                     $this->request->data['User']['terms_accept'] = 1;
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Verification failed."),
+                        'result' => array(
+                            "status" => false, "msg" => "Verification failed."
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -158,8 +172,9 @@ class ApiController extends AppController {
                 unset($this->User->validate['image']);
                 if (empty($this->request->data['source_id'])) {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Third party ID is not provided."),
+                        'result' => array(
+                            "status" => false, "msg" => "Third party ID is not provided."
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -192,34 +207,37 @@ class ApiController extends AppController {
                         $this->Session->write('Auth.User.token', $token);
 
                         $returnData = $this->Auth->user();
-//																								$viewVars = array( "username" => $this->request->data['email']);
-//																								$configVars = serialize($viewVars);
-//                       
-//                        $subject = "nDorse sign up successful";
-//																								$to = $this->request->data['email'];
-//                        //$this->Common->sendEmail($this->request->data['email'], $subject, "register", $configVars);
-//																								$email = array("to" => $to, "subject" => $subject, "config_vars" => $configVars, "template" => "register");
-//																								$this->Email->save($email);
+                        //																								$viewVars = array( "username" => $this->request->data['email']);
+                        //																								$configVars = serialize($viewVars);
+                        //                       
+                        //                        $subject = "nDorse sign up successful";
+                        //																								$to = $this->request->data['email'];
+                        //                        //$this->Common->sendEmail($this->request->data['email'], $subject, "register", $configVars);
+                        //																								$email = array("to" => $to, "subject" => $subject, "config_vars" => $configVars, "template" => "register");
+                        //																								$this->Email->save($email);
 
                         $returnData = $this->Auth->user();
                         $returnData['role'] = $roleList[$returnData['role']];
 
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Verification successful.", 'data' => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => "Verification successful.", 'data' => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Verification successful but unable to login. Please try to login again or contact support@ndorse.net if problem persists."),
+                            'result' => array(
+                                "status" => false, "msg" => "Verification successful but unable to login. Please try to login again or contact support@ndorse.net if problem persists."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "There is some problem in verification. Please try again later or contact support@ndorse.net if problem persists."),
+                        'result' => array(
+                            "status" => false, "msg" => "There is some problem in verification. Please try again later or contact support@ndorse.net if problem persists."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -232,34 +250,39 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function isValidQRCode() {
+    public function isValidQRCode()
+    {
         $organization = $this->Organization->findBySecretCode($this->request->data['qr_code']);
         if (empty($organization)) {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Invalid QR Code"),
+                'result' => array(
+                    "status" => false, "msg" => "Invalid QR Code"
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $invite = $this->Invite->find("first", array("conditions" => array("email" => $this->request->data['email'], 'organization_id' => $organization['Organization']['id'])));
             if (empty($invite)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You are not invited to join organization having " . $this->request->data['qr_code'] . " QR code. Please submit request to join organization."),
+                    'result' => array(
+                        "status" => false, "msg" => "You are not invited to join organization having " . $this->request->data['qr_code'] . " QR code. Please submit request to join organization."
+                    ),
                     '_serialize' => array('result')
                 ));
                 function_exists('curl_version');
@@ -267,33 +290,36 @@ class ApiController extends AppController {
                 return;
             }
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Valid QR Code", "data" => array("organization_id" => $organization['Organization']['id'])),
+                'result' => array(
+                    "status" => true, "msg" => "Valid QR Code", "data" => array("organization_id" => $organization['Organization']['id'])
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function login() {
-//        echo "TEST";
-//        pr($this->request->data); 
-//        exit;
+    public function login()
+    {
+        //        echo "TEST";
+        //        pr($this->request->data); 
+        //        exit;
 
         if ($this->request->is('post')) {
             $this->request->data['User'] = $this->request->data;
-//echo "Test"; exit;
+            //echo "Test"; exit;
             $this->request->data['source'] = isset($this->request->data['source']) && !empty($this->request->data['source']) ? $this->request->data['source'] : "email";
 
             $userData = $this->User->find('first', array('conditions' => array('User.email' => $this->request->data['email'])));
-//            pr($userData); exit;
+            //            pr($userData); exit;
             if (empty($userData)) {
                 if ($this->request->data['source'] != 'email') {
                     $this->register();
                     return;
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "The email you entered is not registered.", 'isRegistered' => false),
+                        'result' => array(
+                            "status" => false, "msg" => "The email you entered is not registered.", 'isRegistered' => false
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -303,44 +329,46 @@ class ApiController extends AppController {
             $roleList = $this->Common->setSessionRoles();
             if ($roleList[$userData['User']['role']] == "super_admin") {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Super Admin login not permitted in nDorse App only Super Admin site."),
+                    'result' => array(
+                        "status" => false, "msg" => "Super Admin login not permitted in nDorse App only Super Admin site."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
             }
 
-//            if ((int) $userData['User']['status'] != 1) {
-//                $this->set(array(
-//                    'result' => array("status" => false
-//                        , "msg" => "Your account is inactive. Please contact administrator."),
-//                    '_serialize' => array('result')
-//                ));
-//                return;
-//            }
+            //            if ((int) $userData['User']['status'] != 1) {
+            //                $this->set(array(
+            //                    'result' => array("status" => false
+            //                        , "msg" => "Your account is inactive. Please contact administrator."),
+            //                    '_serialize' => array('result')
+            //                ));
+            //                return;
+            //            }
             $this->User->setValidation('login');
             $this->User->set($this->request->data);
 
             if ($this->User->validates()) {
                 if ($this->request->data['source'] == "email") {
                     $logginSuccess = $this->Auth->login();
-//                    echo 'logginSuccess';
-//                    pr($logginSuccess); exit;
+                    //                    echo 'logginSuccess';
+                    //                    pr($logginSuccess); exit;
                 } else {
 
-//$userData = $this->User->find("first", array("conditions" => array("email" => $this->request->data['email'], "source" => $this->request->data['source'], "source_id" => $this->request->data['source_id'])));
-//Update profile if email exists and thirdparty account is not attached
+                    //$userData = $this->User->find("first", array("conditions" => array("email" => $this->request->data['email'], "source" => $this->request->data['source'], "source_id" => $this->request->data['source_id'])));
+                    //Update profile if email exists and thirdparty account is not attached
                     if (empty($userData['User'][$this->request->data['source'] . "_id"])) {
                         $this->User->id = $userData['User']['id'];
                         $saved = $this->User->saveField($this->request->data['source'] . "_id", $this->request->data['source_id']);
-//$this->User->saveField("source", $this->request->data['source']);
+                        //$this->User->saveField("source", $this->request->data['source']);
 
                         if ($saved) {
                             $userData['User'][$this->request->data['source'] . "_id"] = $this->request->data['source_id'];
                         } else {
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "The third party account you are using cannot be associated with your existing account. Please try  again."),
+                                'result' => array(
+                                    "status" => false, "msg" => "The third party account you are using cannot be associated with your existing account. Please try  again."
+                                ),
                                 '_serialize' => array('result')
                             ));
                             return;
@@ -353,22 +381,23 @@ class ApiController extends AppController {
                         $logginSuccess = $this->Auth->login($userData['User']);
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "The third party account you are using is not configured correctly."),
+                            'result' => array(
+                                "status" => false, "msg" => "The third party account you are using is not configured correctly."
+                            ),
                             '_serialize' => array('result')
                         ));
                         return;
                     }
                 }
 
-//                pr($logginSuccess);exit;
+                //                pr($logginSuccess);exit;
                 if ($logginSuccess) {
 
 
-//if ((int) $this->Auth->user("status")  == 1) {
+                    //if ((int) $this->Auth->user("status")  == 1) {
 
                     $loggedinUserId = $this->Auth->user('id');
-//                    pr($loggedinUserId);exit;
+                    //                    pr($loggedinUserId);exit;
                     $token = $this->generateToken($loggedinUserId);
                     $this->Session->write('Auth.User.token', $token);
                     $params = array();
@@ -396,13 +425,13 @@ class ApiController extends AppController {
 
                     if (!empty($defaultOrganization) && !empty($defaultOrganization['UserOrganization']) && isset($defaultOrganization['UserOrganization']['id'])) {
                         $orgUpdates = array();
-//if ($defaultOrganization['UserOrganization']['status'] == $statusConfig['active'] && $defaultOrganization['Organization']['status'] == $statusConfig['active']) {
+                        //if ($defaultOrganization['UserOrganization']['status'] == $statusConfig['active'] && $defaultOrganization['Organization']['status'] == $statusConfig['active']) {
                         $currentOrg = $defaultOrganization['Organization'];
 
                         $currentOrg['joined'] = $defaultOrganization['UserOrganization']['joined'];
 
                         if ($defaultOrganization['UserOrganization']['entity_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $entity = $this->getOrgValues($currentOrg["id"], "Entity", true, array($defaultOrganization['UserOrganization']['entity_id']));
                             if (!empty($entity)) {
                                 $currentOrg['entity'] = $entity[0]["name"];
@@ -414,9 +443,9 @@ class ApiController extends AppController {
                         }
 
                         if ($defaultOrganization['UserOrganization']['department_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $department = $this->getOrgValues($currentOrg["id"], "OrgDepartments", true, array($defaultOrganization['UserOrganization']['department_id']));
-// $department = $defaultOrganization['UserOrganization']['department_id'];
+                            // $department = $defaultOrganization['UserOrganization']['department_id'];
                             if (!empty($department)) {
                                 $currentOrg['department'] = $department[0]["name"];
                             } else {
@@ -426,7 +455,7 @@ class ApiController extends AppController {
                             $currentOrg['department'] = "";
                         }
                         if ($defaultOrganization['UserOrganization']['job_title_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $jobtitle = $this->getOrgValues($currentOrg["id"], "OrgJobTitles", 1, array($defaultOrganization['UserOrganization']['job_title_id']));
 
                             if (!empty($jobtitle)) {
@@ -438,7 +467,7 @@ class ApiController extends AppController {
                             $currentOrg['job_title'] = "";
                         }
                         if ($defaultOrganization['UserOrganization']['job_title_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $jobtitle = $this->getOrgValues($currentOrg["id"], "OrgJobTitles", 1, array($defaultOrganization['UserOrganization']['job_title_id']));
 
                             if (!empty($jobtitle)) {
@@ -470,24 +499,24 @@ class ApiController extends AppController {
 
 
 
-//$orgUpdates = array("is_current_org_active" => 1);
-//} else {
-//Check inactive/active/eval status of default user organization
-//$isCurrentOrgActive = 1;
+                        //$orgUpdates = array("is_current_org_active" => 1);
+                        //} else {
+                        //Check inactive/active/eval status of default user organization
+                        //$isCurrentOrgActive = 1;
                         $msg = "";
                         $userStatus = array_search($defaultOrganization['UserOrganization']["status"], $statusConfig);
                         $orgStatus = array_search($defaultOrganization['Organization']["status"], $statusConfig);
-//Get current user org status and total org count
-//$this->UserOrganization->unbindModel(array('belongsTo' => array('User')));
-//$totalUserOrgsActive = $this->UserOrganization->find("count", array("conditions" => array("user_id" => $loggedinUserId, "UserOrganization.status" => $statusConfig['active'], "Organization.status" => $statusConfig['active'])));
-//
+                        //Get current user org status and total org count
+                        //$this->UserOrganization->unbindModel(array('belongsTo' => array('User')));
+                        //$totalUserOrgsActive = $this->UserOrganization->find("count", array("conditions" => array("user_id" => $loggedinUserId, "UserOrganization.status" => $statusConfig['active'], "Organization.status" => $statusConfig['active'])));
+                        //
                         //$params = array();
-//$params['conditions'] = array("user_id" => $loggedinUserId);
-//$params['conditions']['OR'] = array("UserOrganization.status" => $statusConfig['inactive'], "UserOrganization.status" => $statusConfig['eval'], "Organization.status" => $statusConfig['inactive']);
-//$totalUserOrgsInactive = $this->UserOrganization->find("count", $params);
-//if(!empty($defaultOrganization)) {
+                        //$params['conditions'] = array("user_id" => $loggedinUserId);
+                        //$params['conditions']['OR'] = array("UserOrganization.status" => $statusConfig['inactive'], "UserOrganization.status" => $statusConfig['eval'], "Organization.status" => $statusConfig['inactive']);
+                        //$totalUserOrgsInactive = $this->UserOrganization->find("count", $params);
+                        //if(!empty($defaultOrganization)) {
                         if ($defaultOrganization['Organization']['status'] != $statusConfig['active']) {
-//$isCurrentOrgActive = 0;
+                            //$isCurrentOrgActive = 0;
 
                             if ($defaultOrganization['Organization']['status'] == $statusConfig['inactive']) {
                                 $msg = "Default Organization inactivated.";
@@ -495,7 +524,7 @@ class ApiController extends AppController {
                                 $msg = "Default Organization deleted!";
                             }
                         } else if ($defaultOrganization['UserOrganization']['status'] != $statusConfig['active']) {
-//$isCurrentOrgActive  = 0;
+                            //$isCurrentOrgActive  = 0;
                             if ($defaultOrganization['UserOrganization']['status'] == $statusConfig['inactive'] || $defaultOrganization['UserOrganization']['status'] == $statusConfig['eval']) {
                                 $msg = "nDorse access inactivated for default Organization. Contact Organization Admin.";
                             } else if ($defaultOrganization['UserOrganization']['status'] == $statusConfig['deleted']) {
@@ -506,22 +535,22 @@ class ApiController extends AppController {
                         }
 
 
-//$orgUpdates = array("is_current_org_active" => $isCurrentOrgActive, "total_user_orgs_active" => $totalUserOrgsActive, "total_user_orgs_inactive" => $totalUserOrgsInactive, "msg" => $msg, 'user_status' => $userStatus, 'org_status' => $orgStatus);
+                        //$orgUpdates = array("is_current_org_active" => $isCurrentOrgActive, "total_user_orgs_active" => $totalUserOrgsActive, "total_user_orgs_inactive" => $totalUserOrgsInactive, "msg" => $msg, 'user_status' => $userStatus, 'org_status' => $orgStatus);
                         $orgUpdates = array("msg" => $msg, 'user_status' => $userStatus, 'org_status' => $orgStatus);
-//} 
-//}
+                        //} 
+                        //}
                         $loggedInUser = $returnData = $this->Auth->user();
                     } else {
                         $loggedInUser = $returnData = $this->Auth->user();
-//                        
-//                        $this->UserOrganization->unbindModel(array('belongsTo' => array('Organization', 'User')));
-//                        $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $loggedinUserId, "status" => $statusConfig['active']), "order" => "created ASC"));
-//                        
-//                        $loggedInUser['accessOrgId'] = $userOrganization['UserOrganization']['organization_id'];
+                        //                        
+                        //                        $this->UserOrganization->unbindModel(array('belongsTo' => array('Organization', 'User')));
+                        //                        $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $loggedinUserId, "status" => $statusConfig['active']), "order" => "created ASC"));
+                        //                        
+                        //                        $loggedInUser['accessOrgId'] = $userOrganization['UserOrganization']['organization_id'];
                     }
 
 
-//                    pr($currentOrg); exit;
+                    //                    pr($currentOrg); exit;
                     $returnData['current_org'] = $currentOrg;
                     if (isset($orgUpdates)) {
                         $returnData['org_updates'] = $orgUpdates;
@@ -538,10 +567,10 @@ class ApiController extends AppController {
                     } else {
                         $returnData["dob"] = "";
                     }
-//
+                    //
                     $source = $this->request->data['source'];
                     if ($source == "email") {
-//print_r($returnData);exit;
+                        //print_r($returnData);exit;
                         unset($returnData["source_id"]);
                         unset($returnData["fb_id"]);
                         unset($returnData["gplus_id"]);
@@ -560,14 +589,14 @@ class ApiController extends AppController {
                         unset($returnData["gplus_id"]);
                     }
 
-//
+                    //
 
                     if (empty($returnData['fname']) || empty($returnData['lname'])) {
                         $returnData['profile_updated'] = false;
                     } else {
                         $returnData['profile_updated'] = true;
                     }
-//                    pr($returnData); exit;
+                    //                    pr($returnData); exit;
                     if (empty($returnData['fname']) || empty($returnData['lname']) || empty($returnData['mobile']) || empty($returnData['country']) || empty($returnData['street']) || empty($returnData['zip']) || empty($returnData['state']) || empty($returnData['city'])) {
                         $returnData['profile_completed'] = false;
                     } else {
@@ -576,7 +605,7 @@ class ApiController extends AppController {
 
                     $updated = $this->User->updateAll(array("last_app_used" => "NOW()"), array("id" => $loggedInUser['id']));
 
-//Get pending request organizations
+                    //Get pending request organizations
                     $pendingRequests = $this->OrgRequests->find("all", array("conditions" => array("user_id" => $loggedInUser['id'], "status" => 0)));
                     $pendingRequestOrgs = array();
                     foreach ($pendingRequests as $pendingRequest) {
@@ -590,27 +619,29 @@ class ApiController extends AppController {
 
 
 
-//                    pr($returnData); exit;
-//                    $a = $this->Auth->user();
-//                    $returnData['auth_user'] = $a;
+                    //                    pr($returnData); exit;
+                    //                    $a = $this->Auth->user();
+                    //                    $returnData['auth_user'] = $a;
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "", "data" => $returnData),
+                        'result' => array(
+                            "status" => true, "msg" => "", "data" => $returnData
+                        ),
                         '_serialize' => array('result')
                     ));
-//} else {
-//    $this->Auth->logout();
-//    $this->set(array(
-//        'result' => array("status" => false
-//            , "msg" => "Your account is not active."),
-//        '_serialize' => array('result')
-//    ));
-//}
+                    //} else {
+                    //    $this->Auth->logout();
+                    //    $this->set(array(
+                    //        'result' => array("status" => false
+                    //            , "msg" => "Your account is not active."),
+                    //        '_serialize' => array('result')
+                    //    ));
+                    //}
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "The password you entered is incorrect."),
+                        'result' => array(
+                            "status" => false, "msg" => "The password you entered is incorrect."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -624,8 +655,9 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
@@ -634,7 +666,8 @@ class ApiController extends AppController {
         }
     }
 
-    public function logout() {
+    public function logout()
+    {
         $userinfo = $this->getuserData($this->request->data['token'], true);
         $authority_name = '';
         if (isset($this->request->data['authority_name']) && $this->request->data['authority_name']) {
@@ -652,6 +685,8 @@ class ApiController extends AppController {
         if (isset($userSource) && $userSource == 'ADFS') {
             if ($authority_name == 'lcmch-sp') {
                 $adfs_link = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=lcmch-sp&logout';
+            } elseif ($authority_name == 'tgmc-sp') {
+                $adfs_link = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=tgmc-sp&logout';
             } else {
                 $adfs_link = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp&logout';
             }
@@ -660,101 +695,114 @@ class ApiController extends AppController {
         $this->logoutSystem($this->Auth->user('id'));
 
         $this->set(array(
-            'result' => array("status" => true, 'adfs_url' => $adfs_link
-                , "msg" => ""),
+            'result' => array(
+                "status" => true, 'adfs_url' => $adfs_link, "msg" => ""
+            ),
             '_serialize' => array('result')
         ));
 
-//        if (isset($this->request->data['token'])) {
-//            
-//            $userinfo = $this->getuserData($this->request->data['token'], true);
-//            $userSource = '';
-//            
-//            
-//            if (!empty($userinfo)) {
-//                $userID = $userinfo['users']['id'];
-//                $userSource = $userinfo['users']['source'];
-//            } else {
-//                $userID = $this->Auth->user('id');
-//                $userSource = $this->rAuth->user['source'];
-//            }
-//            $adfs_link = '';
-////            echo $userID;
-////            echo $userSource;
-////            pr($userinfo); exit;
-//            
-//            if (isset($userSource) && $userSource == 'ADFS') {
-//                $adfs_link = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp&logout';
-//            }
-//            
-//            $this->logoutSystemSelf($userID, $this->request->data['token']);
-//            
-//            $this->set(array(
-//                'result' => array("status" => true, 'adfs_url' => $adfs_link
-//                    , "msg" => "Logout successfully"),
-//                '_serialize' => array('result')
-//            ));
-//        } else {
-//            $this->set(array(
-//                'result' => array("status" => false
-//                    , "msg" => "Token is missing in request"),
-//                '_serialize' => array('result')
-//            ));
-//        }
+        //        if (isset($this->request->data['token'])) {
+        //            
+        //            $userinfo = $this->getuserData($this->request->data['token'], true);
+        //            $userSource = '';
+        //            
+        //            
+        //            if (!empty($userinfo)) {
+        //                $userID = $userinfo['users']['id'];
+        //                $userSource = $userinfo['users']['source'];
+        //            } else {
+        //                $userID = $this->Auth->user('id');
+        //                $userSource = $this->rAuth->user['source'];
+        //            }
+        //            $adfs_link = '';
+        ////            echo $userID;
+        ////            echo $userSource;
+        ////            pr($userinfo); exit;
+        //            
+        //            if (isset($userSource) && $userSource == 'ADFS') {
+        //                $adfs_link = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp&logout';
+        //            }
+        //            
+        //            $this->logoutSystemSelf($userID, $this->request->data['token']);
+        //            
+        //            $this->set(array(
+        //                'result' => array("status" => true, 'adfs_url' => $adfs_link
+        //                    , "msg" => "Logout successfully"),
+        //                '_serialize' => array('result')
+        //            ));
+        //        } else {
+        //            $this->set(array(
+        //                'result' => array("status" => false
+        //                    , "msg" => "Token is missing in request"),
+        //                '_serialize' => array('result')
+        //            ));
+        //        }
     }
 
-    public function updateApisession($data) {
+    public function updateApisession($data)
+    {
         $this->ApiSession->saveField('status', $data['status']);
     }
 
-    public function getDefaultDepartments() {
+    public function getDefaultDepartments()
+    {
         $departments = $this->Common->getDefaultDepartments(true, false, array("name"));
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Predefined departments", 'data' => $departments),
+            'result' => array(
+                "status" => true, "msg" => "Predefined departments", 'data' => $departments
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function getDefaultHobbies() {
+    public function getDefaultHobbies()
+    {
         $hobbies = $this->Common->getDefaultHobbies(true, false, array("name"));
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Predefined hobbies", 'data' => $hobbies),
+            'result' => array(
+                "status" => true, "msg" => "Predefined hobbies", 'data' => $hobbies
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function getDefaultJobTitles() {
+    public function getDefaultJobTitles()
+    {
         $jobTitles = $this->Common->getDefaultJobTitles(true, false, array("title"));
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Predefined job titles", 'data' => $jobTitles),
+            'result' => array(
+                "status" => true, "msg" => "Predefined job titles", 'data' => $jobTitles
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function getDefaultSkills() {
+    public function getDefaultSkills()
+    {
         $skills = $this->Common->getDefaultSkills(true, false, array("name"));
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Predefined skills", 'data' => $skills),
+            'result' => array(
+                "status" => true, "msg" => "Predefined skills", 'data' => $skills
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function getDefaultindustries() {
+    public function getDefaultindustries()
+    {
 
         $industries = $this->Common->getDefaultIndustries(true, true, array("name", "id"));
 
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Predefined industries", 'data' => $industries),
+            'result' => array(
+                "status" => true, "msg" => "Predefined industries", 'data' => $industries
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function getPredefinedValues() {
+    public function getPredefinedValues()
+    {
         if (isset($this->request->query['type'])) {
             $requirements = explode(",", $this->request->query['type']);
             $returnData = array();
@@ -762,38 +810,38 @@ class ApiController extends AppController {
                 $type = trim($type);
 
                 switch ($type) {
-                    case "departments" :
+                    case "departments":
                         $departments = $this->Common->getDefaultDepartments(true, false, array("name"));
                         $returnData['departments'] = $departments;
                         break;
 
-                    case "job_titles" :
+                    case "job_titles":
                         $jobTitles = $this->Common->getDefaultJobTitles(true, false, array("title"));
                         $returnData['job_titles'] = $jobTitles;
                         break;
 
-                    case "skills" :
+                    case "skills":
                         $skills = $this->Common->getDefaultSkills(true, false, array("name"));
                         $returnData['skills'] = $skills;
                         break;
 
-                    case "hobbies" :
+                    case "hobbies":
                         $hobbies = $this->Common->getDefaultHobbies(true, false, array("name"));
                         $returnData['hobbies'] = $hobbies;
                         break;
 
-                    case "core_values" :
+                    case "core_values":
                         $coreValues = $this->Common->getDefaultCoreValues(true, false, array("name"));
 
                         $returnData['core_values'] = $coreValues["normal"];
                         $returnData['selected'] = $coreValues["selected"];
                         break;
-                    case "countries" :
+                    case "countries":
                         $countryValues = $this->getCountryStateList();
                         $returnData['default_country'] = "United States";
                         $returnData['country'] = $countryValues;
                         break;
-                    case "degrees" :
+                    case "degrees":
                         $degreeValues = $this->Common->getDefaultDegrees(true, false, array("name"));
                         $returnData['degree'] = $degreeValues;
                         break;
@@ -801,41 +849,47 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Predefined values", 'data' => $returnData),
+                'result' => array(
+                    "status" => true, "msg" => "Predefined values", 'data' => $returnData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "type is missing."),
+                'result' => array(
+                    "status" => false, "msg" => "type is missing."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getSubOrganizations() {
+    public function getSubOrganizations()
+    {
         if (isset($this->request->query['oid'])) {
             $org_id = $this->request->query['oid'];
             $subOrganizations = $this->Common->getSubOrganizations($org_id, true, false, array("id", "name"));
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Suborganizations list", 'data' => $subOrganizations),
+                'result' => array(
+                    "status" => true, "msg" => "Suborganizations list", 'data' => $subOrganizations
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Organization ID is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Organization ID is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function createOrganization() {
+    public function createOrganization()
+    {
         $statusConfig = Configure::read("statusConfig");
         if ($this->request->is('post')) {
-//Save default values
+            //Save default values
             $this->request->data['secret_code'] = $this->getSecretCode("organization");
             $this->request->data['admin_id'] = $this->Auth->user('id');
             if (isset($this->request->data['status']) && $this->request->data['status'] != "") {
@@ -850,7 +904,7 @@ class ApiController extends AppController {
 
                 if ($this->Organization->save($this->request->data)) {
 
-//upload image
+                    //upload image
                     if (isset($this->request->data['image']) && $this->request->data['image'] != "") {
                         $uploadPath = ORG_IMAGE_DIR;
 
@@ -866,10 +920,10 @@ class ApiController extends AppController {
                         $this->request->data['image'] = $imageUrl;
                     }
                     $this->request->data['id'] = $this->Organization->id;
-//print_r($this->request->data['core_values']);
+                    //print_r($this->request->data['core_values']);
                     $orgCoreValues = json_decode($this->request->data['core_values']);
 
-//print_r($orgCoreValues);exit;
+                    //print_r($orgCoreValues);exit;
                     $orgCoreValues1 = array();
 
                     foreach ($orgCoreValues as $key => $coreValue) {
@@ -885,18 +939,18 @@ class ApiController extends AppController {
 
                     $this->OrgCoreValues->saveMany($orgCoreValues1);
 
-//
+                    //
 
                     if (isset($this->request->data["department"]) && $this->request->data["department"] != "") {
-//$orgDeptValues = json_decode($this->request->data["department"]);
-//
+                        //$orgDeptValues = json_decode($this->request->data["department"]);
+                        //
                         //$orgDeptValues1 = array();
-//foreach ($orgDeptValues as $key => $DeptValues) {
-//
+                        //foreach ($orgDeptValues as $key => $DeptValues) {
+                        //
                         //    $orgDeptValues1[$key]["organization_id"] = $this->Organization->id;
-//    $orgDeptValues1[$key]["name"] = $DeptValues->name;
-//    $orgDeptValues1[$key]["from_master"] = $DeptValues->from_master;
-//}
+                        //    $orgDeptValues1[$key]["name"] = $DeptValues->name;
+                        //    $orgDeptValues1[$key]["from_master"] = $DeptValues->from_master;
+                        //}
 
                         $orgDeptValues = explode(",", $this->request->data["department"]);
 
@@ -905,7 +959,7 @@ class ApiController extends AppController {
 
                             $orgDeptValues1[$key]["organization_id"] = $this->Organization->id;
                             $orgDeptValues1[$key]["name"] = $DeptValues;
-// $orgDeptValues1[$key]["from_master"] = $DeptValues->from_master;
+                            // $orgDeptValues1[$key]["from_master"] = $DeptValues->from_master;
                         }
 
                         $this->OrgDepartments->saveMany($orgDeptValues1);
@@ -925,7 +979,7 @@ class ApiController extends AppController {
                         foreach ($orgJobTitileValues as $key => $TitleValues) {
                             $orgJobTitileValues1[$key]["organization_id"] = $this->Organization->id;
                             $orgJobTitileValues1[$key]["title"] = $TitleValues;
-//$orgJobTitileValues1[$key]["from_master"] = $TitleValues->from_master;
+                            //$orgJobTitileValues1[$key]["from_master"] = $TitleValues->from_master;
                         }
                         $this->OrgJobTitles->saveMany($orgJobTitileValues1);
                     }
@@ -974,17 +1028,17 @@ class ApiController extends AppController {
                     $orgArray["token"] = $this->request->data["token"];
                     $orgArray["Organization"]["departments"] = $this->getOrgValues($org_id, "OrgDepartments");
                     $orgArray["Organization"]["entities"] = $this->getOrgValues($org_id, "Entity");
-// $orgArray["Organization"]["entity"] = $this->getOrgValues($org_id, "Entity");
+                    // $orgArray["Organization"]["entity"] = $this->getOrgValues($org_id, "Entity");
                     $orgArray["Organization"]["job_titles"] = $this->getOrgValues($org_id, "OrgJobTitles");
                     $orgArray["Organization"]["org_role"] = "admin";
                     $orgArray["Organization"]["joined"] = "1";
 
                     if ($this->Auth->user('role') > 2 || $this->Auth->user('role') > 2) {
                         $this->User->id = $this->Auth->user('id');
-//$this->user->role = 2;
+                        //$this->user->role = 2;
                         $this->User->saveField('role', 2);
                     }
-//
+                    //
                     $params = array();
                     $params['fields'] = "*";
                     $params['conditions'] = array("DefaultOrg.user_id" => $this->Auth->user('id'));
@@ -1003,7 +1057,7 @@ class ApiController extends AppController {
 
 
 
-// send email
+                    // send email
                     $emailQueue = array();
                     $subject = "nDorse notification -- New Organization Created Successfully";
                     $viewVars = array("org_name" => $orgArray["Organization"]["name"], "fname" => $this->Auth->user('fname'));
@@ -1022,10 +1076,11 @@ class ApiController extends AppController {
 
 
 
-//
+                    //
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization created successfully!", 'data' => $orgArray),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization created successfully!", 'data' => $orgArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -1039,23 +1094,26 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function invite() {
+    public function invite()
+    {
         if ($this->request->is('post')) {
-// @TODO : Remove invalid email ids
+            // @TODO : Remove invalid email ids
             $this->request->data['emailIds'] = str_replace(" ", "", $this->request->data['emailIds']);
             $emailIds = explode(",", $this->request->data['emailIds']);
             $loggedInUser = $this->Auth->user();
@@ -1066,16 +1124,18 @@ class ApiController extends AppController {
 
             if (empty($current_org)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You have not joined any Organization. Please join some Organization."),
+                    'result' => array(
+                        "status" => false, "msg" => "You have not joined any Organization. Please join some Organization."
+                    ),
                     '_serialize' => array('result')
                 ));
 
                 return;
             } else if ($current_org['org_role'] == 'endorser') {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You are not authorized to Invite Users for " . $current_org['name']),
+                    'result' => array(
+                        "status" => false, "msg" => "You are not authorized to Invite Users for " . $current_org['name']
+                    ),
                     '_serialize' => array('result')
                 ));
 
@@ -1102,7 +1162,7 @@ class ApiController extends AppController {
                 $invitedMails[] = $invited['Invite']['email'];
             }
 
-// Save invites and emails to user
+            // Save invites and emails to user
             $invites = $emailQueue = array();
             $viewVars = array("org_name" => $current_org['name'], "org_code" => $current_org['secret_code']);
 
@@ -1117,7 +1177,7 @@ class ApiController extends AppController {
                 }
             }
 
-//Email to admin
+            //Email to admin
             /* $this->UserOrganization->unbindModel(array('belongsTo' => array('Organization')));
               $orgAdmins = $this->UserOrganization->find("all", array("conditions" => array("organization_id" => $loggedInUser['current_org']['id'], "user_role" => 2)));
 
@@ -1136,7 +1196,7 @@ class ApiController extends AppController {
               $emailQueue[] = array("to" => $adminDetails['User']['email'], "subject" => $subject, "config_vars" => $configVars, "template" => "invite_admin");
               } */
 
-//            $adminDetails = $this->User->findById($current_org['admin_id']);
+            //            $adminDetails = $this->User->findById($current_org['admin_id']);
             if (!empty($invites)) {
                 $this->Invite->saveMany($invites);
             }
@@ -1164,13 +1224,13 @@ class ApiController extends AppController {
                 }
             }
 
-//Get subscription information for current organization
+            //Get subscription information for current organization
             $statusConfig = Configure::read("statusConfig");
             $params = array();
             $conditions = array();
             $todayDate = date('Y-m-d H:i:s');
-//                $conditions['start_date <='] = $todayDate;
-//                $conditions['end_date >='] = $todayDate;
+            //                $conditions['start_date <='] = $todayDate;
+            //                $conditions['end_date >='] = $todayDate;
             $conditions['Subscription.status'] = 1;
             $conditions['Subscription.organization_id'] = $loggedInUser['current_org']['id'];
             $params['conditions'] = $conditions;
@@ -1191,20 +1251,24 @@ class ApiController extends AppController {
 
 
             $this->set(array(
-                'result' => array("status" => true,
-                    "msg" => $msg),
+                'result' => array(
+                    "status" => true,
+                    "msg" => $msg
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getProfile() {
+    public function getProfile()
+    {
 
         if (isset($this->request->data['token'])) {
             $authuser = $this->Auth->user();
@@ -1219,7 +1283,7 @@ class ApiController extends AppController {
             if ($authuser["id"] == $user_id) {
                 //$org_id = $authuser['current_org']['id'];
                 //$org_id = $authuser['current_org']->id;
-// *** GET CORE VALUES Start*** //
+                // *** GET CORE VALUES Start*** //
                 $params = array();
                 $params['fields'] = "count(*) as cnt";
                 $conditionarray["Endorsement.organization_id"] = $org_id;
@@ -1259,8 +1323,8 @@ class ApiController extends AppController {
                 $params['group'] = 'EndorseCoreValue.value_id';
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $corevalues = $this->Endorsement->find("all", $params);
-//print_r($corevalues);
-//	echo $this->Endorsement->getLastQuery();die;
+                //print_r($corevalues);
+                //	echo $this->Endorsement->getLastQuery();die;
                 $core_values = array();
                 if (!empty($corevalues)) {
                     foreach ($corevalues as $cval) {
@@ -1270,7 +1334,7 @@ class ApiController extends AppController {
                     }
                 }
 
-// *** GET CORE VALUES END*** //
+                // *** GET CORE VALUES END*** //
 
 
 
@@ -1279,7 +1343,7 @@ class ApiController extends AppController {
 
                 $params = array();
                 $params['fields'] = array("*");
-//$params['conditions'] = array("user_id" => $user_id, "organization_id" => $org_id);
+                //$params['conditions'] = array("user_id" => $user_id, "organization_id" => $org_id);
                 $params['joins'] = array(
                     array(
                         'table' => 'trophies',
@@ -1293,14 +1357,14 @@ class ApiController extends AppController {
                     )
                 );
                 $badges = $this->Badge->find("all", $params);
-//                echo $this->Badge->getLastQuery();
-//                pr($badges);die;
+                //                echo $this->Badge->getLastQuery();
+                //                pr($badges);die;
 
                 $userBadges = array();
 
                 foreach ($badges as $badge) {
                     $badgeInfo = array();
-//$badgeInfo['badge_id'] = $badge['Badge']['id'];
+                    //$badgeInfo['badge_id'] = $badge['Badge']['id'];
                     $badgeInfo['trophy_id'] = $badge['Trophy']['id'];
                     $badgeInfo['count'] = empty($badge['Badge']['count']) ? 0 : (int) $badge['Badge']['count'];
                     $rootUrl = Router::url('/', true);
@@ -1316,7 +1380,7 @@ class ApiController extends AppController {
                 $userinfo["user_data"] = $authuser;
                 $userinfo["badges"] = $userBadges;
                 $userinfo["core_value"] = $core_values;
-// $userinfo["user_data"] = $this->getuserData($token);
+                // $userinfo["user_data"] = $this->getuserData($token);
                 if (isset($userinfo["user_data"]["dob"]) && strtotime($userinfo["user_data"]["dob"]) > 0) {
                     $userinfo["user_data"]["dob"] = date("m/d/Y", strtotime($userinfo["user_data"]["dob"]));
                 } else {
@@ -1325,7 +1389,7 @@ class ApiController extends AppController {
                 unset($userinfo["current_org"]);
             } else {
 
-// *** GET CORE VALUES Start*** //
+                // *** GET CORE VALUES Start*** //
                 $params = array();
                 $conditionarray = array();
                 $params['fields'] = "count(*) as cnt";
@@ -1364,8 +1428,8 @@ class ApiController extends AppController {
                 $params['group'] = 'EndorseCoreValue.value_id';
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $corevalues = $this->Endorsement->find("all", $params);
-//print_r($corevalues);
-//	echo $this->Endorsement->getLastQuery();die;
+                //print_r($corevalues);
+                //	echo $this->Endorsement->getLastQuery();die;
                 $core_values = array();
                 if (!empty($corevalues)) {
                     foreach ($corevalues as $cval) {
@@ -1375,7 +1439,7 @@ class ApiController extends AppController {
                     }
                 }
 
-// *** GET CORE VALUES END*** //
+                // *** GET CORE VALUES END*** //
 
 
                 $conditionarray = $array = array();
@@ -1437,7 +1501,7 @@ class ApiController extends AppController {
 
                 $params = array();
                 $params['fields'] = array("*");
-//$params['conditions'] = array("user_id" => $user_id, "organization_id" => $org_id);
+                //$params['conditions'] = array("user_id" => $user_id, "organization_id" => $org_id);
                 $params['joins'] = array(
                     array(
                         'table' => 'trophies',
@@ -1451,14 +1515,14 @@ class ApiController extends AppController {
                     )
                 );
                 $badges = $this->Badge->find("all", $params);
-//                echo $this->Badge->getLastQuery();
-//                pr($badges);die;
+                //                echo $this->Badge->getLastQuery();
+                //                pr($badges);die;
 
                 $userBadges = array();
 
                 foreach ($badges as $badge) {
                     $badgeInfo = array();
-//$badgeInfo['badge_id'] = $badge['Badge']['id'];
+                    //$badgeInfo['badge_id'] = $badge['Badge']['id'];
                     $badgeInfo['trophy_id'] = $badge['Trophy']['id'];
                     $badgeInfo['count'] = empty($badge['Badge']['count']) ? 0 : (int) $badge['Badge']['count'];
                     $rootUrl = Router::url('/', true);
@@ -1469,14 +1533,14 @@ class ApiController extends AppController {
                 }
                 /*                 * * Budgt CODE END *** */
 
-//					//select users.*,user_organizations.organization_id,organizations.name
-// from  users
-//left join user_organizations on user_organizations.user_id =users.id and user_organizations.user_role='3'
-//left join organizations on organizations.id = user_organizations.organization_id and organizations.admin_id=2
-//where users.id=4 
+                //					//select users.*,user_organizations.organization_id,organizations.name
+                // from  users
+                //left join user_organizations on user_organizations.user_id =users.id and user_organizations.user_role='3'
+                //left join organizations on organizations.id = user_organizations.organization_id and organizations.admin_id=2
+                //where users.id=4 
                 $array['conditions'] = $conditionarray;
                 $orgArray = $this->User->find("all", $array);
-//  print_r($orgArray);
+                //  print_r($orgArray);
 
                 $orgarr = array();
                 foreach ($orgArray as $val) {
@@ -1496,7 +1560,7 @@ class ApiController extends AppController {
                     $userinfo["job_title"] = "";
                     if (isset($val["userOrganization"]) && !empty($val["userOrganization"])) {
                         if ($val["userOrganization"]["entity_id"] > 0) {
-//$userinfo["entity"] = $entity;
+                            //$userinfo["entity"] = $entity;
                             $entity = $this->getOrgValues($org_idnew, "Entity", 1, array($val["userOrganization"]["entity_id"]));
                             if (!empty($entity)) {
                                 $userinfo["entity"] = $entity[0]["name"];
@@ -1504,16 +1568,16 @@ class ApiController extends AppController {
                         }
 
                         if ($val["userOrganization"]["department_id"] > 0) {
-// $userinfo["department"] = $department;
+                            // $userinfo["department"] = $department;
                             $department = $this->getOrgValues($org_idnew, "OrgDepartments", 1, array($val["userOrganization"]["department_id"]));
                             if (!empty($department)) {
                                 $userinfo["department"] = $department[0]["name"];
                             }
                         }
                         if ($val["userOrganization"]["job_title_id"] > 0) {
-//$userinfo["job_title"] = $job_title;
+                            //$userinfo["job_title"] = $job_title;
                             $job_title = $this->getOrgValues($org_id, "OrgJobTitles", 1, array($val["userOrganization"]["job_title_id"]));
-// print_r($job_title);
+                            // print_r($job_title);
                             if (!empty($job_title)) {
                                 $userinfo["job_title"] = $job_title[0]["name"];
                             }
@@ -1549,7 +1613,7 @@ class ApiController extends AppController {
 
 
 
-//  $userinfo = $this->getuserData($token, true);
+            //  $userinfo = $this->getuserData($token, true);
             if (!empty($userinfo)) {
                 unset($userinfo["user_data"]["password"]);
                 unset($userinfo["user_data"]["gplus_id"]);
@@ -1558,11 +1622,11 @@ class ApiController extends AppController {
                 unset($userinfo["user_data"]["source_id"]);
                 unset($userinfo["user_data"]["lin_id"]);
                 unset($userinfo["user_data"]["secret_code"]);
-// $userinfo["users"]["entity"] = "";
+                // $userinfo["users"]["entity"] = "";
                 if (isset($userinfo["user_data"]["image"]) && $userinfo["user_data"]["image"] != "") {
                     $rootUrl = Router::url('/', true);
                     //$rootUrl = str_replace("http:", "https:", $rootUrl);
-//                    $userinfo["user_data"]["image"] = str_replace(Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/", "", $userinfo["user_data"]["image"]);
+                    //                    $userinfo["user_data"]["image"] = str_replace(Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/", "", $userinfo["user_data"]["image"]);
                     $userinfo["user_data"]["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userinfo["user_data"]["image"];
                 }
                 $userinfo["core_value"] = $core_values;
@@ -1575,41 +1639,45 @@ class ApiController extends AppController {
 
 
 
-//if ($userinfo["users"]["entity_id"] != "0") {
-//    // get entity name
-//
+                //if ($userinfo["users"]["entity_id"] != "0") {
+                //    // get entity name
+                //
                 //    $array = array();
-//    $array['fields'] = array('name');
-//    $array['conditions'] = array('id' => $userinfo["users"]["entity_id"]);
-//    $entitydata = $this->Entity->find('first', $array);
-//    if (!empty($entitydata)) {
-//        $entityname = $entitydata['Entity']['name'];
-//    }
-//    $userinfo["users"]["entity"] = $entityname;
-//}
+                //    $array['fields'] = array('name');
+                //    $array['conditions'] = array('id' => $userinfo["users"]["entity_id"]);
+                //    $entitydata = $this->Entity->find('first', $array);
+                //    if (!empty($entitydata)) {
+                //        $entityname = $entitydata['Entity']['name'];
+                //    }
+                //    $userinfo["users"]["entity"] = $entityname;
+                //}
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "profile info", 'data' => $userinfo),
+                    'result' => array(
+                        "status" => true, "msg" => "profile info", 'data' => $userinfo
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "invalid token"),
+                    'result' => array(
+                        "status" => true, "msg" => "invalid token"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getuserData($token, $data = false) {
+    public function getuserData($token, $data = false)
+    {
 
 
         $fields = "id";
@@ -1625,10 +1693,11 @@ class ApiController extends AppController {
         return $userinfo;
     }
 
-    public function saveprofile() {
+    public function saveprofile()
+    {
         $authuser = $this->Auth->user();
         $firstUpdate = false;
-//        pr($authuser);
+        //        pr($authuser);
 
         if (!isset($authuser['fname']) || empty($authuser['fname'])) {
             $firstUpdate = true;
@@ -1642,25 +1711,25 @@ class ApiController extends AppController {
 
         $resizeConfig = array('height' => 279, 'width' => 279);
 
-//print_r($this->request->data);
+        //print_r($this->request->data);
         if (isset($this->request->data['token'])) {
 
             $token = $this->request->data['token'];
             $userinfo = $this->getuserData($token);
-//            pr($userinfo);
+            //            pr($userinfo);
             $this->request->data["id"] = $userinfo["users"]["id"];
             $this->request->data["email"] = $authuser["email"];
             if (isset($this->request->data['image']) && $this->request->data['image'] == "") {
-//unset($this->request->data['image']);
+                //unset($this->request->data['image']);
             }
             if (isset($this->request->data["dob"]) && strtotime($this->request->data["dob"]) > 0) {
                 $this->request->data["dob"] = date("Y-m-d", strtotime($this->request->data["dob"]));
             }
-//            pr($this->request->data);
-//            exit;
+            //            pr($this->request->data);
+            //            exit;
             unset($this->request->data['role']);
             $this->User->set($this->request->data);
-// edit
+            // edit
 
             $this->User->setValidation('edit');
             $imgerror = 0;
@@ -1670,7 +1739,7 @@ class ApiController extends AppController {
                     $imageExtension = $this->User->data['User']['file_extension'];
                 }
                 if ($this->User->save(null, false)) {
-//Upload profile image
+                    //Upload profile image
                     if (isset($this->request->data['image']) && $this->request->data['image'] != "") {
                         $uploadPath = PROFILE_IMAGE_DIR;
                         $imageData = $this->request->data['image'];
@@ -1681,7 +1750,7 @@ class ApiController extends AppController {
                     } elseif (isset($this->request->data['image']) && $this->request->data['image'] == "") {
                         $this->User->saveField('image', "");
                     }
-//$current_org
+                    //$current_org
 
                     $userinfo = $this->getuserData($token, true);
 
@@ -1697,14 +1766,14 @@ class ApiController extends AppController {
                         $rootUrl = Router::url('/', true);
                         //$rootUrl = str_replace("http:", "https:", $rootUrl);
                         $userinfo["users"]["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userinfo["users"]["image"];
-//$userinfo["users"]["image"] = $userinfo["users"]["image"];
+                        //$userinfo["users"]["image"] = $userinfo["users"]["image"];
                     }
 
                     $userinfo['users']["current_org"] = $authuser["current_org"];
                     $this->Session->write('Auth.User', $userinfo['users']);
                     $this->Session->write('Auth.User.profile_updated', true);
                     $this->Session->write('Auth.User.token', $token);
-//Get pending request organizations
+                    //Get pending request organizations
                     $pendingRequests = $this->OrgRequests->find("all", array("conditions" => array("user_id" => $authuser['id'], "status" => 0)));
                     $pendingRequestOrgs = array();
                     foreach ($pendingRequests as $pendingRequest) {
@@ -1718,15 +1787,15 @@ class ApiController extends AppController {
                     $userinfo["pending_requests"] = $pendingRequestOrgs;
                     unset($userinfo["created"]);
                     unset($userinfo["updated"]);
-//unset($userinfo["secret_code"]);
-// unset($userinfo["role"]);//
-// get user role according to
+                    //unset($userinfo["secret_code"]);
+                    // unset($userinfo["role"]);//
+                    // get user role according to
                     $userorgrole = $this->UserOrganization->find("all", array(
                         'joins' => array(array('table' => 'default_orgs', 'type' => 'INNER', 'conditions' => array('UserOrganization.organization_id = default_orgs.organization_id'))),
                         'conditions' => array('UserOrganization.user_id' => $userinfo["id"]),
                         'fields' => array('UserOrganization.user_role')
                     ));
-//
+                    //
                     if (!empty($userorgrole)) {
 
                         $userinfo["role"] = $userorgrole[0]["UserOrganization"]["user_role"];
@@ -1749,16 +1818,17 @@ class ApiController extends AppController {
 
                         $subject = "nDorse sign up successful";
                         $to = $this->request->data['email'];
-//$this->Common->sendEmail($this->request->data['email'], $subject, "register", $configVars);
+                        //$this->Common->sendEmail($this->request->data['email'], $subject, "register", $configVars);
                         $email = array("to" => $to, "subject" => $subject, "config_vars" => $configVars, "template" => "register");
                         $this->Email->save($email);
                         $msg = "Your profile was created successfully.";
                     }
 
-//
+                    //
                     if (isset($this->request->data['device_id']) && $this->request->data['device_id'] != "") {
                         $this->LoginStatistics->updateAll(
-                                array('LoginStatistics.live' => "0"), array('LoginStatistics.user_id' => $userinfo["id"])
+                            array('LoginStatistics.live' => "0"),
+                            array('LoginStatistics.user_id' => $userinfo["id"])
                         );
                         $loginStats = array();
                         $loginStats['user_id'] = $userinfo["id"];
@@ -1770,11 +1840,12 @@ class ApiController extends AppController {
                         $this->LoginStatistics->set($loginStats);
                         $this->LoginStatistics->save();
                     }
-//
+                    //
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => $msg, 'data' => $userinfo),
+                        'result' => array(
+                            "status" => true, "msg" => $msg, 'data' => $userinfo
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -1787,21 +1858,24 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Errors!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function saveprofileorg() {
+    public function saveprofileorg()
+    {
 
         if (isset($this->request->data['token'])) {
             $userinfo = $this->getuserData($this->request->data['token'], false);
@@ -1811,7 +1885,8 @@ class ApiController extends AppController {
             $department_id = $this->request->data['department_id'];
             $job_title_id = $this->request->data['job_title_id'];
             $this->UserOrganization->updateAll(
-                    array('UserOrganization.entity_id' => "'" . $entity_id . "'", 'UserOrganization.department_id' => "'" . $department_id . "'", 'UserOrganization.job_title_id' => "'" . $job_title_id . "'"), array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
+                array('UserOrganization.entity_id' => "'" . $entity_id . "'", 'UserOrganization.department_id' => "'" . $department_id . "'", 'UserOrganization.job_title_id' => "'" . $job_title_id . "'"),
+                array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
             );
             $userinfo = $this->UserOrganization->find("all", array(
                 'joins' => array(array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id'))),
@@ -1820,27 +1895,30 @@ class ApiController extends AppController {
             ));
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "organization user details", 'data' => $userinfo),
+                'result' => array(
+                    "status" => true, "msg" => "organization user details", 'data' => $userinfo
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function changepassword() {
-// check users organization 1 or many
-// 
+    public function changepassword()
+    {
+        // check users organization 1 or many
+        // 
         $authuser = $this->Auth->user();
         if (isset($this->request->data['token'])) {
             $org_id = $this->request->data["org_id"];
             $user_id = $this->request->data["user_id"];
-//
+            //
             if ($user_id != "") {
 
                 $array = array();
@@ -1881,13 +1959,13 @@ class ApiController extends AppController {
                 $array['conditions'] = $conditionarray;
                 $orgArray = $this->Organization->find("all", $array);
                 pr($orgArray);
-//	echo $this->Organization->getLastQuery();die;
+                //	echo $this->Organization->getLastQuery();die;
             }
-//
+            //
             $orgemail = array();
 
             $this->User->set($this->request->data);
-// edit
+            // edit
             $this->request->data["id"] = $user_id;
             $this->User->setValidation('reset_password');
             if ($this->User->validates()) {
@@ -1897,11 +1975,11 @@ class ApiController extends AppController {
                 if ($this->User->save($this->request->data)) {
                     foreach ($orgArray as $orgval) {
                         $requestarray[] = array("organization_id" => $orgval['Organization']['id'], "user_id" => $user_id);
-// orgAdmin xxxx has reset your password. Your new password is yyyyyy
+                        // orgAdmin xxxx has reset your password. Your new password is yyyyyy
                         $organization_name = $orgval['Organization']['name'];
                         if ($org_id == $orgval['Organization']['id']) {
 
-//$subject = "Password updated by a " . $organization_name." orgAdmin";
+                            //$subject = "Password updated by a " . $organization_name." orgAdmin";
                             $subject = "nDorse Password Reset";
                             $viewVars = array("org_name" => $orgval['Organization']['name'], "fname" => trim($orgval['User1']['fname']), "password" => $password, "user_name" => trim($orgval['User1']['fname'] . " " . $orgval['User1']['lname']));
 
@@ -1916,7 +1994,7 @@ class ApiController extends AppController {
                             $configVars = serialize($viewVars);
                             $emailQueue[] = array("to" => $orgval['User1']['useremail'], "subject" => $subject, "config_vars" => $configVars, "template" => "update_password");
                         } else {
-// $subject = "Password updated by a " . $organization_name." orgAdmin";
+                            // $subject = "Password updated by a " . $organization_name." orgAdmin";
                             $subject = "nDorse Password Reset";
                             $viewVars = array("org_name" => $organization_name, "fname" => trim($orgval['User1']['fname']), "password" => $password, "user_name" => trim($orgval['User1']['fname'] . " " . $orgval['User1']['lname']));
 
@@ -1935,10 +2013,11 @@ class ApiController extends AppController {
                     if (!empty($emailQueue)) {
                         $this->Email->saveMany($emailQueue);
                     }
-// send email to user for change password
+                    // send email to user for change password
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Password update successfully. ", 'data' => true),
+                        'result' => array(
+                            "status" => true, "msg" => "Password update successfully. ", 'data' => true
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
@@ -1951,8 +2030,9 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -1965,22 +2045,25 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// api for get organization details
-    public function getOrganization() {
+    // api for get organization details
+    public function getOrganization()
+    {
         $statusConfig = Configure::read("statusConfig");
         if (isset($this->request->query['token'])) {
             if (isset($this->request->query['oid'])) {
@@ -1998,10 +2081,10 @@ class ApiController extends AppController {
                 if (!empty($orgArray)) {
 
                     $orgArray["Organization"]["status"] = array_search($orgArray["Organization"]["status"], $statusConfig);
-//unset($orgArray["Organization"]["secret_code"]);
+                    //unset($orgArray["Organization"]["secret_code"]);
                     unset($orgArray["Organization"]["admin_id"]);
-// get core values
-//
+                    // get core values
+                    //
                     $params = array();
                     $start_date = "";
                     $end_date = "";
@@ -2060,7 +2143,7 @@ class ApiController extends AppController {
                         foreach ($corevalues as $cval) {
 
                             $cinfo[] = array("id" => $cval["OrgCoreValues"]["id"], "name" => $cval["OrgCoreValues"]["core_value"], "color_code" => $cval["OrgCoreValues"]["color_code"], "total" => $cval[0]["total"]);
-//$total_value += $cval[0]["tot"];
+                            //$total_value += $cval[0]["tot"];
                         }
                     }
 
@@ -2074,12 +2157,12 @@ class ApiController extends AppController {
                     foreach ($coreinfo as $cval) {
 
                         $core_value[] = array("id" => $cval["OrgCoreValues"]["id"], "name" => $cval["OrgCoreValues"]["name"], "color_code" => $cval["OrgCoreValues"]["color_code"]);
-//$total_value += $cval[0]["tot"];
+                        //$total_value += $cval[0]["tot"];
                     }
-//        select count(`EndorseCoreValue`.`id`),`Endorsement`.`id` from `endorsements` AS `Endorsement`  
-//LEFT  JOIN `ndorse_arcgate`.`endorse_core_values` AS `EndorseCoreValue` ON (`Endorsement`.`id` =`EndorseCoreValue`.`endorsement_id`) 
-//where `Endorsement`.`organization_id`=258
-//group by EndorseCoreValue.endorsement_id  order by `Endorsement`.`id`
+                    //        select count(`EndorseCoreValue`.`id`),`Endorsement`.`id` from `endorsements` AS `Endorsement`  
+                    //LEFT  JOIN `ndorse_arcgate`.`endorse_core_values` AS `EndorseCoreValue` ON (`Endorsement`.`id` =`EndorseCoreValue`.`endorsement_id`) 
+                    //where `Endorsement`.`organization_id`=258
+                    //group by EndorseCoreValue.endorsement_id  order by `Endorsement`.`id`
                     $params = array();
                     $conditionarray['Endorsement.organization_id'] = $org_id; // array('0','1','3');
                     unset($conditionarray["Endorsement.created >= "]);
@@ -2103,9 +2186,9 @@ class ApiController extends AppController {
                     $this->Endorsement->recursive = -1;
                     $corevaluesendorsement = $this->Endorsement->find("all", $params);
 
-//                $log = $this->Endorsement->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
+                    //                $log = $this->Endorsement->getDataSource()->getLog(false, false);
+                    //                pr($log);
+                    //                exit;
                     //pr($corevaluesendorsement); exit;
 
 
@@ -2114,9 +2197,9 @@ class ApiController extends AppController {
                     foreach ($corevaluesendorsement as $coreeval) {
                         $corevaltotal += $coreeval[0]["total"];
                     }
-//print_r($corevaluesendorsement);
-// echo $this->Endorsement->getLastQuery();die;
-//exit;
+                    //print_r($corevaluesendorsement);
+                    // echo $this->Endorsement->getLastQuery();die;
+                    //exit;
                     $orgArray["core_values"] = $cinfo;
                     $orgArray["total_core_values"] = $corevaltotal;
                     $orgArray["total_endorsement"] = count($corevaluesendorsement); //$cinfo;
@@ -2133,54 +2216,59 @@ class ApiController extends AppController {
                     $rootUrl = Router::url('/', true);
                     //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $orgArray["Organization"]["health_url"] = $rootUrl . "img/" . $orgArray["Organization"]["health_url"];
-//                    pr($orgArray); exit;
+                    //                    pr($orgArray); exit;
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization info ", 'data' => $orgArray),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization info ", 'data' => $orgArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Organization not found"),
+                        'result' => array(
+                            "status" => false, "msg" => "Organization not found"
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Organization ID is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Organization ID is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// api for save organization 		 
-    public function saveOrganization() {
+    // api for save organization 		 
+    public function saveOrganization()
+    {
         $statusConfig = Configure::read("statusConfig");
 
         if ($this->request->is('post')) {
-//'ruleValid'=>array(
-//                   'rule' => array('validateImage'),
-//            )
-//$this->Organization->validate['short_name']['ruleUnique'] = array(
-//    'rule' => 'isUnique',
-//    'required' => 'create',
-//    "on" => 'update',
-//    'message' => 'Short name already exists.'
-//);
+            //'ruleValid'=>array(
+            //                   'rule' => array('validateImage'),
+            //            )
+            //$this->Organization->validate['short_name']['ruleUnique'] = array(
+            //    'rule' => 'isUnique',
+            //    'required' => 'create',
+            //    "on" => 'update',
+            //    'message' => 'Short name already exists.'
+            //);
             $org_id = $this->request->data["id"] = $this->request->data["org_id"];
 
 
-// unset($this->Organization->validate['image']['ruleRequired']);
-// unset($this->Organization->validate['secret_code']);
+            // unset($this->Organization->validate['image']['ruleRequired']);
+            // unset($this->Organization->validate['secret_code']);
             if (isset($this->request->data['image']) && $this->request->data['image'] == "") {
                 unset($this->request->data['image']);
             }
@@ -2196,16 +2284,16 @@ class ApiController extends AppController {
                 "on" => 'update',
                 'message' => 'Organization name already exists.'
             );
-// if(isset($this->request->data['name']) && $this->request->data['name']!="")
-// {
-// $organizations = $this->Organization->find("all", array("conditions" => array("id !=" => $org_id,"name"=>$this->request->data['name'])));
-// print_r($organizations);
-// }
-//unset($this->Organization->validate['name']['ruleUnique']);
+            // if(isset($this->request->data['name']) && $this->request->data['name']!="")
+            // {
+            // $organizations = $this->Organization->find("all", array("conditions" => array("id !=" => $org_id,"name"=>$this->request->data['name'])));
+            // print_r($organizations);
+            // }
+            //unset($this->Organization->validate['name']['ruleUnique']);
             $this->Organization->id = $org_id;
 
             if ($this->Organization->validates()) {
-//
+                //
 
 
                 if (isset($this->request->data['image']) && $this->request->data['image'] != "") {
@@ -2213,7 +2301,7 @@ class ApiController extends AppController {
                 }
 
                 if ($this->Organization->save(null, false)) {
-//Upload profile image
+                    //Upload profile image
                     if (isset($this->request->data['image']) && $this->request->data['image'] != "") {
                         $uploadPath = ORG_IMAGE_DIR;
                         $imageData = $this->request->data['image'];
@@ -2222,10 +2310,10 @@ class ApiController extends AppController {
                             $this->Organization->saveField('image', $imageName);
                         }
                     }
-// save organization core value
+                    // save organization core value
                     if (isset($this->request->data["core_values"]) && $this->request->data["core_values"] != "") {
                         $orgCoreValues = json_decode($this->request->data['core_values']);
-//$orgCoreValues = array();
+                        //$orgCoreValues = array();
                         $array = array();
                         $array['fields'] = array('*');
                         $array['conditions'] = array('organization_id' => $org_id);
@@ -2238,29 +2326,30 @@ class ApiController extends AppController {
                             foreach ($coreValuelist as $listval) {
 
                                 $existcoreValueArray[$listval["OrgCoreValues"]["id"]] = $listval["OrgCoreValues"]["name"];
-//$coreValuelist
+                                //$coreValuelist
                             }
                         }
 
                         $this->OrgCoreValues->updateAll(
-                                array('OrgCoreValues.status' => "2"), array('OrgCoreValues.organization_id' => $org_id)
+                            array('OrgCoreValues.status' => "2"),
+                            array('OrgCoreValues.organization_id' => $org_id)
                         );
                         $norgCoreValues = array();
 
                         foreach ($orgCoreValues as $key => $coreValue) {
                             $valueid = array_search($coreValue->name, $existcoreValueArray);
-//echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
+                            //echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
                             if (1) {
 
                                 if ($valueid > 0) {
                                     $norgCoreValues[$key]['id'] = $valueid;
-//continue;
+                                    //continue;
                                 }
                             } else {
-//if ($valueid > 0 && $valueid != $coreValue->id) {
-//    $norgCoreValues[$key]['id'] = $valueid;
-//    //continue;
-//}
+                                //if ($valueid > 0 && $valueid != $coreValue->id) {
+                                //    $norgCoreValues[$key]['id'] = $valueid;
+                                //    //continue;
+                                //}
                             }
 
                             $norgCoreValues[$key]['color_code'] = $coreValue->color_code;
@@ -2268,15 +2357,15 @@ class ApiController extends AppController {
                             $norgCoreValues[$key]['organization_id'] = $org_id;
                             $norgCoreValues[$key]['status'] = 1;
 
-//if (isset($coreValue->from_master)) {
-//    $norgCoreValues[$key]["from_master"] = $coreValue->from_master;
-//}
+                            //if (isset($coreValue->from_master)) {
+                            //    $norgCoreValues[$key]["from_master"] = $coreValue->from_master;
+                            //}
                         }
 
                         $this->OrgCoreValues->saveMany($norgCoreValues);
                     }
-// end save org core values
-// save entity org values
+                    // end save org core values
+                    // save entity org values
                     if (isset($this->request->data["entity"]) && $this->request->data["entity"] != "") {
                         $array = array();
                         $array['fields'] = array('*');
@@ -2284,36 +2373,37 @@ class ApiController extends AppController {
                         $entityValuelist = $this->Entity->find("all", $array);
                         $existentityValueArray = array();
                         $this->Entity->updateAll(
-                                array('Entity.status' => "2"), array('Entity.organization_id' => $org_id)
+                            array('Entity.status' => "2"),
+                            array('Entity.organization_id' => $org_id)
                         );
                         if (!empty($entityValuelist)) {
 
                             foreach ($entityValuelist as $listval) {
 
                                 $existentityValueArray[$listval["Entity"]["id"]] = $listval["Entity"]["name"];
-//$coreValuelist
+                                //$coreValuelist
                             }
                         }
 
                         $orgEntityValues = explode(",", $this->request->data["entity"]);
                         $orgEntityValues1 = array();
                         foreach ($orgEntityValues as $key => $EntityValues) {
-//
+                            //
                             $valueid = array_search($EntityValues, $existentityValueArray);
-//echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
+                            //echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
                             if (1) {
 
                                 if ($valueid > 0) {
                                     $orgEntityValues1[$key]['id'] = $valueid;
-//continue;
+                                    //continue;
                                 }
                             } else {
-//if ($valueid > 0 && $valueid != $EntityValues->id) {
-//    $orgEntityValues1[$key]['id'] = $valueid;
-//    //continue;
-//}
+                                //if ($valueid > 0 && $valueid != $EntityValues->id) {
+                                //    $orgEntityValues1[$key]['id'] = $valueid;
+                                //    //continue;
+                                //}
                             }
-//
+                            //
                             $orgEntityValues1[$key]["organization_id"] = $org_id;
                             $orgEntityValues1[$key]['name'] = $EntityValues;
                             $orgEntityValues1[$key]["status"] = 1;
@@ -2321,13 +2411,14 @@ class ApiController extends AppController {
                         $this->Entity->saveMany($orgEntityValues1);
                     } else {
                         $this->Entity->updateAll(
-                                array('Entity.status' => "2"), array('Entity.organization_id' => $org_id)
+                            array('Entity.status' => "2"),
+                            array('Entity.organization_id' => $org_id)
                         );
                     }
 
 
-// end save entity org 
-// save dept org values
+                    // end save entity org 
+                    // save dept org values
                     if (isset($this->request->data["department"]) && $this->request->data["department"] != "") {
                         $array = array();
                         $array['fields'] = array('*');
@@ -2335,51 +2426,53 @@ class ApiController extends AppController {
                         $deptValuelist = $this->OrgDepartments->find("all", $array);
                         $existdeptValueArray = array();
                         $this->OrgDepartments->updateAll(
-                                array('OrgDepartments.status' => "2"), array('OrgDepartments.organization_id' => $org_id)
+                            array('OrgDepartments.status' => "2"),
+                            array('OrgDepartments.organization_id' => $org_id)
                         );
                         if (!empty($deptValuelist)) {
 
                             foreach ($deptValuelist as $listval) {
 
                                 $existdeptValueArray[$listval["OrgDepartments"]["id"]] = $listval["OrgDepartments"]["name"];
-//$coreValuelist
+                                //$coreValuelist
                             }
                         }
 
                         $orgDeptValues = explode(",", $this->request->data["department"]);
                         $orgDeptValues1 = array();
                         foreach ($orgDeptValues as $key => $DeptValues) {
-//
+                            //
                             $valueid = array_search($DeptValues, $existdeptValueArray);
-//echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
+                            //echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
                             if (1) {
 
                                 if ($valueid > 0) {
                                     $orgDeptValues1[$key]['id'] = $valueid;
-//continue;
+                                    //continue;
                                 }
                             } else {
-//if ($valueid > 0 && $valueid != $DeptValues->id) {
-//    $orgDeptValues1[$key]['id'] = $valueid;
-//    //continue;
-//}
+                                //if ($valueid > 0 && $valueid != $DeptValues->id) {
+                                //    $orgDeptValues1[$key]['id'] = $valueid;
+                                //    //continue;
+                                //}
                             }
-//
+                            //
                             $orgDeptValues1[$key]["organization_id"] = $org_id;
                             $orgDeptValues1[$key]['name'] = $DeptValues; //$DeptValues->name;
-//$orgDeptValues1[$key]["from_master"] = $DeptValues->from_master;
+                            //$orgDeptValues1[$key]["from_master"] = $DeptValues->from_master;
                             $orgDeptValues1[$key]["status"] = 1;
                         }
                         $this->OrgDepartments->saveMany($orgDeptValues1);
                     } else {
                         $this->OrgDepartments->updateAll(
-                                array('OrgDepartments.status' => "2"), array('OrgDepartments.organization_id' => $org_id)
+                            array('OrgDepartments.status' => "2"),
+                            array('OrgDepartments.organization_id' => $org_id)
                         );
                     }
 
 
-// end save Dept org
-// save job title org values
+                    // end save Dept org
+                    // save job title org values
                     if (isset($this->request->data["job_title"]) && $this->request->data["job_title"] != "") {
                         $array = array();
                         $array['fields'] = array('*');
@@ -2387,54 +2480,57 @@ class ApiController extends AppController {
                         $JobTitleValuelist = $this->OrgJobTitles->find("all", $array);
                         $existJobTitleValueArray = array();
                         $this->OrgJobTitles->updateAll(
-                                array('OrgJobTitles.status' => "2"), array('OrgJobTitles.organization_id' => $org_id)
+                            array('OrgJobTitles.status' => "2"),
+                            array('OrgJobTitles.organization_id' => $org_id)
                         );
                         if (!empty($JobTitleValuelist)) {
 
                             foreach ($JobTitleValuelist as $listval) {
 
                                 $existJobTitleValueArray[$listval["OrgJobTitles"]["id"]] = $listval["OrgJobTitles"]["title"];
-//$coreValuelist
+                                //$coreValuelist
                             }
                         }
 
                         $orgJobTitleValues = explode(",", $this->request->data["job_title"]);
                         $orgJobTitleValues1 = array();
                         foreach ($orgJobTitleValues as $key => $JobTitleValues) {
-//
+                            //
                             $valueid = array_search($JobTitleValues, $existJobTitleValueArray);
-//echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
+                            //echo $coreValue["name"]."-----newid---".$valueid."----".$coreValue["id"];
                             if (1) {
 
                                 if ($valueid > 0) {
                                     $orgJobTitleValues1[$key]['id'] = $valueid;
-//continue;
+                                    //continue;
                                 }
                             } else {
-//if ($valueid > 0 && $valueid != $JobTitleValues->id) {
-//    $orgJobTitleValues1[$key]['id'] = $valueid;
-//    //continue;
-//}
+                                //if ($valueid > 0 && $valueid != $JobTitleValues->id) {
+                                //    $orgJobTitleValues1[$key]['id'] = $valueid;
+                                //    //continue;
+                                //}
                             }
-//
+                            //
                             $orgJobTitleValues1[$key]['title'] = $JobTitleValues;
-// $orgJobTitleValues1[$key]["from_master"] = $JobTitleValues->from_master;
+                            // $orgJobTitleValues1[$key]["from_master"] = $JobTitleValues->from_master;
                             $orgJobTitleValues1[$key]["organization_id"] = $this->Organization->id;
                             $orgJobTitleValues1[$key]["status"] = 1;
                         }
                         $this->OrgJobTitles->saveMany($orgJobTitleValues1);
                     } else {
                         $this->OrgJobTitles->updateAll(
-                                array('OrgJobTitles.status' => "2"), array('OrgJobTitles.organization_id' => $org_id)
+                            array('OrgJobTitles.status' => "2"),
+                            array('OrgJobTitles.organization_id' => $org_id)
                         );
                     }
 
 
 
-// end save Dept org
+                    // end save Dept org
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization profile updated successfully.", 'data' => true),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization profile updated successfully.", 'data' => true
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -2447,26 +2543,29 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// api for get user in organization
-    public function getorganizationuser() {
+    // api for get user in organization
+    public function getorganizationuser()
+    {
         $statusConfig = Configure::read("statusConfig");
         if (isset($this->request->query['token'])) {
             $org_id = $this->request->query['oid'];
-//$loggedinUser = $this->Auth->user();
+            //$loggedinUser = $this->Auth->user();
             $userinfo = $this->getuserData($this->request->query['token']);
             $login_user_id = $userinfo["users"]["id"];
             $limit = Configure::read("pageLimit");
@@ -2486,7 +2585,7 @@ class ApiController extends AppController {
 
             $params = array();
             $params['fields'] = "count(*) as cnt";
-//echo $userspecific."---". $login_user_id;
+            //echo $userspecific."---". $login_user_id;
             if ($userspecific == 0) {
                 $params['conditions'] = array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_role' => array('3', '2'), 'UserOrganization.user_id !=' => $login_user_id, 'UserOrganization.status' => array('0', '1', '3'));
             } else {
@@ -2507,8 +2606,8 @@ class ApiController extends AppController {
             if ($userspecific == 0) {
 
                 $totaluser = $this->UserOrganization->find("all", $params);
-//print_r($totaluser);
-//echo $this->UserOrganization->getLastQuery();die;
+                //print_r($totaluser);
+                //echo $this->UserOrganization->getLastQuery();die;
                 $totaluser = $totaluser[0][0]["cnt"];
                 $totalpage = ceil($totaluser / $limit);
             }
@@ -2523,13 +2622,13 @@ class ApiController extends AppController {
             $userinfo = $this->UserOrganization->find("all", $params);
 
 
-//$userinfo = $this->UserOrganization->find("all", array(
-//            'joins' => array(array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id'))),
-//            'conditions' => array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_role' => array('3', '4'), 'UserOrganization.status' => array('0', '1', '3')),
-//            'fields' => array('users.id,users.fname,users.lname,users.image,UserOrganization.status,UserOrganization.user_role,UserOrganization.entity_id,UserOrganization.department_id,UserOrganization.job_title_id')
-//        ));
-// echo $this->UserOrganization->getLastQuery();
-// echo "<hr>";
+            //$userinfo = $this->UserOrganization->find("all", array(
+            //            'joins' => array(array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id'))),
+            //            'conditions' => array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_role' => array('3', '4'), 'UserOrganization.status' => array('0', '1', '3')),
+            //            'fields' => array('users.id,users.fname,users.lname,users.image,UserOrganization.status,UserOrganization.user_role,UserOrganization.entity_id,UserOrganization.department_id,UserOrganization.job_title_id')
+            //        ));
+            // echo $this->UserOrganization->getLastQuery();
+            // echo "<hr>";
 
             $userdetails = array();
             foreach ($userinfo as $userval) {
@@ -2549,21 +2648,24 @@ class ApiController extends AppController {
                 $data = array("users" => $userdetails);
             }
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "organization users", 'data' => $data),
+                'result' => array(
+                    "status" => true, "msg" => "organization users", 'data' => $data
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// api for inactive/active/delete user in organization
-    public function userOrgAction() {
+    // api for inactive/active/delete user in organization
+    public function userOrgAction()
+    {
         $statusConfig = Configure::read("statusConfig");
 
         if (isset($this->request->data['token'])) {
@@ -2576,20 +2678,20 @@ class ApiController extends AppController {
             $subscriptiondata = $this->Subscription->findByOrganizationId($org_id);
             if (in_array($status, array(1, 3))) {
                 $available_pool = 10;
-// get subscription info
+                // get subscription info
 
                 if (!empty($subscriptiondata) && $subscriptiondata["Subscription"]["status"] == 1) {
                     $available_pool += $subscriptiondata["Subscription"]["pool_purchased"];
                 }
-//$params =array();
-//$params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['active'], $statusConfig['eval']));
-//$params['fields'] = array("COUNT(UserOrganization.user_id) as count");
-//$userOrgStats = $this->UserOrganization->find("all", $params);
-// $usercount = $userOrgStats[0][0]["count"];
-//  $ucount = $usercount+1;
-//
+                //$params =array();
+                //$params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['active'], $statusConfig['eval']));
+                //$params['fields'] = array("COUNT(UserOrganization.user_id) as count");
+                //$userOrgStats = $this->UserOrganization->find("all", $params);
+                // $usercount = $userOrgStats[0][0]["count"];
+                //  $ucount = $usercount+1;
+                //
                 $params = array();
-// $params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['inactive'], $statusConfig['active'], $statusConfig['eval']));
+                // $params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['inactive'], $statusConfig['active'], $statusConfig['eval']));
                 $params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['active'], $statusConfig['eval']));
                 $params['group'] = 'pool_type';
                 $params['fields'] = array("UserOrganization.pool_type", "COUNT(UserOrganization.user_id) as count");
@@ -2608,8 +2710,8 @@ class ApiController extends AppController {
 
                 $usercount = $freeCount + $paidCount;
                 $ucount = $usercount + 1;
-//
-//User cannot be set to evaluation mode since subscription limit is over
+                //
+                //User cannot be set to evaluation mode since subscription limit is over
                 $modemsg = "Active";
                 if ($status == 3) {
                     $modemsg = "Evaluation mode";
@@ -2618,22 +2720,23 @@ class ApiController extends AppController {
                 if ($ucount > $available_pool) {
                     $msg = "No quota available.";
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Subscription limit exceeded! To add user(s) to " . $modemsg . "; purchase or upgrade subscription to activate added user(s) using Admin Portal on www.ndorse.net or by contacting NDORSE LLC at support@ndorse.net."),
+                        'result' => array(
+                            "status" => false, "msg" => "Subscription limit exceeded! To add user(s) to " . $modemsg . "; purchase or upgrade subscription to activate added user(s) using Admin Portal on www.ndorse.net or by contacting NDORSE LLC at support@ndorse.net."
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
                 }
                 $pool_type = "'free'";
-//if($ucount>10){
-//  $pool_type ="'paid'";   
-//}
+                //if($ucount>10){
+                //  $pool_type ="'paid'";   
+                //}
                 if ($freeCount >= 10) {
                     $pool_type = "'paid'";
                 }
             }
 
-//
+            //
             $updatemsg = "User status updated successfully.";
             if (in_array($status, array(0, 2))) {
                 $pool_type = "'paid'";
@@ -2647,7 +2750,8 @@ class ApiController extends AppController {
                 }
             }
             $this->UserOrganization->updateAll(
-                    array('UserOrganization.status' => $status, 'UserOrganization.pool_type' => $pool_type), array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
+                array('UserOrganization.status' => $status, 'UserOrganization.pool_type' => $pool_type),
+                array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
             );
             $userstatus = 1;
             if ($useraccess == "inactive" || $useraccess == "eval" || $useraccess == "deleted") {
@@ -2656,11 +2760,14 @@ class ApiController extends AppController {
             $defaultorg = $this->DefaultOrg->find("first", array("conditions" => array("user_id" => $user_id)));
             if (!empty($defaultorg)) {
                 $this->DefaultOrg->updateAll(
-                        array('DefaultOrg.status' => $userstatus), array('DefaultOrg.organization_id' => $org_id, 'DefaultOrg.user_id' => $user_id)
+                    array('DefaultOrg.status' => $userstatus),
+                    array('DefaultOrg.organization_id' => $org_id, 'DefaultOrg.user_id' => $user_id)
                 );
             } elseif ($useraccess == "active") {
-                $userorgs = $this->UserOrganization->find("all", array('joins' => array(/* array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id')), */
-                        array('table' => 'organizations', 'type' => 'INNER', 'conditions' => array('organizations.id = UserOrganization.organization_id and organizations.status=1'))),
+                $userorgs = $this->UserOrganization->find("all", array(
+                    'joins' => array(/* array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id')), */
+                        array('table' => 'organizations', 'type' => 'INNER', 'conditions' => array('organizations.id = UserOrganization.organization_id and organizations.status=1'))
+                    ),
                     'conditions' => array('UserOrganization.user_id' => $user_id),
                     'fields' => array('organizations.id')
                 ));
@@ -2671,11 +2778,12 @@ class ApiController extends AppController {
             }
             $userinfo = $this->UserOrganization->find("all", array(
                 'joins' => array(/* array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id')), */
-                    array('table' => 'organizations', 'type' => 'INNER', 'conditions' => array('organizations.id = UserOrganization.organization_id'))),
+                    array('table' => 'organizations', 'type' => 'INNER', 'conditions' => array('organizations.id = UserOrganization.organization_id'))
+                ),
                 'conditions' => array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id),
                 'fields' => array('UserOrganization.user_id,UserOrganization.status,UserOrganization.user_role,organizations.name,organizations.admin_id')
             ));
-// print_r($userinfo);
+            // print_r($userinfo);
             $userid = array();
             foreach ($userinfo as $userval) {
                 $userid[] = $userval["UserOrganization"]["user_id"];
@@ -2690,22 +2798,23 @@ class ApiController extends AppController {
             if ($useraccess == "deleted") {
 
                 $this->Invite->updateAll(
-                        array('Invite.is_deleted' => 1), array('Invite.organization_id' => $org_id, 'Invite.email' => $userdetailid[$user_id]["email"])
+                    array('Invite.is_deleted' => 1),
+                    array('Invite.organization_id' => $org_id, 'Invite.email' => $userdetailid[$user_id]["email"])
                 );
-            } $userdetails = array();
+            }
+            $userdetails = array();
             $emailQueue = array();
             foreach ($userinfo as $userval) {
-// print_r($userval);exit;
+                // print_r($userval);exit;
                 $euser = $userdetailid[$userval["UserOrganization"]["user_id"]];
                 $orguser = $userdetailid[$userval["organizations"]["admin_id"]];
-// $orguser = $loggedInUser['fname']." ".$loggedInUser['lname'];
+                // $orguser = $loggedInUser['fname']." ".$loggedInUser['lname'];
                 if ($euser["image"] != "") {
                     $rootUrl = Router::url('/', true);
                     //$rootUrl = str_replace("http:", "https:", $rootUrl);
                     $euser["image"] = $rootUrl . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $euser["image"];
                 }
-                $userval['UserOrganization']['status'] = array_search($userval['UserOrganization']['status'], $statusConfig);
-                ;
+                $userval['UserOrganization']['status'] = array_search($userval['UserOrganization']['status'], $statusConfig);;
                 $euser["id"] = $userval["UserOrganization"]["user_id"];
                 $userdetails = array_merge($euser, $userval['UserOrganization']);
 
@@ -2738,36 +2847,40 @@ class ApiController extends AppController {
                 $emailQueue[] = array("to" => $euser['email'], "subject" => $subject, "config_vars" => $configVars, "template" => "org_action");
             }
             unset($userdetails["email"]);
-//            $this->Email->saveMany($emailQueue); //Removed as per client requirement
+            //            $this->Email->saveMany($emailQueue); //Removed as per client requirement
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => $updatemsg, 'data' => $userdetails),
+                'result' => array(
+                    "status" => true, "msg" => $updatemsg, 'data' => $userdetails
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function userOrgAdminAccessAction() {
+    public function userOrgAdminAccessAction()
+    {
         if (isset($this->request->data['token'])) {
             $org_id = $this->request->data['oid'];
             $role = $this->request->data['role'];
             $user_id = $this->request->data['user_id'];
 
             $this->UserOrganization->updateAll(
-                    array('UserOrganization.user_role' => "'" . $role . "'"), array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
+                array('UserOrganization.user_role' => "'" . $role . "'"),
+                array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
             );
             $userinfo = $this->UserOrganization->find("all", array(
                 'joins' => array(array('table' => 'users', 'type' => 'INNER', 'conditions' => array('users.id = UserOrganization.user_id'))),
                 'conditions' => array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id),
                 'fields' => array('users.id,users.fname,users.lname,users.email,users.image,UserOrganization.status,UserOrganization.user_role')
             ));
-//$userdetails = array();
+            //$userdetails = array();
             $roleList = $this->Common->setSessionRoles();
             $successdata = "";
             $emailQueue = array();
@@ -2786,7 +2899,7 @@ class ApiController extends AppController {
                 }
                 $userval['UserOrganization']["role"] = $roleList[$userval['UserOrganization']["user_role"]];
                 $userval['UserOrganization']["user_role"] = $userval['UserOrganization']["user_role"];
-// $userdetails[] = array_merge($userval['users'], $userval['UserOrganization']);
+                // $userdetails[] = array_merge($userval['users'], $userval['UserOrganization']);
                 $successdata = $userval['UserOrganization'];
                 $viewVars = array("org_id" => $org_id, "role" => $role, "user_id" => $user_id, "fname" => $userval["users"]["fname"]);
 
@@ -2802,23 +2915,26 @@ class ApiController extends AppController {
                 $emailQueue[] = array("to" => $userval["users"]['email'], "subject" => $subject, "config_vars" => $configVars, "template" => "org_admin_access_action");
             }
 
-//            $this->Email->saveMany($emailQueue); //Removed as per client requirement
+            //            $this->Email->saveMany($emailQueue); //Removed as per client requirement
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "User's role updated successfully.", 'data' => $successdata),
+                'result' => array(
+                    "status" => true, "msg" => "User's role updated successfully.", 'data' => $successdata
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// search user api for organization
-    public function userOrgSearch() {
+    // search user api for organization
+    public function userOrgSearch()
+    {
 
 
         if (isset($this->request->query['token'])) {
@@ -2844,21 +2960,24 @@ class ApiController extends AppController {
                 $userdetails[] = array_merge($userval['users'], $userval['UserOrganization']);
             }
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "organization users", 'data' => $userdetails),
+                'result' => array(
+                    "status" => true, "msg" => "organization users", 'data' => $userdetails
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// get all organization for loggeding user
-    public function getAllOrganization_old() {
+    // get all organization for loggeding user
+    public function getAllOrganization_old()
+    {
         if (isset($this->request->data['token'])) {
             $token = $this->request->data['token'];
             $userid = $this->getuserData($token);
@@ -2875,8 +2994,8 @@ class ApiController extends AppController {
                 } elseif ($type == "endorser") {
                     $array['fields'] = array('id', 'name', 'short_name', 'image', 'UserOrganization.user_role');
                     $conditionarray['Organization.status'] = 1;
-//$conditionarray['Organization.admin_id !='] = $user_id;
-//
+                    //$conditionarray['Organization.admin_id !='] = $user_id;
+                    //
                     $array['joins'] = array(
                         array(
                             'table' => 'user_organizations',
@@ -2888,7 +3007,7 @@ class ApiController extends AppController {
                             )
                         )
                     );
-//
+                    //
                 } else {
                     $array['fields'] = array('id', 'name', 'short_name', 'image', 'UserOrganization.user_id');
                     $conditionarray['Organization.status'] = 1;
@@ -2934,7 +3053,7 @@ class ApiController extends AppController {
                         $orginfo[] = $val1;
                     }
                 }
-//$orginfo["user"]["token"]= $token;
+                //$orginfo["user"]["token"]= $token;
 
                 $orginfo1["token"] = $token;
                 $orginfo1["organization"] = $orginfo;
@@ -2942,27 +3061,31 @@ class ApiController extends AppController {
 
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "organization details", 'data' => $orginfo1),
+                    'result' => array(
+                        "status" => true, "msg" => "organization details", 'data' => $orginfo1
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid token in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid token in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getAllOrganization() {
+    public function getAllOrganization()
+    {
         if (isset($this->request->data['token'])) {
             $token = $this->request->data['token'];
             $userid = $this->getuserData($token);
@@ -2992,7 +3115,7 @@ class ApiController extends AppController {
                 $conditionarray = array();
                 if ($type == "user") {
                     $array['fields'] = array('Organization.id', 'name', 'short_name', 'image', 'health_url', 'UserOrganization.status', 'UserOrganization.user_role');
-//$conditionarray['admin_id'] = $user_id;
+                    //$conditionarray['admin_id'] = $user_id;
 
                     $array['joins'] = array(
                         array(
@@ -3002,7 +3125,7 @@ class ApiController extends AppController {
                             'conditions' => array(
                                 'UserOrganization.user_id = ' . $user_id,
                                 'UserOrganization.organization_id = Organization.id',
-//                                'UserOrganization.joined = 1',
+                                //                                'UserOrganization.joined = 1',
                                 'UserOrganization.status = 1',
                                 'UserOrganization.user_role' => array('2')
                             )
@@ -3011,10 +3134,10 @@ class ApiController extends AppController {
                     $conditionarray['Organization.status'] = array(0, 1);
                 } elseif ($type == "endorser") {
                     $selectfields = array('id', 'name', 'short_name', 'image', 'about', 'status', 'UserOrganization.user_role', 'health_url');
-// $conditionarray['Organization.status'] = array(0, 1);
+                    // $conditionarray['Organization.status'] = array(0, 1);
                     $conditionarray['Organization.status'] = array(0, 1);
-//$conditionarray['Organization.admin_id !='] = $user_id;
-//
+                    //$conditionarray['Organization.admin_id !='] = $user_id;
+                    //
                     $array['joins'] = array(
                         array(
                             'table' => 'user_organizations',
@@ -3023,13 +3146,13 @@ class ApiController extends AppController {
                             'conditions' => array(
                                 'UserOrganization.user_id = ' . $user_id,
                                 'UserOrganization.organization_id = Organization.id',
-//                                'UserOrganization.joined = 1',
+                                //                                'UserOrganization.joined = 1',
                                 'UserOrganization.status = 1',
                                 'UserOrganization.user_role' => array(2, 3, 6)
                             )
                         )
                     );
-//
+                    //
                 } else {
                     $selectfields = array('id', 'name', 'short_name', 'image', 'about', 'health_url', 'OrgRequests.user_id');
                     $conditionarray['Organization.status'] = 1;
@@ -3042,8 +3165,8 @@ class ApiController extends AppController {
                     foreach ($orgusers as $orgval) {
                         $org_idarray[] = $orgval["UserOrganization"]["organization_id"];
                     }
-//  echo $this->UserOrganization->getLastQuery();
-//print_r($org_idarray);exit;
+                    //  echo $this->UserOrganization->getLastQuery();
+                    //print_r($org_idarray);exit;
                     $array['joins'] = array(
                         array(
                             'table' => 'org_requests',
@@ -3057,9 +3180,9 @@ class ApiController extends AppController {
                         )
                     );
                     /** Commented by Babulal Prasad @12152016 to get Joined Org data TOO *** */
-//                    if (!empty($org_idarray)) {
-//                        $conditionarray['Organization.id !='] = $org_idarray;
-//                    }
+                    //                    if (!empty($org_idarray)) {
+                    //                        $conditionarray['Organization.id !='] = $org_idarray;
+                    //                    }
                 }
                 if ($org_id > 0) {
                     $conditionarray['Organization.id'] = $org_id;
@@ -3077,8 +3200,8 @@ class ApiController extends AppController {
                 }
                 $array['fields'] = $selectfields;
                 $orgArray = $this->Organization->find("all", $array);
-//echo $this->Organization->getLastQuery();
-//print_r($orgArray);exit;
+                //echo $this->Organization->getLastQuery();
+                //print_r($orgArray);exit;
                 $orginfo = array();
                 foreach ($orgArray as $val) {
 
@@ -3089,9 +3212,9 @@ class ApiController extends AppController {
 
 
                     if ($type == "public") {
-// $exituser = $val["UserOrganization"];
-//echo $type;
-//Added By Babulal Prasad
+                        // $exituser = $val["UserOrganization"];
+                        //echo $type;
+                        //Added By Babulal Prasad
                         $val1['is_org_joined'] = 0;
                         if (!empty($org_idarray)) {
                             if (in_array($val1["id"], $org_idarray)) {
@@ -3105,7 +3228,7 @@ class ApiController extends AppController {
                         } else {
                             $val1["is_request"] = 0;
                         }
-//print_r($val1);
+                        //print_r($val1);
                     } elseif ($type == "endorser") {
                         if ($val["UserOrganization"]["user_role"] == 2) {
                             $role = "admin";
@@ -3117,14 +3240,14 @@ class ApiController extends AppController {
                         $val1["role"] = $role;
                     } elseif ($type == "user") {
 
-//if ($val["UserOrganization"]["user_role"] == 2) {
-//      $role = "admin";
-//  } elseif ($val["UserOrganization"]["user_role"] == 4) {
-//      $role = "designated_admin";
-//  } else {
-//      $role = "ndorser";
-//  }
-//  $val1["role"] = $role;   
+                        //if ($val["UserOrganization"]["user_role"] == 2) {
+                        //      $role = "admin";
+                        //  } elseif ($val["UserOrganization"]["user_role"] == 4) {
+                        //      $role = "designated_admin";
+                        //  } else {
+                        //      $role = "ndorser";
+                        //  }
+                        //  $val1["role"] = $role;   
                     }
                     $rootUrl = Router::url('/', true);
                     //$rootUrl = str_replace("http:", "https:", $rootUrl);
@@ -3132,15 +3255,15 @@ class ApiController extends AppController {
                     if ($val1["image"] != "") {
                         $val1["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $val1["image"];
                     }
-//if ($type != "public") {
+                    //if ($type != "public") {
                     $orginfo[] = $val1;
-//} elseif ($exituser["user_id"] != $user_id) {
-//   $orginfo[] = $val1;
-// }
+                    //} elseif ($exituser["user_id"] != $user_id) {
+                    //   $orginfo[] = $val1;
+                    // }
                 }
-//pr($orginfo); exit;
+                //pr($orginfo); exit;
                 $orginfo1["token"] = $token;
-//$orginfo1["total_page"] = $totalpage;
+                //$orginfo1["total_page"] = $totalpage;
                 $orginfo1["organization"] = $orginfo;
                 if ($org_id == 0) {
                     $orginfo1 = array("token" => $token, "organization" => $orginfo, "total_page" => $totalpage);
@@ -3149,28 +3272,32 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "organization details", 'data' => $orginfo1),
+                    'result' => array(
+                        "status" => true, "msg" => "organization details", 'data' => $orginfo1
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid token in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid token in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// get search all organization for loggeding user
-    public function getOrgSearch() {
+    // get search all organization for loggeding user
+    public function getOrgSearch()
+    {
         if (isset($this->request->data['token']) && isset($this->request->data['keyword'])) {
             $token = $this->request->data['token'];
             $userid = $this->getuserData($token);
@@ -3187,19 +3314,19 @@ class ApiController extends AppController {
                 if ($type == "user") {
                     $array['conditions'] = array('status' => 1, 'admin_id' => $user_id, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
                 } else {
-//$array['joins'] = array(
-//    array(
-//        'table' => 'user_organizations',
-//        'alias' => 'UserOrganization',
-//        'type' => 'LEFT',
-//        'conditions' => array(
-//            'UserOrganization.user_id = ' . $user_id,
-//            'UserOrganization.organization_id = Organization.id',
-//            'UserOrganization.status IN (0,1,3)'
-//        )
-//    )
-//);
-//
+                    //$array['joins'] = array(
+                    //    array(
+                    //        'table' => 'user_organizations',
+                    //        'alias' => 'UserOrganization',
+                    //        'type' => 'LEFT',
+                    //        'conditions' => array(
+                    //            'UserOrganization.user_id = ' . $user_id,
+                    //            'UserOrganization.organization_id = Organization.id',
+                    //            'UserOrganization.status IN (0,1,3)'
+                    //        )
+                    //    )
+                    //);
+                    //
                     $farray = array();
                     $farray['fields'] = array('organization_id');
                     $farray['conditions'] = array('UserOrganization.user_id = ' . $user_id, 'UserOrganization.status !=2');
@@ -3208,30 +3335,30 @@ class ApiController extends AppController {
                     foreach ($orgusers as $orgval) {
                         $org_idarray[] = $orgval["UserOrganization"]["organization_id"];
                     }
-//  echo $this->UserOrganization->getLastQuery();
-//print_r($org_idarray);exit;
-//                    if (!empty($org_idarray)) {
-//                        //$conditionarray['Organization.id !='] = $org_idarray;
-//                        $array['conditions'] = array('Organization.id !=' => $org_idarray, 'Organization.status' => 1, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
-//                    } else {
-//  
+                    //  echo $this->UserOrganization->getLastQuery();
+                    //print_r($org_idarray);exit;
+                    //                    if (!empty($org_idarray)) {
+                    //                        //$conditionarray['Organization.id !='] = $org_idarray;
+                    //                        $array['conditions'] = array('Organization.id !=' => $org_idarray, 'Organization.status' => 1, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
+                    //                    } else {
+                    //  
                     $array['conditions'] = array('Organization.id !=' => 415, 'Organization.status' => 1, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
-//                    }
+                    //                    }
                 }
                 $orgArray = $this->Organization->find("all", $array);
-// echo $this->Organization->getLastQuery();
+                // echo $this->Organization->getLastQuery();
                 $orginfo = array();
                 foreach ($orgArray as $val) {
 
                     $val1 = $val["Organization"];
 
-//if ($val["Organization"]["image"] != "") {
-//    $val["Organization"]["image"] = Router::url('/', true) . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $val["Organization"]["image"];
-//}
-// if (empty($val["UserOrganization"])) {
-// 
-// 
-//Added By Babulal Prasad
+                    //if ($val["Organization"]["image"] != "") {
+                    //    $val["Organization"]["image"] = Router::url('/', true) . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $val["Organization"]["image"];
+                    //}
+                    // if (empty($val["UserOrganization"])) {
+                    // 
+                    // 
+                    //Added By Babulal Prasad
                     $val1['is_org_joined'] = 0;
 
                     if (!empty($org_idarray)) {
@@ -3242,39 +3369,44 @@ class ApiController extends AppController {
                     $orginfo[] = $val1;
 
 
-// }
+                    // }
                 }
                 $orginfo1["token"] = $token;
                 $orginfo1["organization"] = $orginfo;
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "search organization details", 'data' => $orginfo1),
+                    'result' => array(
+                        "status" => true, "msg" => "search organization details", 'data' => $orginfo1
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid token in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid token in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token or keyword is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token or keyword is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getOrgAction() {
+    public function getOrgAction()
+    {
 
         if (isset($this->request->data['token'])) {
             $org_id = $this->request->data['oid'];
             $status = $this->request->data['status'];
 
             $this->Organization->updateAll(
-                    array('Organization.status' => $status), array('id' => $org_id)
+                array('Organization.status' => $status),
+                array('id' => $org_id)
             );
             $array = array();
             $array['fields'] = array('id', 'name', 'short_name', 'image', 'status');
@@ -3303,25 +3435,28 @@ class ApiController extends AppController {
 
             $subject = "nDorse Notification -- Organization " . $statusmsg . " by admin";
             $emailQueue[] = array("to" => "admin@ndorse.com", "subject" => $subject, "config_vars" => $configVars, "template" => "org_status_action");
-//            $this->Email->saveMany($emailQueue); //Removed as per client requirement
+            //            $this->Email->saveMany($emailQueue); //Removed as per client requirement
 
             $this->getTimelyUpdates();
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Organization status updated successfully.", 'data' => $orginfo),
+                'result' => array(
+                    "status" => true, "msg" => "Organization status updated successfully.", 'data' => $orginfo
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function saveOrgoption() {
+    public function saveOrgoption()
+    {
         if (isset($this->request->data['token'])) {
 
             $org_id = $this->request->data['org_id'];
@@ -3340,20 +3475,23 @@ class ApiController extends AppController {
                 $job_title_id = $this->request->data['job_title_id'];
             }
             $this->UserOrganization->updateAll(
-                    array('UserOrganization.entity_id' => "'" . $entity_id . "'", 'UserOrganization.department_id' => "'" . $dept_id . "'", 'UserOrganization.job_title_id' => "'" . $job_title_id . "'"), array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
+                array('UserOrganization.entity_id' => "'" . $entity_id . "'", 'UserOrganization.department_id' => "'" . $dept_id . "'", 'UserOrganization.job_title_id' => "'" . $job_title_id . "'"),
+                array('UserOrganization.organization_id' => $org_id, 'UserOrganization.user_id' => $user_id)
             );
             $organization = $this->Organization->findById($org_id);
-//echo $this->Organization->getLastQuery();die;
+            //echo $this->Organization->getLastQuery();die;
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Role for " . $organization['Organization']['name'] . " updated successfully.", 'data' => true),
+                'result' => array(
+                    "status" => true, "msg" => "Role for " . $organization['Organization']['name'] . " updated successfully.", 'data' => true
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -3362,13 +3500,14 @@ class ApiController extends AppController {
     /** Added by Babulal Prasad @30MAY2019
      * Post API to add endorsement comments
      * * */
-    public function postEndorseComment() {
+    public function postEndorseComment()
+    {
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
             $errorsArray = array();
             $error = false;
-//            pr($this->request->data);
-//            exit
+            //            pr($this->request->data);
+            //            exit
             $token = $this->request->data['token'];
             $orgId = $this->request->data['org_id'];
             $orgDATA = $this->Organization->findById($orgId);
@@ -3387,8 +3526,10 @@ class ApiController extends AppController {
             $commentData = array();
             if ($this->EndorsementComment->validates()) {
                 if ($this->EndorsementComment->save()) {
-                    $result = $this->EndorsementComment->find('all', array('fields' => array('user_id', 'endorsement_id', 'UNIX_TIMESTAMP(created) as create_date', 'comment'),
-                        'conditions' => array('id' => $this->EndorsementComment->id)));
+                    $result = $this->EndorsementComment->find('all', array(
+                        'fields' => array('user_id', 'endorsement_id', 'UNIX_TIMESTAMP(created) as create_date', 'comment'),
+                        'conditions' => array('id' => $this->EndorsementComment->id)
+                    ));
                     $commentData['EndorsementComment'] = $result[0]['EndorsementComment'];
                     $commentData['EndorsementComment']['create_date'] = $result[0][0]['create_date'];
                     $commentData['EndorsementComment']['created'] = $result[0][0]['create_date'];
@@ -3418,9 +3559,9 @@ class ApiController extends AppController {
                         ));
 
                         if (!empty($loginuser[0]["LoginStatistics"]) && $loginuser[0]["LoginStatistics"]["device_id"] != "") {
-//                                echo "TEST";
-//                                pr($loginuser);
-//                                exit;
+                            //                                echo "TEST";
+                            //                                pr($loginuser);
+                            //                                exit;
                             if (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "ios") {
                                 //print_r($device_token);
                                 $deviceToken_msg_arr = array();
@@ -3435,21 +3576,21 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @7-june-2019
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-//                                $this->loadModel('AlertCenterNotification');
-//                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
-//                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
-//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                $AlertCenterNotificationArray['status'] = 0;
-//                                $AlertCenterNotificationArray['os'] = 'ios';
-//                                $AlertCenterNotificationArray['feed_id'] = $endorsementId;
-//                                $AlertCenterNotificationArray['sender_id'] = $userID;
-//
-//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                //                                $this->loadModel('AlertCenterNotification');
+                                //                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
+                                //                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                                //                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
+                                //                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['status'] = 0;
+                                //                                $AlertCenterNotificationArray['os'] = 'ios';
+                                //                                $AlertCenterNotificationArray['feed_id'] = $endorsementId;
+                                //                                $AlertCenterNotificationArray['sender_id'] = $userID;
+                                //
+                                //                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
-//                                    print_r($deviceToken_msg_arr);
-//                                    continue;
+                                //                                    print_r($deviceToken_msg_arr);
+                                //                                    continue;
                                 $this->Common->sendPushNotification($deviceToken_msg_arr);
                             } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
 
@@ -3460,8 +3601,10 @@ class ApiController extends AppController {
                                 $organization_id = $val['Organization']['orgid'];
                                 // $msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n<br />".$val["EndorseReplies"]["reply"];
                                 $msg = $userName . " has commented on your nDorsement \n\n in " . $orgName . " Organization";
-                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
-                                    "title" => "nDorse App");
+                                $parameter = array(
+                                    "org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
+                                    "title" => "nDorse App"
+                                );
 
                                 $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
                                 //print_r($deviceToken_msg_arr);
@@ -3469,17 +3612,17 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @7-june-2018
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-//                                $this->loadModel('AlertCenterNotification');
-//                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
-//                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
-//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                $AlertCenterNotificationArray['status'] = 0;
-//                                $AlertCenterNotificationArray['os'] = 'android';
-//                                $AlertCenterNotificationArray['feed_id'] = $endorsementId;
-//                                $AlertCenterNotificationArray['sender_id'] = $userID;
-//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                //                                $this->loadModel('AlertCenterNotification');
+                                //                                $AlertCenterNotificationArray['user_id'] = $endorsedId;
+                                //                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                                //                                $AlertCenterNotificationArray['alert_type'] = 'nDorsement comment Notification';
+                                //                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['status'] = 0;
+                                //                                $AlertCenterNotificationArray['os'] = 'android';
+                                //                                $AlertCenterNotificationArray['feed_id'] = $endorsementId;
+                                //                                $AlertCenterNotificationArray['sender_id'] = $userID;
+                                //                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
                             }
                         }
@@ -3499,15 +3642,17 @@ class ApiController extends AppController {
                     /* Send Push notification code End */
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Comment posted successfully!", "data" => $commentData),
+                        'result' => array(
+                            "status" => true, "msg" => "Comment posted successfully!", "data" => $commentData
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $error = true;
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Unable to Post Comment."),
+                        'result' => array(
+                            "status" => false, "msg" => "Unable to Post Comment."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -3520,8 +3665,9 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
@@ -3531,14 +3677,16 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Comment posted successfully!", "data" => $commentData),
+                'result' => array(
+                    "status" => true, "msg" => "Comment posted successfully!", "data" => $commentData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -3547,14 +3695,15 @@ class ApiController extends AppController {
     /** Added by Babulal Prasad @12022016
      * Post API
      * * */
-    public function postComment() {
+    public function postComment()
+    {
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
             $errorsArray = array();
             $error = false;
-//            pr($this->request->data);
-//            pr($loggedInUser);
-//            exit;
+            //            pr($this->request->data);
+            //            pr($loggedInUser);
+            //            exit;
             $sender_id = $post['user_id'] = $loggedInUser['id'];
             $postId = $post['post_id'] = $this->request->data['post_id'];
             $post['comment'] = isset($this->request->data['comment']) ? $this->request->data['comment'] : "";
@@ -3563,8 +3712,10 @@ class ApiController extends AppController {
             $commentData = array();
             if ($this->PostComment->validates()) {
                 if ($this->PostComment->save()) {
-                    $result = $this->PostComment->find('all', array('fields' => array('user_id', 'post_id', 'UNIX_TIMESTAMP(created) as create_date', 'comment'),
-                        'conditions' => array('id' => $this->PostComment->id)));
+                    $result = $this->PostComment->find('all', array(
+                        'fields' => array('user_id', 'post_id', 'UNIX_TIMESTAMP(created) as create_date', 'comment'),
+                        'conditions' => array('id' => $this->PostComment->id)
+                    ));
                     $commentData['PostComment'] = $result[0]['PostComment'];
                     $commentData['PostComment']['create_date'] = $result[0][0]['create_date'];
                     $commentData['PostComment']['created'] = $result[0][0]['create_date'];
@@ -3602,15 +3753,17 @@ class ApiController extends AppController {
 
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Comment posted successfully!", "data" => $commentData),
+                        'result' => array(
+                            "status" => true, "msg" => "Comment posted successfully!", "data" => $commentData
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $error = true;
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Unable to Post Comment."),
+                        'result' => array(
+                            "status" => false, "msg" => "Unable to Post Comment."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -3623,8 +3776,9 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
@@ -3634,24 +3788,27 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Comment posted successfully!", "data" => $commentData),
+                'result' => array(
+                    "status" => true, "msg" => "Comment posted successfully!", "data" => $commentData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function wallpost() {
-// @TODO : email and push notification to endorsee
+    public function wallpost()
+    {
+        // @TODO : email and push notification to endorsee
 
         if ($this->request->is('post')) {
-//            pr(json_encode($this->request->data)); exit;
+            //            pr(json_encode($this->request->data)); exit;
             $loggedInUser = $this->Auth->user();
             $emojisValue = array();
             if (isset($this->request->data['emojis']) && trim($this->request->data['emojis']) != "") {
@@ -3665,11 +3822,11 @@ class ApiController extends AppController {
             $orgId = $post['organization_id'] = $loggedInUser['current_org']['id'];
             $PostMessage = $post['message'] = isset($this->request->data['message']) ? $this->request->data['message'] : "";
 
-            $subcenterID = $post['subcenter_id'] = (isset($this->request->data['subcenter_id']) && $this->request->data['subcenter_id'] != 0 ) ? $this->request->data['subcenter_id'] : "";
+            $subcenterID = $post['subcenter_id'] = (isset($this->request->data['subcenter_id']) && $this->request->data['subcenter_id'] != 0) ? $this->request->data['subcenter_id'] : "";
 
             $postTitle = $post['title'] = isset($this->request->data['title']) ? $this->request->data['title'] : "";
             $post['emojis_count'] = count($emojisValue) ? count($emojisValue) : 0;
-//            pr($this->request->data);  exit;
+            //            pr($this->request->data);  exit;
             /*             * * Post Scheduling code begin: Added by Babulal prasad@9dec2017 *** */
             if (isset($this->request->data['endorse_list']) && count($this->request->data['endorse_list']) > 0) {
                 $postUserIds = $postDeptIds = $postEnityIds = array();
@@ -3701,8 +3858,8 @@ class ApiController extends AppController {
                 $sendEmailNotification = 1;
             }
 
-//            pr($post);
-//            exit;
+            //            pr($post);
+            //            exit;
             /*             * * Post Scheduling code end *** */
 
             if (isset($this->request->data['post_type']) && $this->request->data['post_type'] == 'postlater') {
@@ -3720,7 +3877,7 @@ class ApiController extends AppController {
             } else {
                 $post['post_publish_date'] = date("Y-m-d H:i:s", time());
             }
-//            pr($post); exit;
+            //            pr($post); exit;
             $this->Post->clear();
             $this->Post->set($post);
             if ($this->Post->validates()) {
@@ -3785,7 +3942,7 @@ class ApiController extends AppController {
                         //pr($dateDATA);
                     } else {
                         $feedTrans['FeedTran']['publish_date'] = date("Y-m-d H:i:s", time());
-//                        pr($feedTrans); exit;
+                        //                        pr($feedTrans); exit;
                         /*                         * ** */
                         if ($postVisibility == 1) { //Check visible selected users
                             $userIds = $postUserIds;
@@ -3802,7 +3959,7 @@ class ApiController extends AppController {
                                     $userIDbyDept = $this->UserOrganization->find('all', array("fields" => array("UserOrganization.user_id"), "conditions" => array("department_id" => $deptID, "organization_id" => $orgId, 'status' => 1)));
                                     if (isset($userIDbyDept) && count($userIDbyDept) > 0) {
                                         foreach ($userIDbyDept as $index => $userOrgData) {
-//                                pr($userOrgData['UserOrganization']['user_id']);
+                                            //                                pr($userOrgData['UserOrganization']['user_id']);
                                             $userList[$userOrgData['UserOrganization']['user_id']] = $userOrgData['UserOrganization']['user_id'];
                                         }
                                     }
@@ -3817,15 +3974,15 @@ class ApiController extends AppController {
                                     $userIDbySubOrg = $this->UserOrganization->find('all', array("fields" => array("UserOrganization.user_id"), "conditions" => array("entity_id" => $subOrgID, "organization_id" => $orgId, 'status' => 1)));
                                     if (isset($userIDbySubOrg) && count($userIDbySubOrg) > 0) {
                                         foreach ($userIDbySubOrg as $index => $userOrgData) {
-//                                pr($userOrgData['UserOrganization']['user_id']);
+                                            //                                pr($userOrgData['UserOrganization']['user_id']);
                                             $userList[$userOrgData['UserOrganization']['user_id']] = $userOrgData['UserOrganization']['user_id'];
                                         }
                                     }
                                 }
                             }
-//                echo "<br>ORG : " . $orgId;
-//                echo "<br>USER ID : " . $user_id;
-//                echo "<br>PostScheduleID: " . $PostScheduleID;
+                            //                echo "<br>ORG : " . $orgId;
+                            //                echo "<br>USER ID : " . $user_id;
+                            //                echo "<br>PostScheduleID: " . $PostScheduleID;
 
                             $orgDATA = $this->Organization->findById($orgId);
                             $orgName = $orgDATA['Organization']['name'];
@@ -3835,9 +3992,9 @@ class ApiController extends AppController {
                             $PostMessage = $PostMessage;
                             $push_notification = $sendPushNotification;
 
-//                            pr($userList);
+                            //                            pr($userList);
                             //                            exit;
-//                            echo $push_notification; exit;
+                            //                            echo $push_notification; exit;
                             if (isset($push_notification) && $push_notification == 1) {
 
                                 if (isset($userList) && count($userList) > 0) {
@@ -3851,9 +4008,9 @@ class ApiController extends AppController {
 
 
                                         if (!empty($loginuser[0]["LoginStatistics"]) && $loginuser[0]["LoginStatistics"]["device_id"] != "") {
-//                                echo "TEST";
-//                                pr($loginuser);
-//                                exit;
+                                            //                                echo "TEST";
+                                            //                                pr($loginuser);
+                                            //                                exit;
                                             if (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "ios") {
                                                 //print_r($device_token);
                                                 $deviceToken_msg_arr = array();
@@ -3879,8 +4036,8 @@ class ApiController extends AppController {
                                                 $AlertCenterNotificationArray['feed_id'] = $postId;
                                                 $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                                 /* SAVE DATA for alert center feature End** */
-//                                    print_r($deviceToken_msg_arr);
-//                                    continue;
+                                                //                                    print_r($deviceToken_msg_arr);
+                                                //                                    continue;
                                                 $this->Common->sendPushNotification($deviceToken_msg_arr);
                                             } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
 
@@ -3891,8 +4048,10 @@ class ApiController extends AppController {
                                                 $organization_id = $val['Organization']['orgid'];
                                                 // $msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n<br />".$val["EndorseReplies"]["reply"];
                                                 $msg = $userName . " has posted a post titled : " . $PostTitle . " \n\n in " . $orgName . " Organization";
-                                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
-                                                    "title" => "nDorse App");
+                                                $parameter = array(
+                                                    "org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
+                                                    "title" => "nDorse App"
+                                                );
 
                                                 $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
                                                 //print_r($deviceToken_msg_arr);
@@ -3928,7 +4087,7 @@ class ApiController extends AppController {
                                         $emailArray[$userID] = $userData['User']['email'];
                                     }
                                 }
-//                    pr($emailArray);
+                                //                    pr($emailArray);
 
                                 if (!empty($emailArray)) {
                                     $emailQueue = array();
@@ -3950,17 +4109,17 @@ class ApiController extends AppController {
                                             $emailQueue[] = array("to" => $userEmail, "subject" => $subject, "config_vars" => $configVars, "template" => "post_notification");
                                         }
                                     }
-//                        pr($emailQueue);
+                                    //                        pr($emailQueue);
                                     if (!empty($emailQueue)) {
                                         $this->Email->saveMany($emailQueue);
                                     }
                                 }
                             }/* Send email notificatin to user on post publish END* */
-                        } else {//Show to all users of organization
+                        } else { //Show to all users of organization
                             //GET ALL USERS OF ORGANIZATION TO SEND PUSH NOTIFICATION
                             $this->DefaultOrg->unbindModel(array("belongsTo" => array("Organization", "User")));
                             $userIDsOfOrg = $this->DefaultOrg->find('all', array("fields" => array("DefaultOrg.user_id"), "conditions" => array("DefaultOrg.organization_id" => $orgId, 'DefaultOrg.status' => 1)));
-//                            pr($userIDsOfOrg); exit;
+                            //                            pr($userIDsOfOrg); exit;
                             $userList = array();
                             if (isset($userIDsOfOrg) && !empty($userIDsOfOrg)) {
                                 foreach ($userIDsOfOrg as $index => $userDATAa) {
@@ -3982,9 +4141,9 @@ class ApiController extends AppController {
                                             ));
 
                                             if (!empty($loginuser[0]["LoginStatistics"]) && $loginuser[0]["LoginStatistics"]["device_id"] != "") {
-//                                echo "TEST";
-//                                pr($loginuser);
-//                                exit;
+                                                //                                echo "TEST";
+                                                //                                pr($loginuser);
+                                                //                                exit;
                                                 if (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "ios") {
                                                     //print_r($device_token);
                                                     $deviceToken_msg_arr = array();
@@ -3995,8 +4154,8 @@ class ApiController extends AppController {
                                                     $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion", "title" => "nDorse App");
 
                                                     $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
-//                                                    pr($deviceToken_msg_arr);
-//                                                    exit;
+                                                    //                                                    pr($deviceToken_msg_arr);
+                                                    //                                                    exit;
                                                     /** Added by Babulal Prasad @7-june-2018
                                                      * * SAVE DATA for alert center feature Start
                                                      * ** */
@@ -4021,8 +4180,10 @@ class ApiController extends AppController {
                                                     $organization_id = $orgId;
                                                     // $msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n<br />".$val["EndorseReplies"]["reply"];
                                                     $msg = $userName . " has posted a post titled : " . $PostTitle . " \n\n in " . $orgName . " Organization";
-                                                    $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
-                                                        "title" => "nDorse App");
+                                                    $parameter = array(
+                                                        "org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
+                                                        "title" => "nDorse App"
+                                                    );
 
                                                     $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
                                                     //print_r($deviceToken_msg_arr);
@@ -4045,7 +4206,7 @@ class ApiController extends AppController {
                                             }
                                         }
 
-//                                        exit;
+                                        //                                        exit;
 
                                         /* Send email notificatin to user on post publish start* */
                                         $emailArray = array();
@@ -4059,7 +4220,7 @@ class ApiController extends AppController {
                                                     }
                                                 }
                                             }
-//                    pr($emailArray);exit;
+                                            //                    pr($emailArray);exit;
 
                                             if (!empty($emailArray)) {
                                                 $emailQueue = array();
@@ -4081,7 +4242,7 @@ class ApiController extends AppController {
                                                         $emailQueue[] = array("to" => $userEmail, "subject" => $subject, "config_vars" => $configVars, "template" => "post_notification");
                                                     }
                                                 }
-//                        pr($emailQueue);
+                                                //                        pr($emailQueue);
                                                 if (!empty($emailQueue)) {
                                                     $this->Email->saveMany($emailQueue);
                                                 }
@@ -4096,7 +4257,7 @@ class ApiController extends AppController {
 
                     /* Saving data into post schedule table end**** */
 
-//                    pr($feedTrans); exit;
+                    //                    pr($feedTrans); exit;
                     $this->FeedTran->save($feedTrans);
 
 
@@ -4107,8 +4268,9 @@ class ApiController extends AppController {
                 } else {
                     $error = true;
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Unable to Post."),
+                        'result' => array(
+                            "status" => false, "msg" => "Unable to Post."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -4121,14 +4283,15 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
 
-//break;
+                //break;
             }
-//}
+            //}
 
             if ($error) {
                 return;
@@ -4140,24 +4303,27 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Post submitted!", "data" => array('post_id' => $postId)),
+                'result' => array(
+                    "status" => true, "msg" => "Post submitted!", "data" => array('post_id' => $postId)
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function saveWallpostAttachment() {
+    public function saveWallpostAttachment()
+    {
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
 
-//            $endorsementIds = explode(",", $this->request->data['post_id']);
+            //            $endorsementIds = explode(",", $this->request->data['post_id']);
             $postId = $this->request->data['post_id'];
 
             if ($this->request->data['type'] == "image") {
@@ -4175,12 +4341,12 @@ class ApiController extends AppController {
                     $imageName = $this->Common->getUploadFilename($uploadPath, $imageName);
 
                     if ($this->Common->uploadApiImage($uploadPath, $imageName, $imageData)) {
-//$this->request->data['name'] = $imageName;
+                        //$this->request->data['name'] = $imageName;
                         unset($this->PostAttachment->validate['image']);
-//
+                        //
 
                         $postAttachments[] = array("post_id" => $postId, "type" => $this->request->data['type'], "name" => $imageName);
-// check if image_count = 0 then update image_count flag
+                        // check if image_count = 0 then update image_count flag
 
                         if ($this->PostAttachment->saveMany($postAttachments)) {
                             $imagepost = 0;
@@ -4196,26 +4362,29 @@ class ApiController extends AppController {
 
                             $postAttachmentId = $this->PostAttachment->id;
 
-//                            $postTrans['PostTrans']['post_id'] = $postId;
-//                            $postTrans['PostTrans']['post_attachment_id'] = $postAttachmentId;
-//                            $this->PostTrans->save($postTrans);
+                            //                            $postTrans['PostTrans']['post_id'] = $postId;
+                            //                            $postTrans['PostTrans']['post_attachment_id'] = $postAttachmentId;
+                            //                            $this->PostTrans->save($postTrans);
 
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Attachments sent successfully."),
+                                'result' => array(
+                                    "status" => true, "msg" => "Attachments sent successfully."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."),
+                                'result' => array(
+                                    "status" => false, "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."),
+                            'result' => array(
+                                "status" => false, "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -4230,25 +4399,28 @@ class ApiController extends AppController {
 
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function saveWallpostAttachmentFiles() {
+    public function saveWallpostAttachmentFiles()
+    {
         if ($this->request->is('post')) {
-//            pr($this->request->data);
-//            exit;
+            //            pr($this->request->data);
+            //            exit;
             $loggedInUser = $this->Auth->user();
             $postId = $this->request->data['post_id'];
             if ($this->request->data['type'] == "files") {
@@ -4264,21 +4436,24 @@ class ApiController extends AppController {
                         if ($this->PostAttachment->saveMany($postAttachments)) {
                             $postAttachmentId = $this->PostAttachment->id;
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Attachments sent successfully."),
+                                'result' => array(
+                                    "status" => true, "msg" => "Attachments sent successfully."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."),
+                                'result' => array(
+                                    "status" => false, "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Error!", 'errors' => "file name empty"),
+                            'result' => array(
+                                "status" => false, "msg" => "Error!", 'errors' => "file name empty"
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -4289,25 +4464,28 @@ class ApiController extends AppController {
                         $errorsArray[$key] = $error[0];
                     }
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function saveEndorseAttachmentFiles() {
+    public function saveEndorseAttachmentFiles()
+    {
         if ($this->request->is('post')) {
-//            pr($this->request->data);
-//            exit;
+            //            pr($this->request->data);
+            //            exit;
             $loggedInUser = $this->Auth->user();
             $nDorsementId = $this->request->data['endorsement_ids'];
             if ($this->request->data['type'] == "files") {
@@ -4323,21 +4501,24 @@ class ApiController extends AppController {
                         if ($this->EndorseAttachment->saveMany($postAttachments)) {
                             $postAttachmentId = $this->EndorseAttachment->id;
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Attachments sent successfully."),
+                                'result' => array(
+                                    "status" => true, "msg" => "Attachments sent successfully."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."),
+                                'result' => array(
+                                    "status" => false, "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Error!", 'errors' => "file name empty"),
+                            'result' => array(
+                                "status" => false, "msg" => "Error!", 'errors' => "file name empty"
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -4348,27 +4529,30 @@ class ApiController extends AppController {
                         $errorsArray[$key] = $error[0];
                     }
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorse() {
-// @TODO : email and push notification to endorsee
+    public function endorse()
+    {
+        // @TODO : email and push notification to endorsee
 
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
-//            pr($this->request->data); exit;
+            //            pr($this->request->data); exit;
             $endorseList = json_decode($this->request->data['endorse_list']);
             $subcenterForArray = array();
 
@@ -4388,9 +4572,9 @@ class ApiController extends AppController {
             if (isset($subcenterForArray) && !empty($subcenterForArray)) {
                 $subcenterForArray = $subcenterForArray[0];
             }
-//            pr($subcenterForArray); exit;
-//            pr($subcenterForArray);exit;
-//Get list of eval and inactive users
+            //            pr($subcenterForArray); exit;
+            //            pr($subcenterForArray);exit;
+            //Get list of eval and inactive users
             $endorsedUserIds = array();
 
             foreach ($endorseList as $endorseRequest) {
@@ -4466,7 +4650,7 @@ class ApiController extends AppController {
                 }
                 $endorsement['subcenter_for'] = $subcenterForID;
 
-//                pr($endorsement); exit;
+                //                pr($endorsement); exit;
 
                 if ($endorseRequest->for == 'department' || $endorseRequest->for == 'entity' || ($endorseRequest->for == 'user' && in_array($endorseRequest->id, $inactiveUserIds))) {
                     $endorsement['email_sent'] = 2;
@@ -4524,8 +4708,9 @@ class ApiController extends AppController {
                     } else {
                         $error = true;
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Unable to nDorse."),
+                            'result' => array(
+                                "status" => false, "msg" => "Unable to nDorse."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -4540,8 +4725,9 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
 
@@ -4568,12 +4754,13 @@ class ApiController extends AppController {
                 $this->EndorseAttachment->saveMany($bitmojisValueArray);
             }
 
-//Save endorse emails to email table
+            //Save endorse emails to email table
             $params = array();
             $params['fields'] = array("*");
             $params['conditions'] = array("User.id" => $emailUserIds);
             $params['joins'] = array(
-                array('table' => "login_statistics",
+                array(
+                    'table' => "login_statistics",
                     "alias" => "LoginStatistics",
                     "type" => "LEFT",
                     'conditions' => array(
@@ -4588,61 +4775,63 @@ class ApiController extends AppController {
             $endorserID = $loggedInUser['id'];
             $endorserName = $loggedInUser['fname'] . " " . $loggedInUser['lname'];
             $configVars = array("endorser_name" => $endorserName);
-//            pr($emailUsers); exit;
+            //            pr($emailUsers); exit;
             foreach ($emailUsers as $index => $user) {
                 if (is_array($user["LoginStatistics"]) && !empty($user["LoginStatistics"])) {
-//                    pr($user["LoginStatistics"]);
+                    //                    pr($user["LoginStatistics"]);
                     $deviceToken_msg_arr = array();
                     $token = $user["LoginStatistics"]["device_id"];
                     $count = 1;
                     if ($this->request->data['type'] == "anonymous") {
                         $endorserName = "anonymously";
                     }
-//Hi <endorsed name>,  You were ndorsed by <endorser name> from <organizaion name>. 
+                    //Hi <endorsed name>,  You were ndorsed by <endorser name> from <organizaion name>. 
                     $msg = 'Hi ' . ucfirst($user['User']['fname']) . ", You were nDorsed by " . $endorserName . " from " . $loggedInUser['current_org']["name"] . ".";
                     $notificationMsg = 'You have recieved an nDorsement from ' . $endorserName;
-                    $parameter = array("org_id" => $loggedInUser['current_org']['id'], "category" => "SwitchAction", "notification_type" => "post_promotion",
-                        "title" => "nDorse App");
+                    $parameter = array(
+                        "org_id" => $loggedInUser['current_org']['id'], "category" => "SwitchAction", "notification_type" => "post_promotion",
+                        "title" => "nDorse App"
+                    );
 
                     $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'original_msg' => $msg, 'msg' => $msg, "data" => $parameter);
                     if (strtolower($user["LoginStatistics"]["os"]) == "ios") {
-//print_r($device_token);
-//print_r($deviceToken_msg_arr);
+                        //print_r($device_token);
+                        //print_r($deviceToken_msg_arr);
                         //Uncommented on 1-12-2017 as per discussion with Rohan - Done by Babulal
                         $this->Common->sendPushNotification($deviceToken_msg_arr);
                         /** Added by Babulal Prasad @7-june-2018
                          * * SAVE DATA for alert center feature Start
                          * ** */
-//                        $this->loadModel('AlertCenterNotification');
-//                        $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
-//                        $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
-//                        $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
-//                        $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
-//                        $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
-//                        $AlertCenterNotificationArray['status'] = 0;
-//                        $AlertCenterNotificationArray['os'] = 'ios';
-//                        $AlertCenterNotificationArray['feed_id'] = $endorsementID;
-//                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                        //                        $this->loadModel('AlertCenterNotification');
+                        //                        $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
+                        //                        $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
+                        //                        $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
+                        //                        $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
+                        //                        $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
+                        //                        $AlertCenterNotificationArray['status'] = 0;
+                        //                        $AlertCenterNotificationArray['os'] = 'ios';
+                        //                        $AlertCenterNotificationArray['feed_id'] = $endorsementID;
+                        //                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                         /* SAVE DATA for alert center feature End** */
                     } elseif (strtolower($user["LoginStatistics"]["os"]) == "android") {
                         //Uncommented on 1-12-2017 as per discussion with Rohan - Done by Babulal
-//                        pr($deviceToken_msg_arr);
-//                        echo "deviceToken_msg_arr => ". $deviceToken_msg_arr;
+                        //                        pr($deviceToken_msg_arr);
+                        //                        echo "deviceToken_msg_arr => ". $deviceToken_msg_arr;
                         $this->Common->sendPushNotificationAndroid($deviceToken_msg_arr);
-//                        exit;
+                        //                        exit;
                         /** Added by Babulal Prasad @7-june-2018
                          * * SAVE DATA for alert center feature Start
                          * ** */
-//                        $this->loadModel('AlertCenterNotification');
-//                        $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
-//                        $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
-//                        $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
-//                        $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
-//                        $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
-//                        $AlertCenterNotificationArray['status'] = 0;
-//                        $AlertCenterNotificationArray['os'] = 'android';
-//                        $AlertCenterNotificationArray['feed_id'] = $endorsementID;
-//                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                        //                        $this->loadModel('AlertCenterNotification');
+                        //                        $AlertCenterNotificationArray['user_id'] = $user['User']['id'];
+                        //                        $AlertCenterNotificationArray['org_id'] = $loggedInUser['current_org']['id'];
+                        //                        $AlertCenterNotificationArray['alert_type'] = 'nDorse Notification';
+                        //                        $AlertCenterNotificationArray['plain_msg'] = $notificationMsg;
+                        //                        $AlertCenterNotificationArray['original_msg'] = $notificationMsg;
+                        //                        $AlertCenterNotificationArray['status'] = 0;
+                        //                        $AlertCenterNotificationArray['os'] = 'android';
+                        //                        $AlertCenterNotificationArray['feed_id'] = $endorsementID;
+                        //                        $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                         /* SAVE DATA for alert center feature End** */
                     }
                 }
@@ -4667,7 +4856,7 @@ class ApiController extends AppController {
                 $configVars["first_name"] = $user['User']['fname'];
                 $configVars["username"] = $user['User']['username'];
                 $sso_user = 0;
-                if (isset($loggedInUser['current_org']['id']) && ($loggedInUser['current_org']['id'] == 415 || $loggedInUser['current_org']['id'] == 171 || $loggedInUser['current_org']['id'] == 425 || $loggedInUser['current_org']['id'] == 247)) {
+                if (isset($loggedInUser['current_org']['id']) && ($loggedInUser['current_org']['id'] == 415 || $loggedInUser['current_org']['id'] == 171 || $loggedInUser['current_org']['id'] == 425 || $loggedInUser['current_org']['id'] == 247 || $loggedInUser['current_org']['id'] == 446)) {
                     $sso_user = 1;
                 }
                 $configVars["sso"] = $sso_user;
@@ -4676,29 +4865,32 @@ class ApiController extends AppController {
                 $emailQueue[$user['User']['id']] = array("to" => $user['User']['email'], "subject" => $subject, "config_vars" => $saveVars, "template" => "endorse");
             }
 
-//            pr($emailQueue); exit;
+            //            pr($emailQueue); exit;
 
             if (!empty($emailQueue)) {
                 $this->Email->saveMany($emailQueue);
             }
 
-//            exec("wget -bqO- " . Router::url('/', true) . "/cron/endorseEmails &> /dev/null");
+            //            exec("wget -bqO- " . Router::url('/', true) . "/cron/endorseEmails &> /dev/null");
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)),
+                'result' => array(
+                    "status" => true, "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function guestEndorse() {
+    public function guestEndorse()
+    {
 
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
@@ -4786,7 +4978,7 @@ class ApiController extends AppController {
                 $this->Endorsement->set($endorsement);
 
                 if ($this->Endorsement->validates()) {
-//                    pr($endorsement);  exit;
+                    //                    pr($endorsement);  exit;
                     if ($this->Endorsement->save()) {
                         $endorsementIds[] = $this->Endorsement->id;
                         $endorsed_user_id = array();
@@ -4821,8 +5013,9 @@ class ApiController extends AppController {
                     } else {
                         $error = true;
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Unable to nDorse."),
+                            'result' => array(
+                                "status" => false, "msg" => "Unable to nDorse."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -4835,8 +5028,9 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
 
@@ -4851,26 +5045,29 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)),
+                'result' => array(
+                    "status" => true, "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function daisyEndorse() {
+    public function daisyEndorse()
+    {
 
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
             $endorseList = json_decode($this->request->data['endorse_list']);
-//            pr($this->request->data);
-//            exit;
+            //            pr($this->request->data);
+            //            exit;
 
 
             if (isset($this->request->data['source']) && $this->request->data['source'] == 'web_app') {
@@ -4925,27 +5122,27 @@ class ApiController extends AppController {
             /* Email Template Start */
 
             if (isset($userEmailId) && $userEmailId != '') {
-//                $orgID = $this->request->data['org_id'];
-//                $orgDATA = $this->Organization->findById($orgID);
-//                $organizationName = '';
-//                if (!empty($orgDATA)) {
-//                    if (isset($orgDATA['Organization']['name']) && $orgDATA['Organization']['name'] != '') {
-//                        $organizationName = $orgDATA['Organization']['name'];
-//                    }
-//                }
-//                $msg = "Your feedback received successfully.";
-//                $viewVars = array("username" => $userEmailId, 'first_name' => $userFName, 'last_name' => $userLName, 'org_name' => $organizationName);
+                //                $orgID = $this->request->data['org_id'];
+                //                $orgDATA = $this->Organization->findById($orgID);
+                //                $organizationName = '';
+                //                if (!empty($orgDATA)) {
+                //                    if (isset($orgDATA['Organization']['name']) && $orgDATA['Organization']['name'] != '') {
+                //                        $organizationName = $orgDATA['Organization']['name'];
+                //                    }
+                //                }
+                //                $msg = "Your feedback received successfully.";
+                //                $viewVars = array("username" => $userEmailId, 'first_name' => $userFName, 'last_name' => $userLName, 'org_name' => $organizationName);
                 /* added by Babulal Prasad at 7-feb-2018 for unsubscribe from email */
-//                $userIdEncrypted = base64_encode($endorserID);
-//                $rootUrl = Router::url('/', true);
-//                $rootUrl = str_replace("http:", "https:", $rootUrl);
-//                $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
-//                $viewVars["pathToRender"] = $pathToRender;
-//                /**/
-//                $configVars = serialize($viewVars);
-//                $subject = "Your feedback received successfully.";
-//                $to = $userEmailId;
-//                $email = array("to" => $to, "subject" => $subject, "config_vars" => $configVars, "template" => "guest_feedback");
+                //                $userIdEncrypted = base64_encode($endorserID);
+                //                $rootUrl = Router::url('/', true);
+                //                $rootUrl = str_replace("http:", "https:", $rootUrl);
+                //                $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
+                //                $viewVars["pathToRender"] = $pathToRender;
+                //                /**/
+                //                $configVars = serialize($viewVars);
+                //                $subject = "Your feedback received successfully.";
+                //                $to = $userEmailId;
+                //                $email = array("to" => $to, "subject" => $subject, "config_vars" => $configVars, "template" => "guest_feedback");
                 // $this->Email->save($email);  I have stopped mail, first i need to confirm with client 
             }
             /* Email Template End */
@@ -4975,7 +5172,7 @@ class ApiController extends AppController {
                 $this->Endorsement->set($endorsement);
 
                 if ($this->Endorsement->validates()) {
-//                    pr($endorsement);  exit;
+                    //                    pr($endorsement);  exit;
                     if ($this->Endorsement->save()) {
                         $endorsementIds[] = $this->Endorsement->id;
                         $endorsed_user_id = array();
@@ -5010,8 +5207,9 @@ class ApiController extends AppController {
                     } else {
                         $error = true;
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Unable to nDorse."),
+                            'result' => array(
+                                "status" => false, "msg" => "Unable to nDorse."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -5024,8 +5222,9 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
 
@@ -5040,20 +5239,23 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)),
+                'result' => array(
+                    "status" => true, "msg" => "nDorsement submitted!", "data" => array('endorsement_ids' => $endorsementIds)
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function saveEndorseAttachment() {
+    public function saveEndorseAttachment()
+    {
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
 
@@ -5074,9 +5276,9 @@ class ApiController extends AppController {
                     $imageName = $this->Common->getUploadFilename($uploadPath, $imageName);
 
                     if ($this->Common->uploadApiImage($uploadPath, $imageName, $imageData)) {
-//$this->request->data['name'] = $imageName;
+                        //$this->request->data['name'] = $imageName;
                         unset($this->EndorseAttachment->validate['image']);
-//
+                        //
 
                         $params = array();
                         $params['fields'] = "id,image_count";
@@ -5087,15 +5289,15 @@ class ApiController extends AppController {
                         foreach ($imageendorsement as $imgval) {
                             $endorseimagearray[$imgval["Endorsement"]["id"]] = $imgval["Endorsement"]["image_count"];
                         }
-//print_r($endorseimagearray);
-//
+                        //print_r($endorseimagearray);
+                        //
                         $endorseupdate = array();
                         foreach ($endorsementIds as $id) {
 
                             $endorseAttachments[] = array("endorsement_id" => $id, "type" => $this->request->data['type'], "name" => $imageName);
-// check if image_count = 0 then update image_count flag
+                            // check if image_count = 0 then update image_count flag
                             if ($endorseimagearray[$id] == 0) {
-//echo $id;
+                                //echo $id;
                                 $this->Endorsement->id = $id;
                                 $this->Endorsement->savefield("image_count", 1);
                             }
@@ -5105,21 +5307,24 @@ class ApiController extends AppController {
                         if ($this->EndorseAttachment->saveMany($endorseAttachments)) {
 
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Attachments sent successfully."),
+                                'result' => array(
+                                    "status" => true, "msg" => "Attachments sent successfully."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."),
+                                'result' => array(
+                                    "status" => false, "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."),
+                            'result' => array(
+                                "status" => false, "msg" => "Attachment failed due to server error! Please try nDorsement later or without attachment."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -5134,22 +5339,25 @@ class ApiController extends AppController {
 
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Error!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getCountryStateList() {
+    public function getCountryStateList()
+    {
 
 
         $countryinfo = $this->Country->find("all", array(
@@ -5164,14 +5372,15 @@ class ApiController extends AppController {
         return $countryarray;
     }
 
-    public function getOrgValues($org_id, $model = "OrgJobTitles", $all = 0, $valueid = array()) {
+    public function getOrgValues($org_id, $model = "OrgJobTitles", $all = 0, $valueid = array())
+    {
         $title = "name";
         $fields = array("id");
         $value = "";
-//if($valueid !="")
-//{
-//	$value = explode(",",$valueid);
-//}
+        //if($valueid !="")
+        //{
+        //	$value = explode(",",$valueid);
+        //}
         if ($model == "OrgJobTitles") {
             $title = "title";
             $fields[] = "title";
@@ -5208,7 +5417,7 @@ class ApiController extends AppController {
 
 
         if ($all == 1) {
-//echo "test1";
+            //echo "test1";
             if (!empty($valueid)) {
                 $condarr[$model . '.id'] = $valueid;
             }
@@ -5217,41 +5426,44 @@ class ApiController extends AppController {
             $condarr[$model . '.status'] = 1;
         }
 
-//		if($all)
-//		{
-//			
-//			$orgcoreinfo = $this->$model->find("all", array(
-//                    'conditions' => $condarr,
-//                    'fields' => $fields
-//                ));
-//		}else{
+        //		if($all)
+        //		{
+        //			
+        //			$orgcoreinfo = $this->$model->find("all", array(
+        //                    'conditions' => $condarr,
+        //                    'fields' => $fields
+        //                ));
+        //		}else{
         $orgcoreinfo = $this->$model->find("all", array(
             'conditions' => $condarr,
             'fields' => $fields
         ));
         //pr($orgcoreinfo); exit;
-//}
-//echo $this->Organization->getLastQuery();
+        //}
+        //echo $this->Organization->getLastQuery();
         $oinfo = array();
         foreach ($orgcoreinfo as $val) {
             if ($model == "OrgCoreValues") {
-// $oinfo[] = array("id" => $val[$model]["id"], "name" => strtolower($val[$model][$title]), "color_code" => $val[$model]["color_code"]);
-                $oinfo[] = array("id" => $val[$model]["id"], "name" => $val[$model][$title], "color_code" => $val[$model]["color_code"],
+                // $oinfo[] = array("id" => $val[$model]["id"], "name" => strtolower($val[$model][$title]), "color_code" => $val[$model]["color_code"]);
+                $oinfo[] = array(
+                    "id" => $val[$model]["id"], "name" => $val[$model][$title], "color_code" => $val[$model]["color_code"],
                     "custom_message_text" => $val[$model]["custom_message_text"], "custom_message_enabled" => $val[$model]["custom_message_enabled"],
-                    "custom_message_disabled_user_id" => $val[$model]["custom_message_disabled_user_id"], "for_webapp" => $val[$model]["for_webapp"], "for_guest" => $val[$model]["for_guest"]);
+                    "custom_message_disabled_user_id" => $val[$model]["custom_message_disabled_user_id"], "for_webapp" => $val[$model]["for_webapp"], "for_guest" => $val[$model]["for_guest"]
+                );
             } elseif ($model == 'Organization') {
-// $oinfo[] = array("id" => $val[$model]["id"], "name" => strtolower($val[$model][$title]));
+                // $oinfo[] = array("id" => $val[$model]["id"], "name" => strtolower($val[$model][$title]));
 
                 $oinfo[] = $val[$model];
             } else {
-// $oinfo[] = array("id" => $val[$model]["id"], "name" => strtolower($val[$model][$title]));
+                // $oinfo[] = array("id" => $val[$model]["id"], "name" => strtolower($val[$model][$title]));
                 $oinfo[] = array("id" => $val[$model]["id"], "name" => $val[$model][$title]);
             }
         }
         return $oinfo;
     }
 
-    public function getOrgoption() {
+    public function getOrgoption()
+    {
 
         if (isset($this->request->data['token']) && isset($this->request->data['org_id'])) {
             $orgArray = array();
@@ -5269,27 +5481,30 @@ class ApiController extends AppController {
             }
             $orgArray["option_selected"] = $selectdata;
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Organization entity,department,job_titles data ",
-                    "data" => $orgArray),
+                'result' => array(
+                    "status" => true, "msg" => "Organization entity,department,job_titles data ",
+                    "data" => $orgArray
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token or keyword is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token or keyword is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function joinOrganization() {
+    public function joinOrganization()
+    {
         if ($this->request->is('post')) {
             $loggedinUser = $this->Auth->user();
 
-//Remove this code once invite table is empty
+            //Remove this code once invite table is empty
             $organization = $this->Organization->findBySecretCode($this->request->data['org_code']);
-//echo $this->Organization->getLastQuery();die;
+            //echo $this->Organization->getLastQuery();die;
             if (!empty($organization)) {
                 $this->joinOrganizationRemove();
                 return;
@@ -5299,19 +5514,21 @@ class ApiController extends AppController {
             $this->JoinOrgCode->bindModel(array('belongsTo' => array('Organization')));
             $joinOrgCodeRecord = $this->JoinOrgCode->findByCode($this->request->data['org_code']);
 
-//echo $this->Organization->getLastQuery();die;
+            //echo $this->Organization->getLastQuery();die;
             if (empty($joinOrgCodeRecord)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid join code."),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid join code."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
             } else {
                 if ($joinOrgCodeRecord['JoinOrgCode']['is_expired'] == 1) {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Code has been expired"),
+                        'result' => array(
+                            "status" => false, "msg" => "Code has been expired"
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -5320,8 +5537,9 @@ class ApiController extends AppController {
                 $organization = $joinOrgCodeRecord['Organization'];
                 if ($organization['status'] != 1) {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Organization Inactive!"),
+                        'result' => array(
+                            "status" => false, "msg" => "Organization Inactive!"
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -5333,8 +5551,9 @@ class ApiController extends AppController {
                 if (!empty($alreadyJoined)) {
                     if ($alreadyJoined['UserOrganization']['status'] != $statusConfig['deleted'] && $alreadyJoined['UserOrganization']['joined'] == 1) {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "You are already a member of this Organization."),
+                            'result' => array(
+                                "status" => false, "msg" => "You are already a member of this Organization."
+                            ),
                             '_serialize' => array('result')
                         ));
                         return;
@@ -5380,8 +5599,8 @@ class ApiController extends AppController {
                         $params = array();
                         $conditions = array();
                         $todayDate = date('Y-m-d H:i:s');
-//                    $conditions['start_date <='] = $todayDate;
-//                    $conditions['end_date >='] = $todayDate;
+                        //                    $conditions['start_date <='] = $todayDate;
+                        //                    $conditions['end_date >='] = $todayDate;
                         $conditions['Subscription.status'] = 1;
                         $conditions['Subscription.organization_id'] = $organization['id'];
                         $params['conditions'] = $conditions;
@@ -5390,13 +5609,13 @@ class ApiController extends AppController {
                             $poolPurchased = $currentSubscription['Subscription']['pool_purchased'];
 
                             if ($paidCount >= $poolPurchased) {
-//$status = $statusConfig['invite_inactive'];
+                                //$status = $statusConfig['invite_inactive'];
                                 $status = $statusConfig['inactive'];
                             } else {
                                 $status = $statusConfig['active'];
                             }
                         } else {
-//$status = $statusConfig['invite_inactive'];
+                            //$status = $statusConfig['invite_inactive'];
                             $status = $statusConfig['inactive'];
                         }
                     } else {
@@ -5435,7 +5654,7 @@ class ApiController extends AppController {
                     $this->JoinOrgCode->updateAll(array("is_expired" => 1, "user_organization_id" => $userOrgId), array("id" => $joinOrgCodeRecord['JoinOrgCode']['id']));
 
                     $this->DefaultOrg->deleteAll(
-                            array('DefaultOrg.organization_id' => $organization['id'], 'DefaultOrg.user_id' => $joinOrgCodeRecord['JoinOrgCode']['user_id'])
+                        array('DefaultOrg.organization_id' => $organization['id'], 'DefaultOrg.user_id' => $joinOrgCodeRecord['JoinOrgCode']['user_id'])
                     );
 
                     $organization['org_role'] = 'endorser';
@@ -5444,11 +5663,11 @@ class ApiController extends AppController {
                     if (empty($currentOrg)) {
                         $roleList = $this->Common->setSessionRoles();
 
-//                        if ($status == $statusConfig['active']) {
-//                            $currentOrg = $organization['Organization'];
-//                            $currentOrg['org_role'] = 'endorser';
-//                            $this->Session->write('Auth.User.current_org', $currentOrg);
-//                        }
+                        //                        if ($status == $statusConfig['active']) {
+                        //                            $currentOrg = $organization['Organization'];
+                        //                            $currentOrg['org_role'] = 'endorser';
+                        //                            $this->Session->write('Auth.User.current_org', $currentOrg);
+                        //                        }
 
                         $defaultOrg = array("organization_id" => $organization['id'], "user_id" => $loggedinUser['id']);
                         $this->DefaultOrg->save($defaultOrg);
@@ -5467,11 +5686,11 @@ class ApiController extends AppController {
                     } else if ($status == $statusConfig['eval']) {
                         $msg = "You have successfully joined the Organization, but you are in evaluation mode.";
 
-//                        $this->set(array(
-//                            'result' => array("status" => true
-//                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => true
+                        //                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     } else {
                         $msg = "You have successfully joined " . $organization['name'] . "! Your status is inactive. To activate your status, contact your Organization Admin to purchase additional subscription.";
 
@@ -5490,28 +5709,29 @@ class ApiController extends AppController {
 
                         $viewVars = serialize(array("org_name" => $organization['name'], 'user' => $loggedinUser, "pathToRender" => $pathToRender));
                         $to = $admin['User']['email'];
-//$this->Common->sendEmail($admin['User']['email'], $subject, $template, $viewVars);
+                        //$this->Common->sendEmail($admin['User']['email'], $subject, $template, $viewVars);
                         $email = array("to" => $to, "subject" => $subject, "config_vars" => $viewVars, "template" => $template);
-//  $this->Email->save($email);
-//                        $this->set(array(
-//                            'result' => array("status" => false
-//                                , "msg" => $msg, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        //  $this->Email->save($email);
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => false
+                        //                                , "msg" => $msg, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     }
 
                     $orgReturnData = array("Organization" => $organization);
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => $msg, "data" => $orgReturnData, "isDefault" => $isDefault, "isActive" => $isActive),
+                        'result' => array(
+                            "status" => true, "msg" => $msg, "data" => $orgReturnData, "isDefault" => $isDefault, "isActive" => $isActive
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
 
-//                    $this->Invite->id = $inviteId;
-//                    $this->Invite->delete();
-//$this->Invite->saveField("is_accepted", 1);
+                    //                    $this->Invite->id = $inviteId;
+                    //                    $this->Invite->delete();
+                    //$this->Invite->saveField("is_accepted", 1);
                 } else {
                     $errors = $this->UserOrganization->validationErrors;
                     $errorsArray = array();
@@ -5521,30 +5741,34 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Errors!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function joinOrganizationRemove() {
+    public function joinOrganizationRemove()
+    {
         if ($this->request->is('post')) {
             $loggedinUser = $this->Auth->user();
             $organization = $this->Organization->findBySecretCode($this->request->data['org_code']);
-//echo $this->Organization->getLastQuery();die;
+            //echo $this->Organization->getLastQuery();die;
             if (empty($organization)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid Unique Code."),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid Unique Code."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -5552,8 +5776,9 @@ class ApiController extends AppController {
 
                 if ($organization['Organization']['status'] != 1) {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Organization Inactive!"),
+                        'result' => array(
+                            "status" => false, "msg" => "Organization Inactive!"
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -5566,8 +5791,9 @@ class ApiController extends AppController {
                 if (!empty($alreadyJoined)) {
                     if ($alreadyJoined['UserOrganization']['status'] != $statusConfig['deleted'] && $alreadyJoined['UserOrganization']['joined'] == 1) {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "You are already a member of this Organization."),
+                            'result' => array(
+                                "status" => false, "msg" => "You are already a member of this Organization."
+                            ),
                             '_serialize' => array('result')
                         ));
                         return;
@@ -5578,8 +5804,9 @@ class ApiController extends AppController {
                 $invite = $this->Invite->find("first", array("conditions" => array("email" => $loggedinUser['email'], 'organization_id' => $organization['Organization']['id'])));
                 if (empty($invite)) {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "You do not have access to this Organization. Please request a Unique Code through JOIN Organization."),
+                        'result' => array(
+                            "status" => false, "msg" => "You do not have access to this Organization. Please request a Unique Code through JOIN Organization."
+                        ),
                         '_serialize' => array('result')
                     ));
 
@@ -5620,8 +5847,8 @@ class ApiController extends AppController {
                         $params = array();
                         $conditions = array();
                         $todayDate = date('Y-m-d H:i:s');
-//                    $conditions['start_date <='] = $todayDate;
-//                    $conditions['end_date >='] = $todayDate;
+                        //                    $conditions['start_date <='] = $todayDate;
+                        //                    $conditions['end_date >='] = $todayDate;
                         $conditions['Subscription.status'] = 1;
                         $conditions['Subscription.organization_id'] = $organization['Organization']['id'];
                         $params['conditions'] = $conditions;
@@ -5630,13 +5857,13 @@ class ApiController extends AppController {
                             $poolPurchased = $currentSubscription['Subscription']['pool_purchased'];
 
                             if ($paidCount >= $poolPurchased) {
-//$status = $statusConfig['invite_inactive'];
+                                //$status = $statusConfig['invite_inactive'];
                                 $status = $statusConfig['inactive'];
                             } else {
                                 $status = $statusConfig['active'];
                             }
                         } else {
-//$status = $statusConfig['invite_inactive'];
+                            //$status = $statusConfig['invite_inactive'];
                             $status = $statusConfig['inactive'];
                         }
                     } else {
@@ -5651,8 +5878,8 @@ class ApiController extends AppController {
                     "pool_type" => $poolType,
                     "status" => $status,
                     //"department_id" => "",
-//"job_title_id" => "",
-//"entity_id" => "",
+                    //"job_title_id" => "",
+                    //"entity_id" => "",
                     "flow" => "app_invite",
                     "joined" => 1
                 );
@@ -5670,8 +5897,8 @@ class ApiController extends AppController {
                 } else {
                     $userOrgId = $alreadyJoined['UserOrganization']['id'];
                     $saved = $this->UserOrganization->save($newUserOrganization);
-//                    $saved = $this->UserOrganization->updateAll(array("joined" => 1), array("UserOrganization.id" => $userOrgId));
-//                    $status = $alreadyJoined['UserOrganization']['status'];
+                    //                    $saved = $this->UserOrganization->updateAll(array("joined" => 1), array("UserOrganization.id" => $userOrgId));
+                    //                    $status = $alreadyJoined['UserOrganization']['status'];
                 }
 
                 if ($saved) {
@@ -5680,11 +5907,11 @@ class ApiController extends AppController {
                     if (empty($currentOrg)) {
                         $roleList = $this->Common->setSessionRoles();
 
-//                        if ($status == $statusConfig['active']) {
-//                            $currentOrg = $organization['Organization'];
-//                            $currentOrg['org_role'] = 'endorser';
-//                            $this->Session->write('Auth.User.current_org', $currentOrg);
-//                        }
+                        //                        if ($status == $statusConfig['active']) {
+                        //                            $currentOrg = $organization['Organization'];
+                        //                            $currentOrg['org_role'] = 'endorser';
+                        //                            $this->Session->write('Auth.User.current_org', $currentOrg);
+                        //                        }
 
                         $defaultOrg = array("organization_id" => $organization['Organization']['id'], "user_id" => $loggedinUser['id']);
                         $this->DefaultOrg->save($defaultOrg);
@@ -5702,11 +5929,11 @@ class ApiController extends AppController {
                     } else if ($status == $statusConfig['eval']) {
                         $msg = "You have successfully joined the Organization, but you are in evaluation mode.";
 
-//                        $this->set(array(
-//                            'result' => array("status" => true
-//                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => true
+                        //                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     } else {
                         $msg = "You have successfully joined " . $organization['Organization']['name'] . "! Your status is inactive. To activate your status, contact your Organization Admin to purchase additional subscription.";
 
@@ -5722,25 +5949,26 @@ class ApiController extends AppController {
                         /*                         * * */
                         $viewVars = serialize(array("org_name" => $organization['Organization']['name'], 'user' => $loggedinUser, "pathToRender" => $pathToRender));
                         $to = $admin['User']['email'];
-//$this->Common->sendEmail($admin['User']['email'], $subject, $template, $viewVars);
+                        //$this->Common->sendEmail($admin['User']['email'], $subject, $template, $viewVars);
                         $email = array("to" => $to, "subject" => $subject, "config_vars" => $viewVars, "template" => $template);
-// $this->Email->save($email);
-//                        $this->set(array(
-//                            'result' => array("status" => false
-//                                , "msg" => $msg, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        // $this->Email->save($email);
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => false
+                        //                                , "msg" => $msg, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     }
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => $isActive),
+                        'result' => array(
+                            "status" => true, "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => $isActive
+                        ),
                         '_serialize' => array('result')
                     ));
 
                     $this->Invite->id = $inviteId;
                     $this->Invite->delete();
-//$this->Invite->saveField("is_accepted", 1);
+                    //$this->Invite->saveField("is_accepted", 1);
                 } else {
                     $errors = $this->UserOrganization->validationErrors;
                     $errorsArray = array();
@@ -5750,22 +5978,25 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Errors!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getSubscriptionInfo() {
+    public function getSubscriptionInfo()
+    {
         if ($this->request->is('post')) {
             $loggedinUser = $this->Auth->user();
             if ($loggedinUser['current_org']['org_role'] == "admin" || $loggedinUser['current_org']['org_role'] == "designated_admin") {
@@ -5773,8 +6004,8 @@ class ApiController extends AppController {
                 $params = array();
                 $conditions = array();
                 $todayDate = date('Y-m-d H:i:s');
-//                $conditions['start_date <='] = $todayDate;
-//                $conditions['end_date >='] = $todayDate;
+                //                $conditions['start_date <='] = $todayDate;
+                //                $conditions['end_date >='] = $todayDate;
                 $conditions['Subscription.status'] = 1;
                 $conditions['Subscription.organization_id'] = $loggedinUser['current_org']['id'];
                 $params['conditions'] = $conditions;
@@ -5789,28 +6020,32 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Subscription information",
-                        "data" => array("pool_purchased" => $poolPurchased, "joined_user" => $joinedUser, "invite_msg" => $inviteMsg)),
+                    'result' => array(
+                        "status" => true, "msg" => "Subscription information",
+                        "data" => array("pool_purchased" => $poolPurchased, "joined_user" => $joinedUser, "invite_msg" => $inviteMsg)
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You are not allowed to view this information"),
+                    'result' => array(
+                        "status" => false, "msg" => "You are not allowed to view this information"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function searchInOrganization() {
+    public function searchInOrganization()
+    {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -5823,8 +6058,9 @@ class ApiController extends AppController {
 
             if (!isset($loggedinUser['current_org'])) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You have not joined any organization yet. Please join."),
+                    'result' => array(
+                        "status" => false, "msg" => "You have not joined any organization yet. Please join."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -5857,25 +6093,25 @@ class ApiController extends AppController {
                                     WHERE ((LOWER(User.fname) LIKE LOWER('%" . $keyWord . "%')) OR (LOWER(User.lname) LIKE LOWER('%" . $keyWord . "%')) OR (LOWER(CONCAT(User.fname, ' ', User.lname)) LIKE LOWER('%" . $keyWord . "%')))	AND UserOrganization.status IN (" . $statusConfig['active'] . ", " . $statusConfig['eval'] . ")
                                     AND UserOrganization.organization_id = " . $loggedinUser['current_org']['id'] . $searchSelfCondition . " " . $searchBySubcenter . "
                                     GROUP BY  User.id, Endorsement.endorsed_id";
-//            $usersData = $this->UserOrganization->query($sql_not_using);
-//$usersData = $this->UserOrganization->find("all", $params);
-//echo $this->UserOrganization->getLastQuery();die;
-//pr($usersData);die;
-//            $users = array();
-//
-//            foreach ($usersData as $user) {
-////if($user['User']['id']!=$loggedinUser['id']){
-//                $userDetail = array();
-//                $userDetail['id'] = $user['User']['id'];
-//                $userDetail['email'] = $user['User']['email'];
-//                $userDetail['name'] = $user['User']['fname'] . " " . $user['User']['lname'];
-//                $userDetail['org_status'] = array_search($user['UserOrganization']['status'], $statusConfig);
-//                $userDetail['endorse_count'] = $user[0]['count'];
-////                $userDetail['subcenter'] = $user['OrgSubcenter']['short_name'];
-//
-//                $users[$user['User']['id']] = $userDetail;
-////}
-//            }
+            //            $usersData = $this->UserOrganization->query($sql_not_using);
+            //$usersData = $this->UserOrganization->find("all", $params);
+            //echo $this->UserOrganization->getLastQuery();die;
+            //pr($usersData);die;
+            //            $users = array();
+            //
+            //            foreach ($usersData as $user) {
+            ////if($user['User']['id']!=$loggedinUser['id']){
+            //                $userDetail = array();
+            //                $userDetail['id'] = $user['User']['id'];
+            //                $userDetail['email'] = $user['User']['email'];
+            //                $userDetail['name'] = $user['User']['fname'] . " " . $user['User']['lname'];
+            //                $userDetail['org_status'] = array_search($user['UserOrganization']['status'], $statusConfig);
+            //                $userDetail['endorse_count'] = $user[0]['count'];
+            ////                $userDetail['subcenter'] = $user['OrgSubcenter']['short_name'];
+            //
+            //                $users[$user['User']['id']] = $userDetail;
+            ////}
+            //            }
 
             /* GET POSTs Users Start */
             $postQuery = "SELECT  User.id, User.fname, User.lname, User.email, UserOrganization.status,OrgSubcenter.short_name,OrgSubcenter.long_name,OrgSubcenter.id,OrgDepartment.name, IF(Post. organization_id = " . $loggedinUser['current_org']['id'] . ", COUNT(Post.id), 0) as count
@@ -5898,9 +6134,9 @@ class ApiController extends AppController {
                                 GROUP BY  User.id";
 
             $postData = $this->Post->query($postQuery);
-//            pr($postData);
+            //            pr($postData);
             foreach ($postData as $user) {
-//if($user['User']['id']!=$loggedinUser['id']){
+                //if($user['User']['id']!=$loggedinUser['id']){
                 $userDetail = array();
                 $userDetail['id'] = $user['User']['id'];
                 $userDetail['email'] = $user['User']['email'];
@@ -5913,7 +6149,7 @@ class ApiController extends AppController {
                 $userDetail['department'] = $user['OrgDepartment']['name'];
 
                 $users[$user['User']['id']] = $userDetail;
-//}
+                //}
             }
 
 
@@ -5937,7 +6173,7 @@ class ApiController extends AppController {
                                 AND UserOrganization.organization_id = " . $loggedinUser['current_org']['id'] . $searchSelfCondition . "
                                 GROUP BY  Post.id";
             $postTitleData = $this->Post->query($postTitleQuery);
-//pr($postTitleData);
+            //pr($postTitleData);
             $postTitle = array();
             foreach ($postTitleData as $index => $postDATA) {
                 $postDetail = array();
@@ -5947,7 +6183,7 @@ class ApiController extends AppController {
                 $postDetail['email'] = $postDATA['User']['email'];
                 $postDetail['type'] = "post_title";
                 $postTitle[] = $postDetail;
-//}
+                //}
             }
 
             /* GET Search in Post Title End */
@@ -5957,31 +6193,31 @@ class ApiController extends AppController {
 
             $departments = array();
 
-//												$params = array();
-//												$params['joins'] = array(
-//                            array(
-//                                'table' => 'endorsements',
-//                                'alias' => 'Endorsement',
-//                                'type' => 'LEFT',
-//                                'conditions' => array(
-//                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
-//                                    'Endorsement.endorsed_id = OrgDepartments.id',
-//                                    'Endorsement.organization_id = ' . $loggedinUser['current_org']['id'],
-//																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
-//                                )
-//                            )
-//                        );
-//												
-//												$conditions = array();
-//												$conditions['OR']["OrgDepartments.name LIKE"] = '%' . $keyWord . '%';
-//												$conditions['OrgDepartments.status'] = array($statusConfig['active']);
-//												$conditions['OrgDepartments.organization_id'] = $loggedinUser['current_org']['id'];
-//												
-//												$params['conditions'] = $conditions;
-//												
-//												$params['fields'] = array("OrgDepartments.id", "OrgDepartments.name", "COUNT(Endorsement.id) as count");
-//												
-//												$departmentsData = $this->OrgDepartments->find("all", $params);
+            //												$params = array();
+            //												$params['joins'] = array(
+            //                            array(
+            //                                'table' => 'endorsements',
+            //                                'alias' => 'Endorsement',
+            //                                'type' => 'LEFT',
+            //                                'conditions' => array(
+            //                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
+            //                                    'Endorsement.endorsed_id = OrgDepartments.id',
+            //                                    'Endorsement.organization_id = ' . $loggedinUser['current_org']['id'],
+            //																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
+            //                                )
+            //                            )
+            //                        );
+            //												
+            //												$conditions = array();
+            //												$conditions['OR']["OrgDepartments.name LIKE"] = '%' . $keyWord . '%';
+            //												$conditions['OrgDepartments.status'] = array($statusConfig['active']);
+            //												$conditions['OrgDepartments.organization_id'] = $loggedinUser['current_org']['id'];
+            //												
+            //												$params['conditions'] = $conditions;
+            //												
+            //												$params['fields'] = array("OrgDepartments.id", "OrgDepartments.name", "COUNT(Endorsement.id) as count");
+            //												
+            //												$departmentsData = $this->OrgDepartments->find("all", $params);
 
             $sql = "SELECT OrgDepartments.id, OrgDepartments.name, COUNT(Endorsement.id) as count
                                         FROM org_departments AS OrgDepartments
@@ -5992,9 +6228,9 @@ class ApiController extends AppController {
                                         GROUP BY  OrgDepartments.id, Endorsement.endorsed_id";
             $departmentsData = $this->OrgDepartments->query($sql);
 
-//echo $this->OrgDepartments->getLastQuery();die;
-//
-//pr($departmentsData);die;
+            //echo $this->OrgDepartments->getLastQuery();die;
+            //
+            //pr($departmentsData);die;
 
             foreach ($departmentsData as $department) {
                 $departmentDetail = array();
@@ -6007,31 +6243,31 @@ class ApiController extends AppController {
 
             $entities = array();
 
-//												$params = array();
-//												$params['joins'] = array(
-//                            array(
-//                                'table' => 'endorsements',
-//                                'alias' => 'Endorsement',
-//                                'type' => 'LEFT',
-//                                'conditions' => array(
-//                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
-//                                    'Endorsement.endorsed_id = Entity.id',
-//                                    'Endorsement.organization_id = ' . $loggedinUser['current_org']['id'],
-//																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
-//                                )
-//                            )
-//                        );
-//												
-//												$conditions = array();
-//												$conditions['OR']["Entity.name LIKE"] = '%' . $keyWord . '%';
-//												$conditions['Entity.status'] = array($statusConfig['active']);
-//												$conditions['Entity.organization_id'] = $loggedinUser['current_org']['id'];
-//												
-//												$params['conditions'] = $conditions;
-//												
-//												$params['fields'] = array("Entity.id", "Entity.name", "COUNT(Endorsement.id) as count");
-//												
-//												$entitiesData = $this->Entity->find("all", $params);
+            //												$params = array();
+            //												$params['joins'] = array(
+            //                            array(
+            //                                'table' => 'endorsements',
+            //                                'alias' => 'Endorsement',
+            //                                'type' => 'LEFT',
+            //                                'conditions' => array(
+            //                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
+            //                                    'Endorsement.endorsed_id = Entity.id',
+            //                                    'Endorsement.organization_id = ' . $loggedinUser['current_org']['id'],
+            //																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
+            //                                )
+            //                            )
+            //                        );
+            //												
+            //												$conditions = array();
+            //												$conditions['OR']["Entity.name LIKE"] = '%' . $keyWord . '%';
+            //												$conditions['Entity.status'] = array($statusConfig['active']);
+            //												$conditions['Entity.organization_id'] = $loggedinUser['current_org']['id'];
+            //												
+            //												$params['conditions'] = $conditions;
+            //												
+            //												$params['fields'] = array("Entity.id", "Entity.name", "COUNT(Endorsement.id) as count");
+            //												
+            //												$entitiesData = $this->Entity->find("all", $params);
 
             $entitiesData = $this->Entity->query("
                 SELECT Entity.id, Entity.name, COUNT(Endorsement.id) as count
@@ -6042,7 +6278,7 @@ class ApiController extends AppController {
                 AND Entity.organization_id = " . $loggedinUser['current_org']['id'] . "
                 GROUP BY  Entity.id, Endorsement.endorsed_id");
 
-//echo $this->Entity->getLastQuery();die;
+            //echo $this->Entity->getLastQuery();die;
 
             foreach ($entitiesData as $entity) {
                 $entityDetail = array();
@@ -6059,20 +6295,23 @@ class ApiController extends AppController {
             $resultData['post_title'] = $postTitle;
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Search results", "data" => $resultData),
+                'result' => array(
+                    "status" => true, "msg" => "Search results", "data" => $resultData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function searchInOrganizationDaisyWeb() {
+    public function searchInOrganizationDaisyWeb()
+    {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -6081,8 +6320,9 @@ class ApiController extends AppController {
             $orgID = $loggedinUser['current_org']['id'];
             if (!isset($loggedinUser['current_org'])) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You have not joined any organization yet. Please join."),
+                    'result' => array(
+                        "status" => false, "msg" => "You have not joined any organization yet. Please join."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -6113,9 +6353,9 @@ class ApiController extends AppController {
                                     GROUP BY  User.id, Endorsement.endorsed_id";
             $usersData = $this->UserOrganization->query($sql);
 
-//$usersData = $this->UserOrganization->find("all", $params);
-//echo $this->UserOrganization->getLastQuery();die;
-//pr($usersData);die;
+            //$usersData = $this->UserOrganization->find("all", $params);
+            //echo $this->UserOrganization->getLastQuery();die;
+            //pr($usersData);die;
 
             $users = array();
 
@@ -6148,20 +6388,23 @@ class ApiController extends AppController {
             $resultData['entities'] = array();
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Search results", "data" => $resultData),
+                'result' => array(
+                    "status" => true, "msg" => "Search results", "data" => $resultData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function searchInOrganizationGuest() {
+    public function searchInOrganizationGuest()
+    {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -6189,14 +6432,14 @@ class ApiController extends AppController {
                                     GROUP BY  User.id, Endorsement.endorsed_id";
             $usersData = $this->UserOrganization->query($sql);
 
-//$usersData = $this->UserOrganization->find("all", $params);
-//echo $this->UserOrganization->getLastQuery();die;
-//pr($usersData);die;
+            //$usersData = $this->UserOrganization->find("all", $params);
+            //echo $this->UserOrganization->getLastQuery();die;
+            //pr($usersData);die;
 
             $users = array();
 
             foreach ($usersData as $user) {
-//if($user['User']['id']!=$loggedinUser['id']){
+                //if($user['User']['id']!=$loggedinUser['id']){
                 $userDetail = array();
                 $userDetail['id'] = $user['User']['id'];
                 $userDetail['email'] = $user['User']['email'];
@@ -6210,46 +6453,46 @@ class ApiController extends AppController {
 
 
                 $users[$user['User']['id']] = $userDetail;
-//}
+                //}
             }
 
             /* GET POSTs Users Start */
-//            $postQuery = "SELECT  User.id, User.fname, User.lname, User.email, UserOrganization.status, IF(Post. organization_id = " . $orgID . ", COUNT(Post.id), 0) as count,
-//                Department.name as department_name,Entity.name as entity_name
-//                                FROM user_organizations AS UserOrganization
-//                                LEFT JOIN users AS User ON (UserOrganization.user_id = User.id) 
-//                                LEFT JOIN departments AS Department ON (UserOrganization.department_id = Department.id) 
-//                                    LEFT JOIN entities AS Entity ON (UserOrganization.entity_id = Entity.id)
-//                                LEFT JOIN 
-//                                  posts AS Post ON 
-//                                   (Post.organization_id = " . $orgID . ") 
-//                                WHERE 
-//                                (
-//                                        (LOWER(User.fname) LIKE LOWER('%" . $keyWord . "%')) OR (LOWER(User.lname) LIKE LOWER('%" . $keyWord . "%')) 
-//                                        OR 
-//                                        (LOWER(CONCAT(User.fname, ' ', User.lname)) LIKE LOWER('%" . $keyWord . "%'))
-//
-//                                )	
-//                                AND UserOrganization.status IN (" . $statusConfig['active'] . ", " . $statusConfig['eval'] . ")
-//                                AND UserOrganization.organization_id = " . $orgID . $searchSelfCondition . "
-//                                GROUP BY  User.id";
-//
-//            $postData = $this->Post->query($postQuery);
-//
-//            foreach ($postData as $user) {
-////if($user['User']['id']!=$loggedinUser['id']){
-//                $userDetail = array();
-//                $userDetail['id'] = $user['User']['id'];
-//                $userDetail['email'] = $user['User']['email'];
-//                $userDetail['name'] = $user['User']['fname'] . " " . $user['User']['lname'];
-//                $userDetail['org_status'] = array_search($user['UserOrganization']['status'], $statusConfig);
-//                $userDetail['endorse_count'] = $user[0]['count'];
-//                $userDetail['department_name'] = $user['Department']['department_name'];
-//                $userDetail['entity_name'] = $user['Entity']['entity_name'];
-//
-//                $users[$user['User']['id']] = $userDetail;
-////}
-//            }
+            //            $postQuery = "SELECT  User.id, User.fname, User.lname, User.email, UserOrganization.status, IF(Post. organization_id = " . $orgID . ", COUNT(Post.id), 0) as count,
+            //                Department.name as department_name,Entity.name as entity_name
+            //                                FROM user_organizations AS UserOrganization
+            //                                LEFT JOIN users AS User ON (UserOrganization.user_id = User.id) 
+            //                                LEFT JOIN departments AS Department ON (UserOrganization.department_id = Department.id) 
+            //                                    LEFT JOIN entities AS Entity ON (UserOrganization.entity_id = Entity.id)
+            //                                LEFT JOIN 
+            //                                  posts AS Post ON 
+            //                                   (Post.organization_id = " . $orgID . ") 
+            //                                WHERE 
+            //                                (
+            //                                        (LOWER(User.fname) LIKE LOWER('%" . $keyWord . "%')) OR (LOWER(User.lname) LIKE LOWER('%" . $keyWord . "%')) 
+            //                                        OR 
+            //                                        (LOWER(CONCAT(User.fname, ' ', User.lname)) LIKE LOWER('%" . $keyWord . "%'))
+            //
+            //                                )	
+            //                                AND UserOrganization.status IN (" . $statusConfig['active'] . ", " . $statusConfig['eval'] . ")
+            //                                AND UserOrganization.organization_id = " . $orgID . $searchSelfCondition . "
+            //                                GROUP BY  User.id";
+            //
+            //            $postData = $this->Post->query($postQuery);
+            //
+            //            foreach ($postData as $user) {
+            ////if($user['User']['id']!=$loggedinUser['id']){
+            //                $userDetail = array();
+            //                $userDetail['id'] = $user['User']['id'];
+            //                $userDetail['email'] = $user['User']['email'];
+            //                $userDetail['name'] = $user['User']['fname'] . " " . $user['User']['lname'];
+            //                $userDetail['org_status'] = array_search($user['UserOrganization']['status'], $statusConfig);
+            //                $userDetail['endorse_count'] = $user[0]['count'];
+            //                $userDetail['department_name'] = $user['Department']['department_name'];
+            //                $userDetail['entity_name'] = $user['Entity']['entity_name'];
+            //
+            //                $users[$user['User']['id']] = $userDetail;
+            ////}
+            //            }
 
 
             $usersArray = array();
@@ -6262,28 +6505,28 @@ class ApiController extends AppController {
 
             /* GET POSTs Users End */
             /* GET Search in Post Title Start */
-//            $postTitleQuery = "SELECT  Post.title,Post.id,User.id, User.fname, User.lname, User.email, UserOrganization.status, 
-//                                IF(Post. organization_id = " . $orgID . ", COUNT(Post.id), 0) as count
-//                                FROM user_organizations AS UserOrganization
-//                                LEFT JOIN posts AS Post ON (Post.organization_id = " . $orgID . ") 
-//                                LEFT JOIN users AS User ON (Post.user_id = User.id) 
-//                                WHERE LOWER(CONCAT(Post.title)) LIKE LOWER('%" . $keyWord . "%')	
-//                                AND UserOrganization.status IN (" . $statusConfig['active'] . ", " . $statusConfig['eval'] . ")
-//                                AND UserOrganization.organization_id = " . $orgID . $searchSelfCondition . "
-//                                GROUP BY  Post.id";
-//            $postTitleData = $this->Post->query($postTitleQuery);
-////pr($postTitleData);
-//            $postTitle = array();
-//            foreach ($postTitleData as $index => $postDATA) {
-//                $postDetail = array();
-//                $postDetail['title'] = $postDATA['Post']['title'];
-//                $postDetail['id'] = $postDATA['Post']['id'];
-//                $postDetail['name'] = $postDATA['User']['fname'] . " " . $postDATA['User']['lname'];
-//                $postDetail['email'] = $postDATA['User']['email'];
-//                $postDetail['type'] = "post_title";
-//                $postTitle[] = $postDetail;
-////}
-//            }
+            //            $postTitleQuery = "SELECT  Post.title,Post.id,User.id, User.fname, User.lname, User.email, UserOrganization.status, 
+            //                                IF(Post. organization_id = " . $orgID . ", COUNT(Post.id), 0) as count
+            //                                FROM user_organizations AS UserOrganization
+            //                                LEFT JOIN posts AS Post ON (Post.organization_id = " . $orgID . ") 
+            //                                LEFT JOIN users AS User ON (Post.user_id = User.id) 
+            //                                WHERE LOWER(CONCAT(Post.title)) LIKE LOWER('%" . $keyWord . "%')	
+            //                                AND UserOrganization.status IN (" . $statusConfig['active'] . ", " . $statusConfig['eval'] . ")
+            //                                AND UserOrganization.organization_id = " . $orgID . $searchSelfCondition . "
+            //                                GROUP BY  Post.id";
+            //            $postTitleData = $this->Post->query($postTitleQuery);
+            ////pr($postTitleData);
+            //            $postTitle = array();
+            //            foreach ($postTitleData as $index => $postDATA) {
+            //                $postDetail = array();
+            //                $postDetail['title'] = $postDATA['Post']['title'];
+            //                $postDetail['id'] = $postDATA['Post']['id'];
+            //                $postDetail['name'] = $postDATA['User']['fname'] . " " . $postDATA['User']['lname'];
+            //                $postDetail['email'] = $postDATA['User']['email'];
+            //                $postDetail['type'] = "post_title";
+            //                $postTitle[] = $postDetail;
+            ////}
+            //            }
 
             /* GET Search in Post Title End */
 
@@ -6292,31 +6535,31 @@ class ApiController extends AppController {
 
             $departments = array();
 
-//												$params = array();
-//												$params['joins'] = array(
-//                            array(
-//                                'table' => 'endorsements',
-//                                'alias' => 'Endorsement',
-//                                'type' => 'LEFT',
-//                                'conditions' => array(
-//                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
-//                                    'Endorsement.endorsed_id = OrgDepartments.id',
-//                                    'Endorsement.organization_id = ' . $orgID,
-//																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
-//                                )
-//                            )
-//                        );
-//												
-//												$conditions = array();
-//												$conditions['OR']["OrgDepartments.name LIKE"] = '%' . $keyWord . '%';
-//												$conditions['OrgDepartments.status'] = array($statusConfig['active']);
-//												$conditions['OrgDepartments.organization_id'] = $orgID;
-//												
-//												$params['conditions'] = $conditions;
-//												
-//												$params['fields'] = array("OrgDepartments.id", "OrgDepartments.name", "COUNT(Endorsement.id) as count");
-//												
-//												$departmentsData = $this->OrgDepartments->find("all", $params);
+            //												$params = array();
+            //												$params['joins'] = array(
+            //                            array(
+            //                                'table' => 'endorsements',
+            //                                'alias' => 'Endorsement',
+            //                                'type' => 'LEFT',
+            //                                'conditions' => array(
+            //                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
+            //                                    'Endorsement.endorsed_id = OrgDepartments.id',
+            //                                    'Endorsement.organization_id = ' . $orgID,
+            //																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
+            //                                )
+            //                            )
+            //                        );
+            //												
+            //												$conditions = array();
+            //												$conditions['OR']["OrgDepartments.name LIKE"] = '%' . $keyWord . '%';
+            //												$conditions['OrgDepartments.status'] = array($statusConfig['active']);
+            //												$conditions['OrgDepartments.organization_id'] = $orgID;
+            //												
+            //												$params['conditions'] = $conditions;
+            //												
+            //												$params['fields'] = array("OrgDepartments.id", "OrgDepartments.name", "COUNT(Endorsement.id) as count");
+            //												
+            //												$departmentsData = $this->OrgDepartments->find("all", $params);
 
             $sql = "SELECT OrgDepartments.id, OrgDepartments.name, COUNT(Endorsement.id) as count
                                         FROM org_departments AS OrgDepartments
@@ -6327,9 +6570,9 @@ class ApiController extends AppController {
                                         GROUP BY  OrgDepartments.id, Endorsement.endorsed_id";
             $departmentsData = $this->OrgDepartments->query($sql);
 
-//echo $this->OrgDepartments->getLastQuery();die;
-//
-//pr($departmentsData);die;
+            //echo $this->OrgDepartments->getLastQuery();die;
+            //
+            //pr($departmentsData);die;
 
             foreach ($departmentsData as $department) {
                 $departmentDetail = array();
@@ -6342,31 +6585,31 @@ class ApiController extends AppController {
 
             $entities = array();
 
-//												$params = array();
-//												$params['joins'] = array(
-//                            array(
-//                                'table' => 'endorsements',
-//                                'alias' => 'Endorsement',
-//                                'type' => 'LEFT',
-//                                'conditions' => array(
-//                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
-//                                    'Endorsement.endorsed_id = Entity.id',
-//                                    'Endorsement.organization_id = ' . $orgID,
-//																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
-//                                )
-//                            )
-//                        );
-//												
-//												$conditions = array();
-//												$conditions['OR']["Entity.name LIKE"] = '%' . $keyWord . '%';
-//												$conditions['Entity.status'] = array($statusConfig['active']);
-//												$conditions['Entity.organization_id'] = $orgID;
-//												
-//												$params['conditions'] = $conditions;
-//												
-//												$params['fields'] = array("Entity.id", "Entity.name", "COUNT(Endorsement.id) as count");
-//												
-//												$entitiesData = $this->Entity->find("all", $params);
+            //												$params = array();
+            //												$params['joins'] = array(
+            //                            array(
+            //                                'table' => 'endorsements',
+            //                                'alias' => 'Endorsement',
+            //                                'type' => 'LEFT',
+            //                                'conditions' => array(
+            //                                    'Endorsement.endorser_id = ' . $loggedinUser['id'],
+            //                                    'Endorsement.endorsed_id = Entity.id',
+            //                                    'Endorsement.organization_id = ' . $orgID,
+            //																																				'Endorsement.created BETWEEN \'' .$startDate . '\' AND \'' .$endDate .'\''
+            //                                )
+            //                            )
+            //                        );
+            //												
+            //												$conditions = array();
+            //												$conditions['OR']["Entity.name LIKE"] = '%' . $keyWord . '%';
+            //												$conditions['Entity.status'] = array($statusConfig['active']);
+            //												$conditions['Entity.organization_id'] = $orgID;
+            //												
+            //												$params['conditions'] = $conditions;
+            //												
+            //												$params['fields'] = array("Entity.id", "Entity.name", "COUNT(Endorsement.id) as count");
+            //												
+            //												$entitiesData = $this->Entity->find("all", $params);
 
             $entitiesData = $this->Entity->query("
                 SELECT Entity.id, Entity.name, COUNT(Endorsement.id) as count
@@ -6377,7 +6620,7 @@ class ApiController extends AppController {
                 AND Entity.organization_id = " . $orgID . "
                 GROUP BY  Entity.id, Endorsement.endorsed_id");
 
-//echo $this->Entity->getLastQuery();die;
+            //echo $this->Entity->getLastQuery();die;
 
             foreach ($entitiesData as $entity) {
                 $entityDetail = array();
@@ -6391,23 +6634,26 @@ class ApiController extends AppController {
             $resultData['users'] = $usersArray;
             $resultData['departments'] = $departments;
             $resultData['entities'] = $entities;
-//            $resultData['post_title'] = $postTitle;
+            //            $resultData['post_title'] = $postTitle;
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Search results", "data" => $resultData),
+                'result' => array(
+                    "status" => true, "msg" => "Search results", "data" => $resultData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function searchInOrganizationDaisy() {
+    public function searchInOrganizationDaisy()
+    {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -6435,9 +6681,9 @@ class ApiController extends AppController {
                                     GROUP BY  User.id, Endorsement.endorsed_id";
             $usersData = $this->UserOrganization->query($sql);
 
-//$usersData = $this->UserOrganization->find("all", $params);
-//echo $this->UserOrganization->getLastQuery();die;
-//            pr($usersData);die;
+            //$usersData = $this->UserOrganization->find("all", $params);
+            //echo $this->UserOrganization->getLastQuery();die;
+            //            pr($usersData);die;
 
             $users = array();
 
@@ -6470,20 +6716,23 @@ class ApiController extends AppController {
             $resultData['entities'] = array();
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Search results", "data" => $resultData),
+                'result' => array(
+                    "status" => true, "msg" => "Search results", "data" => $resultData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getVariousOrganizationData() {
+    public function getVariousOrganizationData()
+    {
 
         if (isset($this->request->data['token']) && isset($this->request->data['org_id'])) {
             $resultData = array();
@@ -6513,47 +6762,50 @@ class ApiController extends AppController {
 
 
 
-//            pr($resultData);
-//            $settings = $this->GlobalSetting->findByKey("endorsement_limit");
-//            if (!empty($settings)) {
-//                $resultData['endorsement_limit'] = $settings['GlobalSetting']['value'];
-//            }
-//            $settings = $this->GlobalSetting->findByKey("endorsement_limit");
-//            if (!empty($settings)) {
-//                $resultData['endorsement_limit'] = $settings['GlobalSetting']['value'];
-//            }
+            //            pr($resultData);
+            //            $settings = $this->GlobalSetting->findByKey("endorsement_limit");
+            //            if (!empty($settings)) {
+            //                $resultData['endorsement_limit'] = $settings['GlobalSetting']['value'];
+            //            }
+            //            $settings = $this->GlobalSetting->findByKey("endorsement_limit");
+            //            if (!empty($settings)) {
+            //                $resultData['endorsement_limit'] = $settings['GlobalSetting']['value'];
+            //            }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Organization core values ",
-                    "data" => $resultData),
+                'result' => array(
+                    "status" => true, "msg" => "Organization core values ",
+                    "data" => $resultData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token or keyword is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token or keyword is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getLiveFeeds_old() {
+    public function getLiveFeeds_old()
+    {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
-//            pr($loggedInUser); exit;
+            //            pr($loggedInUser); exit;
             $user_id = $loggedInUser['id'];
-//$loggedinUser = $this->Auth->user();
-//        $params = array();
-//        $params['fields'] = "*";
-//        $params['conditions'] = array("DefaultOrg.user_id" => $loggedinUser['id']);
-//        $defaultOrganization = $this->DefaultOrg->find("first", $params);
+            //$loggedinUser = $this->Auth->user();
+            //        $params = array();
+            //        $params['fields'] = "*";
+            //        $params['conditions'] = array("DefaultOrg.user_id" => $loggedinUser['id']);
+            //        $defaultOrganization = $this->DefaultOrg->find("first", $params);
             $department_id = $this->Common->getUserCurrentDept($user_id, $loggedInUser['current_org']['id']);
             $entity_id = $this->Common->getUserCurrentSubOrg($user_id, $loggedInUser['current_org']['id']);
 
-//            pr($loggedInUser); exit;
+            //            pr($loggedInUser); exit;
             if (isset($loggedInUser['current_org'])) {
                 $org_id = $loggedInUser['current_org']['id'];
                 $keyword = "";
@@ -6561,11 +6813,12 @@ class ApiController extends AppController {
                 $params = array();
                 $params['fields'] = "user_id,entity_id,department_id";
                 $params['conditions'] = array(
-                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1);
+                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1
+                );
 
                 $userdepartmentorg = $this->UserOrganization->find("all", $params);
-//                pr($userdepartmentorg);
-//                exit;
+                //                pr($userdepartmentorg);
+                //                exit;
                 $entity_user_array = array();
                 $department_user_array = array();
                 foreach ($userdepartmentorg as $userorgval) {
@@ -6577,10 +6830,10 @@ class ApiController extends AppController {
                         $department_user_array[$userorgval["UserOrganization"]["department_id"]][] = $userorgval["UserOrganization"]["user_id"];
                     }
                 }
-//pr($entity_user_array);
-//echo "<hr>";
-//pr($department_user_array);exit;
-//
+                //pr($entity_user_array);
+                //echo "<hr>";
+                //pr($department_user_array);exit;
+                //
 
                 if (isset($this->request->data["type"]) && $this->request->data["type"] != "") {
                     $type = $this->request->data["type"];
@@ -6599,7 +6852,7 @@ class ApiController extends AppController {
 
                 $feed_type = $feed_id = "";
                 $endorse_search_id = "";
-//                pr($this->request->data);exit;
+                //                pr($this->request->data);exit;
                 if (isset($this->request->data["feed_type"]) && $this->request->data["feed_type"] != "") {
                     $feed_type = $this->request->data["feed_type"];
                     if (isset($this->request->data["feed_id"]) && $this->request->data["feed_id"] != '') {
@@ -6623,9 +6876,9 @@ class ApiController extends AppController {
                 }
 
                 /* NEW CODE START */
-//Getting total feeds count
+                //Getting total feeds count
                 $NEWconditionarray = $postFeedIds = $endorseFeedIds = $feedArray = array();
-//pr($this->request->data);
+                //pr($this->request->data);
                 if (isset($this->request->data["endorse_type"]) && $this->request->data["endorse_type"] == "user") {
                     $NEWconditionarray = array("user_id like '%" . '"' . $this->request->data["endorse_id"] . '"' . "%'");
                 }
@@ -6655,19 +6908,21 @@ class ApiController extends AppController {
 
 
                 /* Condition added by Babulal prasad to filter scheduled posts */
-//                                $NEWconditionarray["FeedTran.org_id"] = $org_id;
+                //                                $NEWconditionarray["FeedTran.org_id"] = $org_id;
                 $NEWconditionarray["FeedTran.status"] = 1;
 
 
                 $NEWconditionarray["OR"] = array(
-                    array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
-                                    "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
-                                    "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
+                    array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array(
+                        "visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
+                        "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
+                        "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'"
+                    )))),
                     array("visibility_check" => 0, 'FeedTran.org_id' => $org_id)
                 );
-//(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
-//OR 
-//(visibility_check = 0 and org_id = 123  )
+                //(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
+                //OR 
+                //(visibility_check = 0 and org_id = 123  )
 
 
                 /*                 * ***************** */
@@ -6675,48 +6930,48 @@ class ApiController extends AppController {
 
                 $NEWparams['fields'] = "count(*) as cnt";
                 $NEWparams['conditions'] = $NEWconditionarray;
-//$NEWparams['order'] = 'FeedTran.created desc';
+                //$NEWparams['order'] = 'FeedTran.created desc';
                 $NEWparams['order'] = 'FeedTran.publish_date desc';
                 $totaleFeeds = $this->FeedTran->find("all", $NEWparams);
-//                pr($totaleFeeds); exit;
-//                echo $this->FeedTran->getLastQuery();exit;
-//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
+                //                pr($totaleFeeds); exit;
+                //                echo $this->FeedTran->getLastQuery();exit;
+                //                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //                exit;
 
                 $totalLiveFeed = $totaleFeeds[0][0]["cnt"];
                 $totalpage = ceil($totalLiveFeed / $limit);
                 $NEWconditionarray["FeedTran.endorse_type !="] = 'private';
 
-//Getting live feeds
-//$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
-//pr($NEWconditionarray); exit;
+                //Getting live feeds
+                //$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                //pr($NEWconditionarray); exit;
                 $paramsFeed['fields'] = "*";
                 $paramsFeed['conditions'] = $NEWconditionarray;
                 $paramsFeed['limit'] = $limit;
                 $paramsFeed['page'] = $page;
                 $paramsFeed['offset'] = $offset;
 
-//                $paramsFeed['joins'] = array(
-//                    array(
-//                        'table' => 'endorsements',
-//                        'alias' => 'Endorsement',
-//                        'type' => 'LEFT',
-//                        'conditions' => array(
-//                            'FeedTran.feed_id = Endorsement.id',
-//                            'FeedTran.feed_type = "endorse"',
-//                            'Endorsement.type != "private"'
-//                        )
-//                    )
-//                );
-//                pr($paramsFeed);
+                //                $paramsFeed['joins'] = array(
+                //                    array(
+                //                        'table' => 'endorsements',
+                //                        'alias' => 'Endorsement',
+                //                        'type' => 'LEFT',
+                //                        'conditions' => array(
+                //                            'FeedTran.feed_id = Endorsement.id',
+                //                            'FeedTran.feed_type = "endorse"',
+                //                            'Endorsement.type != "private"'
+                //                        )
+                //                    )
+                //                );
+                //                pr($paramsFeed);
                 $paramsFeed['order'] = 'FeedTran.created desc';
                 $FeedTranRes = $this->FeedTran->find("all", $paramsFeed);
-//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
-//                pr($FeedTranRes);
-//                exit;
+                //                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //                exit;
+                //                pr($FeedTranRes);
+                //                exit;
                 if (!empty($FeedTranRes)) {
                     foreach ($FeedTranRes as $index => $feedTransData) {
                         $feedArray[$feedTransData['FeedTran']['id']]['feed_id'] = $feedTransData['FeedTran']['feed_id'];
@@ -6730,19 +6985,19 @@ class ApiController extends AppController {
                 }
 
                 $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                //if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                 $this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id));
 
-//                pr($feedArray);
-//                pr($postFeedIds);
-//                pr($endorseFeedIds);
-//                exit;
+                //                pr($feedArray);
+                //                pr($postFeedIds);
+                //                pr($endorseFeedIds);
+                //                exit;
 
                 /* NEW CODE END */
                 $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                 $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
-//                pr($userOrganization);
-//                exit;
+                //                pr($userOrganization);
+                //                exit;
 
                 $params = array();
                 $params['fields'] = "count(*) as cnt";
@@ -6751,19 +7006,19 @@ class ApiController extends AppController {
                 if ($type == "endorser") {
                     $conditionarray["Endorsement.endorser_id"] = $user_id;
                 } elseif ($type == "endorsed") {
-//                    $updateArray['ndorsed_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //                    $updateArray['ndorsed_updated'] = '"' . date("Y-m-d H:i:s") . '"';
                     $conditionarray["Endorsement.endorsed_id"] = $user_id;
                 } else {
-//                    $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//                    $conditionarray["Endorsement.type != "] = "private";
+                    //                    $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //                    $conditionarray["Endorsement.type != "] = "private";
                 }
 
 
 
-//Condition changed after discuss with rohan @2-feb-2018 by Babulal Prasad
-//if ($userOrganization['UserOrganization']['user_role'] != 2) {
+                //Condition changed after discuss with rohan @2-feb-2018 by Babulal Prasad
+                //if ($userOrganization['UserOrganization']['user_role'] != 2) {
                 $conditionarray["Endorsement.type != "] = "private";
-// }
+                // }
 
 
                 $conditionarray["Endorsement.id"] = $endorseFeedIds;
@@ -6781,30 +7036,30 @@ class ApiController extends AppController {
                             'EndorsementLike.user_id =' . $user_id
                         )
                     )
-//                    , array(
-//                        'table' => 'endorse_attachments',
-//                        'alias' => 'EndorseAttachment',
-//                        'type' => 'LEFT',
-//                        'conditions' => array(
-//                            'Endorsement.id = EndorseAttachment.endorsement_id ',
-//                            'EndorseAttachment.type = "emojis"'
-//                        )
-//                    )
+                    //                    , array(
+                    //                        'table' => 'endorse_attachments',
+                    //                        'alias' => 'EndorseAttachment',
+                    //                        'type' => 'LEFT',
+                    //                        'conditions' => array(
+                    //                            'Endorsement.id = EndorseAttachment.endorsement_id ',
+                    //                            'EndorseAttachment.type = "emojis"'
+                    //                        )
+                    //                    )
                 );
 
                 $params['fields'] = "*,UNIX_TIMESTAMP(Endorsement.created) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['order'] = 'Endorsement.created desc';
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseCoreValues', 'EndorseReplies')));
                 $this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
-//pr($params);
-//exit;
+                //pr($params);
+                //exit;
                 $endorsement = $this->Endorsement->find("all", $params);
-//                echo $this->Endorsement->getLastQuery();exit;
-//                $log = $this->Endorsement->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
-//pr($endorsement); 
-// exit;
+                //                echo $this->Endorsement->getLastQuery();exit;
+                //                $log = $this->Endorsement->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //                exit;
+                //pr($endorsement); 
+                // exit;
                 $endorsmentarray = array();
                 $departmentarray = array();
                 $entityarray = array();
@@ -6822,13 +7077,13 @@ class ApiController extends AppController {
                 }
 
                 $serverCurrentTime = "";
-//                pr($endorsement);exit;
+                //                pr($endorsement);exit;
                 $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
                 //$emojis_url = str_replace("http:", "https:", $emojis_url);
-//                pr($endorsement); exit;
+                //                pr($endorsement); exit;
 
                 foreach ($endorsement as $key => $value) {
-//                    pr($value["EndorseAttachments"]);
+                    //                    pr($value["EndorseAttachments"]);
                     $displayflag = 0;
                     $endorsval = $value["Endorsement"];
                     $endorsval["created"] = $value[0]["create_date"];
@@ -6838,15 +7093,15 @@ class ApiController extends AppController {
                     $endorsmentarray[$key]["endorse"] = $endorsval;
                     $endorsmentarray[$key]["imagecount"] = $endorsval["image_count"];
 
-//                    echo "EMOJI COUNT : ".count($value["EndorseAttachments"]);
+                    //                    echo "EMOJI COUNT : ".count($value["EndorseAttachments"]);
 
                     $endorsmentarray[$key]["emojis_count"] = count($value["EndorseAttachments"]);
                     $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
 
-//                    if (isset($value["EndorseAttachment"]['name']) && $value["EndorseAttachment"]['name'] != '') {
+                    //                    if (isset($value["EndorseAttachment"]['name']) && $value["EndorseAttachment"]['name'] != '') {
                     if (!empty($value["EndorseAttachments"])) {
                         $endorsmentarray[$key]["bitmojis_image"] = '';
-//                        pr($value["EndorseAttachments"]); exit;
+                        //                        pr($value["EndorseAttachments"]); exit;
                         if (count($value["EndorseAttachments"]) > 0) {
                             //pr($endorsementAttachment);
                             foreach ($value["EndorseAttachments"] as $iCount => $endorsementAttachment) {
@@ -6876,11 +7131,11 @@ class ApiController extends AppController {
                     } else {
                         $endorsmentarray[$key]["like"] = 0;
                     }
-//$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
+                    //$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
 
                     $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                     $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
-//pr($userOrganization['UserOrganization']['public_ndorse_visible_tc']); exit;
+                    //pr($userOrganization['UserOrganization']['public_ndorse_visible_tc']); exit;
 
 
                     if ($endorsval["endorsement_for"] == "department") {
@@ -6982,14 +7237,14 @@ class ApiController extends AppController {
                     $newarray[$key]["endorsement_for"] = $eval["endorse"]["endorsement_for"];
                     $newarray[$key]["endorsed_id"] = $eval["endorse"]["endorsed_id"];
                     $newarray[$key]["endorser_id"] = $eval["endorse"]["endorser_id"];
-//	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
-// print_r($newarray);
+                    //	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
+                    // print_r($newarray);
                     if (isset($userdata[$eval["endorse"]["endorser_id"]])) {
                         $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorser_id"]]);
                         $newarray[$key]["endorser_name"] = $newuserdata[0];
                         if (isset($newuserdata[1])) {
 
-//$newarray[$key]["endorser_image"] = $newuserdata[1];
+                            //$newarray[$key]["endorser_image"] = $newuserdata[1];
 
                             $needle = 'default.jpg';
                             if (strpos($newuserdata[1], $needle) !== false) {
@@ -7027,11 +7282,11 @@ class ApiController extends AppController {
                     if ($eval["endorse"]["endorsement_for"] == "user") {
                         if (isset($userdata[$eval["endorse"]["endorsed_id"]])) {
                             $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorsed_id"]]);
-//pr($newuserdata); 
-//                        pr($eval["endorse"]);
+                            //pr($newuserdata); 
+                            //                        pr($eval["endorse"]);
                             $newarray[$key]["endorsed_name"] = $newuserdata[0];
                             if (isset($newuserdata[1])) {
-//$newarray[$key]["endorsed_image"] = $newuserdata[1];
+                                //$newarray[$key]["endorsed_image"] = $newuserdata[1];
                                 $needle = 'default.jpg';
                                 if (strpos($newuserdata[1], $needle) !== false) {
                                     $newarray[$key]["endorsed_image"] = '';
@@ -7053,13 +7308,13 @@ class ApiController extends AppController {
                     }
                     $newarray[$key]["list_type"] = 'endorse';
 
-//$newarray[$key]["public_endorse_visible"] = $loggedInUser['current_org']['public_endorse_visible'];
+                    //$newarray[$key]["public_endorse_visible"] = $loggedInUser['current_org']['public_endorse_visible'];
                     $newarray[$key]["public_endorse_visible"] = $public_endorse_visible;
 
-//Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
+                    //Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
                     if (!in_array($user_id, array($eval["endorse"]["endorser_id"], $eval["endorse"]["endorsed_id"]))) {
                         if ($eval["endorse"]["type"] == 'standard' && $public_endorse_visible == 0) {
-//$newarray[$key]["message"] = "";
+                            //$newarray[$key]["message"] = "";
                         } else {
                             $newarray[$key]["message"] = $eval["endorse"]["message"];
                         }
@@ -7067,7 +7322,7 @@ class ApiController extends AppController {
                 }
                 $endorseServerTime = $serverCurrentTime;
                 $returndata1 = array("endorse_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
-//pr($returndata1); 
+                //pr($returndata1); 
 
 
 
@@ -7098,16 +7353,16 @@ class ApiController extends AppController {
                     )
                 );
 
-//                $params['fields'] = "*,UNIX_TIMESTAMP(PostSchedule.utc_post_datetime) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                //                $params['fields'] = "*,UNIX_TIMESTAMP(PostSchedule.utc_post_datetime) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['fields'] = "*,UNIX_TIMESTAMP(Post.post_publish_date) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['order'] = 'Post.created desc';
-//$params['group'] = 'Post.id';
-// pr($params); exit;
-//$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
-//$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
+                //$params['group'] = 'Post.id';
+                // pr($params); exit;
+                //$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
+                //$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
                 $endorsement = $this->Post->find("all", $params);
-//                $log = $this->Post->getDataSource()->getLog(false, false);
-//                pr($log);
+                //                $log = $this->Post->getDataSource()->getLog(false, false);
+                //                pr($log);
 
                 $endorsmentarray = array();
                 $departmentarray = array();
@@ -7123,15 +7378,15 @@ class ApiController extends AppController {
 
                 foreach ($endorsement as $key => $value) {
                     $postAttachmentImages = array();
-//                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
-//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
-//                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
-//                        $endorsmentarray[$key]["post_image"] = "";
-//                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
-//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
-//                    } else {
-//                        $endorsmentarray[$key]["post_image"] = array();
-//                    }
+                    //                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
+                    //                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
+                    //                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
+                    //                        $endorsmentarray[$key]["post_image"] = "";
+                    //                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
+                    //                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
+                    //                    } else {
+                    //                        $endorsmentarray[$key]["post_image"] = array();
+                    //                    }
                     $postAttachmentemoji = array();
                     $postAttachmentimg = array();
                     $postAttachmentFiles = array();
@@ -7144,7 +7399,7 @@ class ApiController extends AppController {
                                 if (strpos($temppImages, 'localhost') < 0 || strpos($temppImages, 'staging') < 0) {
                                     //$temppImages = str_replace("http:", "https:", $temppImages);
                                 }
-//                                $temppImages = str_replace("http:", "https:", $temppImages);
+                                //                                $temppImages = str_replace("http:", "https:", $temppImages);
 
                                 $postAttachmentemoji[] = $temppImages;
                             } else if ($postAttchment['type'] == 'image') {
@@ -7171,7 +7426,7 @@ class ApiController extends AppController {
                     $endorsmentarray[$key]["post_attachment_files"] = count($postAttachmentFiles);
                     $endorsmentarray[$key]["imagecount"] = $endorsval["image_count"];
                     $endorsmentarray[$key]["emojis_count"] = $endorsval["emojis_count"];
-//                    $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
+                    //                    $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
                     $endorsmentarray[$key]["user_id"] = $endorsval["user_id"];
                     $endorsmentarray[$key]["published_date"] = $publishedDate;
 
@@ -7200,12 +7455,12 @@ class ApiController extends AppController {
                     $userarray[] = $endorsval["user_id"];
                     $endorsmentarray[$key]["displayflag"] = $displayflag;
                 }
-//pr($endorsmentarray);exit;
+                //pr($endorsmentarray);exit;
                 $userinfo = $this->User->find('all', array(
                     'conditions' => array('User.id' => $userarray),
                     'fields' => array('id', 'fname', 'lname', 'image', 'about')
                 ));
-//pr($userinfo);
+                //pr($userinfo);
                 $userdata = array();
                 foreach ($userinfo as $userval) {
                     $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
@@ -7216,7 +7471,7 @@ class ApiController extends AppController {
                 }
 
                 $newarray = array();
-//pr($endorsmentarray); exit;
+                //pr($endorsmentarray); exit;
                 foreach ($endorsmentarray as $key => $eval) {
                     $key = $eval["post"]["id"];
                     $newarray[$key]["id"] = $eval["post"]["id"];
@@ -7245,26 +7500,26 @@ class ApiController extends AppController {
                     } else {
                         $newarray[$key]["user_name"] = "";
                     }
-//pr($newarray);
-//exit;
+                    //pr($newarray);
+                    //exit;
                     $newarray[$key]["message"] = $eval["post"]["message"];
                     $newarray[$key]["title"] = $eval["post"]["title"];
 
                     $newarray[$key]["like_count"] = $eval["post"]["like_count"];
-//$newarray[$key]["created"] = $eval["post"]["created"];
+                    //$newarray[$key]["created"] = $eval["post"]["created"];
                     $newarray[$key]["created"] = $eval["published_date"];
 
                     $newarray[$key]["imagecount"] = $eval["imagecount"];
                     $newarray[$key]["emojiscount"] = $eval["emojis_count"];
-//                    $newarray[$key]["bitmojiscount"] = $eval["bitmojis_count"];
+                    //                    $newarray[$key]["bitmojiscount"] = $eval["bitmojis_count"];
                     $newarray[$key]["is_reply"] = $eval["reply"];
                     $newarray[$key]["list_type"] = 'wallpost';
                 }
                 if ($loggedInUser['current_org']['joined'] == 0) {
 
                     $updateArray['UserOrganization.joined'] = 1;
-//$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                    //$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                     if ($this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                         $this->Session->write('Auth.User.current_org.joined', 1);
                         $this->JoinOrgCode->updateAll(array("is_expired" => 1), array("email" => $loggedInUser['email'], "organization_id" => $org_id));
@@ -7273,7 +7528,7 @@ class ApiController extends AppController {
 
                 $returndata2 = array("post_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
 
-//pr($returndata2);
+                //pr($returndata2);
                 $liveFeedDATA = array();
                 foreach ($feedArray as $feedId => $feedData) {
                     if ($feedData['feed_type'] == 'post') {
@@ -7290,8 +7545,8 @@ class ApiController extends AppController {
                 } elseif (isset($serverCurrentTime) && $serverCurrentTime != '') {
                     $resServerTime = $serverCurrentTime;
                 }
-//                pr($liveFeedDATA);
-//                exit;
+                //                pr($liveFeedDATA);
+                //                exit;
 
                 /* GETTING POST DATA END */
                 $returndata = array("endorse_data" => $liveFeedDATA, "total_page" => $totalpage, "server_time" => $resServerTime);
@@ -7300,43 +7555,47 @@ class ApiController extends AppController {
 
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Organization Endorsement ",
-                        "data" => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => "Organization Endorsement ",
+                        "data" => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => ""),
+                    'result' => array(
+                        "status" => false, "msg" => ""
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getLiveFeeds() {
+    public function getLiveFeeds()
+    {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
-//            pr($loggedInUser); exit;
+            //            pr($loggedInUser); exit;
             $user_id = $loggedInUser['id'];
-//$loggedinUser = $this->Auth->user();
-//        $params = array();
-//        $params['fields'] = "*";
-//        $params['conditions'] = array("DefaultOrg.user_id" => $loggedinUser['id']);
-//        $defaultOrganization = $this->DefaultOrg->find("first", $params);
+            //$loggedinUser = $this->Auth->user();
+            //        $params = array();
+            //        $params['fields'] = "*";
+            //        $params['conditions'] = array("DefaultOrg.user_id" => $loggedinUser['id']);
+            //        $defaultOrganization = $this->DefaultOrg->find("first", $params);
             $department_id = $this->Common->getUserCurrentDept($user_id, $loggedInUser['current_org']['id']);
             $entity_id = $this->Common->getUserCurrentSubOrg($user_id, $loggedInUser['current_org']['id']);
 
-//            pr($loggedInUser); exit;
+            //            pr($loggedInUser); exit;
             if (isset($loggedInUser['current_org'])) {
                 $org_id = $loggedInUser['current_org']['id'];
                 $keyword = "";
@@ -7344,11 +7603,12 @@ class ApiController extends AppController {
                 $params = array();
                 $params['fields'] = "user_id,entity_id,department_id";
                 $params['conditions'] = array(
-                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1);
+                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1
+                );
 
                 $userdepartmentorg = $this->UserOrganization->find("all", $params);
-//                pr($userdepartmentorg);
-//                exit;
+                //                pr($userdepartmentorg);
+                //                exit;
                 $entity_user_array = array();
                 $department_user_array = array();
                 foreach ($userdepartmentorg as $userorgval) {
@@ -7360,10 +7620,10 @@ class ApiController extends AppController {
                         $department_user_array[$userorgval["UserOrganization"]["department_id"]][] = $userorgval["UserOrganization"]["user_id"];
                     }
                 }
-//pr($entity_user_array);
-//echo "<hr>";
-//pr($department_user_array);exit;
-//
+                //pr($entity_user_array);
+                //echo "<hr>";
+                //pr($department_user_array);exit;
+                //
 
                 if (isset($this->request->data["type"]) && $this->request->data["type"] != "") {
                     $type = $this->request->data["type"];
@@ -7382,7 +7642,7 @@ class ApiController extends AppController {
 
                 $feed_type = $feed_id = "";
                 $endorse_search_id = "";
-//                pr($this->request->data);exit;
+                //                pr($this->request->data);exit;
                 if (isset($this->request->data["feed_type"]) && $this->request->data["feed_type"] != "") {
                     $feed_type = $this->request->data["feed_type"];
                     if (isset($this->request->data["feed_id"]) && $this->request->data["feed_id"] != '') {
@@ -7406,9 +7666,9 @@ class ApiController extends AppController {
                 }
 
                 /* NEW CODE START */
-//Getting total feeds count
+                //Getting total feeds count
                 $NEWconditionarray = $postFeedIds = $endorseFeedIds = $feedArray = array();
-//pr($this->request->data);
+                //pr($this->request->data);
                 if (isset($this->request->data["endorse_type"]) && $this->request->data["endorse_type"] == "user") {
                     $NEWconditionarray = array("user_id like '%" . '"' . $this->request->data["endorse_id"] . '"' . "%'");
                 }
@@ -7441,7 +7701,7 @@ class ApiController extends AppController {
                             $followingIdsArray = array_filter($followingIdsArray); // Removing empty value/ids
                         }
 
-//                        $NEWconditionarray["FeedTran.user_id"] = $followingIdsArray;
+                        //                        $NEWconditionarray["FeedTran.user_id"] = $followingIdsArray;
                     } else { //If feed_type != 'following'
                         $NEWconditionarray["FeedTran.feed_type"] = $feed_type;
                     }
@@ -7453,7 +7713,7 @@ class ApiController extends AppController {
 
                 if (isset($type) && ($type == 'endorser' || $type == 'endorsed')) {
                     $NEWconditionarray["FeedTran.feed_type"] = 'endorse';
-//                    $NEWconditionarray["FeedTran.user_id"] = "like '%'".$user_id."'%'";
+                    //                    $NEWconditionarray["FeedTran.user_id"] = "like '%'".$user_id."'%'";
                 }
 
 
@@ -7470,31 +7730,35 @@ class ApiController extends AppController {
 
 
                 /* Condition added by Babulal prasad to filter scheduled posts */
-//                                $NEWconditionarray["FeedTran.org_id"] = $org_id;
+                //                                $NEWconditionarray["FeedTran.org_id"] = $org_id;
                 $NEWconditionarray["FeedTran.status"] = 1;
 
 
-//                        pr($Usercondition ); exit;
+                //                        pr($Usercondition ); exit;
 
                 if ($feed_type == 'following') {
 
-                    $Usercondition = implode(" OR ", array_map(function($ids) {
-                                return "JSON_CONTAINS(user_id, JSON_ARRAY('$ids'))";
-                            }, $followingIdsArray));
-//                            pr($Usercondition); exit;
+                    $Usercondition = implode(" OR ", array_map(function ($ids) {
+                        return "JSON_CONTAINS(user_id, JSON_ARRAY('$ids'))";
+                    }, $followingIdsArray));
+                    //                            pr($Usercondition); exit;
 
                     $NEWconditionarray["OR"] = array(
-                        array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids" => $followingIdsArray,
-                                        "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
-                                        $Usercondition)))),
+                        array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array(
+                            "visible_user_ids" => $followingIdsArray,
+                            "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
+                            $Usercondition
+                        )))),
                         array("visibility_check" => 0, 'FeedTran.org_id' => $org_id, $Usercondition)
                     );
                 } else {
 
                     $NEWconditionarray["OR"] = array(
-                        array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array("visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
-                                        "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
-                                        "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'")))),
+                        array("AND" => array("FeedTran.visibility_check" => 1, 'FeedTran.org_id' => $org_id, array("OR" => array(
+                            "visible_user_ids like '%" . '"' . $user_id . '"' . "%'",
+                            "visible_sub_org like '%" . '"' . $entity_id . '"' . "%'", "visible_dept like '%" . '"' . $department_id . '"' . "%'",
+                            "FeedTran.user_id like '%" . '"' . $user_id . '"' . "%'"
+                        )))),
                         array("visibility_check" => 0, 'FeedTran.org_id' => $org_id /* , "user_id like '%" . '"' . $user_id . '"' . "%'", */)
                     );
                 }
@@ -7504,28 +7768,28 @@ class ApiController extends AppController {
                   if ($end_date != "") {
                   $NEWconditionarray["FeedTran.created <= "] = date("Y-m-d 23:59:59", $end_date);
                   } */
-//(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
-//OR 
-//(visibility_check = 0 and org_id = 123  )
+                //(visibility_check = 1 and ((visible_user_ids like '%"2926"%' ) OR (visible_dept like'%"539"%') OR (visible_dept like'%"0"%') ) and org_id = 123  ) 
+                //OR 
+                //(visibility_check = 0 and org_id = 123  )
 
 
                 /*                 * ***************** */
 
-//                pr($NEWconditionarray);
-//                exit;
-//                $NEWparams['fields'] = "*";
+                //                pr($NEWconditionarray);
+                //                exit;
+                //                $NEWparams['fields'] = "*";
                 $NEWparams['fields'] = "count(*) as cnt";
                 $NEWparams['conditions'] = $NEWconditionarray;
-//$NEWparams['order'] = 'FeedTran.created desc';
+                //$NEWparams['order'] = 'FeedTran.created desc';
                 $NEWparams['order'] = 'FeedTran.publish_date desc';
                 $totaleFeeds = $this->FeedTran->find("all", $NEWparams);
-//                pr($totaleFeeds);
-//                exit;
-//                echo $this->FeedTran->getLastQuery();
-//                exit;
-//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
+                //                pr($totaleFeeds);
+                //                exit;
+                //                echo $this->FeedTran->getLastQuery();
+                //                exit;
+                //                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //                exit;
 
                 $totalLiveFeed = $totaleFeeds[0][0]["cnt"];
                 $totalpage = ceil($totalLiveFeed / $limit);
@@ -7536,36 +7800,36 @@ class ApiController extends AppController {
                     $NEWconditionarray["FeedTran.endorse_type !="] = 'private';
                 }
 
-//Getting live feeds
-//$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
-//                pr($NEWconditionarray);
-//                exit;
+                //Getting live feeds
+                //$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                //                pr($NEWconditionarray);
+                //                exit;
                 $paramsFeed['fields'] = "*";
                 $paramsFeed['conditions'] = $NEWconditionarray;
                 $paramsFeed['limit'] = $limit;
                 $paramsFeed['page'] = $page;
                 $paramsFeed['offset'] = $offset;
 
-//                $paramsFeed['joins'] = array(
-//                    array(
-//                        'table' => 'endorsements',
-//                        'alias' => 'Endorsement',
-//                        'type' => 'LEFT',
-//                        'conditions' => array(
-//                            'FeedTran.feed_id = Endorsement.id',
-//                            'FeedTran.feed_type = "endorse"',
-//                            'Endorsement.type != "private"'
-//                        )
-//                    )
-//                );
-//                pr($paramsFeed);
+                //                $paramsFeed['joins'] = array(
+                //                    array(
+                //                        'table' => 'endorsements',
+                //                        'alias' => 'Endorsement',
+                //                        'type' => 'LEFT',
+                //                        'conditions' => array(
+                //                            'FeedTran.feed_id = Endorsement.id',
+                //                            'FeedTran.feed_type = "endorse"',
+                //                            'Endorsement.type != "private"'
+                //                        )
+                //                    )
+                //                );
+                //                pr($paramsFeed);
                 $paramsFeed['order'] = 'FeedTran.created desc';
                 $FeedTranRes = $this->FeedTran->find("all", $paramsFeed);
-//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
-//                pr($FeedTranRes);
-//                exit;
+                //                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //                exit;
+                //                pr($FeedTranRes);
+                //                exit;
                 if (!empty($FeedTranRes)) {
                     foreach ($FeedTranRes as $index => $feedTransData) {
                         $feedArray[$feedTransData['FeedTran']['id']]['feed_id'] = $feedTransData['FeedTran']['feed_id'];
@@ -7579,19 +7843,19 @@ class ApiController extends AppController {
                 }
 
                 $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                //if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                 $this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id));
 
-//                pr($feedArray);
-//                pr($postFeedIds);
-//                pr($endorseFeedIds);
-//                exit;
+                //                pr($feedArray);
+                //                pr($postFeedIds);
+                //                pr($endorseFeedIds);
+                //                exit;
 
                 /* NEW CODE END */
                 $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                 $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
-//                pr($userOrganization);
-//                exit;
+                //                pr($userOrganization);
+                //                exit;
 
                 $params = array();
                 $params['fields'] = "count(*) as cnt";
@@ -7600,20 +7864,20 @@ class ApiController extends AppController {
                 if ($type == "endorser") {
                     $conditionarray["Endorsement.endorser_id"] = $user_id;
                 } elseif ($type == "endorsed") {
-//                    $updateArray['ndorsed_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //                    $updateArray['ndorsed_updated'] = '"' . date("Y-m-d H:i:s") . '"';
                     $conditionarray["Endorsement.endorsed_id"] = $user_id;
                 } else {
-//                    $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//                    $conditionarray["Endorsement.type != "] = "private";
+                    //                    $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //                    $conditionarray["Endorsement.type != "] = "private";
                 }
 
 
 
-//Condition changed after discuss with rohan @2-feb-2018 by Babulal Prasad
-//if ($userOrganization['UserOrganization']['user_role'] != 2) {
+                //Condition changed after discuss with rohan @2-feb-2018 by Babulal Prasad
+                //if ($userOrganization['UserOrganization']['user_role'] != 2) {
                 $conditionarray["Endorsement.type != "] = "private";
-// }
-//                pr($endorseFeedIds);
+                // }
+                //                pr($endorseFeedIds);
                 $conditionarray["Endorsement.id"] = $endorseFeedIds;
 
                 $params['conditions'] = $conditionarray;
@@ -7629,30 +7893,30 @@ class ApiController extends AppController {
                             'EndorsementLike.user_id =' . $user_id
                         )
                     )
-//                    , array(
-//                        'table' => 'endorse_attachments',
-//                        'alias' => 'EndorseAttachment',
-//                        'type' => 'LEFT',
-//                        'conditions' => array(
-//                            'Endorsement.id = EndorseAttachment.endorsement_id ',
-//                            'EndorseAttachment.type = "emojis"'
-//                        )
-//                    )
+                    //                    , array(
+                    //                        'table' => 'endorse_attachments',
+                    //                        'alias' => 'EndorseAttachment',
+                    //                        'type' => 'LEFT',
+                    //                        'conditions' => array(
+                    //                            'Endorsement.id = EndorseAttachment.endorsement_id ',
+                    //                            'EndorseAttachment.type = "emojis"'
+                    //                        )
+                    //                    )
                 );
 
                 $params['fields'] = "*,UNIX_TIMESTAMP(Endorsement.created) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['order'] = 'Endorsement.created desc';
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseCoreValues', 'EndorseReplies')));
                 $this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
-//pr($params);
-//exit;
+                //pr($params);
+                //exit;
                 $endorsement = $this->Endorsement->find("all", $params);
-//                echo $this->Endorsement->getLastQuery();exit;
-//                $log = $this->Endorsement->getDataSource()->getLog(false, false);
-//                pr($log);
-//                exit;
-//                pr($endorsement);
-//                exit;
+                //                echo $this->Endorsement->getLastQuery();exit;
+                //                $log = $this->Endorsement->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //                exit;
+                //                pr($endorsement);
+                //                exit;
                 $endorsmentarray = array();
                 $departmentarray = array();
                 $entityarray = array();
@@ -7670,13 +7934,13 @@ class ApiController extends AppController {
                 }
 
                 $serverCurrentTime = "";
-//                pr($endorsement);exit;
+                //                pr($endorsement);exit;
                 $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
                 //$emojis_url = str_replace("http:", "https:", $emojis_url);
-//                pr($endorsement); exit;
+                //                pr($endorsement); exit;
 
                 foreach ($endorsement as $key => $value) {
-//                    pr($value["EndorseAttachments"]);
+                    //                    pr($value["EndorseAttachments"]);
                     $displayflag = 0;
                     $endorsval = $value["Endorsement"];
                     $endorsval["created"] = $value[0]["create_date"];
@@ -7686,15 +7950,15 @@ class ApiController extends AppController {
                     $endorsmentarray[$key]["endorse"] = $endorsval;
                     $endorsmentarray[$key]["imagecount"] = $endorsval["image_count"];
 
-//                    echo "EMOJI COUNT : ".count($value["EndorseAttachments"]);
+                    //                    echo "EMOJI COUNT : ".count($value["EndorseAttachments"]);
 
                     $endorsmentarray[$key]["emojis_count"] = count($value["EndorseAttachments"]);
                     $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
 
-//                    if (isset($value["EndorseAttachment"]['name']) && $value["EndorseAttachment"]['name'] != '') {
+                    //                    if (isset($value["EndorseAttachment"]['name']) && $value["EndorseAttachment"]['name'] != '') {
                     if (!empty($value["EndorseAttachments"])) {
                         $endorsmentarray[$key]["bitmojis_image"] = '';
-//                        pr($value["EndorseAttachments"]); exit;
+                        //                        pr($value["EndorseAttachments"]); exit;
                         if (count($value["EndorseAttachments"]) > 0) {
                             //pr($endorsementAttachment);
                             foreach ($value["EndorseAttachments"] as $iCount => $endorsementAttachment) {
@@ -7724,11 +7988,11 @@ class ApiController extends AppController {
                     } else {
                         $endorsmentarray[$key]["like"] = 0;
                     }
-//$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
+                    //$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
 
                     $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                     $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
-//pr($userOrganization['UserOrganization']['public_ndorse_visible_tc']); exit;
+                    //pr($userOrganization['UserOrganization']['public_ndorse_visible_tc']); exit;
 
 
                     if ($endorsval["endorsement_for"] == "department") {
@@ -7830,14 +8094,14 @@ class ApiController extends AppController {
                     $newarray[$key]["endorsement_for"] = $eval["endorse"]["endorsement_for"];
                     $newarray[$key]["endorsed_id"] = $eval["endorse"]["endorsed_id"];
                     $newarray[$key]["endorser_id"] = $eval["endorse"]["endorser_id"];
-//	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
-// print_r($newarray);
+                    //	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
+                    // print_r($newarray);
                     if (isset($userdata[$eval["endorse"]["endorser_id"]])) {
                         $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorser_id"]]);
                         $newarray[$key]["endorser_name"] = $newuserdata[0];
                         if (isset($newuserdata[1])) {
 
-//$newarray[$key]["endorser_image"] = $newuserdata[1];
+                            //$newarray[$key]["endorser_image"] = $newuserdata[1];
 
                             $needle = 'default.jpg';
                             if (strpos($newuserdata[1], $needle) !== false) {
@@ -7875,11 +8139,11 @@ class ApiController extends AppController {
                     if ($eval["endorse"]["endorsement_for"] == "user") {
                         if (isset($userdata[$eval["endorse"]["endorsed_id"]])) {
                             $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorsed_id"]]);
-//pr($newuserdata); 
-//                        pr($eval["endorse"]);
+                            //pr($newuserdata); 
+                            //                        pr($eval["endorse"]);
                             $newarray[$key]["endorsed_name"] = $newuserdata[0];
                             if (isset($newuserdata[1])) {
-//$newarray[$key]["endorsed_image"] = $newuserdata[1];
+                                //$newarray[$key]["endorsed_image"] = $newuserdata[1];
                                 $needle = 'default.jpg';
                                 if (strpos($newuserdata[1], $needle) !== false) {
                                     $newarray[$key]["endorsed_image"] = '';
@@ -7901,13 +8165,13 @@ class ApiController extends AppController {
                     }
                     $newarray[$key]["list_type"] = 'endorse';
 
-//$newarray[$key]["public_endorse_visible"] = $loggedInUser['current_org']['public_endorse_visible'];
+                    //$newarray[$key]["public_endorse_visible"] = $loggedInUser['current_org']['public_endorse_visible'];
                     $newarray[$key]["public_endorse_visible"] = $public_endorse_visible;
 
-//Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
+                    //Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
                     if (!in_array($user_id, array($eval["endorse"]["endorser_id"], $eval["endorse"]["endorsed_id"]))) {
                         if ($eval["endorse"]["type"] == 'standard' && $public_endorse_visible == 0) {
-//$newarray[$key]["message"] = "";
+                            //$newarray[$key]["message"] = "";
                         } else {
                             $newarray[$key]["message"] = $eval["endorse"]["message"];
                         }
@@ -7915,7 +8179,7 @@ class ApiController extends AppController {
                 }
                 $endorseServerTime = $serverCurrentTime;
                 $returndata1 = array("endorse_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
-//pr($returndata1); 
+                //pr($returndata1); 
 
 
 
@@ -7946,16 +8210,16 @@ class ApiController extends AppController {
                     )
                 );
 
-//                $params['fields'] = "*,UNIX_TIMESTAMP(PostSchedule.utc_post_datetime) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                //                $params['fields'] = "*,UNIX_TIMESTAMP(PostSchedule.utc_post_datetime) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['fields'] = "*,UNIX_TIMESTAMP(Post.post_publish_date) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['order'] = 'Post.created desc';
-//$params['group'] = 'Post.id';
-// pr($params); exit;
-//$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
-//$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
+                //$params['group'] = 'Post.id';
+                // pr($params); exit;
+                //$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
+                //$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
                 $endorsement = $this->Post->find("all", $params);
-//                $log = $this->Post->getDataSource()->getLog(false, false);
-//                pr($log);
+                //                $log = $this->Post->getDataSource()->getLog(false, false);
+                //                pr($log);
 
                 $endorsmentarray = array();
                 $departmentarray = array();
@@ -7971,15 +8235,15 @@ class ApiController extends AppController {
 
                 foreach ($endorsement as $key => $value) {
                     $postAttachmentImages = array();
-//                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
-//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
-//                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
-//                        $endorsmentarray[$key]["post_image"] = "";
-//                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
-//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
-//                    } else {
-//                        $endorsmentarray[$key]["post_image"] = array();
-//                    }
+                    //                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
+                    //                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
+                    //                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
+                    //                        $endorsmentarray[$key]["post_image"] = "";
+                    //                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
+                    //                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
+                    //                    } else {
+                    //                        $endorsmentarray[$key]["post_image"] = array();
+                    //                    }
                     $postAttachmentemoji = array();
                     $postAttachmentimg = array();
                     $postAttachmentFiles = array();
@@ -7992,7 +8256,7 @@ class ApiController extends AppController {
                                 if (strpos($temppImages, 'localhost') < 0 || strpos($temppImages, 'staging') < 0) {
                                     //$temppImages = str_replace("http:", "https:", $temppImages);
                                 }
-//                                $temppImages = str_replace("http:", "https:", $temppImages);
+                                //                                $temppImages = str_replace("http:", "https:", $temppImages);
 
                                 $postAttachmentemoji[] = $temppImages;
                             } else if ($postAttchment['type'] == 'image') {
@@ -8019,7 +8283,7 @@ class ApiController extends AppController {
                     $endorsmentarray[$key]["post_attachment_files"] = count($postAttachmentFiles);
                     $endorsmentarray[$key]["imagecount"] = $endorsval["image_count"];
                     $endorsmentarray[$key]["emojis_count"] = $endorsval["emojis_count"];
-//                    $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
+                    //                    $endorsmentarray[$key]["bitmojis_count"] = $endorsval["bitmojis_count"];
                     $endorsmentarray[$key]["user_id"] = $endorsval["user_id"];
                     $endorsmentarray[$key]["published_date"] = $publishedDate;
 
@@ -8048,12 +8312,12 @@ class ApiController extends AppController {
                     $userarray[] = $endorsval["user_id"];
                     $endorsmentarray[$key]["displayflag"] = $displayflag;
                 }
-//pr($endorsmentarray);exit;
+                //pr($endorsmentarray);exit;
                 $userinfo = $this->User->find('all', array(
                     'conditions' => array('User.id' => $userarray),
                     'fields' => array('id', 'fname', 'lname', 'image', 'about')
                 ));
-//pr($userinfo);
+                //pr($userinfo);
                 $userdata = array();
                 foreach ($userinfo as $userval) {
                     $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
@@ -8064,7 +8328,7 @@ class ApiController extends AppController {
                 }
 
                 $newarray = array();
-//pr($endorsmentarray); exit;
+                //pr($endorsmentarray); exit;
                 foreach ($endorsmentarray as $key => $eval) {
                     $key = $eval["post"]["id"];
                     $newarray[$key]["id"] = $eval["post"]["id"];
@@ -8093,26 +8357,26 @@ class ApiController extends AppController {
                     } else {
                         $newarray[$key]["user_name"] = "";
                     }
-//pr($newarray);
-//exit;
+                    //pr($newarray);
+                    //exit;
                     $newarray[$key]["message"] = $eval["post"]["message"];
                     $newarray[$key]["title"] = $eval["post"]["title"];
 
                     $newarray[$key]["like_count"] = $eval["post"]["like_count"];
-//$newarray[$key]["created"] = $eval["post"]["created"];
+                    //$newarray[$key]["created"] = $eval["post"]["created"];
                     $newarray[$key]["created"] = $eval["published_date"];
 
                     $newarray[$key]["imagecount"] = $eval["imagecount"];
                     $newarray[$key]["emojiscount"] = $eval["emojis_count"];
-//                    $newarray[$key]["bitmojiscount"] = $eval["bitmojis_count"];
+                    //                    $newarray[$key]["bitmojiscount"] = $eval["bitmojis_count"];
                     $newarray[$key]["is_reply"] = $eval["reply"];
                     $newarray[$key]["list_type"] = 'wallpost';
                 }
                 if ($loggedInUser['current_org']['joined'] == 0) {
 
                     $updateArray['UserOrganization.joined'] = 1;
-//$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                    //$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                     if ($this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                         $this->Session->write('Auth.User.current_org.joined', 1);
                         $this->JoinOrgCode->updateAll(array("is_expired" => 1), array("email" => $loggedInUser['email'], "organization_id" => $org_id));
@@ -8121,7 +8385,7 @@ class ApiController extends AppController {
 
                 $returndata2 = array("post_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
 
-//pr($returndata2);
+                //pr($returndata2);
                 $liveFeedDATA = array();
                 foreach ($feedArray as $feedId => $feedData) {
                     if ($feedData['feed_type'] == 'post') {
@@ -8138,8 +8402,8 @@ class ApiController extends AppController {
                 } elseif (isset($serverCurrentTime) && $serverCurrentTime != '') {
                     $resServerTime = $serverCurrentTime;
                 }
-//                pr($liveFeedDATA);
-//                exit;
+                //                pr($liveFeedDATA);
+                //                exit;
 
                 /* GETTING POST DATA END */
                 $returndata = array("endorse_data" => $liveFeedDATA, "total_page" => $totalpage, "server_time" => $resServerTime);
@@ -8148,28 +8412,32 @@ class ApiController extends AppController {
 
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Organization Endorsement ",
-                        "data" => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => "Organization Endorsement ",
+                        "data" => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => ""),
+                    'result' => array(
+                        "status" => false, "msg" => ""
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getLiveFeeds2() { /// Function clone Created by babulal prasad to test on live site
+    public function getLiveFeeds2()
+    { /// Function clone Created by babulal prasad to test on live site
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
@@ -8182,10 +8450,11 @@ class ApiController extends AppController {
                 $params = array();
                 $params['fields'] = "user_id,entity_id,department_id";
                 $params['conditions'] = array(
-                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1);
+                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1
+                );
 
                 $userdepartmentorg = $this->UserOrganization->find("all", $params);
-//pr($userdepartmentorg);
+                //pr($userdepartmentorg);
                 $entity_user_array = array();
                 $department_user_array = array();
                 foreach ($userdepartmentorg as $userorgval) {
@@ -8197,10 +8466,10 @@ class ApiController extends AppController {
                         $department_user_array[$userorgval["UserOrganization"]["department_id"]][] = $userorgval["UserOrganization"]["user_id"];
                     }
                 }
-//pr($entity_user_array);
-//echo "<hr>";
-//pr($department_user_array);exit;
-//
+                //pr($entity_user_array);
+                //echo "<hr>";
+                //pr($department_user_array);exit;
+                //
 
                 if (isset($this->request->data["type"]) && $this->request->data["type"] != "") {
                     $type = $this->request->data["type"];
@@ -8227,9 +8496,9 @@ class ApiController extends AppController {
                 }
 
                 /* NEW CODE START */
-//Getting total feeds count
+                //Getting total feeds count
                 $NEWconditionarray = $postFeedIds = $endorseFeedIds = $feedArray = array();
-//pr($this->request->data);
+                //pr($this->request->data);
                 if (isset($this->request->data["endorse_type"]) && $this->request->data["endorse_type"] == "user") {
                     $NEWconditionarray = array("user_id like '%" . $this->request->data["endorse_id"] . "%'");
                 }
@@ -8256,8 +8525,8 @@ class ApiController extends AppController {
                 $totalpage = ceil($totalLiveFeed / $limit);
 
 
-//Getting live feeds
-//$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
+                //Getting live feeds
+                //$paramsFeed['fields'] = "*,UNIX_TIMESTAMP(created) as create_date, UNIX_TIMESTAMP() as curr_time ";
 
                 $paramsFeed['fields'] = "*";
                 $paramsFeed['conditions'] = $NEWconditionarray;
@@ -8266,9 +8535,9 @@ class ApiController extends AppController {
                 $paramsFeed['offset'] = $offset;
                 $paramsFeed['order'] = 'FeedTran.created desc';
                 $FeedTranRes = $this->FeedTran->find("all", $paramsFeed);
-//                pr($FeedTranRes);
-//                $log = $this->FeedTran->getDataSource()->getLog(false, false);
-//                pr($log);
+                //                pr($FeedTranRes);
+                //                $log = $this->FeedTran->getDataSource()->getLog(false, false);
+                //                pr($log);
                 if (!empty($FeedTranRes)) {
                     foreach ($FeedTranRes as $index => $feedTransData) {
                         $feedArray[$feedTransData['FeedTran']['id']]['feed_id'] = $feedTransData['FeedTran']['feed_id'];
@@ -8282,13 +8551,13 @@ class ApiController extends AppController {
                 }
 
                 $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                //if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                 $this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id));
 
-//                pr($feedArray);
-//                pr($postFeedIds);
-//                pr($endorseFeedIds);
-//                exit;
+                //                pr($feedArray);
+                //                pr($postFeedIds);
+                //                pr($endorseFeedIds);
+                //                exit;
 
                 /* NEW CODE END */
 
@@ -8316,14 +8585,14 @@ class ApiController extends AppController {
                 $params['order'] = 'Endorsement.created desc';
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
-//pr($params);
-//exit;
+                //pr($params);
+                //exit;
                 $endorsement = $this->Endorsement->find("all", $params);
-//                $log = $this->Endorsement->getDataSource()->getLog(false, false);
-//                pr($log);
-//exit;
-//pr($endorsement);
-//exit;
+                //                $log = $this->Endorsement->getDataSource()->getLog(false, false);
+                //                pr($log);
+                //exit;
+                //pr($endorsement);
+                //exit;
                 $endorsmentarray = array();
                 $departmentarray = array();
                 $entityarray = array();
@@ -8354,7 +8623,7 @@ class ApiController extends AppController {
                     } else {
                         $endorsmentarray[$key]["like"] = 0;
                     }
-//$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
+                    //$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
 
                     $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                     $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
@@ -8458,14 +8727,14 @@ class ApiController extends AppController {
                     $newarray[$key]["endorsement_for"] = $eval["endorse"]["endorsement_for"];
                     $newarray[$key]["endorsed_id"] = $eval["endorse"]["endorsed_id"];
                     $newarray[$key]["endorser_id"] = $eval["endorse"]["endorser_id"];
-//	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
-// print_r($newarray);
+                    //	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
+                    // print_r($newarray);
                     if (isset($userdata[$eval["endorse"]["endorser_id"]])) {
                         $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorser_id"]]);
                         $newarray[$key]["endorser_name"] = $newuserdata[0];
                         if (isset($newuserdata[1])) {
 
-//$newarray[$key]["endorser_image"] = $newuserdata[1];
+                            //$newarray[$key]["endorser_image"] = $newuserdata[1];
 
                             $needle = 'default.jpg';
                             if (strpos($newuserdata[1], $needle) !== false) {
@@ -8500,11 +8769,11 @@ class ApiController extends AppController {
                     if ($eval["endorse"]["endorsement_for"] == "user") {
                         if (isset($userdata[$eval["endorse"]["endorsed_id"]])) {
                             $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorsed_id"]]);
-//pr($newuserdata); 
-//                        pr($eval["endorse"]);
+                            //pr($newuserdata); 
+                            //                        pr($eval["endorse"]);
                             $newarray[$key]["endorsed_name"] = $newuserdata[0];
                             if (isset($newuserdata[1])) {
-//$newarray[$key]["endorsed_image"] = $newuserdata[1];
+                                //$newarray[$key]["endorsed_image"] = $newuserdata[1];
                                 $needle = 'default.jpg';
                                 if (strpos($newuserdata[1], $needle) !== false) {
                                     $newarray[$key]["endorsed_image"] = '';
@@ -8528,7 +8797,7 @@ class ApiController extends AppController {
                 }
                 $endorseServerTime = $serverCurrentTime;
                 $returndata1 = array("endorse_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
-//pr($returndata1); 
+                //pr($returndata1); 
 
 
 
@@ -8549,26 +8818,26 @@ class ApiController extends AppController {
                             'PostLike.user_id =' . $user_id
                         )
                     ),
-//                    array(
-//                        'table' => 'post_attachments',
-//                        'alias' => 'PostAttachment',
-//                        'type' => 'LEFT',
-//                        'conditions' => array(
-//                            'Post.id = PostAttachment.post_id ',
-//                             /* 'PostAttachment.type = "image"'*/
-//                        )
-//                    )
+                    //                    array(
+                    //                        'table' => 'post_attachments',
+                    //                        'alias' => 'PostAttachment',
+                    //                        'type' => 'LEFT',
+                    //                        'conditions' => array(
+                    //                            'Post.id = PostAttachment.post_id ',
+                    //                             /* 'PostAttachment.type = "image"'*/
+                    //                        )
+                    //                    )
                 );
 
                 $params['fields'] = "*,UNIX_TIMESTAMP(Post.created) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $params['order'] = 'Post.created desc';
-//$params['group'] = 'Post.id';
-// pr($params); exit;
-//$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
-//$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
+                //$params['group'] = 'Post.id';
+                // pr($params); exit;
+                //$this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
+                //$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
                 $endorsement = $this->Post->find("all", $params);
-//                $log = $this->Post->getDataSource()->getLog(false, false);
-//                pr($log);
+                //                $log = $this->Post->getDataSource()->getLog(false, false);
+                //                pr($log);
 
                 $endorsmentarray = array();
                 $departmentarray = array();
@@ -8584,15 +8853,15 @@ class ApiController extends AppController {
 
                 foreach ($endorsement as $key => $value) {
                     $postAttachmentImages = array();
-//                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
-//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
-//                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
-//                        $endorsmentarray[$key]["post_image"] = "";
-//                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
-//                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
-//                    } else {
-//                        $endorsmentarray[$key]["post_image"] = array();
-//                    }
+                    //                    if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
+                    //                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . $value["PostAttachment"]['name']);
+                    //                    } else if (isset($value['Post']['image_count']) && $value['Post']['image_count'] < 1 && $value['Post']['emojis_count'] > 0) {
+                    //                        $endorsmentarray[$key]["post_image"] = "";
+                    //                        $PostAttachData = $this->PostAttachment->getEmojiByPostId($value['Post']['id']);
+                    //                        $endorsmentarray[$key]["post_image"] = array(Router::url('/', true) . EMOJIS_IMAGE_DIR . $PostAttachData);
+                    //                    } else {
+                    //                        $endorsmentarray[$key]["post_image"] = array();
+                    //                    }
                     $postAttachmentemoji = array();
                     $postAttachmentimg = array();
                     $postAttachmentFiles = array();
@@ -8654,12 +8923,12 @@ class ApiController extends AppController {
                     $userarray[] = $endorsval["user_id"];
                     $endorsmentarray[$key]["displayflag"] = $displayflag;
                 }
-//pr($endorsmentarray);exit;
+                //pr($endorsmentarray);exit;
                 $userinfo = $this->User->find('all', array(
                     'conditions' => array('User.id' => $userarray),
                     'fields' => array('id', 'fname', 'lname', 'image', 'about')
                 ));
-//pr($userinfo);
+                //pr($userinfo);
                 $userdata = array();
                 foreach ($userinfo as $userval) {
                     $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
@@ -8670,7 +8939,7 @@ class ApiController extends AppController {
                 }
 
                 $newarray = array();
-//pr($endorsmentarray); exit;
+                //pr($endorsmentarray); exit;
                 foreach ($endorsmentarray as $key => $eval) {
                     $key = $eval["post"]["id"];
                     $newarray[$key]["id"] = $eval["post"]["id"];
@@ -8699,8 +8968,8 @@ class ApiController extends AppController {
                     } else {
                         $newarray[$key]["user_name"] = "";
                     }
-//pr($newarray);
-//exit;
+                    //pr($newarray);
+                    //exit;
                     $newarray[$key]["message"] = $eval["post"]["message"];
                     $newarray[$key]["title"] = $eval["post"]["title"];
 
@@ -8715,8 +8984,8 @@ class ApiController extends AppController {
                 if ($loggedInUser['current_org']['joined'] == 0) {
 
                     $updateArray['UserOrganization.joined'] = 1;
-//$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
+                    //$updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
+                    //if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                     if ($this->UserOrganization->updateAll($updateArray, array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
                         $this->Session->write('Auth.User.current_org.joined', 1);
                         $this->JoinOrgCode->updateAll(array("is_expired" => 1), array("email" => $loggedInUser['email'], "organization_id" => $org_id));
@@ -8725,7 +8994,7 @@ class ApiController extends AppController {
 
                 $returndata2 = array("post_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
 
-//pr($returndata2);
+                //pr($returndata2);
                 $liveFeedDATA = array();
                 foreach ($feedArray as $feedId => $feedData) {
                     if ($feedData['feed_type'] == 'post') {
@@ -8742,8 +9011,8 @@ class ApiController extends AppController {
                 } elseif (isset($serverCurrentTime) && $serverCurrentTime != '') {
                     $resServerTime = $serverCurrentTime;
                 }
-//                pr($liveFeedDATA);
-//                exit;
+                //                pr($liveFeedDATA);
+                //                exit;
 
                 /* GETTING POST DATA END */
                 $returndata = array("endorse_data" => $liveFeedDATA, "total_page" => $totalpage, "server_time" => $resServerTime);
@@ -8752,28 +9021,32 @@ class ApiController extends AppController {
 
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Organization Endorsement ",
-                        "data" => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => "Organization Endorsement ",
+                        "data" => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => ""),
+                    'result' => array(
+                        "status" => false, "msg" => ""
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getEndorseList() {
+    public function getEndorseList()
+    {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
@@ -8782,19 +9055,20 @@ class ApiController extends AppController {
 
             $user_id = $loggedInUser['id'];
             if (isset($loggedInUser['current_org'])) {
-//print_r($loggedInUser['current_org']);
+                //print_r($loggedInUser['current_org']);
                 $org_id = $loggedInUser['current_org']['id'];
                 $keyword = "";
-//if($this->request->data["keyword"])
-//if(isset($this->request->data["keyword"]))
-//{
-//$keyword = $this->request->data["keyword"];
-//}
-//
+                //if($this->request->data["keyword"])
+                //if(isset($this->request->data["keyword"]))
+                //{
+                //$keyword = $this->request->data["keyword"];
+                //}
+                //
                 $params = array();
                 $params['fields'] = "user_id,entity_id,department_id";
                 $params['conditions'] = array(
-                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1);
+                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1
+                );
                 $userdepartmentorg = $this->UserOrganization->find("all", $params);
 
                 $entity_user_array = array();
@@ -8810,10 +9084,10 @@ class ApiController extends AppController {
                         $department_user_array[$userorgval["UserOrganization"]["department_id"]][] = $userorgval["UserOrganization"]["user_id"];
                     }
                 }
-//  print_r($entity_user_array);
-//  echo "<hr>";
-// print_r($department_user_array);exit;
-//
+                //  print_r($entity_user_array);
+                //  echo "<hr>";
+                // print_r($department_user_array);exit;
+                //
                 $type = $this->request->data["type"];
                 $endorse_type = "";
                 $endorse_search_id = "";
@@ -8850,18 +9124,18 @@ class ApiController extends AppController {
 
                 if ($type == "endorser") {
                     $conditionarray["Endorsement.endorser_id"] = $user_id;
-//$conditionarray["Endorsement.endorsed_id"] = $user_id;
+                    //$conditionarray["Endorsement.endorsed_id"] = $user_id;
                 } elseif ($type == "endorsed") {
                     $updateArray['ndorsed_updated'] = '"' . date("Y-m-d H:i:s") . '"';
-//$conditionarray["Endorsement.endorser_id"] = $user_id;
+                    //$conditionarray["Endorsement.endorser_id"] = $user_id;
                     $conditionarray["Endorsement.endorsed_id"] = $user_id;
                 } else {
                     $updateArray['live_updated'] = '"' . date("Y-m-d H:i:s") . '"';
                     $conditionarray["Endorsement.type != "] = "private";
                 }
-//if($keyword!=""){
-//$conditionarray["Endorsement.id"]= $endorsmentids;		
-//}
+                //if($keyword!=""){
+                //$conditionarray["Endorsement.id"]= $endorsmentids;		
+                //}
                 if ($type != "endorser") {
                     $this->UserOrganization->updateAll($updateArray, array("user_id" => $loggedInUser['id'], "organization_id" => $loggedInUser['current_org']['id']));
                 }
@@ -8872,29 +9146,29 @@ class ApiController extends AppController {
                 if ($end_date != "") {
                     $conditionarray["Endorsement.created <= "] = date("Y-m-d 23:59:59", $end_date);
                 }
-// for date search
-//	array('Equipment.created <= ' => $date,
-//  'Equipment.creatd >= ' => $date
-// )
-// end
+                // for date search
+                //	array('Equipment.created <= ' => $date,
+                //  'Equipment.creatd >= ' => $date
+                // )
+                // end
                 if ($endorse_type != "" && $endorse_search_id != "") {
-//$conditionarray["Endorsement.endorsement_for"] = $endorse_type;
-//$conditionarray["Endorsement.endorsed_id"]= $endorse_search_id;
+                    //$conditionarray["Endorsement.endorsement_for"] = $endorse_type;
+                    //$conditionarray["Endorsement.endorsed_id"]= $endorse_search_id;
                     if ($type == "endorsed") {
                         $conditionarray["Endorsement.endorser_id"] = $endorse_search_id;
                     } elseif ($type == "endorser") {
                         $conditionarray["Endorsement.endorsed_id"] = $endorse_search_id;
                     } else {
-// array('OR' => array('Endorsement.endorsed_id ' => $endorse_search_id, 'Endorsement.endorser_id' => $endorse_search_id));
+                        // array('OR' => array('Endorsement.endorsed_id ' => $endorse_search_id, 'Endorsement.endorser_id' => $endorse_search_id));
                         $conditionarray = array_merge($conditionarray, array('OR' => array('Endorsement.endorsed_id ' => $endorse_search_id, 'Endorsement.endorser_id' => $endorse_search_id)));
                     }
                 }
-//pr( $conditionarray);
+                //pr( $conditionarray);
                 $params['conditions'] = $conditionarray;
                 $params['order'] = 'Endorsement.created desc';
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $totalendorsement = $this->Endorsement->find("all", $params);
-//echo $this->Endorsement->getLastQuery();die;
+                //echo $this->Endorsement->getLastQuery();die;
                 $totalendorse = $totalendorsement[0][0]["cnt"];
                 $totalpage = ceil($totalendorse / $limit);
                 $params['joins'] = array(
@@ -8917,7 +9191,7 @@ class ApiController extends AppController {
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
                 $endorsement = $this->Endorsement->find("all", $params);
-//print_r($endorsement);exit;
+                //print_r($endorsement);exit;
                 $endorsmentarray = array();
                 $departmentarray = array();
                 $entityarray = array();
@@ -8948,7 +9222,7 @@ class ApiController extends AppController {
                     } else {
                         $endorsmentarray[$key]["like"] = 0;
                     }
-//$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
+                    //$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
 
                     $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                     $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
@@ -9055,14 +9329,14 @@ class ApiController extends AppController {
                     $newarray[$key]["endorsement_for"] = $eval["endorse"]["endorsement_for"];
                     $newarray[$key]["endorsed_id"] = $eval["endorse"]["endorsed_id"];
                     $newarray[$key]["endorser_id"] = $eval["endorse"]["endorser_id"];
-//	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
-// print_r($newarray);
+                    //	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
+                    // print_r($newarray);
                     if (isset($userdata[$eval["endorse"]["endorser_id"]])) {
                         $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorser_id"]]);
                         $newarray[$key]["endorser_name"] = $newuserdata[0];
                         if (isset($newuserdata[1])) {
 
-//$newarray[$key]["endorser_image"] = $newuserdata[1];
+                            //$newarray[$key]["endorser_image"] = $newuserdata[1];
 
                             $needle = 'default.jpg';
                             if (strpos($newuserdata[1], $needle) !== false) {
@@ -9099,7 +9373,7 @@ class ApiController extends AppController {
                         $newuserdata = explode("&&&&", $userdata[$eval["endorse"]["endorsed_id"]]);
                         $newarray[$key]["endorsed_name"] = $newuserdata[0];
                         if (isset($newuserdata[1])) {
-//$newarray[$key]["endorsed_image"] = $newuserdata[1];
+                            //$newarray[$key]["endorsed_image"] = $newuserdata[1];
                             $needle = 'default.jpg';
                             if (strpos($newuserdata[1], $needle) !== false) {
                                 $newarray[$key]["endorsed_image"] = '';
@@ -9112,22 +9386,22 @@ class ApiController extends AppController {
                     } elseif ($eval["endorse"]["endorsement_for"] == "entity") {
                         $newarray[$key]["endorsed_name"] = $entity[$eval["endorse"]["endorsed_id"]];
                     }
-//			if((strtolower($eval["endorse"]["type"])=="standard" || strtolower($eval["endorse"]["type"])=="private" ) && ($eval["endorse"]["endorsement_for"]=="user") )
-//{
-//	
-//	$endorsereply = $eval["reply"];
-//	$reply = array();
-//	if(!empty($endorsereply)){
-//			foreach($e ndorsereply as $replyval){
-//				
-//			  $reply[]	=array("reply"=>$replyval["reply"]);
-//			  
-//			}
-//	}
-//	$newarray[$key]["endorse_reply"] =$reply;
-//	$newarray[$key]["endorse_reply_count"] =count($reply);
-//	
-//}
+                    //			if((strtolower($eval["endorse"]["type"])=="standard" || strtolower($eval["endorse"]["type"])=="private" ) && ($eval["endorse"]["endorsement_for"]=="user") )
+                    //{
+                    //	
+                    //	$endorsereply = $eval["reply"];
+                    //	$reply = array();
+                    //	if(!empty($endorsereply)){
+                    //			foreach($e ndorsereply as $replyval){
+                    //				
+                    //			  $reply[]	=array("reply"=>$replyval["reply"]);
+                    //			  
+                    //			}
+                    //	}
+                    //	$newarray[$key]["endorse_reply"] =$reply;
+                    //	$newarray[$key]["endorse_reply_count"] =count($reply);
+                    //	
+                    //}
                 }
                 if ($loggedInUser['current_org']['joined'] == 0) {
                     if ($this->UserOrganization->updateAll(array("UserOrganization.joined" => 1), array("UserOrganization.user_id" => $loggedInUser['id'], "UserOrganization.organization_id" => $org_id))) {
@@ -9138,35 +9412,39 @@ class ApiController extends AppController {
 
                 $returndata = array("endorse_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Organization Endorsement ",
-                        "data" => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => "Organization Endorsement ",
+                        "data" => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => ""),
+                    'result' => array(
+                        "status" => false, "msg" => ""
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorsedetails() {
+    public function endorsedetails()
+    {
         $loggedinUser = $this->Auth->user();
 
         $params = array();
         $params['fields'] = "*";
         $params['conditions'] = array("DefaultOrg.user_id" => $loggedinUser['id']);
         $defaultOrganization = $this->DefaultOrg->find("first", $params);
-//$defaultOrganization['Organization']['public_endorse_visible'];
+        //$defaultOrganization['Organization']['public_endorse_visible'];
         if ($this->request->is('post')) {
             $eid = $this->request->data["e_id"];
 
@@ -9178,21 +9456,21 @@ class ApiController extends AppController {
             $params['fields'] = "*";
             $params['conditions'] = array("Endorsement.id" => $eid);
             $endorsement = $this->Endorsement->find("all", $params);
-//            pr($endorsement); exit;
+            //            pr($endorsement); exit;
             $endorse = array();
             if (!empty($endorsement)) {
-//pr($endorsement);
+                //pr($endorsement);
 
                 $userid = array();
                 $endorse = $endorsement[0]["Endorsement"];
-//
+                //
                 if ($endorse["is_read"] == 0 && isset($this->request->data["isRead"]) && $this->request->data["isRead"] == 1) {
                     $this->Endorsement->id = $eid;
                     $this->Endorsement->savefield("is_read", 1);
                     $endorse["is_read"] = 1;
                 }
 
-//
+                //
                 $org_id = $endorsement[0]["Endorsement"]["organization_id"];
                 $endorse["endorsed_name"] = "";
                 $endorserd_id = $endorsement[0]["Endorsement"]["endorsed_id"];
@@ -9234,7 +9512,7 @@ class ApiController extends AppController {
                     $hashtag_values = $this->getOrgValues($org_id, "OrgHashtag", 1, $hashArray);
                 }
 
-//                pr($core_values); exit;
+                //                pr($core_values); exit;
 
 
                 $endorse["core_values"] = $core_values;
@@ -9245,7 +9523,7 @@ class ApiController extends AppController {
                 if ($endorsement[0]["Endorsement"]["endorsement_for"] == "user") {
                     $userid[] = $endorserd_id;
                 }
-//
+                //
 
                 $userinfo = $this->User->find('all', array(
                     'conditions' => array('User.id' => $userid),
@@ -9259,11 +9537,11 @@ class ApiController extends AppController {
                         $userdata[$userval["User"]["id"]] .= "&&&&" . Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["User"]["image"];
                     }
                 }
-//
+                //
                 $endorse["is_reply"] = 0;
                 $endorse["reply"] = "";
                 $endorse["reply_counter"] = "";
-                if ((strtolower($endorse["type"]) == "standard" || strtolower($endorse["type"]) == "private" ) && ($endorsement[0]["Endorsement"]["endorsement_for"] == "user") && (in_array($selfuser_id, $userid))) {
+                if ((strtolower($endorse["type"]) == "standard" || strtolower($endorse["type"]) == "private") && ($endorsement[0]["Endorsement"]["endorsement_for"] == "user") && (in_array($selfuser_id, $userid))) {
                     $endorsereply = $endorsement[0]["EndorseReplies"];
                     $reply = array();
 
@@ -9305,12 +9583,12 @@ class ApiController extends AppController {
                     }
                     $user_id = $loggedinUser['id'];
                     $endorsval = $endorsement[0]["Endorsement"];
-//pr($endorsement[0]["Endorsement"]); exit;
-//                    pr($userOrganization);die;
-//                        if(in_array($user_id,array($endorsval["endorser_id"],$endorsval["endorsed_id"])) || $userOrganization['UserOrganization']['user_role'] == 2){
-//                    print_r($selfuser_id);
-//                    print_r($userid);
-//                    exit;
+                    //pr($endorsement[0]["Endorsement"]); exit;
+                    //                    pr($userOrganization);die;
+                    //                        if(in_array($user_id,array($endorsval["endorser_id"],$endorsval["endorsed_id"])) || $userOrganization['UserOrganization']['user_role'] == 2){
+                    //                    print_r($selfuser_id);
+                    //                    print_r($userid);
+                    //                    exit;
                     if ($userOrganization['UserOrganization']['user_role'] == 2) {
                         $message_display_flag = 1;
                     } else {
@@ -9324,8 +9602,10 @@ class ApiController extends AppController {
                     if ($selfuser_id != $endorser_id) {
                         $params = array();
                         $params['fields'] = "id";
-                        $params['conditions'] = array("UserOrganization.user_id" => $selfuser_id, "UserOrganization.joined" => 1,
-                            "UserOrganization.organization_id" => $org_id, "UserOrganization.department_id" => $endorserd_id);
+                        $params['conditions'] = array(
+                            "UserOrganization.user_id" => $selfuser_id, "UserOrganization.joined" => 1,
+                            "UserOrganization.organization_id" => $org_id, "UserOrganization.department_id" => $endorserd_id
+                        );
 
                         $userdepartmentorg = $this->UserOrganization->find("first", $params);
                         if ($userOrganization['UserOrganization']['user_role'] == 2) {
@@ -9343,8 +9623,10 @@ class ApiController extends AppController {
                     if ($selfuser_id != $endorser_id) {
                         $params = array();
                         $params['fields'] = "id";
-                        $params['conditions'] = array("UserOrganization.user_id" => $selfuser_id, "UserOrganization.joined" => 1,
-                            "UserOrganization.organization_id" => $org_id, "UserOrganization.entity_id" => $endorserd_id);
+                        $params['conditions'] = array(
+                            "UserOrganization.user_id" => $selfuser_id, "UserOrganization.joined" => 1,
+                            "UserOrganization.organization_id" => $org_id, "UserOrganization.entity_id" => $endorserd_id
+                        );
 
                         $userdepartmentorg = $this->UserOrganization->find("first", $params);
                         if ($userOrganization['UserOrganization']['user_role'] == 2) {
@@ -9359,7 +9641,7 @@ class ApiController extends AppController {
                         $endorse["endorsed_name"] = $entity[0]["name"];
                     }
                 }
-// fetching attatched image
+                // fetching attatched image
                 $attachedimg = array();
                 $emojisimg = array();
                 $attachedimage = $endorsement[0]["EndorseAttachments"];
@@ -9372,7 +9654,7 @@ class ApiController extends AppController {
                 if (!empty($attachedimage) && $message_display_flag == 1) {
 
                     foreach ($attachedimage as $attachval) {
-// ENDORSE_IMAGE_DIR
+                        // ENDORSE_IMAGE_DIR
 
                         if ($attachval["name"] != "" && $attachval["type"] == "image") {
                             $tempIimgs = Router::url('/', true) . "app/webroot/" . ENDORSE_IMAGE_DIR . "small/" . $attachval["name"];
@@ -9384,16 +9666,16 @@ class ApiController extends AppController {
                                 //$tempIimgs1 = str_replace("http:", "https:", $tempIimgs1);
                             }
                             $emojisimg[] = $tempIimgs1;
-//                            $emojisimg[] = $attachval["name"];
+                            //                            $emojisimg[] = $attachval["name"];
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "bitmojis") {
-//                            $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
+                            //                            $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
                             $tempIimgs2 = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $attachval["name"];
                             //$tempIimgs2 = str_replace("http:", "https:", $tempIimgs2);
                             $bitmojisimg[] = $tempIimgs2;
                         }
                     }
                 }
-// end
+                // end
                 $endorse["attatched_image"] = $attachedimg;
                 $endorse["emojis_image"] = $emojisimg;
                 if (isset($bitmojisimg) && $bitmojisimg != '') {
@@ -9404,7 +9686,7 @@ class ApiController extends AppController {
 
 
 
-//Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
+                //Added by Babulal prasad to show/hide public message according to setting to show/hide public endorsment message
                 $organizationDATA = $this->getOrgValues($org_id, "Organization", 1);
                 $public_endorse_visible = 0;
                 if ($organizationDATA[0]['allow_comments'] == 1 && $organizationDATA[0]['public_endorse_visible'] == 1) {
@@ -9412,7 +9694,7 @@ class ApiController extends AppController {
                 }
                 if (!in_array($selfuser_id, array($endorsval["endorser_id"], $endorsval["endorsed_id"]))) {
                     if ($endorse["type"] == 'standard' && $public_endorse_visible == 0) {
-//$endorse["message"] = "";
+                        //$endorse["message"] = "";
                     } else {
                         $endorse["message"] = $endormentMsg;
                     }
@@ -9443,28 +9725,32 @@ class ApiController extends AppController {
 
                 //pr($endorse); exit;
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Endorsement details",
-                        "data" => $endorse),
+                    'result' => array(
+                        "status" => true, "msg" => "Endorsement details",
+                        "data" => $endorse
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "invalid endorsement ."),
+                    'result' => array(
+                        "status" => false, "msg" => "invalid endorsement ."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getPendingPostsList() {
+    public function getPendingPostsList()
+    {
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
             if (isset($loggedInUser['current_org'])) {
@@ -9495,7 +9781,7 @@ class ApiController extends AppController {
                     )
                 );
                 $totalPending = $this->PostSchedule->find('all', $params); // Geting count for all pending post of this user
-//                echo $this->PostSchedule->getLastQuery(); exit;
+                //                echo $this->PostSchedule->getLastQuery(); exit;
 
                 $totalPendingPosts = $totalPending[0][0]["cnt"];
                 $totalpage = ceil($totalPendingPosts / $limit);
@@ -9529,28 +9815,31 @@ class ApiController extends AppController {
                 $allPendingPostData = $this->PostSchedule->find('all', $paramsFeed);
                 $returndata = array("pending_posts" => $allPendingPostData, "total_page" => $totalpage);
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => ""
-                        , 'data' => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => "", 'data' => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => ""),
+                    'result' => array(
+                        "status" => false, "msg" => ""
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getWallPostList() {
+    public function getWallPostList()
+    {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
@@ -9559,19 +9848,20 @@ class ApiController extends AppController {
 
             $user_id = $loggedInUser['id'];
             if (isset($loggedInUser['current_org'])) {
-//print_r($loggedInUser['current_org']);
+                //print_r($loggedInUser['current_org']);
                 $org_id = $loggedInUser['current_org']['id'];
                 $keyword = "";
-//if($this->request->data["keyword"])
-//if(isset($this->request->data["keyword"]))
-//{
-//$keyword = $this->request->data["keyword"];
-//}
-//
+                //if($this->request->data["keyword"])
+                //if(isset($this->request->data["keyword"]))
+                //{
+                //$keyword = $this->request->data["keyword"];
+                //}
+                //
                 $params = array();
                 $params['fields'] = "user_id,entity_id,department_id";
                 $params['conditions'] = array(
-                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1);
+                    "UserOrganization.organization_id" => $org_id, "UserOrganization.status" => 1
+                );
                 $userdepartmentorg = $this->UserOrganization->find("all", $params);
 
                 $entity_user_array = array();
@@ -9584,11 +9874,11 @@ class ApiController extends AppController {
                         $department_user_array[$userorgval["UserOrganization"]["department_id"]][] = $userorgval["UserOrganization"]["user_id"];
                     }
                 }
-//                  print_r($entity_user_array);
-//                  echo "<hr>";
-//                 print_r($department_user_array);
-//                 exit;
-//$type = $this->request->data["type"];
+                //                  print_r($entity_user_array);
+                //                  echo "<hr>";
+                //                 print_r($department_user_array);
+                //                 exit;
+                //$type = $this->request->data["type"];
                 $endorse_type = "";
                 $endorse_search_id = "";
 
@@ -9619,9 +9909,9 @@ class ApiController extends AppController {
                 $conditionarray["Post.user_id"] = $user_id;
                 $conditionarray["Post.status"] = 1;
 
-//if ($type != "endorser") {
-///$this->UserOrganization->updateAll($updateArray, array("user_id" => $loggedInUser['id'], "organization_id" => $loggedInUser['current_org']['id']));
-//}
+                //if ($type != "endorser") {
+                ///$this->UserOrganization->updateAll($updateArray, array("user_id" => $loggedInUser['id'], "organization_id" => $loggedInUser['current_org']['id']));
+                //}
 
                 if ($start_date != "") {
                     $conditionarray["Post.created >= "] = date("Y-m-d 00:00:00", $start_date);
@@ -9630,13 +9920,13 @@ class ApiController extends AppController {
                     $conditionarray["Post.created <= "] = date("Y-m-d 23:59:59", $end_date);
                 }
                 $params['conditions'] = $conditionarray;
-//pr($conditionarray); exit
+                //pr($conditionarray); exit
                 $params['order'] = 'Post.created desc';
                 $totalendorsement = $this->Post->find("all", $params);
 
-//                $conditionarray["PostAttachment.type"] = 'image';
-//                $params['conditions'] = $conditionarray;
-//echo $this->Endorsement->getLastQuery();die;
+                //                $conditionarray["PostAttachment.type"] = 'image';
+                //                $params['conditions'] = $conditionarray;
+                //echo $this->Endorsement->getLastQuery();die;
                 $totalendorse = $totalendorsement[0][0]["cnt"];
                 $totalpage = ceil($totalendorse / $limit);
                 $params['joins'] = array(
@@ -9666,13 +9956,13 @@ class ApiController extends AppController {
                 $params['offset'] = $offset;
                 $params['order'] = 'Post.created desc';
                 $params['group'] = 'Post.id';
-//                pr($params);
-//                exit;
+                //                pr($params);
+                //                exit;
                 $this->Post->unbindModel(array('hasMany' => array('PostAttachments')));
-//$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
+                //$this->Endorsement->bindModel(array('hasMany' => array('EndorseCoreValues')));
                 $endorsement = $this->Post->find("all", $params);
-//                $log = $this->Post->getDataSource()->getLog(false, false);
-//                pr($log);
+                //                $log = $this->Post->getDataSource()->getLog(false, false);
+                //                pr($log);
 
                 $endorsmentarray = array();
                 $departmentarray = array();
@@ -9685,7 +9975,7 @@ class ApiController extends AppController {
                 }
 
                 $serverCurrentTime = "";
-//pr($endorsement); exit;
+                //pr($endorsement); exit;
                 foreach ($endorsement as $key => $value) {
 
                     if (isset($value['Post']['image_count']) && $value['Post']['image_count'] > 0) {
@@ -9716,7 +10006,7 @@ class ApiController extends AppController {
                     } else {
                         $endorsmentarray[$key]["like"] = 0;
                     }
-//$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
+                    //$endorsmentarray[$key]["attatched_image"]=$value["EndorseAttachments"];
                     $this->UserOrganization->unbindModel(array("belongsTo" => array("Organization", "User")));
                     $userOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id)));
                     $userarray[] = $endorsval["user_id"];
@@ -9728,7 +10018,7 @@ class ApiController extends AppController {
                     'conditions' => array('User.id' => $userarray),
                     'fields' => array('id', 'fname', 'lname', 'image', 'about')
                 ));
-//pr($userinfo);
+                //pr($userinfo);
                 $userdata = array();
                 foreach ($userinfo as $userval) {
                     $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
@@ -9760,7 +10050,7 @@ class ApiController extends AppController {
                     }
                 }
                 $newarray = array();
-//pr($endorsmentarray); exit;
+                //pr($endorsmentarray); exit;
                 foreach ($endorsmentarray as $key => $eval) {
 
                     $newarray[$key]["id"] = $eval["post"]["id"];
@@ -9771,7 +10061,7 @@ class ApiController extends AppController {
                     $newarray[$key]["post_image"] = $eval["post_image"];
                     $newarray[$key]["comments_count"] = $eval['post']["comments_count"];
 
-//	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
+                    //	$newarray[$key]["attatched_image"] =  $eval["attatched_image"];
                     if (isset($userdata[$eval["post"]["user_id"]])) {
                         $newuserdata = explode("&&&&", $userdata[$eval["post"]["user_id"]]);
 
@@ -9784,14 +10074,14 @@ class ApiController extends AppController {
                         $newarray[$key]["user_name"] = "";
                     }
 
-//$newarray[$key]["type"] = $eval["endorse"]["type"];
+                    //$newarray[$key]["type"] = $eval["endorse"]["type"];
                     $newarray[$key]["message"] = $eval["post"]["message"];
                     $newarray[$key]["title"] = $eval["post"]["title"];
-//                    if ($eval["displayflag"] == 1) {
-//                        $newarray[$key]["message"] = $eval["post"]["message"];
-//                    } else {
-//                        $newarray[$key]["message"] = "";
-//                    }
+                    //                    if ($eval["displayflag"] == 1) {
+                    //                        $newarray[$key]["message"] = $eval["post"]["message"];
+                    //                    } else {
+                    //                        $newarray[$key]["message"] = "";
+                    //                    }
                     $newarray[$key]["like_count"] = $eval["post"]["like_count"];
                     $newarray[$key]["created"] = $eval["post"]["created"];
 
@@ -9809,28 +10099,32 @@ class ApiController extends AppController {
 
                 $returndata = array("post_data" => $newarray, "total_page" => $totalpage, "server_time" => $serverCurrentTime);
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Organization's Post",
-                        "data" => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => "Organization's Post",
+                        "data" => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => ""),
+                    'result' => array(
+                        "status" => false, "msg" => ""
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    function getPostLastComment($postId) {
+    function getPostLastComment($postId)
+    {
         $res = $this->PostComment->find('all', array(
             'fields' => array('*', "UNIX_TIMESTAMP(PostComment.created) as create_date"),
             'conditions' => array('PostComment.post_id' => $postId),
@@ -9863,12 +10157,14 @@ class ApiController extends AppController {
         return $commentData;
     }
 
-    public function increasePostClickCount($user_id, $post_id) {
+    public function increasePostClickCount($user_id, $post_id)
+    {
         $clickEventArray = array("post_id" => $post_id, "user_id" => $user_id, "post_click" => 1);
         $result = $this->PostEventCount->save($clickEventArray);
     }
 
-    public function wallPostdetails() {
+    public function wallPostdetails()
+    {
 
         if ($this->request->is('post')) {
             $post_id = $this->request->data["post_id"];
@@ -9906,7 +10202,7 @@ class ApiController extends AppController {
                 } else {
                     $postData["is_like"] = 0;
                 }
-//
+                //
                 if ($postData["is_read"] == 0 && isset($this->request->data["isRead"]) && $this->request->data["isRead"] == 1) {
                     $this->Post->id = $post_id;
                     $this->Post->savefield("is_read", 1);
@@ -9945,7 +10241,7 @@ class ApiController extends AppController {
                     }
                     $userAbout = $userval["User"]["about"];
                 }
-//
+                //
                 $postData["is_reply"] = 0;
                 $postData["reply"] = "";
                 $postData["reply_counter"] = "";
@@ -9964,34 +10260,34 @@ class ApiController extends AppController {
                 $postData["PostComment"] = $postCommentData;
 
 
-// fetching attatched image
+                // fetching attatched image
                 $attachedimg = array();
                 $emojisimg = array();
                 $postAttachmentFiles = array();
                 $attachedimage = $post[0]["PostAttachments"];
 
-//                if ($postData["type"] == "anonymous") {
-//                    $postData["message"] = "";
-//                }
+                //                if ($postData["type"] == "anonymous") {
+                //                    $postData["message"] = "";
+                //                }
 
 
                 if (!empty($attachedimage) && $message_display_flag == 1) {
                     foreach ($attachedimage as $attachval) {
                         if ($attachval["name"] != "" && $attachval["type"] == "image") {
                             $tmpImageee = Router::url('/', true) . "app/webroot/" . POST_IMAGE_DIR . "small/" . $attachval["name"];
-                            //$attachedimg[] = str_replace("http:", "https:", $tmpImageee);
+                            $attachedimg[] = str_replace("http:", "https:", $tmpImageee);
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "emojis") {
                             $tmpImageee1 = Router::url('/', true) . "app/webroot/" . BITMOJIS_IMAGE_DIR . $attachval["name"];
                             if (strpos($tmpImageee1, 'localhost') < 0 || strpos($tmpImageee1, 'staging') < 0) {
-                                //$tmpImageee1 = str_replace("http:", "https:", $tmpImageee1);
+                                $tmpImageee1 = str_replace("http:", "https:", $tmpImageee1);
                             }
                             $emojisimg[] = $tmpImageee1;
-//                            $emojisimg[] = $attachval["name"];
+                            //                            $emojisimg[] = $attachval["name"];
                         } elseif ($attachval["name"] != "" && trim($attachval["type"]) == "files") {
                             $fileData = json_decode($attachval["name"], true);
                             $orgUrl = $fileData['url'];
                             $tmpImageee2 = Router::url('/', true) . "app/webroot/" . POST_FILE_DIR . $orgUrl;
-                            //$fileData['url'] = str_replace("http:", "https:", $tmpImageee2);
+                            $fileData['url'] = str_replace("http:", "https:", $tmpImageee2);
                             $fileData['url_web'] = POST_FILE_DIR . $orgUrl;
                             $postAttachmentFiles[] = $fileData;
                         }
@@ -10005,28 +10301,32 @@ class ApiController extends AppController {
                 $postData["created"] = $createdTime;
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Post details",
-                        "data" => $postData),
+                    'result' => array(
+                        "status" => true, "msg" => "Post details",
+                        "data" => $postData
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "invalid post."),
+                    'result' => array(
+                        "status" => false, "msg" => "invalid post."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getPendingwallPostdetails() {
+    public function getPendingwallPostdetails()
+    {
 
         if ($this->request->is('post')) {
             $post_id = $this->request->data["post_id"];
@@ -10054,7 +10354,8 @@ class ApiController extends AppController {
                     'type' => 'LEFT',
                     'conditions' => array(
                         'PostSchedule.post_id = Post.id '
-                    )),
+                    )
+                ),
                 array(
                     'table' => 'feed_trans',
                     'alias' => 'FeedTran',
@@ -10081,14 +10382,14 @@ class ApiController extends AppController {
                 } else {
                     $postData["is_like"] = 0;
                 }
-//
+                //
                 if ($postData["is_read"] == 0 && isset($this->request->data["isRead"]) && $this->request->data["isRead"] == 1) {
                     $this->Post->id = $post_id;
                     $this->Post->savefield("is_read", 1);
                     $postData["is_read"] = 1;
                 }
 
-//
+                //
                 $org_id = $post[0]["Post"]["organization_id"];
                 $userid[] = $endorser_id = $user_id = $post[0]["Post"]["user_id"];
 
@@ -10120,7 +10421,7 @@ class ApiController extends AppController {
                     }
                     $userAbout = $userval["User"]["about"];
                 }
-//
+                //
                 $postData["is_reply"] = 0;
                 $postData["reply"] = "";
                 $postData["reply_counter"] = "";
@@ -10139,15 +10440,15 @@ class ApiController extends AppController {
                 $postData["PostComment"] = $postCommentData;
 
 
-// fetching attatched image
+                // fetching attatched image
                 $attachedimg = array();
                 $emojisimg = array();
                 $postAttachmentFiles = array();
                 $attachedimage = $post[0]["PostAttachments"];
 
-//                if ($postData["type"] == "anonymous") {
-//                    $postData["message"] = "";
-//                }
+                //                if ($postData["type"] == "anonymous") {
+                //                    $postData["message"] = "";
+                //                }
 
 
                 if (!empty($attachedimage) && $message_display_flag == 1) {
@@ -10174,28 +10475,32 @@ class ApiController extends AppController {
                 $postData["FeedTran"] = $post[0]["FeedTran"];
                 $postData["PostSchedule"] = $post[0]["PostSchedule"];
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Post details",
-                        "data" => $postData),
+                    'result' => array(
+                        "status" => true, "msg" => "Post details",
+                        "data" => $postData
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "invalid post."),
+                    'result' => array(
+                        "status" => false, "msg" => "invalid post."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getWallPostCommentLists() {
+    public function getWallPostCommentLists()
+    {
 
         if ($this->request->is('post')) {
             $post_id = $this->request->data["post_id"];
@@ -10217,8 +10522,8 @@ class ApiController extends AppController {
                 $offset = 0;
             }
 
-//            $limit = 5;
-//            $page = 2;
+            //            $limit = 5;
+            //            $page = 2;
 
             $params = array();
             $params['conditions'] = array("PostComment.post_id" => $post_id);
@@ -10241,7 +10546,7 @@ class ApiController extends AppController {
 
             $postData = array();
             if (!empty($postAllComments)) {
-//print_r($endorsement);
+                //print_r($endorsement);
                 $commentsList = $usersList = array();
                 foreach ($postAllComments as $index => $postCmtData) {
                     $data = array_merge($postCmtData['PostComment'], $postCmtData[0]);
@@ -10250,13 +10555,13 @@ class ApiController extends AppController {
                     $usersList[$data['user_id']] = $data['user_id'];
                 }
                 krsort($commentsList);
-//sort($commentsList);
+                //sort($commentsList);
 
                 $userinfo = $this->User->find('all', array(
                     'conditions' => array('User.id' => $usersList),
                     'fields' => array('id', 'fname', 'lname', 'image')
                 ));
-//pr($userinfo);
+                //pr($userinfo);
                 $userdata = array();
                 foreach ($userinfo as $userval) {
                     $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
@@ -10280,22 +10585,25 @@ class ApiController extends AppController {
                     $responseData[] = $data;
                 }
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Wall post comments list",
-                        "data" => array('postcommentlist' => $responseData, 'total_pages' => $totalpage, 'server_time' => $currentTime, 'current_page' => $page)),
+                    'result' => array(
+                        "status" => true, "msg" => "Wall post comments list",
+                        "data" => array('postcommentlist' => $responseData, 'total_pages' => $totalpage, 'server_time' => $currentTime, 'current_page' => $page)
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "No comment found."),
+                    'result' => array(
+                        "status" => false, "msg" => "No comment found."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -10305,16 +10613,17 @@ class ApiController extends AppController {
      * To get All Comments list
      */
 
-    public function getEndorseCommentsLists() {
+    public function getEndorseCommentsLists()
+    {
 
         if ($this->request->is('post')) {
             $endorse_id = $this->request->data["e_id"];
 
-//            $token = $this->request->data['token'];
-//            $userinfo = $this->getuserData($token, true);
-//            
-//            $loggedinUser = $this->Auth->user();
-//            $selfuser_id = $loggedinUser["id"];
+            //            $token = $this->request->data['token'];
+            //            $userinfo = $this->getuserData($token, true);
+            //            
+            //            $loggedinUser = $this->Auth->user();
+            //            $selfuser_id = $loggedinUser["id"];
 
             $isRead = 0;
             $message_display_flag = 1;
@@ -10332,8 +10641,8 @@ class ApiController extends AppController {
                 $offset = 0;
             }
 
-//            $limit = 5;
-//            $page = 2;
+            //            $limit = 5;
+            //            $page = 2;
 
             $params = array();
             $params['conditions'] = array("EndorsementComment.endorsement_id" => $endorse_id);
@@ -10356,7 +10665,7 @@ class ApiController extends AppController {
 
             $postData = array();
             if (!empty($postAllComments)) {
-//print_r($endorsement);
+                //print_r($endorsement);
                 $commentsList = $usersList = array();
                 foreach ($postAllComments as $index => $postCmtData) {
                     $data = array_merge($postCmtData['EndorsementComment'], $postCmtData[0]);
@@ -10365,13 +10674,13 @@ class ApiController extends AppController {
                     $usersList[$data['user_id']] = $data['user_id'];
                 }
                 krsort($commentsList);
-//sort($commentsList);
+                //sort($commentsList);
 
                 $userinfo = $this->User->find('all', array(
                     'conditions' => array('User.id' => $usersList),
                     'fields' => array('id', 'fname', 'lname', 'image')
                 ));
-//pr($userinfo);
+                //pr($userinfo);
                 $userdata = array();
                 foreach ($userinfo as $userval) {
                     $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
@@ -10395,28 +10704,32 @@ class ApiController extends AppController {
                     $responseData[] = $data;
                 }
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Endorsements comments list",
-                        "data" => array('endorsecommentlist' => $responseData, 'total_pages' => $totalpage, 'server_time' => $currentTime, 'current_page' => $page)),
+                    'result' => array(
+                        "status" => true, "msg" => "Endorsements comments list",
+                        "data" => array('endorsecommentlist' => $responseData, 'total_pages' => $totalpage, 'server_time' => $currentTime, 'current_page' => $page)
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "No comment found."),
+                    'result' => array(
+                        "status" => false, "msg" => "No comment found."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function JoinReqOrg() {
+    public function JoinReqOrg()
+    {
         if (isset($this->request->data['token']) && isset($this->request->data['org_data'])) {
             $org_data = json_decode($this->request->data['org_data'], true);
             foreach ($org_data as $orgId => $orgData) {
@@ -10439,13 +10752,13 @@ class ApiController extends AppController {
                 $emailQueue = array();
                 foreach ($orgArray as $orgval) {
 
-//echo $orgval['Organization']['id'];
+                    //echo $orgval['Organization']['id'];
                     $requestinfo = $this->OrgRequests->find('first', array(
                         'conditions' => array('user_id' => $user_id, 'organization_id' => $orgval['Organization']['id'], "status" => 0),
                         'fields' => array('id')
                     ));
 
-// print_r($requestinfo);
+                    // print_r($requestinfo);
                     if (empty($requestinfo)) {
                         $contact_number = $orgData['contact'];
                         $relation_to_org = $orgData['relation_to_org'];
@@ -10456,8 +10769,10 @@ class ApiController extends AppController {
                         }
 
 
-                        $requestarray[] = array("organization_id" => $orgval['Organization']['id'], "user_id" => $user_id, "mobile_number" => $contact_number,
-                            "relationship_to_org" => $relation_to_org, 'relationship_to_org_desc' => $relation_to_org_other, 'why_want_to_join' => $why_want_to_join);
+                        $requestarray[] = array(
+                            "organization_id" => $orgval['Organization']['id'], "user_id" => $user_id, "mobile_number" => $contact_number,
+                            "relationship_to_org" => $relation_to_org, 'relationship_to_org_desc' => $relation_to_org_other, 'why_want_to_join' => $why_want_to_join
+                        );
 
 
                         $organization_name .= $orgval['Organization']['name'] . ",";
@@ -10481,15 +10796,15 @@ class ApiController extends AppController {
                         $alreadyrequested = 1;
                     }
                 }
-            }//Multiple org data loop
-//Your request to join [ORG-NAME]
+            } //Multiple org data loop
+            //Your request to join [ORG-NAME]
             if ($alreadyrequested == 0 && !empty($requestarray)) {
                 $organization_name = substr($organization_name, 0, -1);
                 $this->OrgRequests->saveMany($requestarray);
                 if (!empty($emailQueue)) {
                     $this->Email->saveMany($emailQueue);
                 }
-//save to pending_requests
+                //save to pending_requests
                 $pendingRequestOrgs = $loggedInUser['pending_requests'];
                 if ($pendingRequestOrgs == "") {
                     $pendingRequestOrgs = array();
@@ -10498,16 +10813,18 @@ class ApiController extends AppController {
                 $this->Session->write('Auth.User.pending_requests', $pendingRequestOrgs);
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Your request to join [" . $organization_name . "] was sent successfully!",
-                        "data" => true),
+                    'result' => array(
+                        "status" => true, "msg" => "Your request to join [" . $organization_name . "] was sent successfully!",
+                        "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "you have already sent request for this user. ",
-                        "data" => true),
+                    'result' => array(
+                        "status" => false, "msg" => "you have already sent request for this user. ",
+                        "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             }
@@ -10526,7 +10843,7 @@ class ApiController extends AppController {
             $array['fields'] = array('id', 'name');
             $array['conditions'] = array('id' => $org_ids);
 
-//
+            //
             $orgArray = $this->Organization->find("all", $array);
             $loggedInUser = $this->Auth->user();
             $user_id = $loggedInUser['id'];
@@ -10535,17 +10852,19 @@ class ApiController extends AppController {
             $emailQueue = array();
             foreach ($orgArray as $orgval) {
 
-//echo $orgval['Organization']['id'];
+                //echo $orgval['Organization']['id'];
 
                 $requestinfo = $this->OrgRequests->find('first', array(
                     'conditions' => array('user_id' => $user_id, 'organization_id' => $orgval['Organization']['id'], "status" => 0),
                     'fields' => array('id')
                 ));
 
-// print_r($requestinfo);
+                // print_r($requestinfo);
                 if (empty($requestinfo)) {
-                    $requestarray[] = array("organization_id" => $orgval['Organization']['id'], "user_id" => $user_id, "mobile_number" => '',
-                        "relationship_to_org" => '', 'relationship_to_org_desc' => '', 'why_want_to_join' => '');
+                    $requestarray[] = array(
+                        "organization_id" => $orgval['Organization']['id'], "user_id" => $user_id, "mobile_number" => '',
+                        "relationship_to_org" => '', 'relationship_to_org_desc' => '', 'why_want_to_join' => ''
+                    );
                     $organization_name .= $orgval['Organization']['name'] . ",";
                     foreach ($adminorg[$orgval['Organization']['id']] as $userval) {
 
@@ -10567,7 +10886,7 @@ class ApiController extends AppController {
                     $alreadyrequested = 1;
                 }
             }
-//Your request to join [ORG-NAME]
+            //Your request to join [ORG-NAME]
             if ($alreadyrequested == 0 && !empty($requestarray)) {
                 $organization_name = substr($organization_name, 0, -1);
                 $this->OrgRequests->saveMany($requestarray);
@@ -10575,7 +10894,7 @@ class ApiController extends AppController {
                     $this->Email->saveMany($emailQueue);
                 }
 
-//save to pending_requests
+                //save to pending_requests
 
                 $pendingRequestOrgs = $loggedInUser['pending_requests'];
                 $pendingRequestOrgs = array_merge($pendingRequestOrgs, $org_ids);
@@ -10583,55 +10902,59 @@ class ApiController extends AppController {
                 $this->Session->write('Auth.User.pending_requests', $pendingRequestOrgs);
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Your request to join [" . $organization_name . "] was sent successfully!",
-                        "data" => true),
+                    'result' => array(
+                        "status" => true, "msg" => "Your request to join [" . $organization_name . "] was sent successfully!",
+                        "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "you have already sent request for this user. ",
-                        "data" => true),
+                    'result' => array(
+                        "status" => false, "msg" => "you have already sent request for this user. ",
+                        "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             }
-//
-//			  $invites = $emailQueue = array();
-//            $viewVars = array("org_name" => $current_org['name']);
-//            $configVars = serialize($viewVars);
-//            $subject = "Request to join ".$orgArray['Organization']['name']." organization";
-//			$requestorg = array("organization_id" => $current_org['id']);
-//            foreach ($emailIds as $email) {
-//                if (!in_array($email, $invitedMails)) {
-//                    $invites[] = array("organization_id" => $current_org['id'], "email" => $email);
-//                    $emailQueue[] = array("to" => $email, "subject" => $subject, "config_vars" => $configVars, "template" => "invite");
-//                }
-//            }
-//
-//
-//            if (!empty($invites)) {
-//                $this->Invite->saveMany($invites);
-//                $this->Email->saveMany($emailQueue);
-//                $msg = "Invitation sent.";
-//                $status = true;
-//            } else {
-//                $msg = "All people are already invited";
-//                $status = false;
-//            }
-//
-//            $returnData = array("alreadyInvited" => $invitedMails);
-//
+            //
+            //			  $invites = $emailQueue = array();
+            //            $viewVars = array("org_name" => $current_org['name']);
+            //            $configVars = serialize($viewVars);
+            //            $subject = "Request to join ".$orgArray['Organization']['name']." organization";
+            //			$requestorg = array("organization_id" => $current_org['id']);
+            //            foreach ($emailIds as $email) {
+            //                if (!in_array($email, $invitedMails)) {
+            //                    $invites[] = array("organization_id" => $current_org['id'], "email" => $email);
+            //                    $emailQueue[] = array("to" => $email, "subject" => $subject, "config_vars" => $configVars, "template" => "invite");
+            //                }
+            //            }
+            //
+            //
+            //            if (!empty($invites)) {
+            //                $this->Invite->saveMany($invites);
+            //                $this->Email->saveMany($emailQueue);
+            //                $msg = "Invitation sent.";
+            //                $status = true;
+            //            } else {
+            //                $msg = "All people are already invited";
+            //                $status = false;
+            //            }
+            //
+            //            $returnData = array("alreadyInvited" => $invitedMails);
+            //
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token or organization id  is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token or organization id  is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function JoinReqOrg_bk_20_sept_2017() {
+    public function JoinReqOrg_bk_20_sept_2017()
+    {
 
         if (isset($this->request->data['token']) && isset($this->request->data['org_id'])) {
 
@@ -10647,19 +10970,19 @@ class ApiController extends AppController {
             $array = array();
             $array['fields'] = array('id', 'name');
             $array['conditions'] = array('id' => $org_ids);
-//
-//					    $array['joins'] = array(
-//                array(
-//                    'table' => 'users',
-//                    'alias' => 'user',
-//                    'type' => 'INNER',
-//                    'conditions' => array(
-//                        'Organization.id' => $org_ids,
-//                        'Organization.admin_id = user.id'
-//                    )
-//                )
-//            );
-//
+            //
+            //					    $array['joins'] = array(
+            //                array(
+            //                    'table' => 'users',
+            //                    'alias' => 'user',
+            //                    'type' => 'INNER',
+            //                    'conditions' => array(
+            //                        'Organization.id' => $org_ids,
+            //                        'Organization.admin_id = user.id'
+            //                    )
+            //                )
+            //            );
+            //
             $orgArray = $this->Organization->find("all", $array);
             $loggedInUser = $this->Auth->user();
             $user_id = $loggedInUser['id'];
@@ -10668,13 +10991,13 @@ class ApiController extends AppController {
             $emailQueue = array();
             foreach ($orgArray as $orgval) {
 
-//echo $orgval['Organization']['id'];
+                //echo $orgval['Organization']['id'];
                 $requestinfo = $this->OrgRequests->find('first', array(
                     'conditions' => array('user_id' => $user_id, 'organization_id' => $orgval['Organization']['id'], "status" => 0),
                     'fields' => array('id')
                 ));
 
-// print_r($requestinfo);
+                // print_r($requestinfo);
                 if (empty($requestinfo)) {
                     $requestarray[] = array("organization_id" => $orgval['Organization']['id'], "user_id" => $user_id);
 
@@ -10699,7 +11022,7 @@ class ApiController extends AppController {
                     $alreadyrequested = 1;
                 }
             }
-//Your request to join [ORG-NAME]
+            //Your request to join [ORG-NAME]
             if ($alreadyrequested == 0 && !empty($requestarray)) {
                 $organization_name = substr($organization_name, 0, -1);
                 $this->OrgRequests->saveMany($requestarray);
@@ -10707,7 +11030,7 @@ class ApiController extends AppController {
                     $this->Email->saveMany($emailQueue);
                 }
 
-//save to pending_requests
+                //save to pending_requests
 
                 $pendingRequestOrgs = $loggedInUser['pending_requests'];
                 $pendingRequestOrgs = array_merge($pendingRequestOrgs, $org_ids);
@@ -10715,56 +11038,60 @@ class ApiController extends AppController {
                 $this->Session->write('Auth.User.pending_requests', $pendingRequestOrgs);
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Your request to join [" . $organization_name . "] was sent successfully!",
-                        "data" => true),
+                    'result' => array(
+                        "status" => true, "msg" => "Your request to join [" . $organization_name . "] was sent successfully!",
+                        "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "you have already sent request for this user. ",
-                        "data" => true),
+                    'result' => array(
+                        "status" => false, "msg" => "you have already sent request for this user. ",
+                        "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             }
-//
-//			  $invites = $emailQueue = array();
-//            $viewVars = array("org_name" => $current_org['name']);
-//            $configVars = serialize($viewVars);
-//            $subject = "Request to join ".$orgArray['Organization']['name']." organization";
-//			$requestorg = array("organization_id" => $current_org['id']);
-//            foreach ($emailIds as $email) {
-//                if (!in_array($email, $invitedMails)) {
-//                    $invites[] = array("organization_id" => $current_org['id'], "email" => $email);
-//                    $emailQueue[] = array("to" => $email, "subject" => $subject, "config_vars" => $configVars, "template" => "invite");
-//                }
-//            }
-//
-//
-//            if (!empty($invites)) {
-//                $this->Invite->saveMany($invites);
-//                $this->Email->saveMany($emailQueue);
-//                $msg = "Invitation sent.";
-//                $status = true;
-//            } else {
-//                $msg = "All people are already invited";
-//                $status = false;
-//            }
-//
-//            $returnData = array("alreadyInvited" => $invitedMails);
-//
+            //
+            //			  $invites = $emailQueue = array();
+            //            $viewVars = array("org_name" => $current_org['name']);
+            //            $configVars = serialize($viewVars);
+            //            $subject = "Request to join ".$orgArray['Organization']['name']." organization";
+            //			$requestorg = array("organization_id" => $current_org['id']);
+            //            foreach ($emailIds as $email) {
+            //                if (!in_array($email, $invitedMails)) {
+            //                    $invites[] = array("organization_id" => $current_org['id'], "email" => $email);
+            //                    $emailQueue[] = array("to" => $email, "subject" => $subject, "config_vars" => $configVars, "template" => "invite");
+            //                }
+            //            }
+            //
+            //
+            //            if (!empty($invites)) {
+            //                $this->Invite->saveMany($invites);
+            //                $this->Email->saveMany($emailQueue);
+            //                $msg = "Invitation sent.";
+            //                $status = true;
+            //            } else {
+            //                $msg = "All people are already invited";
+            //                $status = false;
+            //            }
+            //
+            //            $returnData = array("alreadyInvited" => $invitedMails);
+            //
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token or organization id  is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token or organization id  is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// endorse like
-    public function endorselike() {
+    // endorse like
+    public function endorselike()
+    {
 
         if ($this->request->is('post')) {
             $e_id = $this->request->data["e_id"];
@@ -10799,9 +11126,9 @@ class ApiController extends AppController {
                     $msg = $userName . " liked your nDorsement.";
                     /* Send Push notification */
                     if (isset($sendPushNotification) && $sendPushNotification == 1) {
-//
-//                        $userDATA = $this->User->findById($user_id);
-//                        $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
+                        //
+                        //                        $userDATA = $this->User->findById($user_id);
+                        //                        $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
 
 
                         $loginuser = $this->LoginStatistics->find("all", array(
@@ -10821,22 +11148,22 @@ class ApiController extends AppController {
                                 $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion", "title" => "nDorse App");
 
                                 $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
-//                                pr($deviceToken_msg_arr);
-//                                exit;
+                                //                                pr($deviceToken_msg_arr);
+                                //                                exit;
                                 /** Added by Babulal Prasad @30-may-2019
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-//                                $this->loadModel('AlertCenterNotification');
-//                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
-//                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
-//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                $AlertCenterNotificationArray['status'] = 0;
-//                                $AlertCenterNotificationArray['os'] = 'ios';
-//                                $AlertCenterNotificationArray['feed_id'] = $e_id;
-//                                $AlertCenterNotificationArray['sender_id'] = $user_id;
-//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                //                                $this->loadModel('AlertCenterNotification');
+                                //                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
+                                //                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                                //                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
+                                //                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['status'] = 0;
+                                //                                $AlertCenterNotificationArray['os'] = 'ios';
+                                //                                $AlertCenterNotificationArray['feed_id'] = $e_id;
+                                //                                $AlertCenterNotificationArray['sender_id'] = $user_id;
+                                //                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
                                 $this->Common->sendPushNotification($deviceToken_msg_arr);
                             } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
@@ -10848,8 +11175,10 @@ class ApiController extends AppController {
                                 $organization_id = $orgId;
                                 // $msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n<br />".$val["EndorseReplies"]["reply"];
                                 $msg = $userName . " liked your nDorsement.";
-                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
-                                    "title" => "nDorse App");
+                                $parameter = array(
+                                    "org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
+                                    "title" => "nDorse App"
+                                );
 
                                 $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
                                 //print_r($deviceToken_msg_arr);
@@ -10858,17 +11187,17 @@ class ApiController extends AppController {
                                 /** Added by Babulal Prasad @30-may-2019
                                  * * SAVE DATA for alert center feature Start
                                  * ** */
-//                                $this->loadModel('AlertCenterNotification');
-//                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
-//                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
-//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                $AlertCenterNotificationArray['status'] = 0;
-//                                $AlertCenterNotificationArray['os'] = 'android';
-//                                $AlertCenterNotificationArray['feed_id'] = $e_id;
-//                                $AlertCenterNotificationArray['sender_id'] = $user_id;
-//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                                //                                $this->loadModel('AlertCenterNotification');
+                                //                                $AlertCenterNotificationArray['user_id'] = $endorsed_id;
+                                //                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                                //                                $AlertCenterNotificationArray['alert_type'] = 'Endorsement Like Notification';
+                                //                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                                //                                $AlertCenterNotificationArray['status'] = 0;
+                                //                                $AlertCenterNotificationArray['os'] = 'android';
+                                //                                $AlertCenterNotificationArray['feed_id'] = $e_id;
+                                //                                $AlertCenterNotificationArray['sender_id'] = $user_id;
+                                //                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
                                 /* SAVE DATA for alert center feature End** */
                             }
                         }
@@ -10894,7 +11223,7 @@ class ApiController extends AppController {
             } else {
 
                 if (!empty($likeresult) && $likeresult["EndorsementLike"]["id"] > 0) {
-//["EndorsementLike"]["id"]
+                    //["EndorsementLike"]["id"]
                     $this->EndorsementLike->delete($likeresult["EndorsementLike"]["id"]);
                     $like_count = $endorsment_count["Endorsement"]["like_count"] - 1;
                     $this->Endorsement->id = $e_id;
@@ -10907,21 +11236,24 @@ class ApiController extends AppController {
             }
             $total_like = 0;
             $this->set(array(
-                'result' => array("status" => $status
-                    , "msg" => $msg,
-                    "data" => array("like_count" => $like_count)),
+                'result' => array(
+                    "status" => $status, "msg" => $msg,
+                    "data" => array("like_count" => $like_count)
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function increasePostAttachClick() {
+    public function increasePostAttachClick()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $post_id = $this->request->data["post_id"];
@@ -10930,27 +11262,31 @@ class ApiController extends AppController {
                 $attachmentEventArray = array("post_id" => $post_id, "user_id" => $user_id, "post_attachment_click" => 1);
                 $result = $this->PostEventCount->save($attachmentEventArray);
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "count increased."),
+                    'result' => array(
+                        "status" => true, "msg" => "count increased."
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function increasePostAttachPinClick() {
+    public function increasePostAttachPinClick()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $post_id = $this->request->data["post_id"];
@@ -10959,37 +11295,43 @@ class ApiController extends AppController {
                 $attachmentEventArray = array("post_id" => $post_id, "user_id" => $user_id, "post_attachment_pin_click" => 1);
                 $result = $this->PostEventCount->save($attachmentEventArray);
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "count increased."),
+                    'result' => array(
+                        "status" => true, "msg" => "count increased."
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function increasePostLikeEventCount($p_id, $user_id) {
+    public function increasePostLikeEventCount($p_id, $user_id)
+    {
         $likeEventArray = array("post_id" => $p_id, "user_id" => $user_id, "post_like_counts" => 1);
         $result = $this->PostEventCount->save($likeEventArray);
     }
 
-    public function removePostLikeEventCount($p_id, $user_id) {
+    public function removePostLikeEventCount($p_id, $user_id)
+    {
         $result = $this->PostEventCount->deleteAll(array('user_id' => $user_id, 'post_id' => $p_id, "post_like_counts" => 1));
     }
 
     /** Added by Babulal Prasad at 12062016 * */
-    public function postlike() {
+    public function postlike()
+    {
         if ($this->request->is('post')) {
             $p_id = $this->request->data["p_id"];
             $like = $this->request->data["like"];
@@ -11029,78 +11371,78 @@ class ApiController extends AppController {
                     $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
                     $msg = "Your post titled : " . $postTitle . " \n\n liked by " . $userName;
                     /* Send Push notification */
-//                    if (isset($sendPushNotification) && $sendPushNotification == 1) {
-//
-//                        $userDATA = $this->User->findById($user_id);
-//                        $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
-//                        $PostTitle = $postTitle;
-//
-//                        $loginuser = $this->LoginStatistics->find("all", array(
-//                            "conditions" => array("user_id" => $postedUserID, "live" => 1)
-//                        ));
-//
-//
-//                        if (!empty($loginuser[0]["LoginStatistics"]) && $loginuser[0]["LoginStatistics"]["device_id"] != "") {
-//
-//
-//                            if (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "ios") {
-//                                //print_r($device_token);
-//                                $deviceToken_msg_arr = array();
-//                                $token = $loginuser[0]["LoginStatistics"]["device_id"];
-//                                $count = 1;
-//                                //$msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n".$val["EndorseReplies"]["reply"];
-//                                $msg = "Your post titled : " . $PostTitle . " \n\n liked by " . $userName;
-//                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion", "title" => "nDorse App");
-//
-//                                $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
-////                                pr($deviceToken_msg_arr);
-////                                exit;
-//                                /** Added by Babulal Prasad @30-may-2019
-//                                 * * SAVE DATA for alert center feature Start
-//                                 * ** */
-//                                $this->loadModel('AlertCenterNotification');
-//                                $AlertCenterNotificationArray['user_id'] = $postedUserID;
-//                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                $AlertCenterNotificationArray['alert_type'] = 'Post Like Notification';
-//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                $AlertCenterNotificationArray['status'] = 0;
-//                                $AlertCenterNotificationArray['os'] = 'ios';
-//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
-//                                /* SAVE DATA for alert center feature End** */
-//                                $this->Common->sendPushNotification($deviceToken_msg_arr);
-//                            } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
-//
-//                                $deviceToken_msg_arr = array();
-//                                $token = $loginuser[0]["LoginStatistics"]["device_id"];
-//                                $count = 1;
-//                                // $end_name = $val['User']['fname'] . " " . $val['User']['lname'];
-//                                $organization_id = $orgId;
-//                                // $msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n<br />".$val["EndorseReplies"]["reply"];
-//                                $msg = $userName . "Your post titled : " . $PostTitle . " \n\n liked by " . $userName . "";
-//                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
-//                                    "title" => "nDorse App");
-//
-//                                $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
-//                                //print_r($deviceToken_msg_arr);
-//                                $this->Common->sendPushNotificationAndroid($deviceToken_msg_arr);
-//
-//                                /** Added by Babulal Prasad @30-may-2019
-//                                 * * SAVE DATA for alert center feature Start
-//                                 * ** */
-//                                $this->loadModel('AlertCenterNotification');
-//                                $AlertCenterNotificationArray['user_id'] = $postedUserID;
-//                                $AlertCenterNotificationArray['org_id'] = $orgId;
-//                                $AlertCenterNotificationArray['alert_type'] = 'Post Like Notification';
-//                                $AlertCenterNotificationArray['plain_msg'] = $msg;
-//                                $AlertCenterNotificationArray['original_msg'] = $msg;
-//                                $AlertCenterNotificationArray['status'] = 0;
-//                                $AlertCenterNotificationArray['os'] = 'android';
-//                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
-//                                /* SAVE DATA for alert center feature End** */
-//                            }
-//                        }
-//                    }
+                    //                    if (isset($sendPushNotification) && $sendPushNotification == 1) {
+                    //
+                    //                        $userDATA = $this->User->findById($user_id);
+                    //                        $userName = $userDATA['User']['fname'] . " " . $userDATA['User']['lname'];
+                    //                        $PostTitle = $postTitle;
+                    //
+                    //                        $loginuser = $this->LoginStatistics->find("all", array(
+                    //                            "conditions" => array("user_id" => $postedUserID, "live" => 1)
+                    //                        ));
+                    //
+                    //
+                    //                        if (!empty($loginuser[0]["LoginStatistics"]) && $loginuser[0]["LoginStatistics"]["device_id"] != "") {
+                    //
+                    //
+                    //                            if (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "ios") {
+                    //                                //print_r($device_token);
+                    //                                $deviceToken_msg_arr = array();
+                    //                                $token = $loginuser[0]["LoginStatistics"]["device_id"];
+                    //                                $count = 1;
+                    //                                //$msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n".$val["EndorseReplies"]["reply"];
+                    //                                $msg = "Your post titled : " . $PostTitle . " \n\n liked by " . $userName;
+                    //                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion", "title" => "nDorse App");
+                    //
+                    //                                $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
+                    ////                                pr($deviceToken_msg_arr);
+                    ////                                exit;
+                    //                                /** Added by Babulal Prasad @30-may-2019
+                    //                                 * * SAVE DATA for alert center feature Start
+                    //                                 * ** */
+                    //                                $this->loadModel('AlertCenterNotification');
+                    //                                $AlertCenterNotificationArray['user_id'] = $postedUserID;
+                    //                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                    //                                $AlertCenterNotificationArray['alert_type'] = 'Post Like Notification';
+                    //                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                    //                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                    //                                $AlertCenterNotificationArray['status'] = 0;
+                    //                                $AlertCenterNotificationArray['os'] = 'ios';
+                    //                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                    //                                /* SAVE DATA for alert center feature End** */
+                    //                                $this->Common->sendPushNotification($deviceToken_msg_arr);
+                    //                            } elseif (strtolower($loginuser[0]["LoginStatistics"]["os"]) == "android") {
+                    //
+                    //                                $deviceToken_msg_arr = array();
+                    //                                $token = $loginuser[0]["LoginStatistics"]["device_id"];
+                    //                                $count = 1;
+                    //                                // $end_name = $val['User']['fname'] . " " . $val['User']['lname'];
+                    //                                $organization_id = $orgId;
+                    //                                // $msg = 'Hi ' . trim($repliedname) . ", you have received a reply from " . trim($replyname) . " from " . $val["Organization"]["orgname"]."\n\n<br />".$val["EndorseReplies"]["reply"];
+                    //                                $msg = $userName . "Your post titled : " . $PostTitle . " \n\n liked by " . $userName . "";
+                    //                                $parameter = array("org_id" => $orgId, "category" => "SwitchAction", "notification_type" => "post_promotion",
+                    //                                    "title" => "nDorse App");
+                    //
+                    //                                $deviceToken_msg_arr[] = array('token' => $token, 'count' => $count, 'msg' => $msg, "original_msg" => $msg, "data" => $parameter);
+                    //                                //print_r($deviceToken_msg_arr);
+                    //                                $this->Common->sendPushNotificationAndroid($deviceToken_msg_arr);
+                    //
+                    //                                /** Added by Babulal Prasad @30-may-2019
+                    //                                 * * SAVE DATA for alert center feature Start
+                    //                                 * ** */
+                    //                                $this->loadModel('AlertCenterNotification');
+                    //                                $AlertCenterNotificationArray['user_id'] = $postedUserID;
+                    //                                $AlertCenterNotificationArray['org_id'] = $orgId;
+                    //                                $AlertCenterNotificationArray['alert_type'] = 'Post Like Notification';
+                    //                                $AlertCenterNotificationArray['plain_msg'] = $msg;
+                    //                                $AlertCenterNotificationArray['original_msg'] = $msg;
+                    //                                $AlertCenterNotificationArray['status'] = 0;
+                    //                                $AlertCenterNotificationArray['os'] = 'android';
+                    //                                $this->AlertCenterNotification->save($AlertCenterNotificationArray);
+                    //                                /* SAVE DATA for alert center feature End** */
+                    //                            }
+                    //                        }
+                    //                    }
                     $this->loadModel('AlertCenterNotification');
                     $AlertCenterNotificationArray['user_id'] = $postedUserID;
                     $AlertCenterNotificationArray['org_id'] = $orgId;
@@ -11125,7 +11467,7 @@ class ApiController extends AppController {
                     $this->removePostLikeEventCount($p_id, $user_id);
                     /*
                      */
-//["EndorsementLike"]["id"]
+                    //["EndorsementLike"]["id"]
                     $this->PostLike->delete($likeresult["PostLike"]["id"]);
                     $like_count = $post_count["Post"]["like_count"] - 1;
                     $this->Post->id = $p_id;
@@ -11138,22 +11480,25 @@ class ApiController extends AppController {
             }
             $total_like = 0;
             $this->set(array(
-                'result' => array("status" => $status
-                    , "msg" => $msg,
-                    "data" => array("like_count" => $like_count)),
+                'result' => array(
+                    "status" => $status, "msg" => $msg,
+                    "data" => array("like_count" => $like_count)
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /** Added by Babulal Prasad at 12162016 * */
-    public function setDoNotRemindMe() {
+    public function setDoNotRemindMe()
+    {
         if ($this->request->is('post')) {
             $status = $this->request->data["status"];
             $loggedinUser = $this->Auth->user();
@@ -11169,22 +11514,24 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => $resStatus
-                    , "msg" => $msg,
+                'result' => array(
+                    "status" => $resStatus, "msg" => $msg,
                 ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /** Added by Babulal Prasad at 18012019 * */
-    public function setDoNotRemindCoreValue() {
+    public function setDoNotRemindCoreValue()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $token = $this->request->data['token'];
@@ -11217,35 +11564,39 @@ class ApiController extends AppController {
                     }
 
                     $this->set(array(
-                        'result' => array("status" => $resStatus
-                            , "msg" => $msg, "id" => $core_value_id,
+                        'result' => array(
+                            "status" => $resStatus, "msg" => $msg, "id" => $core_value_id,
                         ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Invalid token or expired."),
+                        'result' => array(
+                            "status" => false, "msg" => "Invalid token or expired."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function postdelete() {
+    public function postdelete()
+    {
         if ($this->request->is('post')) {
             $p_id = $this->request->data["p_id"];
             $loggedinUser = $this->Auth->user();
@@ -11257,10 +11608,10 @@ class ApiController extends AppController {
 
             $deletePostSchedule = $this->PostSchedule->query("Delete from post_schedules  where post_id = " . $p_id);
 
-//            pr($deletePostSchedule); exit;
-//$deletePost = $this->Post->delete($p_id);
-//            $deletePostAttachment = $this->PostAttachment->deleteAll(['PostAttachment.post_id' => $p_id], false);
-//            $deletePostLike = $this->PostLike->deleteAll(['PostLike.post_id' => $p_id], false);
+            //            pr($deletePostSchedule); exit;
+            //$deletePost = $this->Post->delete($p_id);
+            //            $deletePostAttachment = $this->PostAttachment->deleteAll(['PostAttachment.post_id' => $p_id], false);
+            //            $deletePostLike = $this->PostLike->deleteAll(['PostLike.post_id' => $p_id], false);
             if ($deletePost) {
                 $msg = "Wall Post deleted successfully";
                 $status = true;
@@ -11269,21 +11620,23 @@ class ApiController extends AppController {
                 $status = false;
             }
             $this->set(array(
-                'result' => array("status" => $status
-                    , "msg" => $msg,
+                'result' => array(
+                    "status" => $status, "msg" => $msg,
                 ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function ndorsedelete() {
+    public function ndorsedelete()
+    {
         if ($this->request->is('post')) {
             $e_id = $this->request->data["e_id"];
             $loggedinUser = $this->Auth->user();
@@ -11291,7 +11644,7 @@ class ApiController extends AppController {
 
             $this->Endorsement->id = $e_id;
 
-//$deleteEndorsement = $this->Endorsement->savefield("status", 0);
+            //$deleteEndorsement = $this->Endorsement->savefield("status", 0);
             $deleteEndorsement = $this->Endorsement->deleteAll(array('id' => $e_id));
 
             $deleteFeedTrans = $this->FeedTran->updateAll(array('status' => 0), array('feed_id' => $e_id, 'feed_type' => 'endorse'));
@@ -11301,10 +11654,10 @@ class ApiController extends AppController {
             $resultEndorseCoreValue = $this->EndorseCoreValue->deleteAll(array('endorsement_id' => $e_id));
             $resultEndorsementAttachment = $this->EndorseAttachment->deleteAll(array('endorsement_id' => $e_id));
 
-// pr($deleteFeedTrans); exit;
-//$deletePost = $this->Post->delete($p_id);
-//            $deletePostAttachment = $this->PostAttachment->deleteAll(['PostAttachment.post_id' => $p_id], false);
-//            $deletePostLike = $this->PostLike->deleteAll(['PostLike.post_id' => $p_id], false);
+            // pr($deleteFeedTrans); exit;
+            //$deletePost = $this->Post->delete($p_id);
+            //            $deletePostAttachment = $this->PostAttachment->deleteAll(['PostAttachment.post_id' => $p_id], false);
+            //            $deletePostLike = $this->PostLike->deleteAll(['PostLike.post_id' => $p_id], false);
             if ($deleteEndorsement) {
                 $msg = "Endorsement deleted successfully";
                 $status = true;
@@ -11313,24 +11666,26 @@ class ApiController extends AppController {
                 $status = false;
             }
             $this->set(array(
-                'result' => array("status" => $status
-                    , "msg" => $msg,
+                'result' => array(
+                    "status" => $status, "msg" => $msg,
                 ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /**Added by saurabh to edit endorsement message
-    *
-    */
-    public function ndorseEditMessage() {
+     *
+     */
+    public function ndorseEditMessage()
+    {
 
         if ($this->request->is('post')) {
             $e_id = $this->request->data["e_id"];
@@ -11342,9 +11697,8 @@ class ApiController extends AppController {
 
             $status = false;
             $updateEndorsementMsg = "";
-            if(isset($e_message) && !empty($e_message))
-            {
-                $updateEndorsementMsg = $this->Endorsement->updateAll(array("message" => "'$e_message'"), array( 'id' => $e_id));
+            if (isset($e_message) && !empty($e_message)) {
+                $updateEndorsementMsg = $this->Endorsement->updateAll(array("message" => "'$e_message'"), array('id' => $e_id));
             }
             //pr($updateEndorsementMsg); exit;
             if ($updateEndorsementMsg == 1) {
@@ -11355,39 +11709,40 @@ class ApiController extends AppController {
                 $status = false;
             }
 
-            if(isset($e_id) && !empty($e_id) && $status = true)
-            {
+            if (isset($e_id) && !empty($e_id) && $status = true) {
                 //new code starts here for nDorsement logs entry
-                    $this->loadModel('EndorsementLogs');
-                    $endorsementLogs = array();
-                    $endorsementLogs['endorser_id'] = $user_id;
-                    $endorsementLogs['endorsement_id'] = $e_id;
-                    $endorsementLogs['message'] = $e_message;
-                    $endorsementLogs['order'] = array("EndorsementLogs.created DESC");
-                    
-                    $this->EndorsementLogs->clear();
-                    $this->EndorsementLogs->set(array("EndorsementLogs" => $endorsementLogs));
-                    $this->EndorsementLogs->save();
+                $this->loadModel('EndorsementLogs');
+                $endorsementLogs = array();
+                $endorsementLogs['endorser_id'] = $user_id;
+                $endorsementLogs['endorsement_id'] = $e_id;
+                $endorsementLogs['message'] = $e_message;
+                $endorsementLogs['order'] = array("EndorsementLogs.created DESC");
+
+                $this->EndorsementLogs->clear();
+                $this->EndorsementLogs->set(array("EndorsementLogs" => $endorsementLogs));
+                $this->EndorsementLogs->save();
 
                 //ends here
             }
 
             $this->set(array(
-                'result' => array("status" => $status
-                    , "msg" => $msg,
+                'result' => array(
+                    "status" => $status, "msg" => $msg,
                 ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function publicndorseacceptcondition() {
+    public function publicndorseacceptcondition()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $loggedinUser = $this->Auth->user();
@@ -11395,9 +11750,9 @@ class ApiController extends AppController {
                 $user_id = $loggedinUser["id"];
                 $current_org_id = $loggedinUser['current_org']['id'];
                 $tcAccepted = $this->UserOrganization->updateAll(array('public_ndorse_visible_tc' => $tc_step), array('user_id' => $user_id, 'organization_id' => $current_org_id));
-//$deletePost = $this->Post->delete($p_id);
-//            $deletePostAttachment = $this->PostAttachment->deleteAll(['PostAttachment.post_id' => $p_id], false);
-//            $deletePostLike = $this->PostLike->deleteAll(['PostLike.post_id' => $p_id], false);
+                //$deletePost = $this->Post->delete($p_id);
+                //            $deletePostAttachment = $this->PostAttachment->deleteAll(['PostAttachment.post_id' => $p_id], false);
+                //            $deletePostLike = $this->PostLike->deleteAll(['PostLike.post_id' => $p_id], false);
                 if ($tcAccepted == 1) {
                     $msg = "1st step t&c accept successfully";
                     $status = true;
@@ -11406,28 +11761,31 @@ class ApiController extends AppController {
                     $status = false;
                 }
                 $this->set(array(
-                    'result' => array("status" => $status
-                        , "msg" => $msg,
+                    'result' => array(
+                        "status" => $status, "msg" => $msg,
                     ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorsereply() {
+    public function endorsereply()
+    {
         if ($this->request->is('post')) {
             $e_id = $this->request->data["e_id"];
             $loggedinUser = $this->Auth->user();
@@ -11452,22 +11810,23 @@ class ApiController extends AppController {
                 $msg = "You are not allowed for endorsment reply";
             }
             $this->set(array(
-                'result' => array("status" => $status
-                    , "msg" => $msg
-                    , "data" => array("reply" => $reply)
+                'result' => array(
+                    "status" => $status, "msg" => $msg, "data" => array("reply" => $reply)
                 ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function mySearchInOrganization() {
+    public function mySearchInOrganization()
+    {
         if ($this->request->is('post')) {
             $resultData = array();
             $keyWord = $this->request->data['keyword'];
@@ -11476,8 +11835,9 @@ class ApiController extends AppController {
             $user_id = $loggedinUser["id"];
             if (!isset($loggedinUser['current_org'])) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You have not joined any organization yet. Please join."),
+                    'result' => array(
+                        "status" => false, "msg" => "You have not joined any organization yet. Please join."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -11485,8 +11845,8 @@ class ApiController extends AppController {
 
             $statusConfig = Configure::read("statusConfig");
 
-//												$startDate = date("Y-m-1 00:00:00");
-//                                                $endDate = date("Y-m-t", strtotime($startDate)) . " 23:59:59";
+            //												$startDate = date("Y-m-1 00:00:00");
+            //                                                $endDate = date("Y-m-t", strtotime($startDate)) . " 23:59:59";
             $endorsecondition = "";
             $endorser_id_name = "";
             if ($type == "endorser") {
@@ -11497,7 +11857,7 @@ class ApiController extends AppController {
                 $endorser_id_name = "endorsed_id";
             }
 
-//												
+            //												
 
             $usersData = $this->UserOrganization->query("
 																												SELECT  User.id, User.fname, User.lname,  UserOrganization.status, COUNT(Endorsement.id) as count FROM 
@@ -11507,10 +11867,10 @@ class ApiController extends AppController {
 																												WHERE ((User.fname LIKE '%" . $keyWord . "%') OR (User.lname LIKE '%" . $keyWord . "%'))
 																												AND UserOrganization.status IN (" . $statusConfig['active'] . ", " . $statusConfig['eval'] . ")
 																												AND UserOrganization.organization_id = " . $loggedinUser['current_org']['id'] .
-                    $endorsecondition . "
+                $endorsecondition . "
 																												AND (Endorsement.organization_id = " . $loggedinUser['current_org']['id'] . "  OR  Endorsement.organization_id IS NULL)
 																												GROUP BY  User.id, Endorsement." . $endorser_id_name);
-//echo $this->User->getLastQuery();die;
+            //echo $this->User->getLastQuery();die;
 
             $users = array();
 
@@ -11536,13 +11896,13 @@ class ApiController extends AppController {
 																																				WHERE OrgDepartments.name LIKE '%" . $keyWord . "%'
 																																				AND OrgDepartments.status = " . $statusConfig['active'] . "
 																																				AND OrgDepartments.organization_id = " . $loggedinUser['current_org']['id']
-                        . $endorsecondition . "
+                    . $endorsecondition . "
 																																				AND (Endorsement.organization_id = " . $loggedinUser['current_org']['id'] . "  OR  Endorsement.organization_id IS NULL)
 																																				GROUP BY  OrgDepartments.id, Endorsement." . $endorser_id_name);
 
-//echo $this->OrgDepartments->getLastQuery();die;
-//
-//pr($departmentsData);die;
+                //echo $this->OrgDepartments->getLastQuery();die;
+                //
+                //pr($departmentsData);die;
 
                 foreach ($departmentsData as $department) {
                     $departmentDetail = array();
@@ -11565,7 +11925,7 @@ class ApiController extends AppController {
 																																AND (Endorsement.organization_id = " . $loggedinUser['current_org']['id'] . "  OR  Endorsement.organization_id IS NULL)
 																																GROUP BY  Entity.id, Endorsement." . $endorser_id_name);
 
-//echo $this->Entity->getLastQuery();die;
+                //echo $this->Entity->getLastQuery();die;
 
                 foreach ($entitiesData as $entity) {
                     $entityDetail = array();
@@ -11583,31 +11943,34 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Search results", "data" => $resultData),
+                'result' => array(
+                    "status" => true, "msg" => "Search results", "data" => $resultData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// switch group
-    public function switchGroup() {
+    // switch group
+    public function switchGroup()
+    {
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $org_id = $this->request->data["org_id"];
             $loggedinUser = $this->Auth->user();
 
             $user_id = $loggedinUser["id"];
-// check user exist this organization
-// check user default organization if exist then deleted if other
-// save default org this endoreser
-//$joinedUser = $this->UserOrganization->find("count", array("conditions" => array("organization_id" => $org_id, "user_id"=>$user_id,"UserOrganization.status" => array( $statusConfig['active'], $statusConfig['eval']))));
+            // check user exist this organization
+            // check user default organization if exist then deleted if other
+            // save default org this endoreser
+            //$joinedUser = $this->UserOrganization->find("count", array("conditions" => array("organization_id" => $org_id, "user_id"=>$user_id,"UserOrganization.status" => array( $statusConfig['active'], $statusConfig['eval']))));
 
             $params = array();
             $params['fields'] = "*";
@@ -11630,7 +11993,7 @@ class ApiController extends AppController {
 
 
             if (!empty($Organization)) {
-//print_r($Organization["DefaultOrg"]);
+                //print_r($Organization["DefaultOrg"]);
                 if (1) {
                     $joined = $Organization['UserOrganization']['joined'];
                     if ($joined == 0) {
@@ -11665,7 +12028,7 @@ class ApiController extends AppController {
 
                     if (!empty($defaultorg_id)) {
                         $deorg_id = $defaultorg_id["DefaultOrg"]["id"];
-// $this->DefaultOrg->delete($deorg_id);
+                        // $this->DefaultOrg->delete($deorg_id);
                         $defaultOrg = array("id" => $deorg_id, "organization_id" => $organization['Organization']['id'], "user_id" => $loggedinUser['id'], "status" => 1);
                     } else {
                         $defaultOrg = array("organization_id" => $organization['Organization']['id'], "user_id" => $loggedinUser['id']);
@@ -11675,35 +12038,39 @@ class ApiController extends AppController {
 
                     $currentorg = array("Organization" => $currentOrg);
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization switched successfully."
-                            , "data" => $currentorg),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization switched successfully.", "data" => $currentorg
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "this group is current group also"),
+                        'result' => array(
+                            "status" => false, "msg" => "this group is current group also"
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You are not joined this group.Plz join this group"),
+                    'result' => array(
+                        "status" => false, "msg" => "You are not joined this group.Plz join this group"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function leaveGroup() {
+    public function leaveGroup()
+    {
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $org_id = $this->request->data["org_id"];
@@ -11712,46 +12079,50 @@ class ApiController extends AppController {
             $user_id = $loggedinUser["id"];
 
             if (!empty($org_id)) {
-//print_r($Organization["DefaultOrg"]);
+                //print_r($Organization["DefaultOrg"]);
                 if (1) {
-//$status == 2 // Deleted
-//                    echo "User ID : ".$user_id;
-//                    echo "<br>Org ID : ".$org_id; exit;
+                    //$status == 2 // Deleted
+                    //                    echo "User ID : ".$user_id;
+                    //                    echo "<br>Org ID : ".$org_id; exit;
 
                     $this->UserOrganization->updateAll(array("UserOrganization.status" => 2, "UserOrganization.joined" => 0,), array("UserOrganization.user_id" => $user_id, "UserOrganization.organization_id" => $org_id));
 
 
                     $data = array("status" => true);
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization leaved successfully."
-                            , "data" => $data),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization leaved successfully.", "data" => $data
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "this group is current group also"),
+                        'result' => array(
+                            "status" => false, "msg" => "this group is current group also"
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You are not joined this group.Plz join this group"),
+                    'result' => array(
+                        "status" => false, "msg" => "You are not joined this group.Plz join this group"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getjoinrequestUser() {
+    public function getjoinrequestUser()
+    {
         if ($this->request->is('post')) {
             $org_id = $this->request->data["org_id"];
             $loggedinUser = $this->Auth->user();
@@ -11759,7 +12130,7 @@ class ApiController extends AppController {
 
             $params = array();
             $params['fields'] = "User.id,User.fname,User.lname,User.email,User.image,Organization.id as org_id,UserOrganization.user_id,"
-                    . "OrgRequests.mobile_number,OrgRequests.relationship_to_org,OrgRequests.why_want_to_join,OrgRequests.relationship_to_org_desc";
+                . "OrgRequests.mobile_number,OrgRequests.relationship_to_org,OrgRequests.why_want_to_join,OrgRequests.relationship_to_org_desc";
             $params['joins'] = array(
                 array(
                     'table' => 'org_requests',
@@ -11797,60 +12168,67 @@ class ApiController extends AppController {
 
 
 
-//echo $this->Organization->getLastQuery();die;
+            //echo $this->Organization->getLastQuery();die;
             if (!empty($Organization)) {
-//pr($Organization);exit;
+                //pr($Organization);exit;
                 $OrgRequests = $Organization[0]["User"];
 
-//print_r($Organization);exit;
+                //print_r($Organization);exit;
                 $userarray = array();
                 if (!empty($OrgRequests) && $OrgRequests["id"] != "") {
 
                     foreach ($Organization as $org) {
-//pr($Organization); exit;
+                        //pr($Organization); exit;
                         if ($org["UserOrganization"]["user_id"] != $org["User"]["id"]) {
-//  $userarray[] = $org["User"];
+                            //  $userarray[] = $org["User"];
                             $img = "";
                             if ($org["User"]["image"] != "") {
                                 $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $org["User"]["image"];
                             }
-                            $userarray[] = array("id" => $org["User"]["id"], "name" => trim($org["User"]["fname"] . " " . $org["User"]["lname"]),
+                            $userarray[] = array(
+                                "id" => $org["User"]["id"], "name" => trim($org["User"]["fname"] . " " . $org["User"]["lname"]),
                                 "email" => $org["User"]['email'],
                                 "imag" => $img, "image" => $img, "mobile_number" => ($org["OrgRequests"]["mobile_number"] == null) ? '' : $org["OrgRequests"]["mobile_number"], "relationship_to_org" => ($org["OrgRequests"]["relationship_to_org"] == null) ? '' : $org["OrgRequests"]["relationship_to_org"],
-                                "why_want_to_join" => ($org["OrgRequests"]["why_want_to_join"] == null) ? '' : $org["OrgRequests"]["why_want_to_join"], "relationship_to_org_desc" => ($org["OrgRequests"]["relationship_to_org_desc"] == null) ? '' : $org["OrgRequests"]["relationship_to_org_desc"]);
+                                "why_want_to_join" => ($org["OrgRequests"]["why_want_to_join"] == null) ? '' : $org["OrgRequests"]["why_want_to_join"], "relationship_to_org_desc" => ($org["OrgRequests"]["relationship_to_org_desc"] == null) ? '' : $org["OrgRequests"]["relationship_to_org_desc"]
+                            );
                         }
                     }
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Requested users",
-                            "data" => $userarray),
+                        'result' => array(
+                            "status" => true, "msg" => "Requested users",
+                            "data" => $userarray
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Currenty no user requested to join this organization."),
+                        'result' => array(
+                            "status" => false, "msg" => "Currenty no user requested to join this organization."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You are not the owner of this organization."),
+                    'result' => array(
+                        "status" => false, "msg" => "You are not the owner of this organization."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function acceptorgrequest() {
+    public function acceptorgrequest()
+    {
 
         if ($this->request->is('post')) {
             $org_id = $this->request->data["org_id"];
@@ -11869,18 +12247,20 @@ class ApiController extends AppController {
             if ($confirm == "no") {
                 foreach ($request_user_id as $val_id) {
                     $this->OrgRequests->deleteAll(
-                            array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $val_id)
+                        array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $val_id)
                     );
                 }
                 $this->set(array(
-                    'result' => array("status" => true,
-                        "msg" => "Request are deleted successfully", "data" => true, "confirm" => $confirm),
+                    'result' => array(
+                        "status" => true,
+                        "msg" => "Request are deleted successfully", "data" => true, "confirm" => $confirm
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
             } else {
                 $params = array();
-// $params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['inactive'], $statusConfig['active'], $statusConfig['eval']));
+                // $params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['inactive'], $statusConfig['active'], $statusConfig['eval']));
                 $params['conditions'] = array("organization_id" => $org_id, "UserOrganization.status" => array($statusConfig['active'], $statusConfig['eval']));
                 $params['group'] = 'pool_type';
                 $params['fields'] = array("UserOrganization.pool_type", "COUNT(UserOrganization.user_id) as count");
@@ -11906,8 +12286,8 @@ class ApiController extends AppController {
                     $params = array();
                     $conditions = array();
                     $todayDate = date('Y-m-d H:i:s');
-//                    $conditions['start_date <='] = $todayDate;
-//                    $conditions['end_date >='] = $todayDate;
+                    //                    $conditions['start_date <='] = $todayDate;
+                    //                    $conditions['end_date >='] = $todayDate;
                     $conditions['Subscription.status'] = 1;
                     $conditions['Subscription.organization_id'] = $org_id;
                     $params["conditions"] = $conditions;
@@ -11932,7 +12312,8 @@ class ApiController extends AppController {
                           ));
                           return;
                           //
-                          } */ if (1) {
+                          } */
+                        if (1) {
 
                             $addacountflag = 1;
                             $organizations = $this->Organization->find("all", array("conditions" => array("id" => $org_id)));
@@ -11941,15 +12322,15 @@ class ApiController extends AppController {
 
 
                             $users = $this->User->find("all", array('joins' => array(
-                                    array(
-                                        'table' => 'default_orgs',
-                                        'alias' => 'DefaultOrg',
-                                        'type' => 'LEFT',
-                                        'conditions' => array(
-                                            'DefaultOrg.user_id = User.id'
-                                        )
+                                array(
+                                    'table' => 'default_orgs',
+                                    'alias' => 'DefaultOrg',
+                                    'type' => 'LEFT',
+                                    'conditions' => array(
+                                        'DefaultOrg.user_id = User.id'
                                     )
-                                ), "conditions" => array("User.id" => $request_user_id), "fields" => array("User.id", "email", "fname", "DefaultOrg.organization_id")));
+                                )
+                            ), "conditions" => array("User.id" => $request_user_id), "fields" => array("User.id", "email", "fname", "DefaultOrg.organization_id")));
 
 
                             $userArray = array();
@@ -11970,9 +12351,9 @@ class ApiController extends AppController {
                             $viewVars = array("org_name" => $organizations['name']);
                             $configVars = serialize($viewVars);
                             $subject = "Congratulations. Your request to accepted for " . $organizations['name'];
-//print_r($request_user_id);
+                            //print_r($request_user_id);
                             foreach ($request_user_id as $val_id) {
-//if (!in_array($val_id, $requests)) {
+                                //if (!in_array($val_id, $requests)) {
                                 $userOrg = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $val_id, "organization_id" => $org_id)));
 
                                 if (!empty($userOrg)) {
@@ -11986,16 +12367,16 @@ class ApiController extends AppController {
                                     $isDefault = true;
                                 }
                                 $emailQueue[] = array("to" => $userArray[$val_id]["email"], "subject" => $subject, "config_vars" => $configVars, "template" => "accept_request");
-//}
+                                //}
                             }
 
 
                             if (!empty($requests)) {
-//$this->OrgRequests->updateAll(
-//        array('OrgRequests.status' => "'1'"), array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
-//);
+                                //$this->OrgRequests->updateAll(
+                                //        array('OrgRequests.status' => "'1'"), array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
+                                //);
                                 $this->OrgRequests->deleteAll(
-                                        array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
+                                    array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
                                 );
                                 $this->UserOrganization->saveMany($requests);
                                 $this->Email->saveMany($emailQueue);
@@ -12015,8 +12396,10 @@ class ApiController extends AppController {
                             }
 
                             $this->set(array(
-                                'result' => array("status" => true,
-                                    "msg" => $msg, "data" => $returnData, "confirm" => $confirm),
+                                'result' => array(
+                                    "status" => true,
+                                    "msg" => $msg, "data" => $returnData, "confirm" => $confirm
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
@@ -12027,15 +12410,15 @@ class ApiController extends AppController {
                         $organizations = $organizations[0]["Organization"];
 
                         $users = $this->User->find("all", array('joins' => array(
-                                array(
-                                    'table' => 'default_orgs',
-                                    'alias' => 'DefaultOrg',
-                                    'type' => 'LEFT',
-                                    'conditions' => array(
-                                        'DefaultOrg.user_id = User.id'
-                                    )
+                            array(
+                                'table' => 'default_orgs',
+                                'alias' => 'DefaultOrg',
+                                'type' => 'LEFT',
+                                'conditions' => array(
+                                    'DefaultOrg.user_id = User.id'
                                 )
-                            ), "conditions" => array("User.id" => $request_user_id), "fields" => array("User.id", "email", "fname", "DefaultOrg.organization_id")));
+                            )
+                        ), "conditions" => array("User.id" => $request_user_id), "fields" => array("User.id", "email", "fname", "DefaultOrg.organization_id")));
 
 
                         $userArray = array();
@@ -12056,8 +12439,8 @@ class ApiController extends AppController {
                         foreach ($request_user_id as $val_id) {
                             if (!in_array($val_id, $requests)) {
 
-//$requests[] = array("organization_id" => $org_id, "user_id" => $val_id, "user_role" => 3, "status" => 1, "pool_type" => "free","flow"=>"request");
-//	$updaterequest
+                                //$requests[] = array("organization_id" => $org_id, "user_id" => $val_id, "user_role" => 3, "status" => 1, "pool_type" => "free","flow"=>"request");
+                                //	$updaterequest
                                 $userOrg = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $val_id, "organization_id" => $org_id)));
                                 if (!empty($userOrg)) {
                                     $requests[] = array("id" => $userOrg["UserOrganization"]["id"], "organization_id" => $org_id, "user_id" => $val_id, "user_role" => 3, "status" => 0, "pool_type" => "paid", "joined" => 1, "flow" => "request");
@@ -12075,13 +12458,13 @@ class ApiController extends AppController {
 
 
                         if (!empty($requests)) {
-//$this->OrgRequests->updateAll(
-//        array('OrgRequests.status' => "'1'"), array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
-//);
+                            //$this->OrgRequests->updateAll(
+                            //        array('OrgRequests.status' => "'1'"), array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
+                            //);
                             $this->OrgRequests->deleteAll(
-                                    array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
+                                array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
                             );
-// echo $this->OrgRequests->getLastQuery();die;
+                            // echo $this->OrgRequests->getLastQuery();die;
                             $this->UserOrganization->saveMany($requests);
                             $this->Email->saveMany($emailQueue);
                             $msg = "Pending request(s) accepted successfully!";
@@ -12091,12 +12474,14 @@ class ApiController extends AppController {
                         $returnData = array("accepted_users" => $userArray);
                         $msg = "Pending request(s) have been accepted and new users added to Organization. Purchase or upgrade subscription to activate added user(s) using Admin Portal on www.ndorse.net or by contacting NDORSE LLC at support@ndorse.net";
                         $this->set(array(
-                            'result' => array("status" => $status,
-                                "msg" => $msg, "data" => $returnData),
+                            'result' => array(
+                                "status" => $status,
+                                "msg" => $msg, "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                         return;
-//
+                        //
                     }
                 } else {
 
@@ -12104,15 +12489,15 @@ class ApiController extends AppController {
                     $organizations = $organizations[0]["Organization"];
 
                     $users = $this->User->find("all", array('joins' => array(
-                            array(
-                                'table' => 'default_orgs',
-                                'alias' => 'DefaultOrg',
-                                'type' => 'LEFT',
-                                'conditions' => array(
-                                    'DefaultOrg.user_id = User.id'
-                                )
+                        array(
+                            'table' => 'default_orgs',
+                            'alias' => 'DefaultOrg',
+                            'type' => 'LEFT',
+                            'conditions' => array(
+                                'DefaultOrg.user_id = User.id'
                             )
-                        ), "conditions" => array("User.id" => $request_user_id), "fields" => array("User.id", "email", "fname", "DefaultOrg.organization_id")));
+                        )
+                    ), "conditions" => array("User.id" => $request_user_id), "fields" => array("User.id", "email", "fname", "DefaultOrg.organization_id")));
 
 
                     $userArray = array();
@@ -12133,8 +12518,8 @@ class ApiController extends AppController {
                     foreach ($request_user_id as $val_id) {
                         if (!in_array($val_id, $requests)) {
 
-//$requests[] = array("organization_id" => $org_id, "user_id" => $val_id, "user_role" => 3, "status" => 1, "pool_type" => "free","flow"=>"request");
-//	$updaterequest
+                            //$requests[] = array("organization_id" => $org_id, "user_id" => $val_id, "user_role" => 3, "status" => 1, "pool_type" => "free","flow"=>"request");
+                            //	$updaterequest
                             $userOrg = $this->UserOrganization->find("first", array("conditions" => array("user_id" => $val_id, "organization_id" => $org_id)));
                             if (!empty($userOrg)) {
                                 $requests[] = array("id" => $userOrg["UserOrganization"]["id"], "organization_id" => $org_id, "user_id" => $val_id, "user_role" => 3, "status" => 1, "pool_type" => "free", "joined" => 1, "flow" => "request");
@@ -12152,13 +12537,13 @@ class ApiController extends AppController {
 
 
                     if (!empty($requests)) {
-//$this->OrgRequests->updateAll(
-//        array('OrgRequests.status' => "'1'"), array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
-//);
+                        //$this->OrgRequests->updateAll(
+                        //        array('OrgRequests.status' => "'1'"), array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
+                        //);
                         $this->OrgRequests->deleteAll(
-                                array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
+                            array('OrgRequests.organization_id' => $org_id, 'OrgRequests.user_id' => $request_user_id)
                         );
-// echo $this->OrgRequests->getLastQuery();die;
+                        // echo $this->OrgRequests->getLastQuery();die;
                         $this->UserOrganization->saveMany($requests);
                         $this->Email->saveMany($emailQueue);
                         $msg = "Pending request(s) accepted successfully!";
@@ -12169,29 +12554,33 @@ class ApiController extends AppController {
 
 
                     $this->set(array(
-                        'result' => array("status" => $status,
-                            "msg" => $msg, "data" => $returnData),
+                        'result' => array(
+                            "status" => $status,
+                            "msg" => $msg, "data" => $returnData
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorsestats() {
+    public function endorsestats()
+    {
         if ($this->request->is('post')) {
             $endorse_stats = array();
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
             $user_id = $loggedInUser['id'];
             if (isset($loggedInUser['current_org'])) {
-//print_r($loggedInUser['current_org']);
+                //print_r($loggedInUser['current_org']);
                 $org_id = $loggedInUser['current_org']['id'];
                 $start_date = "";
                 $end_date = "";
@@ -12206,7 +12595,7 @@ class ApiController extends AppController {
                 $conditionarray["Endorsement.organization_id"] = $org_id;
                 $conditionarray["Endorsement.status"] = '1';
                 $conditionarray["Endorsement.endorser_id"] = $user_id;
-//$conditionarray["Endorsement.endorsement_for"] = 'user';
+                //$conditionarray["Endorsement.endorsement_for"] = 'user';
                 if ($start_date != "") {
 
                     $conditionarray["Endorsement.created >= "] = date("Y-m-d 00:00:00", $start_date);
@@ -12217,12 +12606,12 @@ class ApiController extends AppController {
 
                 $params['conditions'] = $conditionarray;
                 $params['order'] = 'Endorsement.created desc';
-// $params['group'] = 'Endorsement.endorsed_id';
+                // $params['group'] = 'Endorsement.endorsed_id';
 
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $totalendorsement = $this->Endorsement->find("all", $params);
-// print_r($totalendorsement);
-//echo $this->Endorsement->getLastQuery();die;
+                // print_r($totalendorsement);
+                //echo $this->Endorsement->getLastQuery();die;
                 if (!empty($totalendorsement)) {
                     $endorse_stats["endorse_given"] = (string) $totalendorsement[0][0]["cnt"];
                 } else {
@@ -12231,7 +12620,7 @@ class ApiController extends AppController {
 
                 unset($conditionarray["Endorsement.endorser_id"]);
                 unset($conditionarray["Endorsement.endorsement_for"]);
-// unset($params['group']);
+                // unset($params['group']);
                 unset($params['order']);
 
                 $conditionarray["Endorsement.endorsed_id"] = $user_id;
@@ -12276,7 +12665,7 @@ class ApiController extends AppController {
 
                 $params = array();
                 $params['fields'] = array("*");
-//$params['conditions'] = array("user_id" => $user_id, "organization_id" => $org_id);
+                //$params['conditions'] = array("user_id" => $user_id, "organization_id" => $org_id);
                 $params['joins'] = array(
                     array(
                         'table' => 'trophies',
@@ -12290,13 +12679,13 @@ class ApiController extends AppController {
                     ),
                 );
                 $badges = $this->Badge->find("all", $params);
-//echo $this->Badge->getLastQuery();
-//pr($badges);die;
+                //echo $this->Badge->getLastQuery();
+                //pr($badges);die;
                 $userBadges = array();
 
                 foreach ($badges as $badge) {
                     $badgeInfo = array();
-//$badgeInfo['badge_id'] = $badge['Badge']['id'];
+                    //$badgeInfo['badge_id'] = $badge['Badge']['id'];
                     $badgeInfo['trophy_id'] = $badge['Trophy']['id'];
                     $badgeInfo['count'] = empty($badge['Badge']['count']) ? 0 : (int) $badge['Badge']['count'];
                     $badgeInfo['image'] = Router::url('/', true) . TROPHY_IMAGE_DIR . $badge['Trophy']['image'];
@@ -12311,29 +12700,32 @@ class ApiController extends AppController {
                 $endorse_stats['endorse_count'] = array('giving' => $endorserCount, "getting" => $endorsedCount);
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Stats data"
-                        , "data" => $endorse_stats),
+                    'result' => array(
+                        "status" => true, "msg" => "Stats data", "data" => $endorse_stats
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Please join some organization."),
+                    'result' => array(
+                        "status" => false, "msg" => "Please join some organization."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-// get leaderboard
-    public function leaderboard() {
+    // get leaderboard
+    public function leaderboard()
+    {
         if ($this->request->is('post')) {
             $endorse_stats = array();
             $statusConfig = Configure::read("statusConfig");
@@ -12345,7 +12737,7 @@ class ApiController extends AppController {
                 $endorse_field = "endorser_id";
             }
             if (isset($loggedInUser['current_org'])) {
-//print_r($loggedInUser['current_org']);
+                //print_r($loggedInUser['current_org']);
                 $org_id = $loggedInUser['current_org']['id'];
                 $start_date = "";
                 $end_date = "";
@@ -12359,7 +12751,7 @@ class ApiController extends AppController {
 
                 $params['fields'] = "count(Endorsement." . $endorse_field . ") as cnt,User.fname ,User.lname,OrgDepartments.name as department";
                 $conditionarray["Endorsement.organization_id"] = $org_id;
-//$conditionarray["Endorsement.endorsement_for"]= 'user';
+                //$conditionarray["Endorsement.endorsement_for"]= 'user';
                 if ($start_date != "") {
                     $conditionarray["Endorsement.created >= "] = date("Y-m-d 00:00:00", $start_date);
                 }
@@ -12402,8 +12794,8 @@ class ApiController extends AppController {
                 $params['group'] = 'Endorsement.' . $endorse_field;
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $leaderboard = $this->Endorsement->find("all", $params);
-//echo $this->Endorsement->getLastQuery();exit;
-//	echo $this->Organization->getLastQuery();die;
+                //echo $this->Endorsement->getLastQuery();exit;
+                //	echo $this->Organization->getLastQuery();die;
 
                 $leaderboardArr = array();
                 $arraydata = array();
@@ -12440,16 +12832,16 @@ class ApiController extends AppController {
 
                     $departmentsData = $this->OrgDepartments->query($departmentsql);
                     if (!empty($departmentsData)) {
-// print_r($departmentsData);
+                        // print_r($departmentsData);
                         $leaderboardArr = array();
                         foreach ($departmentsData as $department) {
-//$departmentDetail = array();
-//$departmentDetail['id'] = $department['OrgDepartments']['id'];
-//$departmentDetail['name'] = $department['OrgDepartments']['name'];
-//$departmentDetail['endorse_count'] = $department[0]['count'];
+                            //$departmentDetail = array();
+                            //$departmentDetail['id'] = $department['OrgDepartments']['id'];
+                            //$departmentDetail['name'] = $department['OrgDepartments']['name'];
+                            //$departmentDetail['endorse_count'] = $department[0]['count'];
                             $tot = (string) $department[0]['count'];
                             $leaderboardArr[] = array("name" => $department['OrgDepartments']['name'], "department" => "", "Total" => $tot);
-// $departments[] = $departmentDetail;
+                            // $departments[] = $departmentDetail;
                         }
                         $arraydata[] = array("title" => "Department", "list" => $leaderboardArr);
                     }
@@ -12474,16 +12866,16 @@ class ApiController extends AppController {
 
                     $entitiesData = $this->Entity->query($entitysql);
 
-//echo $this->Entity->getLastQuery();die;
-//print_r($entitiesData);
+                    //echo $this->Entity->getLastQuery();die;
+                    //print_r($entitiesData);
                     $leaderboardArr = array();
                     if (!empty($entitiesData)) {
                         foreach ($entitiesData as $entity) {
-//$entityDetail = array();
-//$entityDetail['id'] = $entity['Entity']['id'];
-//$entityDetail['name'] = $entity['Entity']['name'];
-//$entityDetail['endorse_count'] = $entity[0]['count'];
-//  $entities[] = $entityDetail;
+                            //$entityDetail = array();
+                            //$entityDetail['id'] = $entity['Entity']['id'];
+                            //$entityDetail['name'] = $entity['Entity']['name'];
+                            //$entityDetail['endorse_count'] = $entity[0]['count'];
+                            //  $entities[] = $entityDetail;
                             $tot = (string) $entity[0]['count'];
                             $leaderboardArr[] = array("name" => $entity['Entity']['name'], "entity" => "", "Total" => $tot);
                         }
@@ -12492,34 +12884,38 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Stats data"
-                        , "data" => $arraydata),
+                    'result' => array(
+                        "status" => true, "msg" => "Stats data", "data" => $arraydata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "You current organization is not set or may be inactive."),
+                    'result' => array(
+                        "status" => false, "msg" => "You current organization is not set or may be inactive."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     //Modified by Babulal Prasad @24-oct-2018
-    public function forgotPassword() {
+    public function forgotPassword()
+    {
         if ($this->request->is('post')) {
             if (!filter_var($this->request->data['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid email address. Please check."),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid email address. Please check."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -12529,8 +12925,9 @@ class ApiController extends AppController {
 
             if (empty($userData)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "This email is not registered.", 'isRegistered' => false),
+                    'result' => array(
+                        "status" => false, "msg" => "This email is not registered.", 'isRegistered' => false
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -12544,11 +12941,11 @@ class ApiController extends AppController {
             $endcodedCODE = base64_encode($secretCode);
             $link = $endcodedID . "@$@" . $endcodedCODE;
 
-//            $resetPasswordURL = Router::url('/', true) . "client/resetpassword/" . $link;
-//
-//            if (strpos($resetPasswordURL, 'localhost') < 0) {
-//                $resetPasswordURL = str_replace("http:", "https:", $resetPasswordURL);
-//            }
+            //            $resetPasswordURL = Router::url('/', true) . "client/resetpassword/" . $link;
+            //
+            //            if (strpos($resetPasswordURL, 'localhost') < 0) {
+            //                $resetPasswordURL = str_replace("http:", "https:", $resetPasswordURL);
+            //            }
 
 
 
@@ -12577,38 +12974,43 @@ class ApiController extends AppController {
                     //$url = str_replace("http:", "https:", $url);
                 }
 
-//                echo $url; exit;
+                //                echo $url; exit;
                 exec("wget -bqO- " . Router::url('/', true) . "/cron/forgotPasswordEmails &> /dev/null");
-//                exit;
-//                exec("nohup wget " . Router::url('/', true) . "/cron/forgotPasswordEmails > /dev/null 2>&1 &");
-//                exec( "php ".WWW_ROOT."cron_scheduler.php /cron/forgotPasswordEmails/ > /dev/null &");
+                //                exit;
+                //                exec("nohup wget " . Router::url('/', true) . "/cron/forgotPasswordEmails > /dev/null 2>&1 &");
+                //                exec( "php ".WWW_ROOT."cron_scheduler.php /cron/forgotPasswordEmails/ > /dev/null &");
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Email has been sent with instructions to reset password."),
+                    'result' => array(
+                        "status" => true, "msg" => "Email has been sent with instructions to reset password."
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Unable to send verification code. Please try again or contact us at support@ndorse.net."),
+                    'result' => array(
+                        "status" => false, "msg" => "Unable to send verification code. Please try again or contact us at support@ndorse.net."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function forgotPassword_24_Oct_2018() {
+    public function forgotPassword_24_Oct_2018()
+    {
         if ($this->request->is('post')) {
             if (!filter_var($this->request->data['email'], FILTER_VALIDATE_EMAIL)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid email address. Please check."),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid email address. Please check."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -12618,8 +13020,9 @@ class ApiController extends AppController {
 
             if (empty($userData)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "This email is not registered.", 'isRegistered' => false),
+                    'result' => array(
+                        "status" => false, "msg" => "This email is not registered.", 'isRegistered' => false
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -12631,51 +13034,57 @@ class ApiController extends AppController {
             $data['email'] = $this->request->data['email'];
             $data['code'] = $secretCode;
             if ($this->PasswordCode->save($data)) {
-//$subject = "Forgot Password";
-//$template = "forgot_password";
-//$viewVars = array("verification_code" => $secretCode);
-//$this->Common->sendEmail($this->request->data['email'], $subject, $template, $viewVars);
+                //$subject = "Forgot Password";
+                //$template = "forgot_password";
+                //$viewVars = array("verification_code" => $secretCode);
+                //$this->Common->sendEmail($this->request->data['email'], $subject, $template, $viewVars);
 
                 exec("wget -bqO- " . Router::url('/', true) . "/cron/forgotPasswordEmails &> /dev/null");
-//                exec("nohup wget " . Router::url('/', true) . "/cron/forgotPasswordEmails > /dev/null 2>&1 &");
-//                exec( "php ".WWW_ROOT."cron_scheduler.php /cron/forgotPasswordEmails/ > /dev/null &");
+                //                exec("nohup wget " . Router::url('/', true) . "/cron/forgotPasswordEmails > /dev/null 2>&1 &");
+                //                exec( "php ".WWW_ROOT."cron_scheduler.php /cron/forgotPasswordEmails/ > /dev/null &");
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "Email has been sent with instructions to reset password."),
+                    'result' => array(
+                        "status" => true, "msg" => "Email has been sent with instructions to reset password."
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Unable to send verification code. Please try again or contact us at support@ndorse.net."),
+                    'result' => array(
+                        "status" => false, "msg" => "Unable to send verification code. Please try again or contact us at support@ndorse.net."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function resetPassword() {
+    public function resetPassword()
+    {
         if ($this->request->is('post')) {
             $passCode = $this->PasswordCode->find("first", array("conditions" => array("code" => $this->request->data['verification_code'])));
-//            $passCode = $this->PasswordCode->find("first", array("conditions" => array("code" => $this->request->data['verification_code'], "email" => $this->request->data['email'])));
+            //            $passCode = $this->PasswordCode->find("first", array("conditions" => array("code" => $this->request->data['verification_code'], "email" => $this->request->data['email'])));
 
             if (empty($passCode)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Verification code did not match. Please re-try!"),
+                    'result' => array(
+                        "status" => false, "msg" => "Verification code did not match. Please re-try!"
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
             } else if ($passCode['PasswordCode']['status'] != 0) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Verification code has already been used. Go to reset password."),
+                    'result' => array(
+                        "status" => false, "msg" => "Verification code has already been used. Go to reset password."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -12690,14 +13099,16 @@ class ApiController extends AppController {
                     $this->PasswordCode->saveField("status", 1);
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Password reset successfully!"),
+                        'result' => array(
+                            "status" => true, "msg" => "Password reset successfully!"
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Unable to reset password. Please try again or contact support@ndorse.net."),
+                        'result' => array(
+                            "status" => true, "msg" => "Unable to reset password. Please try again or contact support@ndorse.net."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
@@ -12710,21 +13121,24 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Errors!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    function sendPushNotification($deviceToken_msg_arr = null) {
+    function sendPushNotification($deviceToken_msg_arr = null)
+    {
         $this->layout = 'ajax';
         $this->autoRender = false;
         //$deviceToken_msg_arr[0]['token'] = '34e4b5d373818b24ee36dfe6f9f511f5d684942eedfdfefde680b0e7a46a9663';
@@ -12732,21 +13146,27 @@ class ApiController extends AppController {
         $deviceToken_msg_arr[0]['count'] = '1';
 
         if (!empty($deviceToken_msg_arr)) {
-// Put your private key's passphrase here:
-//            $location = dirname(__FILE__) . '/' . 'pushcert_30102019.pem';
-//            $location = dirname(__FILE__) . '/' . 'pushcert_24sept20.pem';
+            // Put your private key's passphrase here:
+            //            $location = dirname(__FILE__) . '/' . 'pushcert_30102019.pem';
+            //            $location = dirname(__FILE__) . '/' . 'pushcert_24sept20.pem';
             $location = dirname(__FILE__) . '/' . 'pushcert_29sept2020.pem';
-//            echo $location; exit;
-//            echo $location; exit;
+            //            echo $location; exit;
+            //            echo $location; exit;
             $ctx = stream_context_create();
             stream_context_set_option($ctx, 'ssl', 'local_cert', $location);
 
-//stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
-// Open a connection to the APNS server
-////gateway.sandbox.push.apple.com
+            //stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
+            // Open a connection to the APNS server
+            ////gateway.sandbox.push.apple.com
             $fp = stream_socket_client(
-//                    'ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx); //Production
-                    'ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx); //Dev env
+                //                    'ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx); //Production
+                'ssl://gateway.sandbox.push.apple.com:2195',
+                $err,
+                $errstr,
+                60,
+                STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT,
+                $ctx
+            ); //Dev env
 
             if (!$fp) {
                 exit("Failed to connect: $err $errstr" . PHP_EOL);
@@ -12760,39 +13180,39 @@ class ApiController extends AppController {
                     $deviceToken = $val['token'];
 
                     $message = 'Hey Congrats!. You got a push notification.';
-//$val['count']
+                    //$val['count']
                     $abc = (int) trim($val['count']);
 
                     $body['aps'] = array(
                         'alert' => $message,
                         'sound' => 'default',
                         'badge' => $abc,
-                            //'content-available' => 1
+                        //'content-available' => 1
                     );
 
-// Encode the payload as JSON
+                    // Encode the payload as JSON
                     $payload = json_encode($body);
-//                    pr($payload);
-//                    exit;
-// Build the binary notification
+                    //                    pr($payload);
+                    //                    exit;
+                    // Build the binary notification
                     $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
-//                    echo $msg;
-// Send it to the server
+                    //                    echo $msg;
+                    // Send it to the server
                     $result = fwrite($fp, $msg, strlen($msg));
-//                    print_r($result);
-//                    exit;
+                    //                    print_r($result);
+                    //                    exit;
 
                     if (!$result) {
-// error not send notification
+                        // error not send notification
                         echo 'message send error';
                     } else {
                         pr($result);
                     }
                 }
-//usleep(250000);
+                //usleep(250000);
             }
 
-// Close the connection to the server
+            // Close the connection to the server
             fclose($fp);
 
             return true;
@@ -12805,26 +13225,27 @@ class ApiController extends AppController {
         die('Done');
     }
 
-    function sendPushNotificationAndroid($deviceToken_msg_arr1 = null) {
+    function sendPushNotificationAndroid($deviceToken_msg_arr1 = null)
+    {
         $this->layout = 'ajax';
         $this->autoRender = false;
         //// $deviceToken_msg_arr1[0]['token'] = 'fSaXOtQPAw8:APA91bEtIiI5vr0OtDC5ys2cAIOgBJmfVpqc9_8NWCvQqcv73woRTObrlEgCLkrfVXjcmyR8-JZrjVLoC6DruwM77uUnqSmJ1B7pnMBUJnx_Nn-HclNQGZwZPjb1Ai7trAaluLb20c2r';
         // $deviceToken_msg_arr1[0]['msg'] = 'testing local';
         // $deviceToken_msg_arr1[0]['data'] = 'testing local';
         // if (!empty($deviceToken_msg_arr1)) {
-//            print_r($deviceToken_msg_arr1);
+        //            print_r($deviceToken_msg_arr1);
         // foreach ($deviceToken_msg_arr1 as $deviceToken_msg_arr) {
-//                $registrationIds = array($deviceToken_msg_arr["token"]);
+        //                $registrationIds = array($deviceToken_msg_arr["token"]);
         $registrationIds = array('fSaXOtQPAw8:APA91bEtIiI5vr0OtDC5ys2cAIOgBJmfVpqc9_8NWCvQqcv73woRTObrlEgCLkrfVXjcmyR8-JZrjVLoC6DruwM77uUnqSmJ1B7pnMBUJnx_Nn-HclNQGZwZPjb1Ai7trAaluLb20c2r');
 
         $API_ACCESS_KEY_GOOGLE = Configure::read("API_ACCESS_KEY_GOOGLE");
-// prep the bundle
+        // prep the bundle
         $msgtext = 'testing local';
         //$orgarray = 'testing local';
-//                $username = 'test username';
-//                if (isset($deviceToken_msg_arr["username"]) && $deviceToken_msg_arr["username"] != '') {
-//                    $username = $deviceToken_msg_arr["username"];
-//                }
+        //                $username = 'test username';
+        //                if (isset($deviceToken_msg_arr["username"]) && $deviceToken_msg_arr["username"] != '') {
+        //                    $username = $deviceToken_msg_arr["username"];
+        //                }
         $username = 'test username';
         //$orgarray = $deviceToken_msg_arr["data"];
         $data = array();
@@ -12836,37 +13257,35 @@ class ApiController extends AppController {
         $payload['badge'] = 1;
 
 
-//                pr($data);
-//                exit;
-//$msg = array
-//(
-//	'message' 	=> $msgtext,
-//	'title'		=> 'This is a title. title',
-//	'subtitle'	=> 'This is a subtitle. subtitle',
-//	'tickerText'	=> 'Ticker text here...Ticker text here...Ticker text here',
-//	
-//	'largeIcon'	=> 'large_icon',
-//	'smallIcon'	=> 'small_icon'
-//);
-        $fields = array
-            (
+        //                pr($data);
+        //                exit;
+        //$msg = array
+        //(
+        //	'message' 	=> $msgtext,
+        //	'title'		=> 'This is a title. title',
+        //	'subtitle'	=> 'This is a subtitle. subtitle',
+        //	'tickerText'	=> 'Ticker text here...Ticker text here...Ticker text here',
+        //	
+        //	'largeIcon'	=> 'large_icon',
+        //	'smallIcon'	=> 'small_icon'
+        //);
+        $fields = array(
             'registration_ids' => $registrationIds,
             'data' => $payload,
             'notification' => $payload,
             "icon" => "workmobappicon", // "firebase-logo.png"
             "sound" => "notification.wav",
-//                    'to' => $registrationIds
+            //                    'to' => $registrationIds
         );
         //json_encode($fields);
 
 
-        $headers = array
-            (
+        $headers = array(
             'Authorization: key=' . $API_ACCESS_KEY_GOOGLE,
             'Content-Type: application/json'
         );
         $ch = curl_init();
-//                curl_setopt($ch, CURLOPT_URL, 'https://android.googleapis.com/gcm/send');
+        //                curl_setopt($ch, CURLOPT_URL, 'https://android.googleapis.com/gcm/send');
         curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -12879,7 +13298,7 @@ class ApiController extends AppController {
         $res = json_decode($result);
         pr($res);
         if ($res->success == 1) {
-//                    echo $res->success;
+            //                    echo $res->success;
             return true;
         } else {
             return false;
@@ -12890,8 +13309,9 @@ class ApiController extends AppController {
         die('Done');
     }
 
-    public function termsConditions() {
-//$termsConditions = "<h1>Terms & Conditions</h1><p><strong>nDorse Terms and Conditions</strong></p><p>Terms and Condition1</p><p>Terms and Condition2</p><p>Terms and Condition3</p>";
+    public function termsConditions()
+    {
+        //$termsConditions = "<h1>Terms & Conditions</h1><p><strong>nDorse Terms and Conditions</strong></p><p>Terms and Condition1</p><p>Terms and Condition2</p><p>Terms and Condition3</p>";
         $termstext = $this->GlobalSetting->findByKey("tandc");
         if (!empty($termstext)) {
             $termstext = $termstext['GlobalSetting']['value'];
@@ -12899,8 +13319,9 @@ class ApiController extends AppController {
 
         if (isset($this->request->query["is_web"])) {
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Terms & Conditionss", "data" => $termstext),
+                'result' => array(
+                    "status" => true, "msg" => "Terms & Conditionss", "data" => $termstext
+                ),
                 '_serialize' => array('result')
             ));
         } else {
@@ -12911,49 +13332,51 @@ class ApiController extends AppController {
             $view->set('terms', $termstext);
             /* Grab output into variable without the view actually outputting! */
             $view_output = $view->render('termsandcondition');
-//echo $view_output;exit;
+            //echo $view_output;exit;
             $view_output = str_replace("\r", "", $view_output);
             $view_output = str_replace("\t", "", $view_output);
             $view_output = str_replace("\n", "", $view_output);
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Terms & Conditions", "data" => $view_output),
+                'result' => array(
+                    "status" => true, "msg" => "Terms & Conditions", "data" => $view_output
+                ),
                 '_serialize' => array('result')
             ));
         }
 
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Terms & Conditions", "data" => $termstext),
-//    '_serialize' => array('result')
-//));
+        //$this->set(array(
+        //    'result' => array("status" => true
+        //        , "msg" => "Terms & Conditions", "data" => $termstext),
+        //    '_serialize' => array('result')
+        //));
     }
 
-//    public function checkADFSLoginSession() {
-//        $this->autoRender = false;
-//        $this->layout = false;
-////        pr($this->request->data); 
-//        $data = array();
-//        $apiurl = $this->request->data['sso_url'];
-////        exit;
-////        $apiurl = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp';
-//        $this->log($apiurl, 'debug');
-//        $headers[] = "Accept: */*";
-//        $headers[] = "Connection: Keep-Alive";
-//        $headers[] = "Content-type: application/x-www-form-urlencoded;charset=UTF-8";
-//        $headers[] = "Cookie: " . $this->Apicalls->getToken();
-//        $cSession = curl_init();
-//        curl_setopt($cSession, CURLOPT_HTTPHEADER, $headers);
-//        curl_setopt($cSession, CURLOPT_COOKIESESSION, TRUE);
-//        curl_setopt($cSession, CURLOPT_URL, $apiurl);
-//        curl_setopt($cSession, CURLOPT_POST, true);
-//        curl_setopt($cSession, CURLOPT_POSTFIELDS, http_build_query($data));
-//        ob_start();
-//        curl_exec($cSession);
-//        $result = ob_get_contents();
-//    }
+    //    public function checkADFSLoginSession() {
+    //        $this->autoRender = false;
+    //        $this->layout = false;
+    ////        pr($this->request->data); 
+    //        $data = array();
+    //        $apiurl = $this->request->data['sso_url'];
+    ////        exit;
+    ////        $apiurl = 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp';
+    //        $this->log($apiurl, 'debug');
+    //        $headers[] = "Accept: */*";
+    //        $headers[] = "Connection: Keep-Alive";
+    //        $headers[] = "Content-type: application/x-www-form-urlencoded;charset=UTF-8";
+    //        $headers[] = "Cookie: " . $this->Apicalls->getToken();
+    //        $cSession = curl_init();
+    //        curl_setopt($cSession, CURLOPT_HTTPHEADER, $headers);
+    //        curl_setopt($cSession, CURLOPT_COOKIESESSION, TRUE);
+    //        curl_setopt($cSession, CURLOPT_URL, $apiurl);
+    //        curl_setopt($cSession, CURLOPT_POST, true);
+    //        curl_setopt($cSession, CURLOPT_POSTFIELDS, http_build_query($data));
+    //        ob_start();
+    //        curl_exec($cSession);
+    //        $result = ob_get_contents();
+    //    }
 
-    public function getTimelyUpdates() {
+    public function getTimelyUpdates()
+    {
 
         if ($this->request->is('post')) {
 
@@ -12964,7 +13387,7 @@ class ApiController extends AppController {
 
 
             $loggedInUser = $this->Auth->user();
-//            pr($loggedInUser); exit;
+            //            pr($loggedInUser); exit;
             $returnData = array();
             $msg = "";
             $liveUpdatedCount = $ndorsedUpdatedCount = $postUpdatedCount = 0;
@@ -12975,46 +13398,42 @@ class ApiController extends AppController {
             $userOrgStatusUpdated = false;
 
             /**
-            * Added by saurabh for api session logs
-            */
+             * Added by saurabh for api session logs
+             */
             $this->loadModel("ApiSessionLogs");
-            
-            if ($loggedInUser["id"]) 
-            {
+
+            if ($loggedInUser["id"]) {
                 $apiSessionLogs = array();
                 $apiSessionLogs['user_id'] = $loggedInUser["id"];
                 $apiSessionLogs['token'] = $loggedInUser["token"]; //$token;
                 $apiSessionLogs['order'] = array("ApiSessionLogs.created DESC");
                 //$apiSessionLogs['status'] = $logged_in_user_status; 
-                
+
                 $this->ApiSessionLogs->clear();
                 $this->ApiSessionLogs->set(array("ApiSessionLogs" => $apiSessionLogs));
-                $this->ApiSessionLogs->save();    
+                $this->ApiSessionLogs->save();
 
-                $apiMsg = "Api session logs successfully created for user ". $loggedInUser['id'] . " email---> " . $loggedInUser['email'] . " token---> " . $loggedInUser['token'];
+                $apiMsg = "Api session logs successfully created for user " . $loggedInUser['id'] . " email---> " . $loggedInUser['email'] . " token---> " . $loggedInUser['token'];
                 $this->log($apiMsg, "getTimelyUpdates");
-            } 
-            else 
-            {
-                $apiMsg = "Problem in creating logs. Please login again! for user ". $loggedInUser['id'] . " email---> " . $loggedInUser['email'] . " token---> " . $loggedInUser['token'];
+            } else {
+                $apiMsg = "Problem in creating logs. Please login again! for user " . $loggedInUser['id'] . " email---> " . $loggedInUser['email'] . " token---> " . $loggedInUser['token'];
                 $this->log($apiMsg, "getTimelyUpdates");
-            }   
+            }
 
             $returnData['api_session_logs'] = array("user_id" => $loggedInUser['id'], "token" => $loggedInUser['token'], "msg" => $apiMsg);
             //ends here
 
             /**
-            * Added by saurabh for checking terms and condition value
-            */
+             * Added by saurabh for checking terms and condition value
+             */
             $tncValue = 0;
-            if ($loggedInUser["id"]) 
-            {
+            if ($loggedInUser["id"]) {
                 $tncStatus = $this->User->find("first", array("conditions" => array(
-                        "status" => '1',
-                        "id" => $loggedInUser["id"]
+                    "status" => '1',
+                    "id" => $loggedInUser["id"]
                 )));
-                
-                if (isset($tncStatus) && !empty($tncStatus)){
+
+                if (isset($tncStatus) && !empty($tncStatus)) {
                     $tncValue = $tncStatus["User"]["terms_accept"];
                 }
             }
@@ -13023,12 +13442,12 @@ class ApiController extends AppController {
 
             //maintenance mode code starts here
             $mainModeValue = MAINTENANCE_MODE_VALUE;
-            if($mainModeValue == 0){
+            if ($mainModeValue == 0) {
                 $msg = MAINTENANCE_MODE_DISABLED;
             } else {
                 $msg = MAINTENANCE_MODE_ENABLED;
             }
-            $returnData['maintenance_mode'] = array("m_mode" => $mainModeValue, "msg" =>$msg);
+            $returnData['maintenance_mode'] = array("m_mode" => $mainModeValue, "msg" => $msg);
             //ends here
 
             //Get feeds update
@@ -13043,38 +13462,55 @@ class ApiController extends AppController {
 
                     if ($liveUpdated != "0000-00-00 00:00:00") {
                         $liveUpdatedCount = $this->Endorsement->find("count", array("conditions" => array(
-                                "organization_id" => $loggedInUser['current_org']['id'],
-                                "type !=" => "private",
-                                "status !=" => 0,
-                                "created > " => $liveUpdated
+                            "organization_id" => $loggedInUser['current_org']['id'],
+                            "type !=" => "private",
+                            "status !=" => 0,
+                            "created > " => $liveUpdated
                         )));
                     } else {
                         $liveUpdatedCount = 0;
                     }
 
+                    /* author: Babulal
                     if ($ndorsedUpdated != "0000-00-00 00:00:00") {
                         $ndorsedUpdatedCount = $this->Endorsement->find("count", array("conditions" => array(
-                                "organization_id" => $loggedInUser['current_org']['id'],
-                                "created > " => $ndorsedUpdated,
-                                "status !=" => 0,
-                                "endorsed_id " => $loggedInUser['id']
+                            "organization_id" => $loggedInUser['current_org']['id'],
+                            "created > " => $ndorsedUpdated,
+                            "status !=" => 0,
+                            "endorsed_id " => $loggedInUser['id']
                         )));
-//                        echo $postUpdated;exit;
-//                         $sqllog = $this->Endorsement->getDataSource()->getLog(false, false);       
-//  debug($sqllog);
+                        //                        echo $postUpdated;exit;
+                        //                         $sqllog = $this->Endorsement->getDataSource()->getLog(false, false);       
+                        //  debug($sqllog);
                     } else {
+                        $ndorsedUpdatedCount = 0;
+                    } */
+
+                    /**
+                     * @modified on 28jul21
+                     * @author Dinesh, Dilbag
+                     * Earlier Endorsement table was used.
+                     * Now AlertCenterNotification table is looked for pending notification view
+                    */
+                    $this->loadModel('AlertCenterNotification');
+                    $ndorsedUpdatedCount = $this->AlertCenterNotification->find("count", array("conditions" => array(
+                        "organization_id" => $loggedInUser['current_org']['id'],
+                        "status" => 0,
+                        "user_id " => $loggedInUser['id']
+                    )));
+                    if (!isset($ndorsedUpdatedCount)){
                         $ndorsedUpdatedCount = 0;
                     }
 
                     /** by Babulal prasad @21=-022017 Add to get Post live feed notification *** */
                     if ($postUpdated != "0000-00-00 00:00:00") {
                         $postUpdatedCount = $this->Post->find("count", array("conditions" => array(
-                                "organization_id" => $loggedInUser['current_org']['id'],
-                                "created > " => $liveUpdated,
-                                "status" => '1'//only posted and active post
+                            "organization_id" => $loggedInUser['current_org']['id'],
+                            "created > " => $liveUpdated,
+                            "status" => '1' //only posted and active post
                         )));
-//                         $sqllog = $this->Endorsement->getDataSource()->getLog(false, false);       
-//  debug($sqllog);
+                        //                         $sqllog = $this->Endorsement->getDataSource()->getLog(false, false);       
+                        //  debug($sqllog);
                     } else {
                         $postUpdatedCount = 0;
                     }
@@ -13099,7 +13535,7 @@ class ApiController extends AppController {
                 }
 
 
-//$isCurrentOrgActive = 1;
+                //$isCurrentOrgActive = 1;
 
                 $userStatus = array_search($userOrg['UserOrganization']["status"], $statusConfig);
                 $orgStatus = array_search($userOrg['Organization']["status"], $statusConfig);
@@ -13145,7 +13581,7 @@ class ApiController extends AppController {
 
 
                 if (empty($defaultOrganization)) {
-//$isCurrentOrgActive = 0;
+                    //$isCurrentOrgActive = 0;
                     $userStatus = "";
                     $orgStatus = "";
                 } else {
@@ -13153,7 +13589,7 @@ class ApiController extends AppController {
                         $currentOrg = $defaultOrganization['Organization'];
 
                         if ($defaultOrganization['UserOrganization']['entity_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $entity = $this->getOrgValues($currentOrg["id"], "Entity", true, array($defaultOrganization['UserOrganization']['entity_id']));
                             if (!empty($entity)) {
                                 $currentOrg['entity'] = $entity[0]["name"];
@@ -13165,9 +13601,9 @@ class ApiController extends AppController {
                         }
 
                         if ($defaultOrganization['UserOrganization']['department_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $department = $this->getOrgValues($currentOrg["id"], "OrgDepartments", true, array($defaultOrganization['UserOrganization']['department_id']));
-// $department = $defaultOrganization['UserOrganization']['department_id'];
+                            // $department = $defaultOrganization['UserOrganization']['department_id'];
                             if (!empty($department)) {
                                 $currentOrg['department'] = $department[0]["name"];
                             } else {
@@ -13177,7 +13613,7 @@ class ApiController extends AppController {
                             $currentOrg['department'] = "";
                         }
                         if ($defaultOrganization['UserOrganization']['job_title_id'] > 0) {
-// $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
+                            // $department= $this->getOrgValues($org_id, "OrgDepartments",true,array($endorserd_id));
                             $jobtitle = $this->getOrgValues($currentOrg["id"], "OrgJobTitles", 1, array($defaultOrganization['UserOrganization']['job_title_id']));
 
                             if (!empty($jobtitle)) {
@@ -13200,7 +13636,7 @@ class ApiController extends AppController {
 
                         $this->Session->write('Auth.User.current_org', $currentOrg);
                         $returnData['current_org'] = $currentOrg;
-//$isCurrentOrgActive = 1;
+                        //$isCurrentOrgActive = 1;
                         $msg = "Default Organization activated!";
                         $userOrgStatusUpdated = true;
                     } else {
@@ -13218,22 +13654,22 @@ class ApiController extends AppController {
 
             /* Adding following list into timley updates */
 
-//            $userID = $loggedInUser['id'];
-//            $this->loadModel("UserFollowing");
-//            $followingIdsArray = array();
-//            $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
-//            if (!empty($userFollowings)) {
-//                $userFollowings = array_shift($userFollowings);
-//                $userFollowings = $userFollowings['UserFollowing'];
-//                $uFollowingID = $userFollowings['id'];
-//                $followingIdsArray = json_decode($userFollowings['following_ids']);
-//            }
-//            $returnData['following_users'] = $followingIdsArray;
+            //            $userID = $loggedInUser['id'];
+            //            $this->loadModel("UserFollowing");
+            //            $followingIdsArray = array();
+            //            $userFollowings = $this->UserFollowing->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $userID, 'status' => 1)));
+            //            if (!empty($userFollowings)) {
+            //                $userFollowings = array_shift($userFollowings);
+            //                $userFollowings = $userFollowings['UserFollowing'];
+            //                $uFollowingID = $userFollowings['id'];
+            //                $followingIdsArray = json_decode($userFollowings['following_ids']);
+            //            }
+            //            $returnData['following_users'] = $followingIdsArray;
 
 
             if (!empty($orgStatus) && !empty($userStatus)) {
                 if ($orgStatus != 'active') {
-//$isCurrentOrgActive = 0;
+                    //$isCurrentOrgActive = 0;
 
                     if ($orgStatus == 'inactive') {
                         $msg = "Default Organization inactivated.";
@@ -13241,7 +13677,7 @@ class ApiController extends AppController {
                         $msg = "Default Organization deleted!";
                     }
                 } else if ($userStatus != 'active') {
-//$isCurrentOrgActive  = 0;
+                    //$isCurrentOrgActive  = 0;
 
                     if ($userStatus == 'inactive' || $userStatus == 'eval') {
                         $msg = "nDorse access inactivated for default Organization. Contact Organization Admin.";
@@ -13280,10 +13716,10 @@ class ApiController extends AppController {
                         $requestMsg .= $acceptedRequest['Organization']['name'];
 
                         $counter++;
-//                            $orgDetails = array();
-//                            $orgDetails['id'] = $acceptedRequest['Organization']['id'];
-//                            $orgDetails['name'] = $acceptedRequest['Organization']['name'];
-//                            $acceptedOrgs[] = $orgDetails;
+                        //                            $orgDetails = array();
+                        //                            $orgDetails['id'] = $acceptedRequest['Organization']['id'];
+                        //                            $orgDetails['name'] = $acceptedRequest['Organization']['name'];
+                        //                            $acceptedOrgs[] = $orgDetails;
                     }
 
                     $requestMsg .= ". You can switch to the organization.";
@@ -13295,20 +13731,23 @@ class ApiController extends AppController {
             $returnData['accepted_request'] = array("is_accepted" => $isRequestAccepted, "msg" => $requestMsg, "button_text" => "Go To Organization");
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Updates", "data" => $returnData),
+                'result' => array(
+                    "status" => true, "msg" => "Updates", "data" => $returnData
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function recoverusername() {
+    public function recoverusername()
+    {
         if (isset($this->request->query["email"])) {
             $email = $this->request->query["email"];
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -13328,49 +13767,54 @@ class ApiController extends AppController {
                     $emailQueue[] = array("to" => $email, "subject" => $subject, "config_vars" => $configVars, "template" => "recover_username");
                     $this->Email->saveMany($emailQueue);
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "username detail send successfully",
-                            "data" => true),
+                        'result' => array(
+                            "status" => true, "msg" => "username detail send successfully",
+                            "data" => true
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "This username not exist this system"),
+                        'result' => array(
+                            "status" => false, "msg" => "This username not exist this system"
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid email address"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid email address"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "email address key not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "email address key not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function topendorse() {
+    public function topendorse()
+    {
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
             $user_id = $loggedInUser['id'];
             if (isset($loggedInUser['current_org'])) {
-//print_r($loggedInUser['current_org']);
+                //print_r($loggedInUser['current_org']);
                 $org_id = $loggedInUser['current_org']['id'];
-//token=a640fe8d1ccd9949adef9103cdfe2615&month=March&year=2015
+                //token=a640fe8d1ccd9949adef9103cdfe2615&month=March&year=2015
                 $month = date("F");
                 $year = date("Y");
                 $currentmonth = 1;
-//$last_week_start = strtotime('-2 week monday 00:00:00');
-//$last_week_end = strtotime('-1 week sunday 23:59:59');
+                //$last_week_start = strtotime('-2 week monday 00:00:00');
+                //$last_week_end = strtotime('-1 week sunday 23:59:59');
                 if (date('N') == 1) {
                     $last_week_start = date('Y-m-d 00:00:00', strtotime('-1 week monday 00:00:00'));
                 } else {
@@ -13416,10 +13860,10 @@ class ApiController extends AppController {
                     for ($i = $first_day; $i <= $last_day; $i = $i + 7) {
                         $days[] = $i;
                     }
-// print_r($days);
+                    // print_r($days);
                     $params = array();
                     $params['fields'] = "count(Endorsement.endorser_id) as cnt,Endorsement.endorser_id,User.id, User.fname ,User.lname,User.image,Endorsement.organization_id,OrgDepartments.name,OrgJobTitles.title";
-//$conditionarray["Endorsement.endorsement_for"] = 'user';
+                    //$conditionarray["Endorsement.endorsement_for"] = 'user';
                     $conditionarray["Endorsement.organization_id"] = $org_id;
                     $conditionarray["Endorsement.created >= "] = $start_date;
                     $conditionarray["Endorsement.created <= "] = $end_date;
@@ -13461,8 +13905,8 @@ class ApiController extends AppController {
                     $params['conditions'] = $conditionarray;
                     $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                     $topendorserd = $this->Endorsement->find("all", $params);
-// print_r($topendorserd);
-//echo $this->Endorsement->getLastQuery();	
+                    // print_r($topendorserd);
+                    //echo $this->Endorsement->getLastQuery();	
                     $topendorsedmontharray["endorser"] = $topendorserd;
 
 
@@ -13508,23 +13952,23 @@ class ApiController extends AppController {
                     $params['conditions'] = $conditionarray;
                     $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                     $topendorserd = $this->Endorsement->find("all", $params);
-//print_r($topendorserd);
+                    //print_r($topendorserd);
                     $topendorsedmontharray["endorsed"] = $topendorserd;
 
-//print_r($topendorsedmontharray);
+                    //print_r($topendorsedmontharray);
                     $wcount = 1;
 
                     foreach ($days as $dayval) {
                         if ($wcount < count($days)) {
-// echo $dayval;
+                            // echo $dayval;
                             $startweekday = $year . "-" . $month . "-" . ($dayval + 1);
                             $endweekday = $year . "-" . $month . "-" . ($dayval + 7);
-//echo "start date";
+                            //echo "start date";
                             $start_date = date('Y-m-d 00:00:00', strtotime($startweekday));
 
                             $end_date = date('Y-m-d 23:59:59', strtotime($endweekday));
-//  $last_week_start=  date('Y-m-d 00:00:00',  strtotime('-2 week monday 00:00:00'));
-//$last_week_end =  date('Y-m-d 23:59:59', strtotime('-1 week sunday 23:59:59'));
+                            //  $last_week_start=  date('Y-m-d 00:00:00',  strtotime('-2 week monday 00:00:00'));
+                            //$last_week_end =  date('Y-m-d 23:59:59', strtotime('-1 week sunday 23:59:59'));
 
                             if ($currentmonth == 1 && $wcount > 1) {
 
@@ -13538,7 +13982,7 @@ class ApiController extends AppController {
 
                             $params = array();
                             $params['fields'] = "count(Endorsement.endorser_id) as cnt,Endorsement.endorser_id,User.id, User.fname ,User.lname,User.image,Endorsement.organization_id,OrgDepartments.name,OrgJobTitles.title";
-//$conditionarray["Endorsement.endorsement_for"] = 'user';
+                            //$conditionarray["Endorsement.endorsement_for"] = 'user';
                             $conditionarray["Endorsement.organization_id"] = $org_id;
                             $conditionarray["Endorsement.created >= "] = $start_date;
                             $conditionarray["Endorsement.created <= "] = $end_date;
@@ -13580,8 +14024,8 @@ class ApiController extends AppController {
                             $params['conditions'] = $conditionarray;
                             $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                             $topendorserd = $this->Endorsement->find("all", $params);
-//
-//  print_r($topendorserd);
+                            //
+                            //  print_r($topendorserd);
                             $topendorsedusernew = 0;
                             $topendorseduserweek = array();
                             $topcnt = 0;
@@ -13607,10 +14051,10 @@ class ApiController extends AppController {
                             }
 
                             $topendorseduserweekdata[$startweekday . "&&&&" . $endweekday]["endorser"] = $topendorseduserweek;
-//
-//print_r($topendorserd);
-//$topendorsedweekarray[$startweekday."&&&&".$endweekday]["endorse"] =  $topendorserd;
-//$topendorsedmontharray["endorse"]= $topendorserd;
+                            //
+                            //print_r($topendorserd);
+                            //$topendorsedweekarray[$startweekday."&&&&".$endweekday]["endorse"] =  $topendorserd;
+                            //$topendorsedmontharray["endorse"]= $topendorserd;
 
                             $params['fields'] = "count(Endorsement.endorsed_id) as cnt,Endorsement.endorsed_id,User.id, User.fname ,User.lname,User.image,Endorsement.organization_id,OrgDepartments.name,OrgJobTitles.title";
                             $conditionarray["Endorsement.endorsement_for"] = 'user';
@@ -13660,8 +14104,8 @@ class ApiController extends AppController {
 
 
                             foreach ($topendorserd as $val) {
-//print_r($val[0]["cnt"])."dddttt";
-// echo "<hr>";
+                                //print_r($val[0]["cnt"])."dddttt";
+                                // echo "<hr>";
 
                                 if ($topendorsedusernew == 0) {
                                     $topendorsedusernew = $val[0]["cnt"];
@@ -13679,19 +14123,19 @@ class ApiController extends AppController {
                                     $allusernew[$val["User"]["id"]] = array_merge($val["User"], $val["OrgDepartments"], $val["OrgJobTitles"]);
                                 }
                             }
-//echo "<hr>";
-//print_r($topendorseduserweek);
-//echo "<hr>";
-//echo $this->Endorsement->getLastQuery();
+                            //echo "<hr>";
+                            //print_r($topendorseduserweek);
+                            //echo "<hr>";
+                            //echo $this->Endorsement->getLastQuery();
                             $topendorseduserweekdata[$startweekday . "&&&&" . $endweekday]["endorsed"] = $topendorseduserweek;
-// print_r($topendorserd);
-// $topendorsedmontharray["endorsed"]= $topendorserd;
-// print_r($topendorsedmontharray);
+                            // print_r($topendorserd);
+                            // $topendorsedmontharray["endorsed"]= $topendorserd;
+                            // print_r($topendorsedmontharray);
                             $week[] = $startweekday . "&&&&" . $endweekday;
                         }
                         $wcount++;
                     }
-// print_r($topendorseduserweekdata);
+                    // print_r($topendorseduserweekdata);
                     $topendorsedusermonthnew = 0;
                     $topendorsedusermonth = array();
                     $topcnt = 0;
@@ -13742,8 +14186,8 @@ class ApiController extends AppController {
                         }
                     }
                     $topendorsedmontharray["endorsed"] = $topendorsedusermonth;
-//print_r($topendorsedmontharray);
-//print_r($allusernew);
+                    //print_r($topendorsedmontharray);
+                    //print_r($allusernew);
                     $topendoserwise = array();
                     $arraydata = array();
 
@@ -13753,11 +14197,11 @@ class ApiController extends AppController {
                         $startweekday = $weekday[0];
                         $endweekday = $weekday[1];
                         if (!empty($topval["endorser"])) {
-//if ($currentmonth != 1) {
+                            //if ($currentmonth != 1) {
                             $duration = "(" . date("m/d/Y", strtotime($startweekday)) . " - " . date("m/d/Y", strtotime($endweekday)) . ")";
-//} else {
-//  $duration = "";
-// }
+                            //} else {
+                            //  $duration = "";
+                            // }
                             $headtitle = "Top nDorser of the Week";
                             $tdata = array();
                             foreach ($topval["endorser"] as $tval) {
@@ -13791,12 +14235,12 @@ class ApiController extends AppController {
                             $arraydata[] = array("title" => $headtitle, "duration" => $duration, "list" => $arraydata1);
                         }
                         if (!empty($topval["endorsed"])) {
-// $duration ="(".date("m/d/Y",strtotime($startweekday))." - ".date("m/d/Y",strtotime($endweekday)).")";
-// if ($currentmonth != 1) {
+                            // $duration ="(".date("m/d/Y",strtotime($startweekday))." - ".date("m/d/Y",strtotime($endweekday)).")";
+                            // if ($currentmonth != 1) {
                             $duration = "(" . date("m/d/Y", strtotime($startweekday)) . " - " . date("m/d/Y", strtotime($endweekday)) . ")";
-// } else {
-//     $duration = "";
-// }
+                            // } else {
+                            //     $duration = "";
+                            // }
                             $headtitle = "Top nDorsed of the Week";
                             $tdata = array();
                             foreach ($topval["endorsed"] as $tval) {
@@ -13823,12 +14267,12 @@ class ApiController extends AppController {
                         } else {
                             $arraydata1 = array();
                             $arraydata1[] = array("name" => "", "image" => "", "isData" => "0", "job_title" => "", "type" => "week");
-// if ($currentmonth != 1) {
+                            // if ($currentmonth != 1) {
                             $duration = "(" . date("m/d/Y", strtotime($startweekday)) . " - " . date("m/d/Y", strtotime($endweekday)) . ")";
-//} else {
-//    $duration = "";
-// }
-// $duration ="(".date("m/d/Y",strtotime($startweekday))." - ".date("m/d/Y",strtotime($endweekday)).")";
+                            //} else {
+                            //    $duration = "";
+                            // }
+                            // $duration ="(".date("m/d/Y",strtotime($startweekday))." - ".date("m/d/Y",strtotime($endweekday)).")";
                             $headtitle = "Top nDorsed of the Week";
                             $arraydata[] = array("title" => $headtitle, "duration" => $duration, "list" => $arraydata1);
                         }
@@ -13841,9 +14285,9 @@ class ApiController extends AppController {
                             $ndorsename = str_replace("endorse", "nDorse", $key);
                             $headtitle = "Top " . $ndorsename . " of the Month";
                             $tdata = array();
-// print_r($topval);
+                            // print_r($topval);
                             foreach ($topval as $tval) {
-//echo $tval;echo "<hr>";
+                                //echo $tval;echo "<hr>";
                                 $val = $allusernew[$tval];
 
                                 if ($val["image"] != "") {
@@ -13877,28 +14321,30 @@ class ApiController extends AppController {
                         }
                     }
                     $topendoserwise[] = $arraydata;
-//print_r($arraydata);
+                    //print_r($arraydata);
                     if (!empty($arraydata)) {
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Top endorsed data", "data" => $arraydata),
+                            'result' => array(
+                                "status" => true, "msg" => "Top endorsed data", "data" => $arraydata
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "No Top Endorsements available for this Month", "data" => true),
+                            'result' => array(
+                                "status" => false, "msg" => "No Top Endorsements available for this Month", "data" => true
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $topendorserorg = $this->Topendorser->find("all", array("conditions" => array("organization_id" => $org_id)));
-// print_r($topendorserorg);
+                    // print_r($topendorserorg);
                     $topendorseuser = array();
                     $alluser = array();
                     if (!empty($topendorserorg)) {
                         foreach ($topendorserorg as $val) {
-// print_r($val);
+                            // print_r($val);
                             $endorser_user = explode(",", $val["Topendorser"]["endorser"]);
                             $endorsed_user = explode(",", $val["Topendorser"]["endorsed"]);
                             $alluser1 = array_merge($endorser_user, $endorsed_user);
@@ -13935,8 +14381,8 @@ class ApiController extends AppController {
                                     )
                                 )
                             ),
-                            "conditions" => array("User.id" => $alluser)
-                            , "fields" => array("User.id", "User.fname", "User.lname", "User.image", "OrgJobTitles.title", "OrgDepartments.name")));
+                            "conditions" => array("User.id" => $alluser), "fields" => array("User.id", "User.fname", "User.lname", "User.image", "OrgJobTitles.title", "OrgDepartments.name")
+                        ));
 
 
                         $userdata = array();
@@ -13965,10 +14411,10 @@ class ApiController extends AppController {
                             unset($val["User"]["fname"]);
                             unset($val["User"]["lname"]);
                             $userdata[$val["User"]["id"]] = $val["User"];
-// print_r($val["User"]);
+                            // print_r($val["User"]);
                         }
 
-//print_r($topendorseuser);
+                        //print_r($topendorseuser);
                         $topendoserwise = array();
                         $arraydata = array();
                         foreach ($topendorseuser as $key => $topval) {
@@ -13999,42 +14445,47 @@ class ApiController extends AppController {
                         }
                         $topendoserwise[] = $arraydata;
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Top endorsed data", "data" => $arraydata),
+                            'result' => array(
+                                "status" => true, "msg" => "Top endorsed data", "data" => $arraydata
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "No Top Endorsements available"),
+                            'result' => array(
+                                "status" => false, "msg" => "No Top Endorsements available"
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Currently any organization has been not joined."),
+                    'result' => array(
+                        "status" => false, "msg" => "Currently any organization has been not joined."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "email address key not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "email address key not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorsementbydept() {
+    public function endorsementbydept()
+    {
 
 
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
             $user_id = $loggedInUser['id'];
-//pr($loggedInUser['current_org']); exit;
+            //pr($loggedInUser['current_org']); exit;
             if (isset($loggedInUser['current_org'])) {
 
                 if (isset($this->request->data["height"]) && $this->request->data["height"] > 0) {
@@ -14089,12 +14540,12 @@ class ApiController extends AppController {
                 $params['order'] = 'cnt desc';
 
                 $params['group'] = 'Endorsement.endorsed_id';
-//pr($params); exit;
+                //pr($params); exit;
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $leaderboard = $this->Endorsement->find("all", $params);
-//                pr($leaderboard); 
-//                echo $this->Endorsement->getLastQuery();die;
-//                exit;
+                //                pr($leaderboard); 
+                //                echo $this->Endorsement->getLastQuery();die;
+                //                exit;
 
                 if (!empty($leaderboard)) {
                     $seriesdata = "";
@@ -14116,7 +14567,7 @@ class ApiController extends AppController {
             colorByPoint: true,
             data: [" . $seriesdata . "]}";
 
-//$this->autoRender = false;
+                    //$this->autoRender = false;
                     /* Set up new view that won't enter the ClassRegistry */
                     $view = new View($this, false);
                     $view->set('data', $series);
@@ -14127,54 +14578,60 @@ class ApiController extends AppController {
 
                     /* Grab output into variable without the view actually outputting! */
                     $view_output = $view->render('box');
-//echo $view_output;
+                    //echo $view_output;
                     $view_output = str_replace("\r", "", $view_output);
                     $view_output = str_replace("\t", "", $view_output);
                     $view_output = str_replace("\n", "", $view_output);
                     if (isset($this->request->data["web"]) && $this->request->data["web"] == 1) {
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Endorsed by department", "data" => $seriesdata),
+                            'result' => array(
+                                "status" => true, "msg" => "Endorsed by department", "data" => $seriesdata
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
 
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Endorsed by department", "data" => $view_output),
+                            'result' => array(
+                                "status" => true, "msg" => "Endorsed by department", "data" => $view_output
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
 
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Endorsed by department", "data" => $view_output),
-//    '_serialize' => array('result')
-//));
+                    //$this->set(array(
+                    //    'result' => array("status" => true
+                    //        , "msg" => "Endorsed by department", "data" => $view_output),
+                    //    '_serialize' => array('result')
+                    //));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "No data available."),
+                        'result' => array(
+                            "status" => false, "msg" => "No data available."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Currently any organization has been not joined."),
+                    'result' => array(
+                        "status" => false, "msg" => "Currently any organization has been not joined."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "token not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "token not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorsementbyday() {
+    public function endorsementbyday()
+    {
 
 
         if ($this->request->is('post')) {
@@ -14229,8 +14686,8 @@ class ApiController extends AppController {
 
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                 $leaderboard = $this->Endorsement->find("all", $array);
-// echo $this->Endorsement->getLastQuery();exit; 		
-// print_r($leaderboard);
+                // echo $this->Endorsement->getLastQuery();exit; 		
+                // print_r($leaderboard);
 
                 if (!empty($leaderboard)) {
 
@@ -14247,13 +14704,13 @@ class ApiController extends AppController {
                         }
                     }
 
-//echo $seriesdata;exit;
+                    //echo $seriesdata;exit;
                     $series = "  {
             name: 'Date',
             colorByPoint: false,
             data: [" . $seriesdata . "]}";
 
-//$this->autoRender = false;
+                    //$this->autoRender = false;
                     /* Set up new view that won't enter the ClassRegistry */
                     $view = new View($this, false);
                     $view->set('data', $series);
@@ -14263,54 +14720,60 @@ class ApiController extends AppController {
 
                     /* Grab output into variable without the view actually outputting! */
                     $view_output = $view->render('column');
-//print_r($view_output);
+                    //print_r($view_output);
 
                     $view_output = str_replace("\r", "", $view_output);
                     $view_output = str_replace("\t", "", $view_output);
                     $view_output = str_replace("\n", "", $view_output);
                     if (isset($this->request->data["web"]) && $this->request->data["web"] == 1) {
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Endorsed by day", "data" => $seriesdata),
+                            'result' => array(
+                                "status" => true, "msg" => "Endorsed by day", "data" => $seriesdata
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
 
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Endorsed by day", "data" => $view_output),
+                            'result' => array(
+                                "status" => true, "msg" => "Endorsed by day", "data" => $view_output
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Endorsed by department", "data" => $view_output),
-//    '_serialize' => array('result')
-//));
+                    //$this->set(array(
+                    //    'result' => array("status" => true
+                    //        , "msg" => "Endorsed by department", "data" => $view_output),
+                    //    '_serialize' => array('result')
+                    //));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "No data available."),
+                        'result' => array(
+                            "status" => false, "msg" => "No data available."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Currently any organization has been not joined."),
+                    'result' => array(
+                        "status" => false, "msg" => "Currently any organization has been not joined."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "token not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "token not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function endorsementbycorevalues() {
+    public function endorsementbycorevalues()
+    {
         if ($this->request->is('post')) {
             $statusConfig = Configure::read("statusConfig");
             $loggedInUser = $this->Auth->user();
@@ -14338,7 +14801,7 @@ class ApiController extends AppController {
                 $user_id = $loggedInUser['id'];
                 if (isset($loggedInUser['current_org'])) {
 
-// $org_id = $loggedInUser['current_org']['id'];
+                    // $org_id = $loggedInUser['current_org']['id'];
 
                     $params = array();
                     $start_date = "";
@@ -14389,8 +14852,8 @@ class ApiController extends AppController {
                     $params['group'] = 'EndorseCoreValue.value_id';
                     $this->Endorsement->unbindModel(array('hasMany' => array('EndorseAttachments', 'EndorseCoreValues', 'EndorseReplies')));
                     $corevalues = $this->Endorsement->find("all", $params);
-//echo $this->Endorsement->getLastQuery();		
-//  print_r($corevalues);exit;
+                    //echo $this->Endorsement->getLastQuery();		
+                    //  print_r($corevalues);exit;
 
                     if (!empty($corevalues)) {
 
@@ -14414,7 +14877,7 @@ class ApiController extends AppController {
             colorByPoint: true,
             data: [" . $seriesdata . "]}";
 
-//$this->autoRender = false;
+                        //$this->autoRender = false;
                         /* Set up new view that won't enter the ClassRegistry */
                         $view = new View($this, false);
                         $view->set('data', $series);
@@ -14425,57 +14888,64 @@ class ApiController extends AppController {
 
                         /* Grab output into variable without the view actually outputting! */
                         $view_output = $view->render('box');
-//echo $view_output;
+                        //echo $view_output;
                         $view_output = str_replace("\r", "", $view_output);
                         $view_output = str_replace("\t", "", $view_output);
                         $view_output = str_replace("\n", "", $view_output);
 
                         if (isset($this->request->data["web"]) && $this->request->data["web"] == 1) {
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "nDorsement by core values", "data" => $seriesdata),
+                                'result' => array(
+                                    "status" => true, "msg" => "nDorsement by core values", "data" => $seriesdata
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
 
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "nDorsement by core values", "data" => $view_output),
+                                'result' => array(
+                                    "status" => true, "msg" => "nDorsement by core values", "data" => $view_output
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "No data available."),
+                            'result' => array(
+                                "status" => false, "msg" => "No data available."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Currently any organization has been not joined."),
+                        'result' => array(
+                            "status" => false, "msg" => "Currently any organization has been not joined."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Currently any organization has been not joined."),
+                    'result' => array(
+                        "status" => false, "msg" => "Currently any organization has been not joined."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "token not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "token not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-//
-    public function endorsementbyjobtitles() {
+    //
+    public function endorsementbyjobtitles()
+    {
 
 
         if ($this->request->is('post')) {
@@ -14489,7 +14959,7 @@ class ApiController extends AppController {
 
                     $org_id = $loggedInUser['current_org']['id'];
                 }
-// $org_id =335;
+                // $org_id =335;
                 if (isset($this->request->data["height"]) && $this->request->data["height"] > 0) {
                     $height = $this->request->data["height"];
                 } else {
@@ -14507,7 +14977,7 @@ class ApiController extends AppController {
                 $user_id = $loggedInUser['id'];
                 if (isset($loggedInUser['current_org'])) {
 
-// $org_id = $loggedInUser['current_org']['id'];
+                    // $org_id = $loggedInUser['current_org']['id'];
 
                     $params = array();
                     $start_date = "";
@@ -14536,7 +15006,7 @@ class ApiController extends AppController {
                         "UserOrganization.organization_id" => $org_id,
                         //"UserOrganization.status" => 1, 
                         "Endorsement.organization_id" => $org_id,
-                            //"Endorsement.endorsement_for" => "user"   
+                        //"Endorsement.endorsement_for" => "user"   
                     );
 
                     if ($startdate != "" && $enddate != "") {
@@ -14558,8 +15028,8 @@ class ApiController extends AppController {
 
                     $detailedjobtitlechart = array("data" => $jbiddata, "jobtitles" => $jobtitles);
 
-//echo $this->UserOrganization->getLastQuery();	exit;	
-// print_r($detailedjobtitlechart);exit;
+                    //echo $this->UserOrganization->getLastQuery();	exit;	
+                    // print_r($detailedjobtitlechart);exit;
 
                     if (!empty($jbiddata)) {
 
@@ -14583,7 +15053,7 @@ class ApiController extends AppController {
             colorByPoint: true,
             data: [" . $seriesdata . "]}";
 
-//$this->autoRender = false;
+                        //$this->autoRender = false;
                         /* Set up new view that won't enter the ClassRegistry */
                         $view = new View($this, false);
                         $view->set('data', $series);
@@ -14601,55 +15071,62 @@ class ApiController extends AppController {
 
                         if (isset($this->request->data["web"]) && $this->request->data["web"] == 1) {
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Endorsed by job title", "data" => $seriesdata),
+                                'result' => array(
+                                    "status" => true, "msg" => "Endorsed by job title", "data" => $seriesdata
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
 
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Endorsed by job title", "data" => $view_output),
+                                'result' => array(
+                                    "status" => true, "msg" => "Endorsed by job title", "data" => $view_output
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Endorsed by job title", "data" => $view_output),
-//    '_serialize' => array('result')
-//));
+                        //$this->set(array(
+                        //    'result' => array("status" => true
+                        //        , "msg" => "Endorsed by job title", "data" => $view_output),
+                        //    '_serialize' => array('result')
+                        //));
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "No data available."),
+                            'result' => array(
+                                "status" => false, "msg" => "No data available."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Currently any organization has been not joined."),
+                        'result' => array(
+                            "status" => false, "msg" => "Currently any organization has been not joined."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Currently any organization has been not joined."),
+                    'result' => array(
+                        "status" => false, "msg" => "Currently any organization has been not joined."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "token not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "token not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-//
-    public function endorsementbyentity() {
+    //
+    public function endorsementbyentity()
+    {
 
 
         if ($this->request->is('post')) {
@@ -14663,7 +15140,7 @@ class ApiController extends AppController {
 
                     $org_id = $loggedInUser['current_org']['id'];
                 }
-// $org_id =335;
+                // $org_id =335;
                 if (isset($this->request->data["height"]) && $this->request->data["height"] > 0) {
                     $height = $this->request->data["height"];
                 } else {
@@ -14681,7 +15158,7 @@ class ApiController extends AppController {
                 $user_id = $loggedInUser['id'];
                 if (isset($loggedInUser['current_org'])) {
 
-// $org_id = $loggedInUser['current_org']['id'];
+                    // $org_id = $loggedInUser['current_org']['id'];
 
                     $params = array();
                     $start_date = "";
@@ -14715,7 +15192,7 @@ class ApiController extends AppController {
                     }
                     $detailedentitychart = array("data" => $entityiddata, "entites" => $entityarray);
 
-//echo $this->Endorsement->getLastQuery();		
+                    //echo $this->Endorsement->getLastQuery();		
 
 
                     if (!empty($entityiddata)) {
@@ -14740,7 +15217,7 @@ class ApiController extends AppController {
             colorByPoint: true,
             data: [" . $seriesdata . "]}";
 
-//$this->autoRender = false;
+                        //$this->autoRender = false;
                         /* Set up new view that won't enter the ClassRegistry */
                         $view = new View($this, false);
                         $view->set('data', $series);
@@ -14755,65 +15232,73 @@ class ApiController extends AppController {
                         $view_output = str_replace("\r", "", $view_output);
                         $view_output = str_replace("\t", "", $view_output);
                         $view_output = str_replace("\n", "", $view_output);
-//echo $view_output;exit;
+                        //echo $view_output;exit;
                         if (isset($this->request->data["web"]) && $this->request->data["web"] == 1) {
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Endorsed by job title", "data" => $seriesdata),
+                                'result' => array(
+                                    "status" => true, "msg" => "Endorsed by job title", "data" => $seriesdata
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
 
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Endorsed by job title", "data" => $view_output),
+                                'result' => array(
+                                    "status" => true, "msg" => "Endorsed by job title", "data" => $view_output
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Endorsed by Sub Organization", "data" => $view_output),
-//    '_serialize' => array('result')
-//));
+                        //$this->set(array(
+                        //    'result' => array("status" => true
+                        //        , "msg" => "Endorsed by Sub Organization", "data" => $view_output),
+                        //    '_serialize' => array('result')
+                        //));
                     } else {
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "No data available."),
+                            'result' => array(
+                                "status" => false, "msg" => "No data available."
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Currently any organization has been not joined."),
+                        'result' => array(
+                            "status" => false, "msg" => "Currently any organization has been not joined."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Currently any organization has been not joined."),
+                    'result' => array(
+                        "status" => false, "msg" => "Currently any organization has been not joined."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "token not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "token not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-//
-    public function faq() {
+    //
+    public function faq()
+    {
         $faqdata = $this->globalsettingFaq->find("all", array("order" => "updated DESC"));
         $is_web = 0;
         if (isset($this->request->query["is_web"])) {
             $is_web = 1;
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Faqscheck", "data" => $faqdata),
+                'result' => array(
+                    "status" => true, "msg" => "Faqscheck", "data" => $faqdata
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -14824,25 +15309,27 @@ class ApiController extends AppController {
             $view->set('faq', $faqdata);
             /* Grab output into variable without the view actually outputting! */
             $view_output = $view->render('faqelementother');
-//echo $view_output;exit;
+            //echo $view_output;exit;
             $view_output = str_replace("\r", "", $view_output);
             $view_output = str_replace("\t", "", $view_output);
             $view_output = str_replace("\n", "", $view_output);
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Faqs", "data" => $view_output),
+                'result' => array(
+                    "status" => true, "msg" => "Faqs", "data" => $view_output
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function sendtermconditions() {
+    public function sendtermconditions()
+    {
 
         if (isset($this->request->query["email"])) {
             $email = $this->request->query["email"];
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $subject = "End User License Agreement for nDorse";
-//  $viewVars = array("attatched" => 1, "docs" => "termandcondition.pdf");
+                //  $viewVars = array("attatched" => 1, "docs" => "termandcondition.pdf");
                 $termstext = $this->GlobalSetting->findByKey("tandc");
                 $termsmsg = "";
                 if (!empty($termstext)) {
@@ -14854,27 +15341,31 @@ class ApiController extends AppController {
                 $emailQueue[] = array("to" => $email, "subject" => $subject, "config_vars" => $configVars, "template" => "terms_conditions");
                 $this->Email->saveMany($emailQueue);
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "End User License Agreement sent successfully.", "data" => true),
+                    'result' => array(
+                        "status" => true, "msg" => "End User License Agreement sent successfully.", "data" => true
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid email address"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid email address"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "email address key not exist."),
+                'result' => array(
+                    "status" => false, "msg" => "email address key not exist."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getEmojis() {
+    public function getEmojis()
+    {
 
         $Emojis = Configure::read("Emojis");
         $emojis_url = Router::url('/', true) . EMOJIS_IMAGE_DIR;
@@ -14893,7 +15384,7 @@ class ApiController extends AppController {
                 }
             }
         }
-//        echo $personalizedBitmoji; exit;
+        //        echo $personalizedBitmoji; exit;
         $BitEmojis = Configure::read("Bitmojis");
         $bit_emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
         if (strpos($bit_emojis_url, 'localhost') < 0) {
@@ -14901,11 +15392,11 @@ class ApiController extends AppController {
         }
         if ($personalizedBitmoji == 0) {
             $emojis_array = array();
-//            $Emojisdata = $this->Emojis->find("all");
-//
-//            foreach ($Emojisdata as $emojisval) {
-//                $emojis_array[] = array("id" => $emojisval["Emojis"]["id"],"image" => $emojisval["Emojis"]["name"], "url" => $emojis_url . $emojisval["Emojis"]["name"]);
-//            }
+            //            $Emojisdata = $this->Emojis->find("all");
+            //
+            //            foreach ($Emojisdata as $emojisval) {
+            //                $emojis_array[] = array("id" => $emojisval["Emojis"]["id"],"image" => $emojisval["Emojis"]["name"], "url" => $emojis_url . $emojisval["Emojis"]["name"]);
+            //            }
 
             /* Combining Bitmojis Start */
 
@@ -14922,7 +15413,7 @@ class ApiController extends AppController {
             }
             /* Combining Bitmojis End */
         } else {
-//            pr($orgBitmojis);
+            //            pr($orgBitmojis);
             $bitmojisArray = json_decode($orgBitmojis);
 
             $bitemojis_array = $bitemoji_array = array();
@@ -14930,49 +15421,52 @@ class ApiController extends AppController {
             $Emojisdata = $this->Bitmojis->find("all", array('conditions' => array('personalized' => 0, 'status' => 1)));
 
             $bitemojis_array = $this->Bitmojis->find("all", array('conditions' => array('org_id' => $organizationID, 'personalized' => 1, 'status' => 1)));
-//            pr($bitemojis_array); exit;
+            //            pr($bitemojis_array); exit;
             foreach ($Emojisdata as $emojisval) {
                 $emojis_array[] = array("personalized" => $emojisval["Bitmojis"]["personalized"], "title" => $emojisval["Bitmojis"]["title"], "image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
             }
             foreach ($bitemojis_array as $Bitmojisval) {
                 $bitemoji_array[] = array("personalized" => $Bitmojisval["Bitmojis"]["personalized"], "title" => $Bitmojisval["Bitmojis"]["title"], "image" => $Bitmojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $Bitmojisval["Bitmojis"]["name"], "id" => $Bitmojisval["Bitmojis"]["id"]);
-//                pr($bitemoji_array);exit;
+                //                pr($bitemoji_array);exit;
             }
             if (count($bitemoji_array) > 0) {
                 $emojis_array = array_merge($emojis_array, $bitemoji_array);
             }
         }
-//                pr($emojis_array);
-//                exit; 
+        //                pr($emojis_array);
+        //                exit; 
 
         if (count($emojis_array) > 0) {
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Emojis data", "data" => $emojis_array),
+                'result' => array(
+                    "status" => true, "msg" => "Emojis data", "data" => $emojis_array
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "No stickers available", "data" => $emojis_array),
+                'result' => array(
+                    "status" => false, "msg" => "No stickers available", "data" => $emojis_array
+                ),
                 '_serialize' => array('result')
             ));
         }
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Emojis data", "data" => $Emojis),
-//    '_serialize' => array('result')
-//));
+        //$this->set(array(
+        //    'result' => array("status" => true
+        //        , "msg" => "Emojis data", "data" => $Emojis),
+        //    '_serialize' => array('result')
+        //));
     }
 
-    public function getOrgEmojis() {
+    public function getOrgEmojis()
+    {
 
         $Emojis = Configure::read("Emojis");
         $emojis_url = Router::url('/', true) . EMOJIS_IMAGE_DIR;
         if (strpos($emojis_url, 'localhost') < 0) {
             //$emojis_url = str_replace("http:", "https:", $emojis_url);
         }
-//        pr($this->request->data);exit;
+        //        pr($this->request->data);exit;
         $personalizedBitmoji = 0;
         if (isset($this->request->data['org_id'])) {
             $organizationID = $this->request->data['org_id'];
@@ -14984,7 +15478,7 @@ class ApiController extends AppController {
                 }
             }
         }
-//        echo $personalizedBitmoji; exit;
+        //        echo $personalizedBitmoji; exit;
         $BitEmojis = Configure::read("Bitmojis");
         $bit_emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
         if (strpos($bit_emojis_url, 'localhost') < 0) {
@@ -14996,11 +15490,11 @@ class ApiController extends AppController {
 
         if ($personalizedBitmoji == 0) {
 
-//            $Emojisdata = $this->Emojis->find("all");
-//
-//            foreach ($Emojisdata as $emojisval) {
-//                $emojis_array[] = array("id" => $emojisval["Emojis"]["id"],"image" => $emojisval["Emojis"]["name"], "url" => $emojis_url . $emojisval["Emojis"]["name"]);
-//            }
+            //            $Emojisdata = $this->Emojis->find("all");
+            //
+            //            foreach ($Emojisdata as $emojisval) {
+            //                $emojis_array[] = array("id" => $emojisval["Emojis"]["id"],"image" => $emojisval["Emojis"]["name"], "url" => $emojis_url . $emojisval["Emojis"]["name"]);
+            //            }
 
             /* Combining Bitmojis Start */
 
@@ -15018,17 +15512,17 @@ class ApiController extends AppController {
             }
             /* Combining Bitmojis End */
         } else {
-//            pr($orgBitmojis);
+            //            pr($orgBitmojis);
             $bitmojisArray = json_decode($orgBitmojis);
 
             $bitemojis_array = $emojis_array_all = array();
             $this->loadModel('Bitmojis');
 
             $Emojisdata = $this->Bitmojis->find("all", array('conditions' => array('id' => $bitmojisArray, 'status' => 1), 'order' => array('personalized desc')));
-//            pr($Emojisdata);
-//            exit;
+            //            pr($Emojisdata);
+            //            exit;
             foreach ($Emojisdata as $emojisval) {
-//                pr($emojisval);
+                //                pr($emojisval);
                 $emojis_array_all[] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
 
                 if (isset($emojisval["Bitmojis"]["personalized"]) && $emojisval["Bitmojis"]["personalized"] == 1) {
@@ -15038,34 +15532,37 @@ class ApiController extends AppController {
                     $emojis_array["default"][] = array("image" => $emojisval["Bitmojis"]["name"], "url" => $bit_emojis_url . $emojisval["Bitmojis"]["name"], "id" => $emojisval["Bitmojis"]["id"]);
                 }
             }
-//                pr($emojis_array);
-//                exit;
+            //                pr($emojis_array);
+            //                exit;
         }
 
         if (count($emojis_array_all) > 0) {
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Emojis data", "data" => $emojis_array_all, "data_new" => $emojis_array),
+                'result' => array(
+                    "status" => true, "msg" => "Emojis data", "data" => $emojis_array_all, "data_new" => $emojis_array
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $oVal = (object) array();
 
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "No stickers available", "data" => $emojis_array_all, "data_new" => $oVal),
+                'result' => array(
+                    "status" => false, "msg" => "No stickers available", "data" => $emojis_array_all, "data_new" => $oVal
+                ),
                 '_serialize' => array('result')
             ));
         }
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Emojis data", "data" => $Emojis),
-//    '_serialize' => array('result')
-//));
+        //$this->set(array(
+        //    'result' => array("status" => true
+        //        , "msg" => "Emojis data", "data" => $Emojis),
+        //    '_serialize' => array('result')
+        //));
     }
 
-//Added by Babulal Prasad top get bitmojis lists from aPI Created @25-070-2018
-    public function getBitmojis() {
+    //Added by Babulal Prasad top get bitmojis lists from aPI Created @25-070-2018
+    public function getBitmojis()
+    {
 
         $Emojis = Configure::read("Bitmojis");
         $emojis_url = Router::url('/', true) . BITMOJIS_IMAGE_DIR;
@@ -15082,53 +15579,62 @@ class ApiController extends AppController {
 
         if (count($emojis_array) > 0) {
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => "Bitmojis data", "data" => $emojis_array),
+                'result' => array(
+                    "status" => true, "msg" => "Bitmojis data", "data" => $emojis_array
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "No stickers available", "data" => $emojis_array),
+                'result' => array(
+                    "status" => false, "msg" => "No stickers available", "data" => $emojis_array
+                ),
                 '_serialize' => array('result')
             ));
         }
 
-//$this->set(array(
-//    'result' => array("status" => true
-//        , "msg" => "Emojis data", "data" => $Emojis),
-//    '_serialize' => array('result')
-//));
+        //$this->set(array(
+        //    'result' => array("status" => true
+        //        , "msg" => "Emojis data", "data" => $Emojis),
+        //    '_serialize' => array('result')
+        //));
     }
 
-    public function updateLastAppUsedTime() {
+    public function updateLastAppUsedTime()
+    {
         if ($this->request->is('post')) {
             $loggedInUser = $this->Auth->user();
-//echo date("Y-m-d H:i:s"); exit;
-//$updated = $this->User->updateAll(array("last_app_used" => "NOW()"), array("id" => $loggedInUser['id']));
+            //echo date("Y-m-d H:i:s"); exit;
+            //$updated = $this->User->updateAll(array("last_app_used" => "NOW()"), array("id" => $loggedInUser['id']));
             $updated = $this->User->updateAll(array("last_app_used" => "'" . date("Y-m-d H:i:s") . "'"), array("id" => $loggedInUser['id']));
-//            pr($updated); exit;
+            //            pr($updated); exit;
             if ($updated) {
-                $this->set(array('result' => array("status" => true
-                        , "msg" => "Last app used time updated."),
+                $this->set(array(
+                    'result' => array(
+                        "status" => true, "msg" => "Last app used time updated."
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
-                $this->set(array('result' => array("status" => false
-                        , "msg" => "Last app used time is not updated."),
+                $this->set(array(
+                    'result' => array(
+                        "status" => false, "msg" => "Last app used time is not updated."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function renewSession() {
+    public function renewSession()
+    {
         if ($this->request->is('post')) {
             $status = $this->renewToken(true);
             $data = NULL;
@@ -15151,47 +15657,53 @@ class ApiController extends AppController {
                 $msg = "Renew session successfully";
                 $isExpired = false;
             }
-            $this->set(array('result' => array("status" => $status,
+            $this->set(array(
+                'result' => array(
+                    "status" => $status,
                     "msg" => $msg,
                     "isExpired" => $isExpired,
-                    "data" => $data),
+                    "data" => $data
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function resetmypassword() {
+    public function resetmypassword()
+    {
 
         if (isset($this->request->data['token'])) {
             $authuser = $this->Auth->user();
             if (isset($this->request->data['current_password']) && $this->request->data['current_password'] != "") {
-// print_r($this->request->data);
+                // print_r($this->request->data);
                 $current_password = $this->Auth->password($this->request->data['current_password']);
 
                 $userInfo = $this->User->findById($authuser["id"]);
                 $userpasswod = $userInfo['User']['password'];
-//echo $current_password;
-// echo "<hr>";
-//echo $userpasswod;
-// echo "<hr>";
+                //echo $current_password;
+                // echo "<hr>";
+                //echo $userpasswod;
+                // echo "<hr>";
                 if ($userpasswod != $current_password) {
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Current password was not entered correctly"),
+                        'result' => array(
+                            "status" => false, "msg" => "Current password was not entered correctly"
+                        ),
                         '_serialize' => array('result')
                     ));
-// $this->redirect(array('controller' => 'users', 'action' => 'changePassword'));
+                    // $this->redirect(array('controller' => 'users', 'action' => 'changePassword'));
                 } else {
 
                     $this->User->set($this->request->data);
-// edit
+                    // edit
                     $this->request->data["id"] = $authuser["id"];
 
                     $this->User->setValidation('reset_password');
@@ -15199,10 +15711,11 @@ class ApiController extends AppController {
                         $password = $this->request->data["password"];
                         if ($this->User->save($this->request->data)) {
 
-// send email to user for change password
+                            // send email to user for change password
                             $this->set(array(
-                                'result' => array("status" => true
-                                    , "msg" => "Password updated successfully.", 'data' => true),
+                                'result' => array(
+                                    "status" => true, "msg" => "Password updated successfully.", 'data' => true
+                                ),
                                 '_serialize' => array('result')
                             ));
                         } else {
@@ -15215,13 +15728,14 @@ class ApiController extends AppController {
 
 
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "Errors!", 'errors' => $errorsArray),
+                                'result' => array(
+                                    "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
                     } else {
-// $errors = $this->User->validationErrors;
+                        // $errors = $this->User->validationErrors;
                         $errors = $this->User->validationErrors;
                         $errorsArray = array();
 
@@ -15230,31 +15744,35 @@ class ApiController extends AppController {
                         }
 
                         $this->set(array(
-                            'result' => array("status" => false
-                                , "msg" => "Errors!", 'errors' => $errorsArray),
+                            'result' => array(
+                                "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "current password required"),
+                    'result' => array(
+                        "status" => false, "msg" => "current password required"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function setnewpassword() {
-//        pr($this->request->data);
-//        if (isset($this->request->data['token'])) {
+    public function setnewpassword()
+    {
+        //        pr($this->request->data);
+        //        if (isset($this->request->data['token'])) {
         if (isset($this->request->data['id']) && $this->request->data['id'] != "") {
 
             $userInfo = $this->User->findById($this->request->data['id']);
@@ -15265,10 +15783,11 @@ class ApiController extends AppController {
                 $password = $this->request->data["password"];
                 if ($this->User->save($this->request->data)) {
 
-// send email to user for change password
+                    // send email to user for change password
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Password updated successfully.", 'data' => true),
+                        'result' => array(
+                            "status" => true, "msg" => "Password updated successfully.", 'data' => true
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
@@ -15281,13 +15800,14 @@ class ApiController extends AppController {
 
 
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Errors!", 'errors' => $errorsArray),
+                        'result' => array(
+                            "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
-// $errors = $this->User->validationErrors;
+                // $errors = $this->User->validationErrors;
                 $errors = $this->User->validationErrors;
                 $errorsArray = array();
                 foreach ($errors as $key => $error) {
@@ -15295,59 +15815,66 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Errors!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Errors!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Invalid User."),
+                'result' => array(
+                    "status" => false, "msg" => "Invalid User."
+                ),
                 '_serialize' => array('result')
             ));
         }
-//        } else {
-//            $this->set(array(
-//                'result' => array("status" => false
-//                    , "msg" => "Token is missing in request"),
-//                '_serialize' => array('result')
-//            ));
-//        }
+        //        } else {
+        //            $this->set(array(
+        //                'result' => array("status" => false
+        //                    , "msg" => "Token is missing in request"),
+        //                '_serialize' => array('result')
+        //            ));
+        //        }
     }
 
-    public function acceptTnC() {
+    public function acceptTnC()
+    {
         $loggedInUser = $this->Auth->user();
         $this->User->id = $loggedInUser['id'];
         $this->User->saveField("terms_accept", 1);
 
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Terms and condition accepted.", 'data' => true),
+            'result' => array(
+                "status" => true, "msg" => "Terms and condition accepted.", 'data' => true
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function checkSession() {
+    public function checkSession()
+    {
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "Session exitsts.", 'data' => true),
+            'result' => array(
+                "status" => true, "msg" => "Session exitsts.", 'data' => true
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function getAcceptedRequests() {
+    public function getAcceptedRequests()
+    {
         $loggedInUser = $this->Auth->user();
-//        $this->OrgRequests->bindModel(array('belongsTo' => array('Organization')));
-//        $acceptedRequests = $this->OrgRequests->find("all", array("conditions" => array("OrgRequests.user_id" => $loggedInUser['id'], "OrgRequests.organization_id" => $loggedInUser['pending_requests'], "OrgRequests.status" => 1)));
-//        $acceptedOrgs = array();
-//        
-//        foreach ($acceptedRequests as $acceptedRequest) {
-//            $orgDetails = array();
-//            $orgDetails['id'] = $acceptedRequest['Organization']['id'];
-//            $orgDetails['name'] = $acceptedRequest['Organization']['name'];
-//            $acceptedOrgs[] = $orgDetails;
-//        }
+        //        $this->OrgRequests->bindModel(array('belongsTo' => array('Organization')));
+        //        $acceptedRequests = $this->OrgRequests->find("all", array("conditions" => array("OrgRequests.user_id" => $loggedInUser['id'], "OrgRequests.organization_id" => $loggedInUser['pending_requests'], "OrgRequests.status" => 1)));
+        //        $acceptedOrgs = array();
+        //        
+        //        foreach ($acceptedRequests as $acceptedRequest) {
+        //            $orgDetails = array();
+        //            $orgDetails['id'] = $acceptedRequest['Organization']['id'];
+        //            $orgDetails['name'] = $acceptedRequest['Organization']['name'];
+        //            $acceptedOrgs[] = $orgDetails;
+        //        }
         $this->DefaultOrg->unbindModel(array('belongsTo' => array('User')));
         $params = array();
         $params['fields'] = "*";
@@ -15387,20 +15914,23 @@ class ApiController extends AppController {
             $orgUpdates = array("user_status" => $userStatus, "org_status" => $orgStatus, "user_role_changed" => false, "user_role" => $userRole, "msg" => $msg);
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => $msg, 'data' => $defaultOrg['Organization'], 'type' => $type, 'org_updates' => $orgUpdates, "button_text" => "Go To Organization"),
+                'result' => array(
+                    "status" => true, "msg" => $msg, 'data' => $defaultOrg['Organization'], 'type' => $type, 'org_updates' => $orgUpdates, "button_text" => "Go To Organization"
+                ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Organization not available.", 'data' => array(), 'type' => 'none'),
+                'result' => array(
+                    "status" => false, "msg" => "Organization not available.", 'data' => array(), 'type' => 'none'
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function addUser() {
+    public function addUser()
+    {
         $email = $this->request->data['email'];
         $userExist = $this->User->findByEmail($email);
         $loggedinUser = $this->Auth->user();
@@ -15435,8 +15965,9 @@ class ApiController extends AppController {
                     $template = "invitation_admin";
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "There is some problem in adding user. Please try again!"),
+                        'result' => array(
+                            "status" => false, "msg" => "There is some problem in adding user. Please try again!"
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -15450,8 +15981,9 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Error!", 'errors' => $errorsArray),
+                    'result' => array(
+                        "status" => false, "msg" => "Error!", 'errors' => $errorsArray
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
@@ -15461,7 +15993,7 @@ class ApiController extends AppController {
             $template = "invitation_admin_existing";
         }
 
-//        $status = $this->request->data['status'];
+        //        $status = $this->request->data['status'];
 
         if ($this->request->data['status'] == $statusConfig['active'] || $this->request->data['status'] == $statusConfig['eval']) {
             $statusFields = $this->Common->getNewUserOrgFields($loggedinUser['current_org']['id'], $this->request->data['status']);
@@ -15514,18 +16046,21 @@ class ApiController extends AppController {
         }
 
         $this->set(array(
-            'result' => array("status" => true
-                , "msg" => "User added successfully."),
+            'result' => array(
+                "status" => true, "msg" => "User added successfully."
+            ),
             '_serialize' => array('result')
         ));
     }
 
-    public function ifUserExist() {
+    public function ifUserExist()
+    {
         $loggedinUser = $this->Auth->user();
         if (empty($this->request->data['email'])) {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Please enter email."),
+                'result' => array(
+                    "status" => false, "msg" => "Please enter email."
+                ),
                 '_serialize' => array('result')
             ));
             return;
@@ -15534,8 +16069,9 @@ class ApiController extends AppController {
         $user = $this->User->findByEmail($this->request->data['email']);
         if (empty($user)) {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => ""),
+                'result' => array(
+                    "status" => false, "msg" => ""
+                ),
                 '_serialize' => array('result')
             ));
         } else {
@@ -15543,14 +16079,16 @@ class ApiController extends AppController {
             $useOrganization = $this->UserOrganization->find("first", array("conditions" => array("UserOrganization.user_id" => $user['User']['id'], "UserOrganization.organization_id" => $orgId, "UserOrganization.status !=" => 2)));
             if (!empty($useOrganization)) {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "This user is already part of your organization"),
+                    'result' => array(
+                        "status" => false, "msg" => "This user is already part of your organization"
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => "This user is already part of nDorse. Please fill other details.", 'data' => array("fname" => $user['User']['fname'], "lname" => $user['User']['lname'])),
+                    'result' => array(
+                        "status" => true, "msg" => "This user is already part of nDorse. Please fill other details.", 'data' => array("fname" => $user['User']['fname'], "lname" => $user['User']['lname'])
+                    ),
                     '_serialize' => array('result')
                 ));
             }
@@ -15562,7 +16100,8 @@ class ApiController extends AppController {
      * This will import only endorment data not the post data
      */
 
-    function enterFeedTransData() {
+    function enterFeedTransData()
+    {
         echo "DONOT USE IT";
         echo "MADE TO USE IT ONCE";
         exit;
@@ -15593,22 +16132,23 @@ class ApiController extends AppController {
                     $feedQueryData[$index]['user_id'] = json_encode($endorsed_user_id);
                 }
                 $offset = $offset + $limit;
-//                pr($feedQueryData);
-//                exit;
+                //                pr($feedQueryData);
+                //                exit;
                 $this->FeedTran->saveMany($feedQueryData);
             }
             echo "Data Imported Successfully";
         }
     }
 
-    public function getActiveUserList() {
+    public function getActiveUserList()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                pr($this->request->data); 
-//                exit;
+                //                pr($this->request->data); 
+                //                exit;
                 $statusConfig = Configure::read("statusConfig");
                 $loggedInUser = $this->Auth->user();
-//            pr($loggedInUser); exit;
+                //            pr($loggedInUser); exit;
                 if (isset($loggedInUser['current_org'])) {
                     $currentOrgId = $loggedInUser['current_org']['id'];
                     $user_id = $loggedInUser['id'];
@@ -15645,9 +16185,9 @@ class ApiController extends AppController {
                         //'conditions' => array('DefaultOrg.organization_id' => $currentOrgId, 'DefaultOrg.status' => 1, 'UserOrganization.status' => 1, 'User.status' => 1),
                         'conditions' => $conditions
                     ));
-//echo $this->DefaultOrg->getLastQuery(); exit;
+                    //echo $this->DefaultOrg->getLastQuery(); exit;
                     $totalRecords = isset($totalUsersCount[0][0]['total_records']) ? $totalUsersCount[0][0]['total_records'] : 0;
-//echo $totalRecords; exit;
+                    //echo $totalRecords; exit;
 
                     /*                     * ********************************* */
 
@@ -15695,8 +16235,10 @@ class ApiController extends AppController {
                         )
                     );
 
-                    $params['fields'] = array('DefaultOrg.*', "CONCAT(trim(fname),' ',trim(lname)) as fullname", 'User.*', 'UserOrganization.user_role',
-                        'UNIX_TIMESTAMP(User.last_app_used) as last_used_date', 'UNIX_TIMESTAMP() as curr_time', 'OrgDepartment.name');
+                    $params['fields'] = array(
+                        'DefaultOrg.*', "CONCAT(trim(fname),' ',trim(lname)) as fullname", 'User.*', 'UserOrganization.user_role',
+                        'UNIX_TIMESTAMP(User.last_app_used) as last_used_date', 'UNIX_TIMESTAMP() as curr_time', 'OrgDepartment.name'
+                    );
 
                     $params['limit'] = $limit;
                     $params['page'] = $page;
@@ -15739,14 +16281,14 @@ class ApiController extends AppController {
                         $uFollowingID = $userFollowings['id'];
                         $followingIdsArray = json_decode($userFollowings['following_ids']);
                     }
-//                    $returnData['following_users'] = $followingIdsArray;
+                    //                    $returnData['following_users'] = $followingIdsArray;
 
                     if (isset($ActiveUsersList)) {
                         if (is_array($ActiveUsersList) && count($ActiveUsersList) > 0) {
                             $User = array();
                             foreach ($ActiveUsersList as $index => $UserData) {
 
-//pr($UserData); exit;
+                                //pr($UserData); exit;
                                 $User['is_following'] = false;
                                 if (in_array($UserData['User']['id'], $followingIdsArray)) {
                                     $User['is_following'] = true;
@@ -15769,15 +16311,16 @@ class ApiController extends AppController {
                                 $User['id'] = $UserData['User']['id'];
                                 $User['dept_name'] = $UserData['OrgDepartment']['name'];
                                 $User['user_role'] = $UserData['UserOrganization']['user_role'];
-//pr($User); exit;   
+                                //pr($User); exit;   
                                 $activeUsers['user'][] = $User;
                             }
                         }
                     }
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Active User List ",
-                            "data" => $activeUsers),
+                        'result' => array(
+                            "status" => true, "msg" => "Active User List ",
+                            "data" => $activeUsers
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
@@ -15786,36 +16329,41 @@ class ApiController extends AppController {
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getAllPendingListing() {
+    public function getAllPendingListing()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                pr($this->request->data); 
-//                exit; 
+                //                pr($this->request->data); 
+                //                exit; 
                 $statusConfig = Configure::read("statusConfig");
                 $loggedInUser = $this->Auth->user();
-//                pr($loggedInUser); exit;
+                //                pr($loggedInUser); exit;
                 if (isset($loggedInUser['current_org'])) {
                     $currentOrgId = $loggedInUser['current_org']['id'];
                     $user_id = $loggedInUser['id'];
                     /*                     * ** Get All pending notification list START*** */
-//                    echo $currentOrgId; exit;
+                    //                    echo $currentOrgId; exit;
                     $this->loadModel('AlertCenterNotification');
-                    $allNotificationsList = $this->AlertCenterNotification->find('all', array('fields' => array('*'),
-                        'conditions' => array('user_id' => $user_id, /* 'org_id' => $currentOrgId, */ 'status' => 0)));
+                    $allNotificationsList = $this->AlertCenterNotification->find('all', array(
+                        'fields' => array('*'),
+                        'conditions' => array('user_id' => $user_id, /* 'org_id' => $currentOrgId, */ 'status' => 0)
+                    ));
 
                     if (!empty($allNotificationsList)) {
                         $alertCenterNotificationArray = array();
@@ -15823,18 +16371,19 @@ class ApiController extends AppController {
                             $alertCenterNotificationArray['AlertCenterNotification'][] = $notificationDATA['AlertCenterNotification'];
                         }
                     } else {
-//$alertCenterNotificationArray = json_encode((object) null);
+                        //$alertCenterNotificationArray = json_encode((object) null);
                         $alertCenterNotificationArray['AlertCenterNotification'] = array();
                     }
-//                    pr($alertCenterNotificationArray);
-//                    exit;
+                    //                    pr($alertCenterNotificationArray);
+                    //                    exit;
                     /*                     * ** Get All pending notification list END*** */
 
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Pending Alert Cente Notification.",
-                            "data" => $alertCenterNotificationArray),
+                        'result' => array(
+                            "status" => true, "msg" => "Pending Alert Cente Notification.",
+                            "data" => $alertCenterNotificationArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
@@ -15843,36 +16392,41 @@ class ApiController extends AppController {
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getAllNotificationListing() {
+    public function getAllNotificationListing()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                pr($this->request->data); 
-//                exit; 
+                //                pr($this->request->data); 
+                //                exit; 
                 $statusConfig = Configure::read("statusConfig");
                 $loggedInUser = $this->Auth->user();
-//                pr($loggedInUser); exit;
+                //                pr($loggedInUser); exit;
                 if (isset($loggedInUser['current_org'])) {
                     $currentOrgId = $loggedInUser['current_org']['id'];
                     $user_id = $loggedInUser['id'];
                     /*                     * ** Get All pending notification list START*** */
-//                    echo $currentOrgId; exit;
+                    //                    echo $currentOrgId; exit;
                     $this->loadModel('AlertCenterNotification');
-                    $allNotificationsList = $this->AlertCenterNotification->find('all', array('fields' => array('*'),
-                        'conditions' => array('user_id' => $user_id /* , 'org_id' => $currentOrgId */)));
+                    $allNotificationsList = $this->AlertCenterNotification->find('all', array(
+                        'fields' => array('*'),
+                        'conditions' => array('user_id' => $user_id /* , 'org_id' => $currentOrgId */)
+                    ));
 
                     if (!empty($allNotificationsList)) {
 
@@ -15880,18 +16434,19 @@ class ApiController extends AppController {
                             $alertCenterNotificationArray['AlertCenterNotification'][] = $notificationDATA['AlertCenterNotification'];
                         }
                     } else {
-//                        $alertCenterNotificationArray = json_encode((object) null);
+                        //                        $alertCenterNotificationArray = json_encode((object) null);
                         $alertCenterNotificationArray['AlertCenterNotification'] = array();
                     }
-//                    pr($alertCenterNotificationArray);
-//                    exit;
+                    //                    pr($alertCenterNotificationArray);
+                    //                    exit;
                     /*                     * ** Get All pending notification list END*** */
 
 
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Pending Alert Center Notification.",
-                            "data" => $alertCenterNotificationArray),
+                        'result' => array(
+                            "status" => true, "msg" => "Pending Alert Center Notification.",
+                            "data" => $alertCenterNotificationArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
@@ -15900,35 +16455,39 @@ class ApiController extends AppController {
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getAllLast15Notifications() {
+    public function getAllLast15Notifications()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                pr($this->request->data); 
-//                exit; 
+                //                pr($this->request->data); 
+                //                exit; 
                 $statusConfig = Configure::read("statusConfig");
                 $loggedInUser = $this->Auth->user();
-//                pr($loggedInUser); exit;
+                //                pr($loggedInUser); exit;
                 if (isset($loggedInUser['current_org'])) {
                     $currentOrgId = $loggedInUser['current_org']['id'];
                     $user_id = $loggedInUser['id'];
                     /*                     * ** Get All pending notification list START*** */
-//                    echo $currentOrgId; exit;
+                    //                    echo $currentOrgId; exit;
                     $this->loadModel('AlertCenterNotification');
-                    $allNotificationsList = $this->AlertCenterNotification->find('all', array('fields' => array('AlertCenterNotification.*', "concat(User.fname,' ',User.lname) as username", 'User.image'),
+                    $allNotificationsList = $this->AlertCenterNotification->find('all', array(
+                        'fields' => array('AlertCenterNotification.*', "concat(User.fname,' ',User.lname) as username", 'User.image'),
                         'joins' => array(
                             array(
                                 'table' => 'users',
@@ -15938,15 +16497,15 @@ class ApiController extends AppController {
                                     'AlertCenterNotification.sender_id = User.id '
                                 )
                             )
-                        )
-                        ,
-                        'conditions' => array('user_id' => $user_id /* , 'org_id' => $currentOrgId */), 'order' => array('AlertCenterNotification.created desc'), 'limit' => 15));
+                        ),
+                        'conditions' => array('user_id' => $user_id /* , 'org_id' => $currentOrgId */), 'order' => array('AlertCenterNotification.created desc'), 'limit' => 15
+                    ));
 
                     if (!empty($allNotificationsList)) {
 
                         foreach ($allNotificationsList as $index => $notificationDATA) {
                             //pr($notificationDATA); exit;
-//                            $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
+                            //                            $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
                             $img = Router::url('/', true) . "app/webroot/img/user.png";
                             if ($notificationDATA["User"]["image"] != "") {
                                 $img = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $notificationDATA["User"]["image"];
@@ -15956,18 +16515,19 @@ class ApiController extends AppController {
                             $alertCenterNotificationArray['AlertCenterNotification'][] = $notificationDATA['AlertCenterNotification'];
                         }
                     } else {
-//                        $alertCenterNotificationArray = json_encode((object) null);
+                        //                        $alertCenterNotificationArray = json_encode((object) null);
                         $alertCenterNotificationArray['AlertCenterNotification'] = array();
                     }
-//                    pr($alertCenterNotificationArray);
-//                    exit;
+                    //                    pr($alertCenterNotificationArray);
+                    //                    exit;
                     /**** Get All pending notification list END*** */
 
                     //sleep(40);
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Last 15 notifications",
-                            "data" => $alertCenterNotificationArray),
+                        'result' => array(
+                            "status" => true, "msg" => "Last 15 notifications",
+                            "data" => $alertCenterNotificationArray
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
@@ -15976,69 +16536,75 @@ class ApiController extends AppController {
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function onViewNotification() {
+    public function onViewNotification()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                pr($this->request->data);
-//                exit;
+                //                pr($this->request->data);
+                //                exit;
                 $statusConfig = Configure::read("statusConfig");
                 $loggedInUser = $this->Auth->user();
-//                pr($loggedInUser); exit;
+                //                pr($loggedInUser); exit;
                 if (isset($loggedInUser['current_org'])) {
                     $currentOrgId = $loggedInUser['current_org']['id'];
                     $user_id = $loggedInUser['id'];
                     /*                     * ** Get All pending notification list START*** */
-//                    echo $currentOrgId; exit;
+                    //                    echo $currentOrgId; exit;
                     $this->loadModel('AlertCenterNotification');
                     $id = $this->request->data['id'];
                     $aCMotification['AlertCenterNotification']['id'] = $id;
                     $aCMotification['AlertCenterNotification']['status'] = 1; //0= pending, 1= viewed , 2 = cancelled
                     $allID = $this->AlertCenterNotification->save($aCMotification);
-//                    $allID = $this->AlertCenterNotification->delete($id);
-//                    pr($allID);
-//                    exit;
-//                    pr($alertCenterNotificationArray);
-//                    exit;
+                    //                    $allID = $this->AlertCenterNotification->delete($id);
+                    //                    pr($allID);
+                    //                    exit;
+                    //                    pr($alertCenterNotificationArray);
+                    //                    exit;
                     /*                     * ** Get All pending notification list END*** */
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Alert Cente Notification has been viewed."),
+                        'result' => array(
+                            "status" => true, "msg" => "Alert Cente Notification has been viewed."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /**
-    *Added by saurabh for modifying accept_terms value.
-    */
+     *Added by saurabh for modifying accept_terms value.
+     */
     // public function acceptTermsAndCondition() 
     // {
     //     if ($this->request->is('post')) 
@@ -16050,14 +16616,14 @@ class ApiController extends AppController {
     //             $loggedInUser = $this->Auth->user();
     //             //pr($loggedInUser); exit;
     //             if (isset($loggedInUser['id'])) {
-                    
+
     //                 $this->loadModel('User');
     //                 $id = $this->request->data['id'];
     //                 $tncModification['User']['id'] = $id;
     //                 $tncModification['User']['terms_accept'] = 1; //0= false, 1= true 
     //                 $allID = $this->User->save($tncModification);
     //                 //$saved = $this->User->saveField("terms_accept", 1);
-                    
+
     //                 $this->set(array(
     //                     'result' => array("status" => true
     //                         , "msg" => "Terms and condition accepted.", 'data' => true),
@@ -16080,53 +16646,58 @@ class ApiController extends AppController {
     //     }
     // }
 
-    public function onCancelNotification() {
+    public function onCancelNotification()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                pr($this->request->data);
-//                exit;
+                //                pr($this->request->data);
+                //                exit;
                 $statusConfig = Configure::read("statusConfig");
                 $loggedInUser = $this->Auth->user();
-//                pr($loggedInUser); exit;
+                //                pr($loggedInUser); exit;
                 if (isset($loggedInUser['current_org'])) {
                     $currentOrgId = $loggedInUser['current_org']['id'];
                     $user_id = $loggedInUser['id'];
                     /*                     * ** Get All pending notification list START*** */
-//                    echo $currentOrgId; exit;
+                    //                    echo $currentOrgId; exit;
                     $this->loadModel('AlertCenterNotification');
                     $id = $this->request->data['id'];
                     $aCMotification = array();
                     $aCMotification['AlertCenterNotification']['id'] = $id;
                     $aCMotification['AlertCenterNotification']['status'] = 2; //0= pending, 1= viewed , 2 = cancelled
                     $allID = $this->AlertCenterNotification->save($aCMotification);
-//                    pr($allID);
-//                    exit;
-//                    pr($alertCenterNotificationArray);
-//                    exit;
+                    //                    pr($allID);
+                    //                    exit;
+                    //                    pr($alertCenterNotificationArray);
+                    //                    exit;
                     /*                     * ** Get All pending notification list END*** */
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Alert Cente Notification has been cancelled."),
+                        'result' => array(
+                            "status" => true, "msg" => "Alert Cente Notification has been cancelled."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function getLikesList() {
+    public function getLikesList()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $token = $this->request->data['token'];
@@ -16135,7 +16706,7 @@ class ApiController extends AppController {
                     $id = $this->request->data['id'];
                     $feedType = $this->request->data['type'];
 
-                    if ($feedType == 'post') {// POST LIKES LIST
+                    if ($feedType == 'post') { // POST LIKES LIST
                         $limit = Configure::read("pageLimit");
                         if (isset($this->request->query["page"]) && $this->request->query["page"] > 1) {
                             $page = $this->request->query["page"];
@@ -16187,13 +16758,14 @@ class ApiController extends AppController {
                                 $postLikeArray[$index]['user_id'] = $postLikedata['User']['id'];
                             }
                         }
-//                        pr($postLikeArray);
-//                        exit;
+                        //                        pr($postLikeArray);
+                        //                        exit;
                         $returnData = array("likes_list" => $postLikeArray, "total_page" => $totalpage, "curr_page" => $page);
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Post Likes List",
-                                "data" => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => "Post Likes List",
+                                "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else if ($feedType == 'endorse') { // ENDORSEMENT LIKES LIST
@@ -16248,42 +16820,47 @@ class ApiController extends AppController {
                                 $endorsementLikeArray[$index]['user_id'] = $postLikedata['User']['id'];
                             }
                         }
-//                        pr($endorsementLikeArray);
-//                        
+                        //                        pr($endorsementLikeArray);
+                        //                        
                         $returnData = array("likes_list" => $endorsementLikeArray, "total_page" => $totalpage, "curr_page" => $page);
-//                        exit;
+                        //                        exit;
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Endorsement Likes List",
-                                "data" => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => "Endorsement Likes List",
+                                "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Invalid token."),
+                        'result' => array(
+                            "status" => false, "msg" => "Invalid token."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /** Added by Babulal Prasad @27-dec-2018 ** */
-    public function getFeaturedVideoList() {
+    public function getFeaturedVideoList()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $token = $this->request->data['token'];
@@ -16293,7 +16870,7 @@ class ApiController extends AppController {
                     $orgid = $this->request->data['org_id'];
 
                     $currentOrgData = $this->Organization->find("all", array('fields' => array('featured_video_enabled'), 'conditions' => array('id' => $orgid)));
-//                    pr($currentOrgData ); exit;
+                    //                    pr($currentOrgData ); exit;
                     if (!empty($currentOrgData)) {
                         $featured_video_enabled = $currentOrgData[0]['Organization']['featured_video_enabled'];
                     }
@@ -16303,9 +16880,10 @@ class ApiController extends AppController {
                     if ($featured_video_enabled == 0) {
                         $returnData = array("org_video_list" => $orgVideoListArray, "total_video" => $totalVideo, 'featured_video_enabled' => $featured_video_enabled);
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Organizations video list.",
-                                "data" => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => "Organizations video list.",
+                                "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
@@ -16350,37 +16928,42 @@ class ApiController extends AppController {
                         }
                         $returnData = array("org_video_list" => $orgVideoListArray, "total_video" => $totalVideo, 'featured_video_enabled' => $featured_video_enabled);
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => "Organizations video list.",
-                                "data" => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => "Organizations video list.",
+                                "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Invalid token."),
+                        'result' => array(
+                            "status" => false, "msg" => "Invalid token."
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /** Added by Babulal Prasad at 12162016 * */
-    public function videoviewed() {
+    public function videoviewed()
+    {
         if ($this->request->is('post')) {
 
             $videoid = $this->request->data["video_id"];
@@ -16414,47 +16997,51 @@ class ApiController extends AppController {
             }
 
             $this->set(array(
-                'result' => array("status" => true
-                    , "msg" => 'Video viewed',
+                'result' => array(
+                    "status" => true, "msg" => 'Video viewed',
                 ),
                 '_serialize' => array('result')
             ));
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /** Added by Babulal Prasad at 12162016 * */
-    public function deleteFeaturedVideo() {
+    public function deleteFeaturedVideo()
+    {
         if ($this->request->is('post')) {
             $videoid = $this->request->data["video_id"];
             if (isset($this->request->data['token'])) {
                 $token = $this->request->data['token'];
-//              $userinfo = $this->getuserData($token, true);
-//              $userID = $userinfo['users']['id'];
+                //              $userinfo = $this->getuserData($token, true);
+                //              $userID = $userinfo['users']['id'];
                 $this->OrgVideo->id = $videoid;
                 $this->OrgVideo->save(array('status' => 3));
                 $this->set(array(
-                    'result' => array("status" => 1
-                        , "msg" => 'Video deleted',
+                    'result' => array(
+                        "status" => 1, "msg" => 'Video deleted',
                     ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -16463,14 +17050,15 @@ class ApiController extends AppController {
     /** Added by Babulal Prasad at 13AUG2019
      * LDAP authentication
      * * */
-    public function ldapLogin() {
+    public function ldapLogin()
+    {
         if ($this->request->is('post')) {
             /* LDAP Auth */
-//            username - bunts
-//            password-Bunty1!
-//            username - rbrajpoot
-//            password- Ram1234
-//Administrator / Redhat#777!!            
+            //            username - bunts
+            //            password-Bunty1!
+            //            username - rbrajpoot
+            //            password- Ram1234
+            //Administrator / Redhat#777!!            
 
             $org_id = $this->request->data['org_id'];
             $username = $this->request->data['username'];
@@ -16481,10 +17069,10 @@ class ApiController extends AppController {
 
             $ldap_dn = "cn=" . $username . $basedn;
             $domain = '@' . $domainName;
-//            $ldap_connect = ldap_connect("ldap://adtest.in");
-//            ldap_set_option($ldap_connect, LDAP_OPT_PROTOCOL_VERSION, 3);
+            //            $ldap_connect = ldap_connect("ldap://adtest.in");
+            //            ldap_set_option($ldap_connect, LDAP_OPT_PROTOCOL_VERSION, 3);
             $ldap_connect = ldap_connect("ldap://" . $domainName, 636);
-//            echo $ldap_connect;
+            //            echo $ldap_connect;
 
             if (!$ldap_connect) {
                 echo 'Could not connect to LDAP server dfsdgsdfg .';
@@ -16495,10 +17083,10 @@ class ApiController extends AppController {
 
             //if (ldap_bind($ldap_connect, $ldap_dn, $ldap_password)) {
             if (@ldap_bind($ldap_connect, $username . $domain, $ldap_password)) {
-//                echo "Authenticated Successfully";
+                //                echo "Authenticated Successfully";
                 $returnData = $this->checkNDorseLogin($ldap_connect, $username, $basedn, $domain, $org_id);
-//                pr($returnData);
-//                exit;
+                //                pr($returnData);
+                //                exit;
                 if ($returnData['type'] == 'login') {
                     $this->set(array(
                         'result' => array("status" => true, 'data' => $returnData['data']),
@@ -16510,10 +17098,10 @@ class ApiController extends AppController {
                         'result' => array("status" => true, 'data' => $returnData['data'], 'msg' => $returnData['msg']),
                         '_serialize' => array('result')
                     ));
-//                    $this->set(array(
-//                        'result' => array("status" => true, 'data' => $returnData['data'], 'isDefault' => $returnData['isDefault'], 'isActive' => $returnData['isActive'], 'msg' => $returnData['msg']),
-//                        '_serialize' => array('result')
-//                    ));
+                    //                    $this->set(array(
+                    //                        'result' => array("status" => true, 'data' => $returnData['data'], 'isDefault' => $returnData['isDefault'], 'isActive' => $returnData['isActive'], 'msg' => $returnData['msg']),
+                    //                        '_serialize' => array('result')
+                    //                    ));
                 }
             } else {
                 $errorMsg = ldap_error($ldap_connect);
@@ -16521,21 +17109,24 @@ class ApiController extends AppController {
                     $errorMsg = 'Unable to connect server.';
                 }
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => $errorMsg),
+                    'result' => array(
+                        "status" => false, "msg" => $errorMsg
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function checkNDorseLogin($ad, $samaccountname, $basedn, $domain, $org_id) {
+    public function checkNDorseLogin($ad, $samaccountname, $basedn, $domain, $org_id)
+    {
         $sr = ldap_search($ad, $basedn, "(userprincipalname={$samaccountname}{$domain})");
         $entry = ldap_first_entry($ad, $sr);
         $user_email = '';
@@ -16557,19 +17148,19 @@ class ApiController extends AppController {
         } while ($entry = ldap_next_entry($ad, $entry));
 
         $entries = ldap_get_entries($ad, $sr);
-//        pr($entries);
-//        pr($user_email);
-//        pr($uniqueAccountName);
+        //        pr($entries);
+        //        pr($user_email);
+        //        pr($uniqueAccountName);
         $organizationData = $this->Organization->findById($org_id);
         $organization = $organizationData['Organization'];
 
-//        pr($entries);
-//        exit;
+        //        pr($entries);
+        //        exit;
 
         $userData = $this->User->find('first', array('conditions' => array('User.email' => $user_email)));
 
-//        pr($userData);
-//        exit;
+        //        pr($userData);
+        //        exit;
         if (!empty($userData)) {
             /*             * *** LOGIN ON NDORSE SERVER SESSION***** */
 
@@ -16582,28 +17173,29 @@ class ApiController extends AppController {
                 $userData['User']['ad_accountname'] = $uniqueAccountName;
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "The third party account you are using cannot be associated with your existing account. Please try  again."),
+                    'result' => array(
+                        "status" => false, "msg" => "The third party account you are using cannot be associated with your existing account. Please try  again."
+                    ),
                     '_serialize' => array('result')
                 ));
                 return;
             }
 
-//            if (!empty($userData['User']['ad_accountname'])) {
-//                $logginSuccess = $this->Auth->login($userData['User']);
-//            } else {
-//                $this->set(array(
-//                    'result' => array("status" => false
-//                        , "msg" => "The third party account you are using is not configured correctly."),
-//                    '_serialize' => array('result')
-//                ));
-//                return;
-//            }
+            //            if (!empty($userData['User']['ad_accountname'])) {
+            //                $logginSuccess = $this->Auth->login($userData['User']);
+            //            } else {
+            //                $this->set(array(
+            //                    'result' => array("status" => false
+            //                        , "msg" => "The third party account you are using is not configured correctly."),
+            //                    '_serialize' => array('result')
+            //                ));
+            //                return;
+            //            }
 
             if ($logginSuccess) {
 
                 $loggedinUserId = $this->Auth->user('id');
-//                    pr($loggedinUserId);exit;
+                //                    pr($loggedinUserId);exit;
                 $token = $this->generateToken($loggedinUserId);
                 $this->Session->write('Auth.User.token', $token);
                 $params = array();
@@ -16718,7 +17310,7 @@ class ApiController extends AppController {
                 } else {
                     $returnData["dob"] = "";
                 }
-//
+                //
                 $source = 'activedirectory';
                 if ($source == "activedirectory") {
                     unset($returnData["source_id"]);
@@ -16732,7 +17324,7 @@ class ApiController extends AppController {
                 } else {
                     $returnData['profile_updated'] = true;
                 }
-//                    pr($returnData); exit;
+                //                    pr($returnData); exit;
                 if (empty($returnData['fname']) || empty($returnData['lname']) || empty($returnData['mobile']) || empty($returnData['country']) || empty($returnData['street']) || empty($returnData['zip']) || empty($returnData['state']) || empty($returnData['city'])) {
                     $returnData['profile_completed'] = false;
                 } else {
@@ -16741,7 +17333,7 @@ class ApiController extends AppController {
 
                 $updated = $this->User->updateAll(array("last_app_used" => "NOW()"), array("id" => $loggedInUser['id']));
 
-//Get pending request organizations
+                //Get pending request organizations
                 $pendingRequests = $this->OrgRequests->find("all", array("conditions" => array("user_id" => $loggedInUser['id'], "status" => 0)));
                 $pendingRequestOrgs = array();
                 foreach ($pendingRequests as $pendingRequest) {
@@ -16752,13 +17344,13 @@ class ApiController extends AppController {
 
                 $returnData['pending_requests'] = $pendingRequestOrgs;
                 //pr($returnData); exit;
-//                    $a = $this->Auth->user();
-//                    $returnData['auth_user'] = $a;
-//                echo "<hr />";
+                //                    $a = $this->Auth->user();
+                //                    $returnData['auth_user'] = $a;
+                //                echo "<hr />";
                 $returnArray['data'] = $returnData;
                 $returnArray['msg'] = 'Succussfully Logged in';
                 $returnArray['type'] = 'login';
-//                pr($returnArray); exit;
+                //                pr($returnArray); exit;
                 return $returnArray;
             }
         } else {
@@ -16767,7 +17359,7 @@ class ApiController extends AppController {
             $returnData['msg'] = 'You are not authorized to access. Please contact your system administrator.';
             $returnData['type'] = 'signup';
 
-//                    pr($returnData); exit;
+            //                    pr($returnData); exit;
             return $returnData;
 
 
@@ -16785,26 +17377,26 @@ class ApiController extends AppController {
             $userAdDATA['User']['secret_code'] = $this->getSecretCode("user");
             $userAdDATA['User']['last_app_used'] = "NOW()";
 
-//            echo "CHECK AND SAVE USER DATA";
-//            pr($userAdDATA); exit;
+            //            echo "CHECK AND SAVE USER DATA";
+            //            pr($userAdDATA); exit;
 
             $this->User->setValidation('register');
             $this->User->set($userAdDATA);
 
             if ($this->User->validates()) {
-//                pr($userAdDATA);
-//                exit;
+                //                pr($userAdDATA);
+                //                exit;
                 if ($userData = $this->User->save(null, false)) {
                     $userRes = $this->User->findById($this->User->id);
-//                    pr($userRes); exit;
+                    //                    pr($userRes); exit;
                     $userAdDATA['User']['id'] = $this->User->id;
                     $loggedinUserId = $this->User->id;
                     $token = $this->generateToken($loggedinUserId);
                     $this->Auth->login($userRes['User']);
                     $this->Session->write('Auth.User.token', $token);
                     $returnData['data'] = $this->Auth->user();
-//                    pr($returnData); exit;
-//                    $returnData['role'] = $roleList[$returnData['role']];
+                    //                    pr($returnData); exit;
+                    //                    $returnData['role'] = $roleList[$returnData['role']];
 
                     /*                     * ** ASSIGNING ORG CODE START **** */
                     $statusConfig = Configure::read("statusConfig");
@@ -16831,8 +17423,8 @@ class ApiController extends AppController {
                         $params = array();
                         $conditions = array();
                         $todayDate = date('Y-m-d H:i:s');
-//                    $conditions['start_date <='] = $todayDate;
-//                    $conditions['end_date >='] = $todayDate;
+                        //                    $conditions['start_date <='] = $todayDate;
+                        //                    $conditions['end_date >='] = $todayDate;
                         $conditions['Subscription.status'] = 1;
                         $conditions['Subscription.organization_id'] = $org_id;
                         $params['conditions'] = $conditions;
@@ -16841,13 +17433,13 @@ class ApiController extends AppController {
                             $poolPurchased = $currentSubscription['Subscription']['pool_purchased'];
 
                             if ($paidCount >= $poolPurchased) {
-//$status = $statusConfig['invite_inactive'];
+                                //$status = $statusConfig['invite_inactive'];
                                 $status = $statusConfig['inactive'];
                             } else {
                                 $status = $statusConfig['active'];
                             }
                         } else {
-//$status = $statusConfig['invite_inactive'];
+                            //$status = $statusConfig['invite_inactive'];
                             $status = $statusConfig['inactive'];
                         }
                     } else {
@@ -16897,53 +17489,53 @@ class ApiController extends AppController {
                         $isActive = true;
                     } else if ($status == $statusConfig['eval']) {
                         $msg = "You have successfully joined the Organization, but you are in evaluation mode.";
-//                        $this->set(array(
-//                            'result' => array("status" => true
-//                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => true
+                        //                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     } else {
                         $msg = "You have successfully joined " . $organization['name'] . "! Your status is inactive. To activate your status, contact your Organization Admin to purchase additional subscription.";
-//                        $isActive = false;
-//                        $admin = $this->User->findById($organization['admin_id']);
-//
-//                        $subject = "Purchase subscription";
-//                        $template = "less_subscription_admin";
-//
-//                        /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
-//                        $userIdEncrypted = base64_encode($organization['admin_id']);
-//                        $rootUrl = Router::url('/', true);
-//                        $rootUrl = str_replace("http:", "https:", $rootUrl);
-//                        $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
-//                        /*                         * * */
-//
-//
-//                        $viewVars = serialize(array("org_name" => $organization['name'], 'user' => $loggedinUser, "pathToRender" => $pathToRender));
-//                        $to = $admin['User']['email'];
-////$this->Common->sendEmail($admin['User']['email'], $subject, $template, $viewVars);
-//                        $email = array("to" => $to, "subject" => $subject, "config_vars" => $viewVars, "template" => $template);
-//  $this->Email->save($email);
-//                        $this->set(array(
-//                            'result' => array("status" => false
-//                                , "msg" => $msg, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        //                        $isActive = false;
+                        //                        $admin = $this->User->findById($organization['admin_id']);
+                        //
+                        //                        $subject = "Purchase subscription";
+                        //                        $template = "less_subscription_admin";
+                        //
+                        //                        /** added by Babulal Prasad at @8-feb-2018 for unsubscribe from email */
+                        //                        $userIdEncrypted = base64_encode($organization['admin_id']);
+                        //                        $rootUrl = Router::url('/', true);
+                        //                        $rootUrl = str_replace("http:", "https:", $rootUrl);
+                        //                        $pathToRender = $rootUrl . "unsubscribe/" . $userIdEncrypted;
+                        //                        /*                         * * */
+                        //
+                        //
+                        //                        $viewVars = serialize(array("org_name" => $organization['name'], 'user' => $loggedinUser, "pathToRender" => $pathToRender));
+                        //                        $to = $admin['User']['email'];
+                        ////$this->Common->sendEmail($admin['User']['email'], $subject, $template, $viewVars);
+                        //                        $email = array("to" => $to, "subject" => $subject, "config_vars" => $viewVars, "template" => $template);
+                        //  $this->Email->save($email);
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => false
+                        //                                , "msg" => $msg, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     }
 
-//                    $orgReturnData = array("Organization" => $organization);
+                    //                    $orgReturnData = array("Organization" => $organization);
                     $returnData['data']['current_org'] = $organization;
                     $returnData['isDefault'] = $isDefault;
                     $returnData['isActive'] = $isActive;
                     $returnData['msg'] = $msg;
                     $returnData['type'] = 'signup';
-//                    pr($returnData); exit;
+                    //                    pr($returnData); exit;
                     return $returnData;
-//                    $this->set(array(
-//                        'result' => array("status" => true
-//                            , "msg" => $msg, "data" => $orgReturnData, "isDefault" => $isDefault, "isActive" => $isActive),
-//                        '_serialize' => array('result')
-//                    ));
-//                    return;
+                    //                    $this->set(array(
+                    //                        'result' => array("status" => true
+                    //                            , "msg" => $msg, "data" => $orgReturnData, "isDefault" => $isDefault, "isActive" => $isActive),
+                    //                        '_serialize' => array('result')
+                    //                    ));
+                    //                    return;
                     /*                     * ** ASSIGNING ORG END **** */
                 } else {
                     $errors = $this->User->validationErrors;
@@ -16961,68 +17553,83 @@ class ApiController extends AppController {
         }
     }
 
-    public function getOrgShortCode() {
+    public function getOrgShortCode()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['short_code'])) {
                 $short_code = trim($this->request->data['short_code']);
                 if (strtolower($short_code) == 'lgh') {
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp'),
-//                            , "msg" => "Organization ADFS link.", 'adfs_link' => 'https://adfs.lgh.org/adfs/ls/?SAMLRequest=nZLNTsMwEIRfJfI9ceKqKbGaSoUeqFRE1QYOXJBjb36k2A5eB%2FH4pCmI9tIDJ3t2%2FY12R16i0F3P14NvzAE%2BBkAffOnOIJ8aORmc4VZgi9wIDci95Mf1046zKOa9s95K25EL5DYhEMH51hoSbDc5eZ8tykpKgPlMqgUrY5nOlRqvUKVllmWKJVUSlykwRoJXcDiSORmNRhxxgK1BL4wfS3GShXEWJmmRMB7f8Rl7I8Fm3KY1wk9U432PnFKhKoy6uomsqydBO6QkWP9O9mANDhrcEdxnK%2BHlsPtjEW0knKyFh0haTbHVfQentam2augg6pueThrPJwuFxKlqlHUIIfYk2P%2Fkdt8a1Zr6dmTl%2BRHyx6LYh%2FvnY0FWy5M1nyJwq%2F8Np8ELJby4nm1JL53P6vp3rL4B&RelayState=https%3A%2F%2Fsso.arcgate.com%2Fsimplesaml%2Fmodule.php%2Fcore%2Fpostredirect.php%3FRedirId%3D_b8673e00349e9b43d3548a82b5bd1505e29354e422&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=OtfL1UN8gU52Z9ArVE6hGyDTeb8wWzUsZT2QF50HUcz%2FnA51LJ6cW4fc%2Bpx%2F%2Fpmy6BENflp3Z7y10D9unVBHanzb2hI97oH%2B%2BGmHUR4NFODFPSV%2BeahewIsPH48o%2FoPesM7DLu9j1ai3%2F83T1zo8EfgieFfC8204FQtcwoX5Z8qk1kCmJOwfBItaMGKyudJ0%2FJswSghPTTmCRQAD9Q9Zg0BfqkqxweiHhpzROQdhH4cellk96r6LB%2BTSYCAlMRVzkmXOoiaerSsh4cBlhI4g3od8U%2Brjg4ynHcc%2F1ivBolRPMg88f7YBMtWmEMgtQ6N3wFi%2FrjRZP2BzYxTpUq1bYQ%3D%3D'),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=ndorse-sp'
+                        ),
+                        //                            , "msg" => "Organization ADFS link.", 'adfs_link' => 'https://adfs.lgh.org/adfs/ls/?SAMLRequest=nZLNTsMwEIRfJfI9ceKqKbGaSoUeqFRE1QYOXJBjb36k2A5eB%2FH4pCmI9tIDJ3t2%2FY12R16i0F3P14NvzAE%2BBkAffOnOIJ8aORmc4VZgi9wIDci95Mf1046zKOa9s95K25EL5DYhEMH51hoSbDc5eZ8tykpKgPlMqgUrY5nOlRqvUKVllmWKJVUSlykwRoJXcDiSORmNRhxxgK1BL4wfS3GShXEWJmmRMB7f8Rl7I8Fm3KY1wk9U432PnFKhKoy6uomsqydBO6QkWP9O9mANDhrcEdxnK%2BHlsPtjEW0knKyFh0haTbHVfQentam2augg6pueThrPJwuFxKlqlHUIIfYk2P%2Fkdt8a1Zr6dmTl%2BRHyx6LYh%2FvnY0FWy5M1nyJwq%2F8Np8ELJby4nm1JL53P6vp3rL4B&RelayState=https%3A%2F%2Fsso.arcgate.com%2Fsimplesaml%2Fmodule.php%2Fcore%2Fpostredirect.php%3FRedirId%3D_b8673e00349e9b43d3548a82b5bd1505e29354e422&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=OtfL1UN8gU52Z9ArVE6hGyDTeb8wWzUsZT2QF50HUcz%2FnA51LJ6cW4fc%2Bpx%2F%2Fpmy6BENflp3Z7y10D9unVBHanzb2hI97oH%2B%2BGmHUR4NFODFPSV%2BeahewIsPH48o%2FoPesM7DLu9j1ai3%2F83T1zo8EfgieFfC8204FQtcwoX5Z8qk1kCmJOwfBItaMGKyudJ0%2FJswSghPTTmCRQAD9Q9Zg0BfqkqxweiHhpzROQdhH4cellk96r6LB%2BTSYCAlMRVzkmXOoiaerSsh4cBlhI4g3od8U%2Brjg4ynHcc%2F1ivBolRPMg88f7YBMtWmEMgtQ6N3wFi%2FrjRZP2BzYxTpUq1bYQ%3D%3D'),
+                        '_serialize' => array('result')
+                    ));
+                } elseif (strtolower($short_code) == 'tghs') {
+                    $this->set(array(
+                        'result' => array(
+                            "status" => true, "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=tgmc-sp'
+                        ),
                         '_serialize' => array('result')
                     ));
                 } elseif (strtolower($short_code) == 'lcmc') {
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=lcmch-sp'),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=lcmch-sp'
+                        ),
                         '_serialize' => array('result')
                     ));
                 } elseif (strtolower($short_code) == 'arc') {
                     $this->set(array(
-                        'result' => array("status" => true
-                            , "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=arcgate-sp'),
+                        'result' => array(
+                            "status" => true, "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=arcgate-sp'
+                        ),
                         '_serialize' => array('result')
                     ));
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Wrong Organization Code.", 'adfs_link' => ''),
+                        'result' => array(
+                            "status" => false, "msg" => "Wrong Organization Code.", 'adfs_link' => ''
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Organization short code missing."),
+                    'result' => array(
+                        "status" => false, "msg" => "Organization short code missing."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
-    public function ADFSClientLogin() {
+    public function ADFSClientLogin()
+    {
 
         if ($this->request->is('post')) {
-//            pr($this->request->data);
-//            exit;
-//            exit;
+            //            pr($this->request->data);
+            //            exit;
+            //            exit;
             $params = json_decode($this->request->data['params'], true);
-//            echo "params : ";
-//            pr($params);
+            //            echo "params : ";
+            //            pr($params);
 
             $authorityname = '';
             if (isset($this->request->data['authorityname'])) {
                 $authorityname = $this->request->data['authorityname'];
             }
-//            echo "<br/> authorityname : " . $authorityname;
-//            exit;
+            //            echo "<br/> authorityname : " . $authorityname;
+            //            exit;
             $this->request->data = $params;
             $UPN = reset($this->request->data);
 
@@ -17032,24 +17639,27 @@ class ApiController extends AppController {
 
             if ($authorityname == 'lcmch-sp') { // For LCMC Health SSO
                 $org_id = 425; //Tested with LCMC Organzation on LIVE server
-//                $org_id = 171; //Tested with LCMC Organzation on LOCAL machine
-//                $org_id = 247; //Tested with LCMC Organzation on Staging Server
+                //                $org_id = 171; //Tested with LCMC Organzation on LOCAL machine
+                //                $org_id = 247; //Tested with LCMC Organzation on Staging Server
+            } elseif ($authorityname == 'tgmc-sp') { // For LCMC Health SSO
+                $org_id = 446; //Tested with TGMC Organzation on LIVE server
+
             } else { // For LGH Health SSO
                 $org_id = 415; //Tested with LGH Organzation on LIVE server
             }
-//            echo $org_id; exit;
+            //            echo $org_id; exit;
             //            $org_id = 148; //Tested with ARCGATE Organzation on Local 
-//            $org_id = 2; //Tested with LGH Organzation on STAGING server
-//            $org_id = 415; //Tested with LGH Organzation on LIVE server
-//            exit;
-//            $requestJson = json_encode($this->request->data);
-//            $path = 'uploads' . DS . 'profile';
-//            $filePath = $file = $path . DS . 'requestedjson.json';
-//            //Writting on json file
-//            unlink($file);
-//            $file = new File($file, true);
-//            $file->write($requestJson);
-//            
+            //            $org_id = 2; //Tested with LGH Organzation on STAGING server
+            //            $org_id = 415; //Tested with LGH Organzation on LIVE server
+            //            exit;
+            //            $requestJson = json_encode($this->request->data);
+            //            $path = 'uploads' . DS . 'profile';
+            //            $filePath = $file = $path . DS . 'requestedjson.json';
+            //            //Writting on json file
+            //            unlink($file);
+            //            $file = new File($file, true);
+            //            $file->write($requestJson);
+            //            
             $firstName = $reponseEmpID = $user_email = $lastName = $uniqueAccountName = $dept = $uid = $employeeId = '';
             $user_email = $this->request->data['mail'][0];
             $userData = array();
@@ -17066,8 +17676,8 @@ class ApiController extends AppController {
 
             $checkFlag = $emailUpdate = $empIDUpdate = 0; // Create new user
             if (isset($reponseEmpID) && $reponseEmpID != '') {
-//                $user_email = $this->request->data['mail'][0];
-//                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
+                //                $user_email = $this->request->data['mail'][0];
+                //                $userData = $this->User->find('first', array('conditions' => array('User.ad_uid' => $uniqueAccountName)));
                 $userData = $this->User->find('first', array('conditions' => array('User.employee_id' => $reponseEmpID)));
                 if (!empty($userData)) { // Check user with UID 
                     $emailUpdate = ($userData['User']['email'] != $user_email) ? 1 : 0;
@@ -17083,8 +17693,8 @@ class ApiController extends AppController {
             } else {
                 $checkFlag = 1;
             }
-            
-            if($checkFlag){
+
+            if ($checkFlag) {
                 $user_email = $this->request->data['mail'][0];
                 $userData = $this->User->find('first', array('conditions' => array('User.email' => $user_email)));
             }
@@ -17111,31 +17721,32 @@ class ApiController extends AppController {
 
             $organizationData = $this->Organization->findById($org_id);
             $organization = $organizationData['Organization'];
-//            pr($userData); exit;
+            //            pr($userData); exit;
 
 
             if (!empty($userData)) {
                 /*                 * *** LOGIN ON NDORSE SERVER SESSION***** */
 
                 $roleList = $this->Common->setSessionRoles();
-//                pr($roleList); exit;
+                //                pr($roleList); exit;
                 $this->User->id = $userData['User']['id'];
-                
-                if($emailUpdate){
+
+                if ($emailUpdate) {
                     $saved = $this->User->saveField("email", $user_email);
                 }
-                if($empIDUpdate){
+                if ($empIDUpdate) {
                     $saved = $this->User->saveField("employee_id", $reponseEmpID);
                 }
-                
+
                 $saved = $this->User->saveField("ad_accountname", $uniqueAccountName);
-//                pr($saved); exit;
+                //                pr($saved); exit;
                 if ($saved) {
                     $userData['User']['ad_accountname'] = $uniqueAccountName;
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "The third party account you are using cannot be associated with your existing account. Please try  again."),
+                        'result' => array(
+                            "status" => false, "msg" => "The third party account you are using cannot be associated with your existing account. Please try  again."
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -17145,8 +17756,9 @@ class ApiController extends AppController {
                     $logginSuccess = $this->Auth->login($userData['User']);
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "The third party account you are using is not configured correctly."),
+                        'result' => array(
+                            "status" => false, "msg" => "The third party account you are using is not configured correctly."
+                        ),
                         '_serialize' => array('result')
                     ));
                     return;
@@ -17155,7 +17767,7 @@ class ApiController extends AppController {
                 if ($logginSuccess) {
 
                     $loggedinUserId = $this->Auth->user('id');
-//                    pr($loggedinUserId);exit;
+                    //                    pr($loggedinUserId);exit;
                     $token = $this->generateToken($loggedinUserId);
                     $this->Session->write('Auth.User.token', $token);
                     $params = array();
@@ -17176,7 +17788,7 @@ class ApiController extends AppController {
                     $params['order'] = 'UserOrganization.id desc';
 
                     $defaultOrganization = $this->DefaultOrg->find("first", $params);
-//                    pr($defaultOrganization); exit;
+                    //                    pr($defaultOrganization); exit;
                     $statusConfig = Configure::read("statusConfig");
 
                     if (!empty($defaultOrganization) && !empty($defaultOrganization['UserOrganization']) && isset($defaultOrganization['UserOrganization']['id'])) {
@@ -17275,7 +17887,7 @@ class ApiController extends AppController {
                     } else {
                         $returnData["dob"] = "";
                     }
-//
+                    //
                     $source = 'ADFS';
                     if ($source == "ADFS") {
                         unset($returnData["source_id"]);
@@ -17289,7 +17901,7 @@ class ApiController extends AppController {
                     } else {
                         $returnData['profile_updated'] = true;
                     }
-//                    pr($returnData); exit;
+                    //                    pr($returnData); exit;
                     if (empty($returnData['fname']) || empty($returnData['lname']) || empty($returnData['mobile']) || empty($returnData['country']) || empty($returnData['street']) || empty($returnData['zip']) || empty($returnData['state']) || empty($returnData['city'])) {
                         $returnData['profile_completed'] = false;
                     } else {
@@ -17298,7 +17910,7 @@ class ApiController extends AppController {
 
                     $updated = $this->User->updateAll(array("last_app_used" => "NOW()"), array("id" => $loggedInUser['id']));
 
-//Get pending request organizations
+                    //Get pending request organizations
                     $pendingRequests = $this->OrgRequests->find("all", array("conditions" => array("user_id" => $loggedInUser['id'], "status" => 0)));
                     $pendingRequestOrgs = array();
                     foreach ($pendingRequests as $pendingRequest) {
@@ -17309,13 +17921,13 @@ class ApiController extends AppController {
 
                     $returnData['pending_requests'] = $pendingRequestOrgs;
                     //pr($returnData); exit;
-//                    $a = $this->Auth->user();
-//                    $returnData['auth_user'] = $a;
-//                echo "<hr />";
+                    //                    $a = $this->Auth->user();
+                    //                    $returnData['auth_user'] = $a;
+                    //                echo "<hr />";
                     $returnArray['data'] = $returnData;
                     $returnArray['msg'] = 'Succussfully Logged in';
                     $returnArray['type'] = 'login';
-//                pr($returnArray); exit;
+                    //                pr($returnArray); exit;
                     $this->set(array(
                         'result' => array("status" => true, 'data' => $returnArray['data'], 'msg' => $returnArray['msg']),
                         '_serialize' => array('result')
@@ -17341,27 +17953,27 @@ class ApiController extends AppController {
                 $userAdDATA['User']['secret_code'] = $this->getSecretCode("user");
                 $userAdDATA['User']['last_app_used'] = "NOW()";
 
-//                echo "CHECK AND SAVE USER DATA";
-//                pr($userAdDATA);
-//                exit;
+                //                echo "CHECK AND SAVE USER DATA";
+                //                pr($userAdDATA);
+                //                exit;
 
                 $this->User->setValidation('register');
                 $this->User->set($userAdDATA);
 
-//                if ($this->User->validates()) {
-//                    pr($userAdDATA);
-//                    exit;
+                //                if ($this->User->validates()) {
+                //                    pr($userAdDATA);
+                //                    exit;
                 if ($userData = $this->User->save(null, false)) {
                     $userRes = $this->User->findById($this->User->id);
-//                    pr($userRes); exit;
+                    //                    pr($userRes); exit;
                     $userAdDATA['User']['id'] = $this->User->id;
                     $loggedinUserId = $this->User->id;
                     $token = $this->generateToken($loggedinUserId);
                     $this->Auth->login($userRes['User']);
                     $this->Session->write('Auth.User.token', $token);
                     $returnData['data'] = $this->Auth->user();
-//                    pr($returnData); exit;
-//                    $returnData['role'] = $roleList[$returnData['role']];
+                    //                    pr($returnData); exit;
+                    //                    $returnData['role'] = $roleList[$returnData['role']];
 
                     /*                     * ** ASSIGNING ORG CODE START **** */
                     $statusConfig = Configure::read("statusConfig");
@@ -17388,8 +18000,8 @@ class ApiController extends AppController {
                         $params = array();
                         $conditions = array();
                         $todayDate = date('Y-m-d H:i:s');
-//                    $conditions['start_date <='] = $todayDate;
-//                    $conditions['end_date >='] = $todayDate;
+                        //                    $conditions['start_date <='] = $todayDate;
+                        //                    $conditions['end_date >='] = $todayDate;
                         $conditions['Subscription.status'] = 1;
                         $conditions['Subscription.organization_id'] = $org_id;
                         $params['conditions'] = $conditions;
@@ -17398,13 +18010,13 @@ class ApiController extends AppController {
                             $poolPurchased = $currentSubscription['Subscription']['pool_purchased'];
 
                             if ($paidCount >= $poolPurchased) {
-//$status = $statusConfig['invite_inactive'];
+                                //$status = $statusConfig['invite_inactive'];
                                 $status = $statusConfig['inactive'];
                             } else {
                                 $status = $statusConfig['active'];
                             }
                         } else {
-//$status = $statusConfig['invite_inactive'];
+                            //$status = $statusConfig['invite_inactive'];
                             $status = $statusConfig['inactive'];
                         }
                     } else {
@@ -17455,11 +18067,11 @@ class ApiController extends AppController {
                         $isActive = true;
                     } else if ($status == $statusConfig['eval']) {
                         $msg = "You have successfully joined the Organization, but you are in evaluation mode.";
-//                        $this->set(array(
-//                            'result' => array("status" => true
-//                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
-//                            '_serialize' => array('result')
-//                        ));
+                        //                        $this->set(array(
+                        //                            'result' => array("status" => true
+                        //                                , "msg" => $msg, "data" => $organization, "isDefault" => $isDefault, "isActive" => false),
+                        //                            '_serialize' => array('result')
+                        //                        ));
                     } else {
                         $msg = "You have successfully joined " . $organization['name'] . "! Your status is inactive. To activate your status, contact your Organization Admin to purchase additional subscription.";
                     }
@@ -17470,26 +18082,26 @@ class ApiController extends AppController {
                         $organization["image"] = $rootUrl . "app/webroot/" . ORG_IMAGE_DIR . "small/" . $organization["image"];
                     }
 
-//                    $orgReturnData = array("Organization" => $organization);
+                    //                    $orgReturnData = array("Organization" => $organization);
                     $returnData['data']['current_org'] = $organization;
                     $returnData['isDefault'] = $isDefault;
                     $returnData['isActive'] = $isActive;
                     $returnData['msg'] = $msg;
                     $returnData['type'] = 'signup';
-//                    pr($returnData); exit;
-//                        return $returnData;
+                    //                    pr($returnData); exit;
+                    //                        return $returnData;
 
                     $this->set(array(
                         'result' => array("status" => true, 'data' => $returnData['data'], 'msg' => $returnData['msg']), 'isDefault' => $returnData['isDefault'], 'isActive' => $returnData['isActive'],
                         '_serialize' => array('result')
                     ));
                     return;
-//                    $this->set(array(
-//                        'result' => array("status" => true
-//                            , "msg" => $msg, "data" => $orgReturnData, "isDefault" => $isDefault, "isActive" => $isActive),
-//                        '_serialize' => array('result')
-//                    ));
-//                    return;
+                    //                    $this->set(array(
+                    //                        'result' => array("status" => true
+                    //                            , "msg" => $msg, "data" => $orgReturnData, "isDefault" => $isDefault, "isActive" => $isActive),
+                    //                        '_serialize' => array('result')
+                    //                    ));
+                    //                    return;
                     /*                     * ** ASSIGNING ORG END **** */
                 } else {
                     $errors = $this->User->validationErrors;
@@ -17501,21 +18113,22 @@ class ApiController extends AppController {
                 }
 
                 /**/
-//                } else {
-//                    $this->set(array(
-//                        'result' => array("status" => false
-//                            , "msg" => "User profile not configured correctly. Please contact your system administrator."),
-//                        '_serialize' => array('result')
-//                    ));
-//                    return;
-//                }
+                //                } else {
+                //                    $this->set(array(
+                //                        'result' => array("status" => false
+                //                            , "msg" => "User profile not configured correctly. Please contact your system administrator."),
+                //                        '_serialize' => array('result')
+                //                    ));
+                //                    return;
+                //                }
 
                 /*                 * ******************************** */
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -17523,7 +18136,8 @@ class ApiController extends AppController {
     }
 
     //Added by Babulal Prasad at 28-nov-2019 to get organization subcenter list
-    public function getOrgSubcenters() {
+    public function getOrgSubcenters()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['org_id'])) {
                 $orgID = $this->request->data['org_id'];
@@ -17542,20 +18156,22 @@ class ApiController extends AppController {
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     //Added by Babulal Prasad at 28-nov-2019 to get organization subcenter list
-    public function getSubcenterCorevalues() {
+    public function getSubcenterCorevalues()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
-//                echo "API Call";
-//                pr($this->request->data);exit;
-//                
+                //                echo "API Call";
+                //                pr($this->request->data);exit;
+                //                
                 if (isset($this->request->data['subcenter_id'])) {
 
                     $subcenterId = $this->request->data['subcenter_id'];
@@ -17576,18 +18192,17 @@ class ApiController extends AppController {
                                 'alias' => 'OrgCoreValue',
                                 'type' => 'LEFT',
                                 'conditions' => array(
-                                    'SubcenterCorevalue.corevalue_id = OrgCoreValue.id '
-                                    , "OrgCoreValue.status" => 1
+                                    'SubcenterCorevalue.corevalue_id = OrgCoreValue.id ', "OrgCoreValue.status" => 1
                                 )
                             )
                         );
                         $params['conditions'] = array("SubcenterCorevalue.subcenter_id" => $subcenterId, "SubcenterCorevalue.status" => 1, 'SubcenterCorevalue.for_web' => 1);
                         $params['order'] = 'SubcenterCorevalue.id desc';
 
-//                    pr($params);
+                        //                    pr($params);
                         $SubcenterCorevalueS = $this->SubcenterCorevalue->find("all", $params);
-//                    pr($SubcenterCorevalueS);
-//                    exit;
+                        //                    pr($SubcenterCorevalueS);
+                        //                    exit;
                         $subcenterCoreValuesArray = array();
                         if (isset($SubcenterCorevalueS) && !empty($SubcenterCorevalueS)) {
                             foreach ($SubcenterCorevalueS as $index => $subcenterdata) {
@@ -17604,10 +18219,10 @@ class ApiController extends AppController {
                                 $subcenterCoreValuesArray[$coreValueID]['custom_message_disabled_user_id'] = $usersArray;
                                 $subcenterCoreValuesArray[$coreValueID]['for_webapp'] = $subcenterdata['SubcenterCorevalue']['for_web'];
                                 $subcenterCoreValuesArray[$coreValueID]['for_guest'] = $subcenterdata['SubcenterCorevalue']['for_feedback'];
-//                            pr($subcenterCoreValuesArray);
+                                //                            pr($subcenterCoreValuesArray);
                             }
                         }
-                    } else {//Get All Core values of organization
+                    } else { //Get All Core values of organization
                     }
 
 
@@ -17617,22 +18232,25 @@ class ApiController extends AppController {
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid token in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid token in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     //Added by Babulal Prasad at 28-nov-2019 to get organization subcenter list
-    public function validateManagerCode() {
+    public function validateManagerCode()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 if (isset($this->request->data['managerCode'])) {
@@ -17648,7 +18266,7 @@ class ApiController extends AppController {
                     if ($managerCode != '') {
                         $params['fields'] = "*";
                         $params['conditions'] = array("Organization.id" => $orgId, "Organization.manager_code" => $managerCode);
-//                    pr($params);
+                        //                    pr($params);
                         $orgData = $this->Organization->find("all", $params);
                         if (!empty($orgData)) {
                             $this->set(array(
@@ -17656,8 +18274,9 @@ class ApiController extends AppController {
                             ));
                         } else {
                             $this->set(array(
-                                'result' => array("status" => false
-                                    , "msg" => "Invalid manager code."),
+                                'result' => array(
+                                    "status" => false, "msg" => "Invalid manager code."
+                                ),
                                 '_serialize' => array('result')
                             ));
                         }
@@ -17665,29 +18284,32 @@ class ApiController extends AppController {
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Invalid token in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Invalid token in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed."),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed."
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
 
     /** Added by Babulal Prasad @12-april-2021 ** */
-    public function getPendingGuestnDorsements() {
-//        if ($this->request->is('get')) {
+    public function getPendingGuestnDorsements()
+    {
+        //        if ($this->request->is('get')) {
         if (isset($this->request->data['token'])) {
             $token = $this->request->data['token'];
             $userinfo = $this->getuserData($token, true);
             $loggedinUser = $this->Auth->user();
-//                pr($current_org);
-//                exit;
+            //                pr($current_org);
+            //                exit;
             $status = 0; //Pending
             if (isset($this->request->data['status'])) {
                 $status = $this->request->data['status'];
@@ -17706,7 +18328,7 @@ class ApiController extends AppController {
                 $params['fields'] = "*,UNIX_TIMESTAMP(Endorsement.created) as create_date, UNIX_TIMESTAMP() as curr_time ";
                 $this->Endorsement->unbindModel(array('hasMany' => array('EndorseCoreValues', 'EndorseReplies', 'EndorseAttachments', 'EndorseHashtag')));
                 $orgDetail = $this->Endorsement->find("all", $params);
-//                    pr($orgDetail); exit;
+                //                    pr($orgDetail); exit;
                 foreach ($orgDetail as $key => $endorsementdata) {
                     $tempEndorse = $endorsementdata['Endorsement'];
                     $userid[] = $tempEndorse["endorser_id"];
@@ -17717,22 +18339,24 @@ class ApiController extends AppController {
 
                 $userdata = array();
                 if (!empty($userid)) {
-                    $totaluserdetails = $this->User->find("all", array("conditions" => array("id" => $userid),
-                        "fields" => array("id", "fname", "lname", "image")));
+                    $totaluserdetails = $this->User->find("all", array(
+                        "conditions" => array("id" => $userid),
+                        "fields" => array("id", "fname", "lname", "image")
+                    ));
                     foreach ($totaluserdetails as $userval) {
-//                            $userdetails[$userval["User"]["id"]] = $userval;
+                        //                            $userdetails[$userval["User"]["id"]] = $userval;
                         $userdata[$userval["User"]["id"]] = trim($userval["User"]["fname"] . " " . $userval["User"]["lname"]);
                         if ($userval["User"]["image"] != "") {
                             $userdata[$userval["User"]["id"]] .= "&&&&" . Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/" . $userval["User"]["image"];
                         }
                     }
                 }
-//                    pr($userdata);
-//                    exit;
-//                    pr($orgDetail);
+                //                    pr($userdata);
+                //                    exit;
+                //                    pr($orgDetail);
                 $guestPendingNdorseData = array();
                 foreach ($orgDetail as $key => $endorsementdata) {
-//                        pr($endorsementdata);
+                    //                        pr($endorsementdata);
                     $endorseData = $endorsementdata['Endorsement'];
 
                     $guestPendingNdorseData[$key]['id'] = $endorseData['id'];
@@ -17750,7 +18374,7 @@ class ApiController extends AppController {
 
                     if (isset($userdata[$endorserId])) {
                         $newuserdata = explode("&&&&", $userdata[$endorserId]);
-//                            pr($newuserdata);
+                        //                            pr($newuserdata);
                         $guestPendingNdorseData[$key]["endorser_name"] = $newuserdata[0];
                         $defaultImg = Router::url('/', true) . "app/webroot/" . PROFILE_IMAGE_DIR . "small/user.png";
                         if (isset($newuserdata[1])) {
@@ -17788,15 +18412,15 @@ class ApiController extends AppController {
                         $guestPendingNdorseData[$key]["endorsed_name"] = "";
                         $guestPendingNdorseData[$key]["endorsed_image"] = "";
                     }
-//                        pr($guestPendingNdorseData);
-//                        exit;
+                    //                        pr($guestPendingNdorseData);
+                    //                        exit;
                 }
-//                    exit;
+                //                    exit;
 
                 $totalrecords = $this->Endorsement->find("count", array("conditions" => array("organization_id" => $orgid, "Endorsement.type" => 'guest', "Endorsement.status =" . $status)));
-//                    pr($orgDetail);
-//                    exit;
-//                    $this->set('orgDetail', $orgDetail);
+                //                    pr($orgDetail);
+                //                    exit;
+                //                    $this->set('orgDetail', $orgDetail);
 
                 $returndata = array("endorsements_list" => $guestPendingNdorseData, "total_page" => $totalrecords);
 
@@ -17821,36 +18445,40 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => $msg,
-                        "data" => $returndata),
+                    'result' => array(
+                        "status" => true, "msg" => $msg,
+                        "data" => $returndata
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Only admin can access."),
+                    'result' => array(
+                        "status" => false, "msg" => "Only admin can access."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
-//        } else {
-//            $this->set(array(
-//                'result' => array("status" => false
-//                    , "msg" => "Get call not allowed."),
-//                '_serialize' => array('result')
-//            ));
-//        }
+        //        } else {
+        //            $this->set(array(
+        //                'result' => array("status" => false
+        //                    , "msg" => "Get call not allowed."),
+        //                '_serialize' => array('result')
+        //            ));
+        //        }
     }
 
     //Added by Babulal prasad to update guest ndorsement status @16-april-2021
-    public function changeGuestEndorsementStatus() {
+    public function changeGuestEndorsementStatus()
+    {
         if (isset($this->request->data['token'])) {
             $token = $this->request->data['token'];
             $userinfo = $this->getuserData($token, true);
@@ -17868,7 +18496,7 @@ class ApiController extends AppController {
                             $status = $this->request->data['status'];
                         }
 
-                        if ($status == 4) {//Delete 
+                        if ($status == 4) { //Delete 
                             $this->Endorsement->id = $endorsementId;
                             $this->Endorsement->delete($endorsementId);
                         } else {
@@ -17878,13 +18506,15 @@ class ApiController extends AppController {
 
                         if ($status == 1) { //Approve then active feed to show on live feed
                             $this->FeedTran->UpdateAll(
-                                    array("status" => 1), array("feed_id" => $endorsementId, "feed_type" => 'endorse', 'endorse_type' => 'guest')
+                                array("status" => 1),
+                                array("feed_id" => $endorsementId, "feed_type" => 'endorse', 'endorse_type' => 'guest')
                             );
-                        } elseif ($status == 4) {//Deleted & hide from live feeds
+                        } elseif ($status == 4) { //Deleted & hide from live feeds
                             $this->FeedTran->deleteAll(array("feed_id" => $endorsementId, "feed_type" => 'endorse', 'endorse_type' => 'guest'));
-                        } else {//Rejected or drafted then inactive feed to hide from live feed
+                        } else { //Rejected or drafted then inactive feed to hide from live feed
                             $this->FeedTran->UpdateAll(
-                                    array("status" => 0), array("feed_id" => $endorsementId, "feed_type" => 'endorse', 'endorse_type' => 'guest')
+                                array("status" => 0),
+                                array("feed_id" => $endorsementId, "feed_type" => 'endorse', 'endorse_type' => 'guest')
                             );
                         }
 
@@ -17913,8 +18543,9 @@ class ApiController extends AppController {
                             }
                         }
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => $msg),
+                            'result' => array(
+                                "status" => true, "msg" => $msg
+                            ),
                             '_serialize' => array('result')
                         ));
                     } catch (Exception $e) {
@@ -17922,22 +18553,25 @@ class ApiController extends AppController {
                     }
                 } else {
                     $this->set(array(
-                        'result' => array("status" => false
-                            , "msg" => "Invalid endorsement Id in request"),
+                        'result' => array(
+                            "status" => false, "msg" => "Invalid endorsement Id in request"
+                        ),
                         '_serialize' => array('result')
                     ));
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Only admin can access."),
+                    'result' => array(
+                        "status" => false, "msg" => "Only admin can access."
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Token is missing in request"),
+                'result' => array(
+                    "status" => false, "msg" => "Token is missing in request"
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -17947,7 +18581,8 @@ class ApiController extends AppController {
      * To Follow any user
      */
 
-    public function followingUser() {
+    public function followingUser()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $token = $this->request->data['token'];
@@ -17963,8 +18598,8 @@ class ApiController extends AppController {
 
                 /* Check entry in follower lists */
                 $userFollower = $this->UserFollower->find('all', array('fields' => array('*'), 'conditions' => array('user_id' => $fllowingUserId, 'status' => 1)));
-//                pr($userFollower);
-//                exit;
+                //                pr($userFollower);
+                //                exit;
 
                 $newEntry = array();
                 if (!empty($userFollowings)) {
@@ -18004,21 +18639,24 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => $msg),
+                    'result' => array(
+                        "status" => true, "msg" => $msg
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed"),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed"
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -18028,7 +18666,8 @@ class ApiController extends AppController {
      * To get followers and following users
      */
 
-    public function getUserFollowList() {
+    public function getUserFollowList()
+    {
         if ($this->request->is('get')) {
             if (isset($this->request->query['token'])) {
                 $token = $this->request->query['token'];
@@ -18067,18 +18706,20 @@ class ApiController extends AppController {
 
                         $returnData['following'] = $users;
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => 'User following list.',
-                                "data" => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => 'User following list.',
+                                "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
                         // Following no-one
                         $x = new stdClass();
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => 'User following list.',
-                                "data" => $x),
+                            'result' => array(
+                                "status" => true, "msg" => 'User following list.',
+                                "data" => $x
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
@@ -18125,33 +18766,37 @@ class ApiController extends AppController {
                         $returnData['followers'] = $users;
 
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => 'User followers list.',
-                                "data" => $returnData),
+                            'result' => array(
+                                "status" => true, "msg" => 'User followers list.',
+                                "data" => $returnData
+                            ),
                             '_serialize' => array('result')
                         ));
                     } else {
                         // Following no-one
                         $x = new stdClass();
                         $this->set(array(
-                            'result' => array("status" => true
-                                , "msg" => 'User followers list.',
-                                "data" => $x),
+                            'result' => array(
+                                "status" => true, "msg" => 'User followers list.',
+                                "data" => $x
+                            ),
                             '_serialize' => array('result')
                         ));
                     }
                 }
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Post call not allowed"),
+                'result' => array(
+                    "status" => false, "msg" => "Post call not allowed"
+                ),
                 '_serialize' => array('result')
             ));
         }
@@ -18161,7 +18806,8 @@ class ApiController extends AppController {
      * To UnFollow any user
      */
 
-    public function UnfollowUser() {
+    public function UnfollowUser()
+    {
         if ($this->request->is('post')) {
             if (isset($this->request->data['token'])) {
                 $token = $this->request->data['token'];
@@ -18208,30 +18854,33 @@ class ApiController extends AppController {
                 }
 
                 $this->set(array(
-                    'result' => array("status" => true
-                        , "msg" => $msg),
+                    'result' => array(
+                        "status" => true, "msg" => $msg
+                    ),
                     '_serialize' => array('result')
                 ));
             } else {
                 $this->set(array(
-                    'result' => array("status" => false
-                        , "msg" => "Token is missing in request"),
+                    'result' => array(
+                        "status" => false, "msg" => "Token is missing in request"
+                    ),
                     '_serialize' => array('result')
                 ));
             }
         } else {
             $this->set(array(
-                'result' => array("status" => false
-                    , "msg" => "Get call not allowed"),
+                'result' => array(
+                    "status" => false, "msg" => "Get call not allowed"
+                ),
                 '_serialize' => array('result')
             ));
         }
     }
-    
-   /** 
+
+    /** 
      *  Post API Created by Saurabh to update endorsement message.
      * */
-    public function updateEndorsementMessage() 
+    public function updateEndorsementMessage()
     {
         $status = false;
         $msg = "Get call not allowed.";
@@ -18239,14 +18888,14 @@ class ApiController extends AppController {
         if ($this->request->is('post')) {
 
             if (isset($this->request->data['token'])) {
-                
+
                 $token = $this->request->data['token'];
                 $userinfo = $this->getuserData($token, true);
                 $user_id = $userinfo['users']['id'];
 
                 $endorsement_id = $this->request->data['endorsement_id'];
                 $message = $this->request->data['message'];
-                
+
                 $loggedInUser = $this->Auth->user();
 
                 $endorsementMsg = $this->Endorsement->updateAll(array("message" => "'$message'"), array("endorser_id" => $user_id, 'id' => $endorsement_id));
@@ -18254,15 +18903,15 @@ class ApiController extends AppController {
                 if ($endorsementMsg) {
                     $status = true;
                     $msg = "Endorsement message updated successfully.";
-                    $data = array("endorsement_id"=>$endorsement_id,"message"=>$message);
+                    $data = array("endorsement_id" => $endorsement_id, "message" => $message);
                     // $this->set(array('result' => array("status" => true
                     //         , "msg" => "Endorsement message updated successfully."),
                     //     '_serialize' => array('result')
                     // ));
                 } else {
-                    
+
                     $msg = "Endorsement message could not be updated.";
-                    $data = array("endorsement_id"=>$endorsement_id);
+                    $data = array("endorsement_id" => $endorsement_id);
                     // $this->set(array('result' => array("status" => false
                     //         , "msg" => "Endorsement message is not updated."),
                     //     '_serialize' => array('result')
@@ -18270,7 +18919,7 @@ class ApiController extends AppController {
                 }
             } else {
                 $msg = "Token is missing in request";
-                
+
                 // $this->set(array(
                 //     'result' => array("status" => false
                 //         , "msg" => "Token is missing in request"),
@@ -18280,11 +18929,10 @@ class ApiController extends AppController {
         }
         $this->set(array(
             'result' => array(
-                "status" => $status, "msg" => $msg, "data"=>$data
+                "status" => $status, "msg" => $msg, "data" => $data
             ),
             '_serialize' => array('result')
-        )); 
-        
+        ));
     }
     //ends here
 
