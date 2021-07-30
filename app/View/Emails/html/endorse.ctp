@@ -44,13 +44,19 @@ switch ($for) {
 
 if ($sso == 1) { //Case for SSO User notification 
     ?>
-    You can see more details of your nDorsements by logging into the nDorse app on your mobile device or via our web-based login at <a href="http://www.ndorse.net/sso/LGH">http://www.ndorse.net/sso/LGH</a>.
+    <?php if($current_org_id == 446){
+        $ssoName = "TGHS";
+    } else {
+        $ssoName = "LGH";
+    }
+    ?>
+    You can see more details of your nDorsements by logging into the nDorse app on your mobile device or via our web-based login at <a href="http://www.ndorse.net/sso/<?php echo $ssoName; ?>">http://www.ndorse.net/sso/<?php echo $ssoName; ?></a>.
     <br/><br/>
     If you are logging in via the nDorse Mobile App, please follow the login instructions below:
     <br/>
     1. Click on the Single Sign-On button
     <br/>
-    2. Type in org code "LGH"
+    2. Type in org code "<?php echo $ssoName; ?>"
     <br/>
     3. Login with your organization provided login credentials
 <?php } else { ?>
