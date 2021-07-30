@@ -13485,6 +13485,23 @@ class ApiController extends AppController
                         $ndorsedUpdatedCount = 0;
                     }
 
+                    /**
+                     * @modified on 28jul21
+                     * @author Dinesh, Dilbag
+                     * Earlier Endorsement table was used.
+                     * Now AlertCenterNotification table is looked for pending notification view
+                    */
+                    $this->loadModel('AlertCenterNotification');
+                    
+                    $ndorsedUpdatedCount = $this->AlertCenterNotification->find("count", array("conditions" => array(
+                        "org_id" => $loggedInUser['current_org']['id'],
+                        "status" => 0,
+                        "user_id " => $loggedInUser['id']
+                    )));
+                    if (!isset($ndorsedUpdatedCount)){
+                        $ndorsedUpdatedCount = 0;
+                    }
+
                     /** by Babulal prasad @21=-022017 Add to get Post live feed notification *** */
                     if ($postUpdated != "0000-00-00 00:00:00") {
                         $postUpdatedCount = $this->Post->find("count", array("conditions" => array(
