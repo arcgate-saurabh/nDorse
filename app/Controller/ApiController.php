@@ -4855,13 +4855,13 @@ class ApiController extends AppController
                 $configVars['for'] = "user";
                 $configVars["first_name"] = $user['User']['fname'];
                 $configVars["username"] = $user['User']['username'];
+                $configVars["current_org_id"] = $loggedInUser['current_org']['id'];
                 $sso_user = 0;
                 if (isset($loggedInUser['current_org']['id']) && ($loggedInUser['current_org']['id'] == 415 || $loggedInUser['current_org']['id'] == 171 || $loggedInUser['current_org']['id'] == 425 || $loggedInUser['current_org']['id'] == 247 || $loggedInUser['current_org']['id'] == 446)) {
                     $sso_user = 1;
                 }
                 $configVars["sso"] = $sso_user;
                 $saveVars = serialize($configVars);
-
                 $emailQueue[$user['User']['id']] = array("to" => $user['User']['email'], "subject" => $subject, "config_vars" => $saveVars, "template" => "endorse");
             }
 
@@ -15831,6 +15831,21 @@ class ApiController extends AppController
             'result' => array(
                 "status" => true, "msg" => "Terms and condition accepted.", 'data' => true
             ),
+            '_serialize' => array('result')
+        ));
+    }
+
+    /**
+    *Created by saurabh for updating skipped_login_walkthrough value to 1.
+    */
+    public function skippedLoginWalkthrough() {
+        $loggedInUser = $this->Auth->user();
+        $this->User->id = $loggedInUser['id'];
+        $this->User->saveField("skipped_login_walkthrough", 1);
+
+        $this->set(array(
+            'result' => array("status" => true
+                , "msg" => "Skipped Login Walkthrough.", 'data' => true),
             '_serialize' => array('result')
         ));
     }
