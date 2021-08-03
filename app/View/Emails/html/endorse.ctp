@@ -45,7 +45,7 @@ switch ($for) {
 if ($sso == 1) { //Case for SSO User notification 
     ?>
     <?php if($current_org_id == 446){
-        $ssoName = "TGHS";
+        $ssoName = "TEAM";
     } else {
         $ssoName = "LGH";
     }

@@ -33,7 +33,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
             if (siteUrl.indexOf('localhost') > -1) {
                 if (siteurl.indexOf('https') > -1) {
-                    siteUrl = siteUrl.replace("https", "http");
+                    //siteUrl = siteUrl.replace("https", "http");
                 }
 
             } else if (siteUrl.indexOf('ndorse.net') > -1) {

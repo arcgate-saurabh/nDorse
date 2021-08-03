@@ -7,7 +7,12 @@ class EndorseController extends AppController {
     public function beforeFilter() {
 
         parent::beforeFilter();
-        $this->layout = "clientlayout";
+        //Added for login walkthrough func by saurabh on 29072021
+        $loggedinUser = $this->Auth->user();
+        if($loggedinUser['skipped_login_walkthrough'] ==1){
+            $this->layout = "clientlayout";
+        }
+        //ends here
         $this->Auth->deny();
         $loggedinUser = $this->Auth->user();
 
@@ -175,6 +180,15 @@ class EndorseController extends AppController {
         $loggedinUser = $this->Auth->user();
         //pr($loggedinUser);
         //exit;
+        //$loggedinUser['terms_accept'];
+
+        //for login walktrough functionality
+        if(isset($loggedinUser['skipped_login_walkthrough']) && $loggedinUser['skipped_login_walkthrough'] ==0 ){
+            
+            $this->redirect(array('controller' => 'endorse', 'action' => 'loginwalkthrough'));               
+        }
+        //ends here
+        
         if ($this->Session->check('Auth.User')) {
             if (isset($loggedinUser['current_org'])) {
                 $orgName = $loggedinUser['current_org']->name;
@@ -259,12 +273,6 @@ class EndorseController extends AppController {
                 }
                 $this->set('followingIdsArray', $followingIdsArray);
 
-
-
-
-                
-
-
                 $user_do_not_remind = $loggedinUser["do_not_remind"];
 
                 if ($jsondatadecoded["result"]["status"]) {
@@ -292,12 +300,18 @@ class EndorseController extends AppController {
             $this->redirect(array('controller' => 'client', 'action' => 'login'));
         }
 
-
-
-
+        
         $this->set('jsIncludes', array('endorse', 'editEndorsementMessage'));
         $this->set('addEndorse', true);
         $this->set('MenuName', 'Live Feed');
+    }
+
+    public function loginwalkthrough() {
+        //$this->layout = false;
+        $loggedinUser = $this->Auth->user();
+        //pr($loggedinUser); exit;
+        $this->set('loggedinUser', $loggedinUser);
+        $this->set('jsIncludes', array('loginwalkthrough'));
     }
 
     public function likeslist() {

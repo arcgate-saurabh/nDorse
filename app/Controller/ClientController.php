@@ -11,22 +11,14 @@ class ClientController extends AppController
 
         //new code starts here
         // Check if we are in offline mode
+        
         $maintenanceModeVal = MAINTENANCE_MODE_VALUE;
-        // if($maintenanceModeVal == 1)
-        // {
-        //     // Check if we are already on the maintenance page
-        //     if ($this->request->controller == 'client' && $this->request->action == 'maintenance') {
-        //     // Don't do anything - we don't want to redirect again.
-        //     } else {
-        //     // Redirect to the maintenance page
-        //         $this->redirect(array('controller' => 'client', 'action' => 'maintenance'));
-        //     }
-        // }
         //ends here
-
+        //pr($this->request->params['action']); exit;
+        //pr($this->layout); exit;
         $this->layout = "clientDefault";
         $loggedinUser = $this->Auth->user();
-        if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client' && $maintenanceModeVal != 1) {
+        if (!empty($loggedinUser) && isset($loggedinUser['portal']) && $loggedinUser['portal'] == 'client' && $maintenanceModeVal != 1 && $this->request->params['action'] != "profilewalkthrough") {
             $this->layout = "clientlayout";
         }
 
@@ -558,8 +550,25 @@ class ClientController extends AppController
         $this->set(compact("orgdata", "type", 'loggedinUser'));
     }
 
+    public function profilewalkthrough() {
+        //$this->layout = false;
+
+        $loggedinUser = $this->Auth->user();
+        //pr($loggedinUser); exit;
+        $this->set('loggedinUser', $loggedinUser);
+        $this->set('jsIncludes', array('profilewalkthrough'));
+    }
+
     public function profile($id = 0)
     {
+        $loggedinUser = $this->Auth->user();
+        //for login walktrough functionality
+        if(isset($loggedinUser['profile_login_walkthrough']) && $loggedinUser['profile_login_walkthrough'] ==0 && $loggedinUser['image'] ==""){
+            
+            $this->redirect(array('controller' => 'client', 'action' => 'profilewalkthrough'));               
+        }
+        //ends here
+
         $errormsg = "";
         $successmsg = "";
         if ($this->Session->check('Auth.User')) {
@@ -569,7 +578,7 @@ class ClientController extends AppController
             if ($successmsg != "") {
                 $this->Session->write('successmessage', "");
             }
-            $loggedinUser = $this->Auth->user();
+            
             //pr($loggedinUser);
             if (isset($loggedinUser['current_org'])) {
                 $this->Session->write('current_org', (array) $loggedinUser['current_org']);

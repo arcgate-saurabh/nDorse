@@ -1115,6 +1115,34 @@ class CajaxController extends AppController {
         exit;
     }
 
+    public function skippedLoginWalkthrough() {
+        $loggedinUser = $this->Auth->user();
+        $postData = array("token" => $loggedinUser['token']);
+        $response = $this->Apicalls->curlpost("skippedLoginWalkthrough.json", $postData);
+        $response = json_decode($response);
+        $response = $response->result;
+
+        if ($response->status) {
+            $this->Session->write('Auth.User.skipped_login_walkthrough', 1);
+        }
+        echo json_encode(array("success" => $response->status, "msg" => $response->msg));
+        exit;
+    }
+
+    public function profileLoginWalkthrough() {
+        $loggedinUser = $this->Auth->user();
+        $postData = array("token" => $loggedinUser['token']);
+        $response = $this->Apicalls->curlpost("profileLoginWalkthrough.json", $postData);
+        $response = json_decode($response);
+        $response = $response->result;
+
+        if ($response->status) {
+            $this->Session->write('Auth.User.profile_login_walkthrough', 1);
+        }
+        echo json_encode(array("success" => $response->status, "msg" => $response->msg));
+        exit;
+    }
+
 //    public function changeuserstatus() {
 //        $loggedinUser = $this->Auth->user();
 //        $postData = $this->request->data;

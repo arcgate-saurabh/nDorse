@@ -16,7 +16,7 @@
 
             if (siteurl.indexOf('localhost') > -1) {
                 if (siteurl.indexOf('https') > -1) {
-                    siteurl = siteurl.replace("https", "http");
+                    //siteurl = siteurl.replace("https", "http");
                 }
             } else if (siteurl.indexOf('ndorse.net') > -1) {
                 if (siteurl.indexOf('https') > -1) {

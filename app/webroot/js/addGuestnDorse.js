@@ -20,7 +20,7 @@ $(document).on("keyup", "#endorsementSearchKeyGuest", function () {
 
         if (siteurl.indexOf('localhost') > -1) {
             if (siteurl.indexOf('https') > -1) {
-                siteurl = siteurl.replace("https", "http");
+                //siteurl = siteurl.replace("https", "http");
             }
         }
         if (siteurl.indexOf('ndorse.net') > -1) {
@@ -69,7 +69,7 @@ $(document).on("keyup", "#daisySearchKeyGuest", function () {
 
         if (siteurl.indexOf('localhost') > -1) {
             if (siteurl.indexOf('https') > -1) {
-                siteurl = siteurl.replace("https", "http");
+                //siteurl = siteurl.replace("https", "http");
             }
         }
         if (siteurl.indexOf('ndorse.net') > -1) {
@@ -122,7 +122,7 @@ $(document).on("keyup", "#endorseDepartmentName", function () {
 
         if (siteurl.indexOf('localhost') > -1) {
             if (siteurl.indexOf('https') > -1) {
-                siteurl = siteurl.replace("https", "http");
+                //siteurl = siteurl.replace("https", "http");
             }
         }
         if (siteurl.indexOf('ndorse.net') > -1) {

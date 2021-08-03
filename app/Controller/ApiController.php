@@ -4855,7 +4855,9 @@ class ApiController extends AppController
                 $configVars['for'] = "user";
                 $configVars["first_name"] = $user['User']['fname'];
                 $configVars["username"] = $user['User']['username'];
-                $configVars["current_org_id"] = $loggedInUser['current_org']['id'];
+                if(isset($loggedInUser['current_org']['id'])){
+                    $configVars["current_org_id"] = $loggedInUser['current_org']['id'];
+                }
                 $sso_user = 0;
                 if (isset($loggedInUser['current_org']['id']) && ($loggedInUser['current_org']['id'] == 415 || $loggedInUser['current_org']['id'] == 171 || $loggedInUser['current_org']['id'] == 425 || $loggedInUser['current_org']['id'] == 247 || $loggedInUser['current_org']['id'] == 446)) {
                     $sso_user = 1;
@@ -15867,6 +15869,21 @@ class ApiController extends AppController
         ));
     }
 
+    /**
+    *Created by saurabh for updating profile_login_walkthrough value to 1.
+    */
+    public function profileLoginWalkthrough() {
+        $loggedInUser = $this->Auth->user();
+        $this->User->id = $loggedInUser['id'];
+        $this->User->saveField("profile_login_walkthrough", 1);
+
+        $this->set(array(
+            'result' => array("status" => true
+                , "msg" => "Profile Login Walkthrough Done Successfully.", 'data' => true),
+            '_serialize' => array('result')
+        ));
+    }
+
     public function checkSession()
     {
         $this->set(array(
@@ -17581,7 +17598,7 @@ class ApiController extends AppController
                         //                            , "msg" => "Organization ADFS link.", 'adfs_link' => 'https://adfs.lgh.org/adfs/ls/?SAMLRequest=nZLNTsMwEIRfJfI9ceKqKbGaSoUeqFRE1QYOXJBjb36k2A5eB%2FH4pCmI9tIDJ3t2%2FY12R16i0F3P14NvzAE%2BBkAffOnOIJ8aORmc4VZgi9wIDci95Mf1046zKOa9s95K25EL5DYhEMH51hoSbDc5eZ8tykpKgPlMqgUrY5nOlRqvUKVllmWKJVUSlykwRoJXcDiSORmNRhxxgK1BL4wfS3GShXEWJmmRMB7f8Rl7I8Fm3KY1wk9U432PnFKhKoy6uomsqydBO6QkWP9O9mANDhrcEdxnK%2BHlsPtjEW0knKyFh0haTbHVfQentam2augg6pueThrPJwuFxKlqlHUIIfYk2P%2Fkdt8a1Zr6dmTl%2BRHyx6LYh%2FvnY0FWy5M1nyJwq%2F8Np8ELJby4nm1JL53P6vp3rL4B&RelayState=https%3A%2F%2Fsso.arcgate.com%2Fsimplesaml%2Fmodule.php%2Fcore%2Fpostredirect.php%3FRedirId%3D_b8673e00349e9b43d3548a82b5bd1505e29354e422&SigAlg=http%3A%2F%2Fwww.w3.org%2F2001%2F04%2Fxmldsig-more%23rsa-sha256&Signature=OtfL1UN8gU52Z9ArVE6hGyDTeb8wWzUsZT2QF50HUcz%2FnA51LJ6cW4fc%2Bpx%2F%2Fpmy6BENflp3Z7y10D9unVBHanzb2hI97oH%2B%2BGmHUR4NFODFPSV%2BeahewIsPH48o%2FoPesM7DLu9j1ai3%2F83T1zo8EfgieFfC8204FQtcwoX5Z8qk1kCmJOwfBItaMGKyudJ0%2FJswSghPTTmCRQAD9Q9Zg0BfqkqxweiHhpzROQdhH4cellk96r6LB%2BTSYCAlMRVzkmXOoiaerSsh4cBlhI4g3od8U%2Brjg4ynHcc%2F1ivBolRPMg88f7YBMtWmEMgtQ6N3wFi%2FrjRZP2BzYxTpUq1bYQ%3D%3D'),
                         '_serialize' => array('result')
                     ));
-                } elseif (strtolower($short_code) == 'tghs') {
+                } elseif (strtolower($short_code) == 'team') {
                     $this->set(array(
                         'result' => array(
                             "status" => true, "msg" => "Organization ADFS link.", 'adfs_link' => 'https://sso.ndorse.net/simplesaml/module.php/core/authenticate.php?as=tgmc-sp'
