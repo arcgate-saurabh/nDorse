@@ -3753,6 +3753,10 @@ class OrganizationsController extends AppController {
                 $orgData['font_color'] = isset($this->request->data['font_color']) ? "'" . $this->request->data['font_color'] . "'" : 'FFFFFF';
                 $orgData['button_color'] = isset($this->request->data['button_color']) ? "'" . $this->request->data['button_color'] . "'" : 'ED5B13';
 
+                //new color branding code starts here 
+                $orgData['card_color_light'] = isset($this->request->data['card_color_light']) ? "'" . $this->request->data['card_color_light'] . "'" : '551C22';
+                $orgData['card_color_dark'] = isset($this->request->data['card_color_dark']) ? "'" . $this->request->data['card_color_dark'] . "'" : '2F0C10';
+                //ends here
                 $updated = $this->Organization->updateAll($orgData, array('id' => $organization_id));
 
                 if ($updated) {

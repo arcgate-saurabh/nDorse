@@ -180,7 +180,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
                         ?>
                         <!-- POST SECTIOn -->
 
-                        <div class="Dear-Details" id="feed_<?php echo $endorse["id"]; ?>" post_id ="<?php echo $endorse["id"]; ?>" >
+                        <div class="Dear-Details new-bg-feeds" id="feed_<?php echo $endorse["id"]; ?>" post_id ="<?php echo $endorse["id"]; ?>" >
                             <div class="Name-Post " > 
                                 <div class="namenimg" >
                                     <?php
@@ -358,7 +358,7 @@ echo $this->Html->script('fancybox/jquery.fancybox-media.js');
                             $no_handclass = "no-hand";
                         }
                         ?>
-                        <div class="live-feeds"  id="live_feed_<?php echo $endorse["id"]; ?>">
+                        <div class="live-feeds new-bg-feeds"  id="live_feed_<?php echo $endorse["id"]; ?>">
                             <!-- <?php
                             if (isset($endorse['type']) && $endorse['type'] == 'guest') {
                                 ?>

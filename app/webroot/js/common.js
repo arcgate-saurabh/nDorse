@@ -460,7 +460,9 @@ function loadscript() {
     $('.bar-mob').css('background', '#' + colorCodeLight);
     $('.commonFont, .commonFont a').css('color', '#' + fontColor + ' !important');
 
-
+    //new color branding code starts here
+    $('.new-bg-feeds').css('background', 'radial-gradient(at 50% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+    //$('.Dear-Details').css('background', 'radial-gradient(at 65% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
 
     //$('.CustomBtnColor').css('background', '#' + buttonColor + ' !important');
     //$('.CustomBtnColor').css('linear-gradient(to bottom', '#' + buttonColor + ' !important)');

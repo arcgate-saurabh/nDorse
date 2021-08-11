@@ -160,7 +160,7 @@ $paramsaction = trim($this->params["action"]);
                     <?php } ?>
 
                     <li>
-                        <?php echo $this->Html->Link("<span class='flaticon-user-4'></span>My<br/>Organisation", array("controller" => "client", "action" => "myorganizations"), ($paramsaction == "myorganizations") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> 
+                        <?php echo $this->Html->Link("<span class='flaticon-user-4'></span>My<br/>Organizations", array("controller" => "client", "action" => "myorganizations"), ($paramsaction == "myorganizations") ? array("class" => "active-link", "escape" => false) : array("escape" => false)); ?> 
 
                     </li>
 

@@ -100,7 +100,7 @@
                 $no_handclass = "no-hand";
             }
             ?>
-            <div class="live-feeds" id="live_feed_<?php echo $endorse["id"]; ?>" >
+            <div class="live-feeds new-bg-feeds" id="live_feed_<?php echo $endorse["id"]; ?>" >
                 <?php
                 if (isset($endorse['type']) && $endorse['type'] == 'guest') {
                     ?>

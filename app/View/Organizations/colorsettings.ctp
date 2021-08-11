@@ -78,6 +78,17 @@ $orgid = $org_data['Organization']['id'];
 
             </div>
         </div>
+
+        <div class="themeBox">
+            <div class="themeSet">
+                <div class="labelCus">Card Color:</div>
+                <div>
+                    <input class="jscolor" name ="card_color_light" value="<?php echo $org_data['Organization']['card_color_light'];?>" id="cardColorLight" />
+                    <input class="jscolor" name ="card_color_dark" value="<?php echo $org_data['Organization']['card_color_dark'];?>" id="cardColorDark" />
+                </div>
+            </div>
+        </div>
+
         <div class="themeBox">
             <a href="javascript:void(0);" class="resetThemeToDefault resetLink">Set Default</a>
         </div>
@@ -133,7 +144,7 @@ $orgid = $org_data['Organization']['id'];
                         </div>
                         <!--#Right Side-->
                         <div class="container col-md-9 col-md-offset-3 col-sm-8 col-sm-offset-4">
-                            <div class="Dear-Details" id="feed_364" post_id="364">
+                            <div class="Dear-Details new-bg-feeds" id="feed_364" post_id="364">
                                 <div class="Name-Post "> 
                                     <div class="namenimg">
                                         <!--<img alt="" class="img-circle hand show-user-profile" src="" width="50px" height="50px" align="left" title="Babulal Prasad" data-user-id="2926" data-logged-id="13766">-->
@@ -172,7 +183,7 @@ $orgid = $org_data['Organization']['id'];
                                 </div>
                             </div>
                             <!--#-->
-                            <div class="live-feeds" style="background: none;">                      
+                            <div class="live-feeds new-bg-feeds">                      
                                 <div class="row hand">
                                     <div class="live-feeds-ndorse" id="feed_48596" endorse_id="48596">
 
@@ -204,12 +215,12 @@ $orgid = $org_data['Organization']['id'];
                                     <div class="clearfix"></div>
                                     <div class="orange-bg no-hand headerFooterBGLight">
                                         <div class="col-xs-4"> <a href="javascript:void(0)"> 
-                                                <img width="20" alt="img" src="http://ndorse.net/img/like.png" endorse="48596" like="0" id="likes_endorse_48596" class="like-img like-img-endorse"></a>
+                                                <img width="20" alt="img" src="<?php echo Router::url('/', true); ?>img/like.png" endorse="48596" like="0" id="likes_endorse_48596" class="like-img like-img-endorse"></a>
                                             <span class="likes hand endorselikeslist" endorse="48596" like="0" id="likes_48596">0 Like </span> </div>
                                         <div class="col-xs-4 text-center"> <span>
                                                 Aug 07                                                                                    </span> </div>
                                         <div class="col-xs-4 text-right">
-                                            <a href="javascript:void(0)"><img width="20" alt="img" src="http://ndorse.net/img/email.png" class="marg-right no-hand"></a>
+                                            <a href="javascript:void(0)"><img width="20" alt="img" src="<?php echo Router::url('/', true); ?>img/email.png" class="marg-right no-hand"></a>
                                         </div>
                                         <div class="clearfix"></div>
                                     </div>
@@ -239,7 +250,7 @@ $orgid = $org_data['Organization']['id'];
                     <div class="search-mob">
                         <?php echo $this->Html->image('theme-img/theme-search.png', array('width' => '100%', 'alt' => 'img')); ?>
                     </div>
-                    <div class="detail-mob"  style="border:1px solid rgba(255,255,255,0.2);">
+                    <div class="detail-mob new-bg-feeds"  style="border:1px solid rgba(255,255,255,0.2);">
                         <div class="desc-mob">
                             <?php echo $this->Html->image('theme-img/theme-detail.png', array('width' => '100%', 'alt' => 'img')); ?>
                         </div>
@@ -247,7 +258,8 @@ $orgid = $org_data['Organization']['id'];
                             <?php echo $this->Html->image('theme-img/theme-bar.png', array('width' => '100%', 'alt' => 'img')); ?>
                         </div>
                     </div>
-                    <div class="detail-mob"  style="border:1px solid rgba(255,255,255,0.2);">
+                    
+                    <div class="detail-mob new-bg-feeds"  style="border:1px solid rgba(255,255,255,0.2);">
                         <div class="desc-mob">
                             <?php echo $this->Html->image('theme-img/theme-detail2.png', array('width' => '100%', 'alt' => 'img')); ?>
                         </div>
@@ -298,10 +310,19 @@ $orgid = $org_data['Organization']['id'];
         var fontColor = '<?php echo $org_data['Organization']['font_color'];?>';
         var buttonColor = '<?php echo $org_data['Organization']['button_color'];?>';
         
+        //starts here
+        var cardColorLight = '<?php echo $org_data['Organization']['card_color_light'];?>';
+        var cardColorDark = '<?php echo $org_data['Organization']['card_color_dark'];?>';
+        //ends here
+
         $('.headerFooterBG').css('background-image', 'linear-gradient(to bottom, #' + colorCodeLight + ',  #' + colorCodeDark + ')').css('border', 'none');
         $('.headerFooterBGLight').css('background-color', '#' + colorCodeLight);
         $('.preview').css('background', 'radial-gradient(at 65% 50%, #' + backgroundLight + ' , #' + backgroundDark + ' 60%)');
         $('.previewNav').css('background', 'radial-gradient(at 30% 30%,  #' + backgroundDark + ' 30%, #' + backgroundLight + ')');
+
+        //new color branding code for ndorsement starts here 
+        $('.new-bg-feeds').css('background', 'radial-gradient(at 50% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+        //
         $('.bar-mob').css('background', '#' + colorCodeLight);
         $('.commonFont, .commonFont a').css('color', '#' + fontColor + ' !important');
 
@@ -309,6 +330,11 @@ $orgid = $org_data['Organization']['id'];
         $('#headerFooterDark').val(colorCodeDark).mouseleave();
         $('#backgroundLight').val(backgroundLight).trigger('mouseout');
         $('#backgroundDark').val(backgroundDark).mouseout();
+
+        //new color branding code for ndorsement starts here 
+        $('#cardColorLight').val(cardColorLight).trigger('mouseout');
+        $('#cardColorDark').val(cardColorDark).mouseout();
+        //ends here
         $('#fontColor').val(fontColor);
         $('#buttonColor').val(buttonColor);
     });
@@ -328,12 +354,22 @@ $orgid = $org_data['Organization']['id'];
 
         var backgroundLight = $('#backgroundLight').val();
         var backgroundDark = $('#backgroundDark').val();
+
+        //color new
+        var cardColorLight = $('#cardColorLight').val();
+        var cardColorDark = $('#cardColorDark').val();
+        //ends here
 //        console.log(backgroundLight + " /  " + backgroundDark);
         $('.preview').css('background', 'radial-gradient(at 65% 50%, #' + backgroundLight + ' , #' + backgroundDark + ' 60%)');
         //$('.preview').css('background-image', 'rediial-gradient(90deg, #' + backgroundLight + ' ,  #' + backgroundDark + ' 75%)');
         $('.previewNav').css('background', 'radial-gradient(at 30% 30%,  #' + backgroundDark + ' 30%, #' + backgroundLight + ')');
         //$('.previewNav').css('background-image', 'linear-gradient(90deg, #' + backgroundDark +'  50%,  #' + backgroundLight + ')');
         //$('.preview').css('background-color', 'linear-gradient(to bottom, #' + backgroundLight + ' 50%, #' + backgroundDark + ' 50%);');
+
+        //color branding code for ndorsement starts here
+        $('.new-bg-feeds').css('background', 'radial-gradient(at 65% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+        //$('.previewNav').css('background', 'radial-gradient(at 30% 30%,  #' + cardColorDark + ' 30%, #' + cardColorLight + ')');
+        //ends here
         $('.bar-mob').css('background', '#' + colorCodeLight);
 
 
@@ -361,6 +397,9 @@ $orgid = $org_data['Organization']['id'];
         var backgroundDark = '0C102F';
         var fontColor = 'FFFFFF';
         var buttonColor = 'ED5B13';
+        
+        var cardColorLight = '551C22';
+        var cardColorDark = '2F0C10';
 
         $('#headerFooterLight').val(colorCodeLight).change();
         $('#headerFooterDark').val(colorCodeDark).mouseleave();
@@ -369,14 +408,25 @@ $orgid = $org_data['Organization']['id'];
         $('#fontColor').val(fontColor);
         $('#buttonColor').val(buttonColor);
 
+        
+        //
+        $('#cardColorLight').val(cardColorLight).trigger('mouseout');
+        $('#cardColorDark').val(cardColorDark).mouseout();
+        //
         $('.jscolor').each(function () {
             $(this).focus();
         });
 
         $('.headerFooterBG').css('background-image', 'linear-gradient(to bottom, #' + colorCodeLight + ',  #' + colorCodeDark + ')').css('border', 'none');
         $('.headerFooterBGLight').css('background-color', '#' + colorCodeLight);
+        
         $('.preview').css('background', 'radial-gradient(at 65% 50%, #' + backgroundLight + ' , #' + backgroundDark + ' 60%)');
         $('.previewNav').css('background', 'radial-gradient(at 30% 30%,  #' + backgroundDark + ' 30%, #' + backgroundLight + ')');
+        
+        //color branding code for ndorsement starts here
+        $('.new-bg-feeds').css('background', 'radial-gradient(at 65% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+        //$('.previewNav').css('background', 'radial-gradient(at 30% 30%,  #' + cardColorDark + ' 30%, #' + cardColorLight + ')');
+        //ends here
         $('.bar-mob').css('background', '#' + colorCodeLight);
         $('.commonFont, .commonFont a').css('color', '#' + fontColor + ' !important');
     });

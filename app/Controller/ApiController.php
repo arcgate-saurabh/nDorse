@@ -3341,12 +3341,16 @@ class ApiController extends AppController
                     //                        //$conditionarray['Organization.id !='] = $org_idarray;
                     //                        $array['conditions'] = array('Organization.id !=' => $org_idarray, 'Organization.status' => 1, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
                     //                    } else {
-                    //  
-                    $array['conditions'] = array('Organization.id !=' => 415, 'Organization.status' => 1, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
+                    //
+
+                    /**
+                    * Hiding TGHS/TEAM with org id as 445 and 415 LGH kept hidden from search  
+                    */
+                    $array['conditions'] = array('Organization.id !=' => array(415,446), 'Organization.status' => 1, array('OR' => array('name LIKE' => '%' . $keyword . '%', 'short_name LIKE' => '%' . $keyword . '%')));
                     //                    }
                 }
                 $orgArray = $this->Organization->find("all", $array);
-                // echo $this->Organization->getLastQuery();
+                //echo $this->Organization->getLastQuery(); exit;
                 $orginfo = array();
                 foreach ($orgArray as $val) {
 

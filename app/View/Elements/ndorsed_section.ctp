@@ -95,7 +95,7 @@
                 $no_handclass = "no-hand";
             }
             ?>
-            <div class="live-feeds"  >
+            <div class="live-feeds new-bg-feeds"  >
                 <div class="row hand">
                     <div class="live-feeds-ndorse" id="feed_<?php echo $endorse["id"]; ?>" endorse_id ="<?php echo $endorse["id"]; ?>">
                         <?php

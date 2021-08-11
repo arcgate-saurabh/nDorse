@@ -33,7 +33,10 @@
         $('.bar-mob').css('background', '#' + colorCodeLight);
         $('.commonFont, .commonFont a').css('color', '#' + fontColor + ' !important');
 
-
+        //new color branding code for ndorsement starts here
+        $('.new-bg-feeds').css('background', 'radial-gradient(at 50% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+        
+        //ends here
 
         //$('.CustomBtnColor').css('background', '#' + buttonColor + ' !important');
         //$('.CustomBtnColor').css('linear-gradient(to bottom', '#' + buttonColor + ' !important)');

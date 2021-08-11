@@ -184,7 +184,10 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 var backgroundDark = '<?php echo $currntOrgArray['background_color_dark'];?>';
                 var fontColor = '<?php echo $currntOrgArray['font_color'];?>';
                 var buttonColor = '<?php echo $currntOrgArray['button_color'];?>';
-                
+                //new color branding code starts here 
+                var cardColorLight = '<?php echo $currntOrgArray['card_color_light'];?>';
+                var cardColorDark = '<?php echo $currntOrgArray['card_color_dark'];?>';
+                //ends here
 
                 $(document).find('.orange-bg').addClass('headerFooterBGLight');
                 $('.orange-bg').addClass('headerFooterBGLight');
@@ -193,6 +196,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
                 $('.tTip').addClass('headerFooterBG');
                 $('.post-thumb h6, .nDorsed-by, .range, .nDorse-Details-msg .mesg').addClass('commonFont');
 
+                //
+                //$('.live-feeds').addClass('live-feeds');
+                //
                 $('.Dear-Details, .live-feeds, .search-icn input').css('border-color', '#' + colorCodeLight);
 
                 $('.headerFooterBG').css('background-image', 'linear-gradient(to bottom, #' + colorCodeLight + ',  #' + colorCodeDark + ')').css('border', 'none');
@@ -200,6 +206,12 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
                 $('.preview').css('background', 'radial-gradient(at 65% 50%, #' + backgroundLight + ' , #' + backgroundDark + ' 60%)');
                 $('.previewNav').css('background', 'radial-gradient(at 30% 30%,  #' + backgroundDark + ' 30%, #' + backgroundLight + ')');
+
+                //new color branding code for ndorsement starts here 
+                $('.new-bg-feeds').css('background', 'radial-gradient(at 50% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+                //$('.Dear-Details').css('background', 'radial-gradient(at 65% 50%, #' + cardColorLight + ' , #' + cardColorDark + ' 60%)');
+                //ends here
+
                 $('.bar-mob').css('background', '#' + colorCodeLight);
                 $('.commonFont, .commonFont a').css('color', '#' + fontColor + ' !important');
 
