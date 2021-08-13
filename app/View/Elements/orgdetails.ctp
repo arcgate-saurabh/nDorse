@@ -4,55 +4,58 @@ $loggeinUser = AuthComponent::user();
 <div class="col-md-5 col-xs-6">
     <div class="row">
         <div class="col-md-6 col-xs-6">
-            <?php
-            if (!empty($orgdetails["image"])) {
-                $filepath = WWW_ROOT . ORG_IMAGE_DIR . $orgdetails["image"];
+            <div style="padding: 10px;">
+                <?php
+                if (!empty($orgdetails["image"])) {
+                    $filepath = WWW_ROOT . ORG_IMAGE_DIR . $orgdetails["image"];
 
-                //=============showing a image even in a case if it doesnt exist;
-                if (file_exists($filepath)) {
-                    $imageinfo = getimagesize($filepath);
-                    $width = $imageinfo[0];
-                    $height = $imageinfo[1];
-                    $height = ($height >= 116) ? 116 : $height;
-                    $width = ($width >= 150) ? 150 : $width;
-                    $org_imagenew = Router::url('/', true) . "app/webroot/" . ORG_IMAGE_DIR . $orgdetails["image"];
-                    echo $this->Html->image($org_imagenew, array('width' => $width, 'height' => $height, 'id' => 'org_image', 'class' => 'img-responsive'));
-                    //echo $this->Html->image($data['Organization']['health_url'],array('class'=>"img-responsive smiley", "width" => "40"));
+                    //=============showing a image even in a case if it doesnt exist;
+                    if (file_exists($filepath)) {
+                        $imageinfo = getimagesize($filepath);
+                        $width = $imageinfo[0];
+                        $height = $imageinfo[1];
+                        //$height = ($height >= 116) ? 116 : $height;
+                        $width = ($width >= 190) ? 190 : $width;
+
+                        $org_imagenew = Router::url('/', true) . "app/webroot/" . ORG_IMAGE_DIR . $orgdetails["image"];
+                        echo $this->Html->image($org_imagenew, array('width' => $width, 'height' => $height, 'id' => 'org_image1', 'class' => 'img-responsive'));
+                        //echo $this->Html->image($data['Organization']['health_url'],array('class'=>"img-responsive smiley", "width" => "40"));
+                    } else {
+                        echo $this->Html->image('img1.png', array('class' => "img-responsive", 'width' => '150'));
+                        //echo $this->Html->image($data['Organization']['health_url'],array('class'=>"img-responsive smiley", "width" => "40"));
+                    }
                 } else {
                     echo $this->Html->image('img1.png', array('class' => "img-responsive", 'width' => '150'));
                     //echo $this->Html->image($data['Organization']['health_url'],array('class'=>"img-responsive smiley", "width" => "40"));
                 }
-            } else {
-                echo $this->Html->image('img1.png', array('class' => "img-responsive", 'width' => '150'));
-                //echo $this->Html->image($data['Organization']['health_url'],array('class'=>"img-responsive smiley", "width" => "40"));
-            }
 
-            if ($page == "info") {
-                if ($loggeinUser['role'] != 6) {
+                if ($page == "info") {
+                    if ($loggeinUser['role'] != 6) {
+                        ?>
+                        <div class="join-code">
+                            <button class="btn btn-xs btn-success" onclick="generateJoinCode(<?php echo $orgdetails['id']; ?>);">Generate One Time Join Code</button>
+                        </div>
+                    <?php }
                     ?>
-                    <div class="join-code">
-                        <button class="btn btn-xs btn-success" onclick="generateJoinCode(<?php echo $orgdetails['id']; ?>);">Generate One Time Join Code</button>
-                    </div>
-                <?php }
-                ?>
-                <?php if ($authUser["role"] == 1) { ?>
-                    <div class="themeEdit">
-                        <span>Color Branding :</span> <?php echo ($orgdetails['theme'] == 1) ? '' : 'Custom'; ?> 
-                        <span>
-                            <?php echo $this->Html->Image("edit_icon.png", array("data-toggle" => "tooltip", "title" => "Color Branding", "url" => array('controller' => 'organizations', 'action' => 'colorsettings', $orgdetails["id"]))); ?>
-                        </span>
-                    </div>
-                    <?php if ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425 || $orgdetails['id'] == 446) { ?>
+                    <?php if ($authUser["role"] == 1) { ?>
                         <div class="themeEdit">
-                            <span>AD Settings :</span> <?php echo ($orgdetails['theme'] == 1) ? '' : 'Custom'; ?> 
+                            <span>Color Branding :</span> <?php echo ($orgdetails['theme'] == 1) ? '' : 'Custom'; ?> 
                             <span>
-                                <?php echo $this->Html->Image("edit_icon.png", array("data-toggle" => "tooltip", "title" => "AD Settting", "url" => array('controller' => 'organizations', 'action' => 'adsettings', $orgdetails["id"]))); ?>
+                                <?php echo $this->Html->Image("edit_icon.png", array("data-toggle" => "tooltip", "title" => "Color Branding", "url" => array('controller' => 'organizations', 'action' => 'colorsettings', $orgdetails["id"]))); ?>
                             </span>
                         </div>
+                        <?php if ($orgdetails['id'] == 148 || $orgdetails['id'] == 415 || $orgdetails['id'] == 425 || $orgdetails['id'] == 446) { ?>
+                            <div class="themeEdit">
+                                <span>AD Settings :</span> <?php echo ($orgdetails['theme'] == 1) ? '' : 'Custom'; ?> 
+                                <span>
+                                    <?php echo $this->Html->Image("edit_icon.png", array("data-toggle" => "tooltip", "title" => "AD Settting", "url" => array('controller' => 'organizations', 'action' => 'adsettings', $orgdetails["id"]))); ?>
+                                </span>
+                            </div>
+                        <?php } ?>
                     <?php } ?>
-                <?php } ?>
-            <?php }
-            ?>
+                <?php }
+                ?>
+            </div>
         </div>
         <div class="col-md-6 comp-name col-xs-6">
             <?php

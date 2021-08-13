@@ -257,7 +257,7 @@ class CommonComponent extends Component {
         return array('status' => !$flagError, 'error' => $errorMessage, 'imageName' => $imageName);
     }
 
-    function uploadImage($fileControl, $uploadPathOffset, $thumbPathOffset, $resizeConfig = array('height' => 279, 'width' => 279), $profiletype = "profile") {
+    function uploadImage($fileControl, $uploadPathOffset, $thumbPathOffset, $resizeConfig = array('height' => 280, 'width' => 280), $profiletype = "profile") {
         //$image = $this->data['Varient']['filename'];
         $image = $fileControl; //File upload control 
         //allowed image types
