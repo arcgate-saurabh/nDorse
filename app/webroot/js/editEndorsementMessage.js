@@ -85,4 +85,4 @@ $(document).on('click', '.js-cancel-editing-redirect', function () {
     
 $("#user_msg_val").focus();
 
- });   
+});   
