@@ -20,16 +20,18 @@
                             <div class="text-center rec-comp <?php echo $handClass; ?>">
                             <?php } ?>    
                             <div class="new">
+                                <div class="imgrdsOrg">
                                 <?php
                                 if ($rec_type == "endorser") {
-                                    echo $this->Html->link($this->Html->Image($image, array("width" => "240", "height" => "250", "class" => "img-circle")), array("controller" => "client", "action" => "orginfo", $organizationlist["id"]), array('escape' => false));
+                                    echo $this->Html->link($this->Html->Image($image, array("width" => "240", "height" => "250")), array("controller" => "client", "action" => "orginfo", $organizationlist["id"]), array('escape' => false));
                                     if ($organizationlist["status"] == 0) {
                                         echo '<div class="inact-ribbon">' . $this->Html->Image("inact-ribbon.png") . '</div>';
                                     }
                                 } else {
-                                    echo $this->Html->Image($image, array("width" => "240", "height" => "250", "class" => "img-circle $handClass"));
+                                    echo $this->Html->Image($image, array("width" => "240", "height" => "250", "class" => "$handClass"));
                                 }
                                 ?>
+                            </div>
                             </div>
                             <h3 class="rec-org-name">
                                 <?php

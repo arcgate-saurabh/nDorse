@@ -1096,6 +1096,17 @@ label {
     outline: none;
 }
 
+/*new css added for search functionality in dropdown on 16aug2021*/
+/*.select-style .select2-container{margin: 0}
+
+.select-style .select2-container span{background: none; margin: 0}
+
+.select-style .select2-container span.select2-selection__arrow{display: none;}
+
+.select-style .select2-container .select2-selection--single{height: auto; padding: 5px;}
+
+td.entityvaluestextbox input.entitytextbox{padding: 8px 10px; border-radius: 3px; border:none;}
+*/
 .table>thead>tr>th {
     border-bottom: 0px solid #ddd;
 }
@@ -7793,4 +7804,24 @@ a.bkTndorse span {
 }
 .join-org-grp button.btn-orange#clearsearcheddata{
     height: 58px;
+}
+
+.imgrdsOrg {
+    width: 240px;
+    height: 240px;
+    border-radius: 20%;
+    background: #EFEFEF;
+    padding: 5px;
+    margin: 5px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.imgrdsOrg  img{
+    border-radius: 20%;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }

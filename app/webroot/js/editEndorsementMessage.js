@@ -79,6 +79,9 @@ $(document).on('click', '.js-cancel-editing', function () {
     window.location.href = siteurl + "endorse/details/" + endorseid+"?mode=edit";
 });
 
+$(document).on('click', '.js-cancel-editing-redirect', function () {
+    window.location.href = siteurl + "endorse";
+});
     
 $("#user_msg_val").focus();
 
